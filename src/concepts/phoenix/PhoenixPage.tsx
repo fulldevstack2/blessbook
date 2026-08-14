@@ -55,7 +55,7 @@ const cuts = [
   },
   {
     mark: "The instrument",
-    line: "The first performer anywhere to play a six-string 24K gold violin",
+    line: "The first six-string 24K gold violin ever played on a stage",
     sub: "Carved as a bird's wing in Donegal, and waited a year for.",
   },
   {

@@ -154,7 +154,8 @@
 
 .chooser-specimen {
   font-family: var(--panel-display);
-  font-size: clamp(1.4rem, 3vw, 2rem);
+  /* Sized so the widest of the three display faces still sets on one line. */
+  font-size: clamp(1.2rem, 2.5vw, 1.7rem);
   line-height: 1.16;
   padding: var(--space-md) 0;
   border-block: 1px solid color-mix(in oklab, currentColor 18%, transparent);
@@ -291,4 +292,11 @@
   margin: var(--space-4xl) 0 var(--space-lg);
   padding-inline: clamp(var(--space-lg), 6vw, var(--space-4xl));
   color: var(--paper-faint);
+}
+
+/* Tagline on its own line for all three, so a long one cannot ragged-wrap into
+   the name and push that card's specimen out of alignment with the others. */
+.chooser-panel-tag {
+  display: block;
+  margin-top: var(--space-2xs);
 }

@@ -77,11 +77,12 @@ const fragmentShader = /* glsl */ `
     sheen *= 0.5 + uLevel * 0.85;
 
     /* ---- the pearl, gathering as the scroll ends ---- */
-    float gather = smoothstep(0.4, 0.96, uProgress);
+    float gather = smoothstep(0.5, 0.97, uProgress);
     vec2 centre = vec2(-0.02, 0.12);
     vec2 d = p - centre;
-    // Small on purpose. A pearl is precious because it is not large.
-    float pearlRadius = mix(1.5, 0.26, gather);
+    // Small on purpose, and small the whole way: it fades in at its final size
+    // rather than shrinking from a wall-sized disc, which read as a beach ball.
+    float pearlRadius = mix(0.33, 0.26, gather);
     float rr = length(d) / pearlRadius;
 
     // A crisp silhouette. A pearl has an edge; only its lustre is soft.

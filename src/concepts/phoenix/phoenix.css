@@ -250,6 +250,9 @@
 }
 
 .phoenix-lede {
+  /* The h2 above it has no bottom margin of its own, and without this the
+     display line and the paragraph collide. */
+  margin-top: var(--space-lg);
   max-width: 62ch;
   color: var(--ivory-soft);
   font-size: 1.05rem;

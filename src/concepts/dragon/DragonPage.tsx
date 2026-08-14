@@ -28,6 +28,7 @@ import {
   teachers,
   territories,
   training,
+  violins,
 } from "../../content/dennis";
 import { photos } from "../../content/media";
 import { socials, words } from "../../content/work";
@@ -40,6 +41,10 @@ import { createDragonScene } from "./dragonScene";
 import "./dragon.css";
 
 const concept = conceptById("dragon");
+
+/** The plate in the instrument section is the Phoenix, whatever this concept is
+ *  called — it is the instrument the story beside it is about. */
+const phoenix = violins.find((violin) => violin.id === "phoenix");
 
 const numerals = ["一", "二", "三", "四", "五", "六", "七", "八", "九"] as const;
 
@@ -164,7 +169,10 @@ export function DragonPage() {
                 {artist.chineseName}
               </span>
               <span className="dragon-roles">
-                {artist.roles} · {artist.city} · {artist.born}
+                {artist.roles}
+                <span className="dragon-born">
+                  {artist.city} · born {artist.born}
+                </span>
               </span>
             </div>
 
@@ -301,7 +309,10 @@ export function DragonPage() {
               {commissionStory.body}
             </p>
 
-            <figure className="dragon-photo dragon-photo--plate" data-reveal="wipe">
+            <figure
+              className="dragon-photo dragon-photo--plate dragon-photo--object"
+              data-reveal="wipe"
+            >
               <img
                 src={photos.violin.src}
                 width={photos.violin.width}
@@ -310,8 +321,7 @@ export function DragonPage() {
                 loading="lazy"
               />
               <figcaption className="dragon-credit">
-                {concept.instrument.name} · {concept.instrument.year} ·{" "}
-                {photos.violin.credit}
+                {phoenix?.name} · {phoenix?.year} · {photos.violin.credit}
               </figcaption>
             </figure>
 

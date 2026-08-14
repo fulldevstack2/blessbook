@@ -91,6 +91,38 @@
   background: transparent;
 }
 
+/* At mid-scroll the ink blooms across the whole frame, and the hero type sits in
+   its path. A veil of paper over the ink and under the words: the wash still
+   reads on the left where the figure is, and the type always has paper behind
+   it. Without this the second and third cuts are dark grey on dark ink. */
+.dragon-stage::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    100deg,
+    transparent 0%,
+    transparent 32%,
+    color-mix(in oklab, var(--paper) 58%, transparent) 48%,
+    color-mix(in oklab, var(--paper) 84%, transparent) 68%,
+    color-mix(in oklab, var(--paper) 88%, transparent) 100%
+  );
+}
+
+/* Single column below the two-column breakpoint, so the veil comes up from the
+   floor where the type is instead of in from the side. */
+@media (max-width: 899px) {
+  .dragon-stage::after {
+    background: linear-gradient(
+      0deg,
+      color-mix(in oklab, var(--paper) 88%, transparent) 0%,
+      color-mix(in oklab, var(--paper) 62%, transparent) 34%,
+      transparent 68%
+    );
+  }
+}
+
 .dragon-hero {
   position: relative;
   z-index: 3;
@@ -154,7 +186,9 @@
   font-size: 10px;
   letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: var(--jade);
+  /* Deeper than the jade rules elsewhere: this one label sits over the wash,
+     where pale jade disappeared. */
+  color: color-mix(in oklab, var(--jade) 76%, var(--ink));
 }
 
 .dragon-hero-foot {
@@ -1353,6 +1387,15 @@
   width: 100%;
 }
 
+/* The instrument is the one thing on this page allowed its own colour. The
+   sentence beside it says 24K gold, and the concept's grayscale-and-multiply
+   treatment was turning it silver — which made the copy a lie. */
+.dragon-photo--object img {
+  filter: none;
+  mix-blend-mode: normal;
+  border: 1px solid var(--rule);
+}
+
 /* ---------- who books him ---------- */
 
 .dragon .wall {
@@ -1428,4 +1471,9 @@
     color-mix(in oklab, var(--paper) 74%, transparent) 54%,
     transparent 100%
   );
+}
+
+.dragon-born {
+  display: block;
+  margin-top: var(--space-2xs);
 }
