@@ -89,46 +89,45 @@ another. Routes:
 - `tsc -b` clean, `npm run build` green.
 - **It is now a git repository.** There is an undo. `git log --oneline` is the
   fastest orientation to what landed when.
-- **Nothing from this project has been pushed anywhere.** The user has decided
-  the target is a **GitHub Pages project repo**, so the site will be served from
-  a subpath and `base` stays `/blesspoke/`. The build copies `index.html` to
-  `404.html` for SPA routing.
-- **The publishing account is not settled.** Deploy config now lives in `.env`
-  rather than being hardcoded: `VITE_BASE` drives the base path and the icon
-  href, `VITE_SITE_URL` drives the og:/twitter: origin. `VITE_SITE_URL` is
-  deliberately **empty**, which leaves the link-preview tags relative — degraded
-  but not wrong. Filling it in is the only change needed, and it is verified to
-  produce correct absolute URLs when set.
-- Confirm with the user before creating a repo or deploying.
+- **It is live at <https://fulldevstack2.github.io/blesspoke/>.** Pushing to
+  `main` triggers `.github/workflows/deploy-pages.yml`, which builds and
+  publishes to Pages. Pages `build_type` is `workflow`, not branch-serving.
+- Deploy config lives in `.env` and is repeated explicitly in the workflow:
+  `VITE_BASE` drives the base path and the icon href, `VITE_SITE_URL` drives the
+  og:/twitter: origin. Both are set to the account above. Moving to a custom
+  domain later means changing those two values and adding a CNAME, nothing else.
+- The build copies `index.html` to `404.html` for SPA routing. **A deep route
+  returns HTTP 404 with the app as its body** — that is the standard Pages SPA
+  trick working as intended, not a fault.
 
-### What was scrapped, and what is still live
+### What was scrapped
 
-An **earlier Blesspoke, built by a different Cursor agent**, exists at
-`/home/malkuth/projects/blesspoke` and was pushed to `fulldevstack2/blesspoke`.
-The user chose "Scrap it and let me rebuild Blesspoke from scratch my own way,"
-and has now confirmed that build is scrapped outright. Its local directory was
-deleted and this project took its place on disk. **Nothing was lost: that commit
-is still on GitHub.**
+An **earlier Blesspoke, built by a different Cursor agent**, occupied both this
+directory and this repo. The user scrapped it — "it's really bad... I don't even
+mind if you delete everything about it" — so its local directory was deleted and
+`main` was force-pushed over with this project.
 
-Two things were live on GitHub Pages when this was written, and **this agent did
-not take either down** — the user said they would handle it:
+**It was not destroyed.** Its one commit is preserved on the
+**`archive/cursor-build`** branch, because that commit's message is "Blesspoke:
+atas scroll-cinema song commissioning platform **+ Lumo admin portal**" and it
+became the only surviving copy of that Lumo work once the local directory went.
+Delete the branch if the user confirms they want it gone.
 
-| URL | Repo | Status |
-|---|---|---|
-| `https://fulldevstack2.github.io/blesspoke/` | `fulldevstack2/blesspoke` | public, Pages on, the **scrapped** Cursor build |
-| `https://fulldevstack2.github.io/canto/` | `fulldevstack2/canto` | public, Pages on, to be unpublished |
+> **Do not casually `git checkout archive/cursor-build`.** That commit *tracks
+> `node_modules`*, so switching to it writes thousands of stale dependency files
+> into the working tree and switching back does not fully clean them. If you
+> ever need to read it, use `git show`/`git worktree` instead. This already bit
+> once and cost a full `npm ci` to recover from.
 
-Note the collision: the scrapped site occupies the exact repo name and URL this
-project would want. Deploying here means either taking that repo over — which
-replaces the old content at the same URL — or picking a different account or
-repo name. **That is an open decision; do not resolve it yourself.** There are
-three GitHub accounts authenticated on this machine (`fulldevstack2`,
-`sportal-dev-team`, `devfakhzan`), and the global git identity is `devfakhzan`,
-so it is not safe to assume which one this should ship under.
+Canto is still live at `https://fulldevstack2.github.io/canto/`
+(`fulldevstack2/canto`). The user said they would unpublish it themselves;
+**this agent did not touch that repo.** Canto stays on disk as the local source
+of Dennis's content, which is fine — everything needed has already been copied
+across and Blesspoke has no runtime dependency on it.
 
-Canto stays on disk as the local source of Dennis's content, which is fine —
-everything needed has already been copied across and Blesspoke has no runtime
-dependency on it.
+Note for anyone running git commands here: `git init` created **`master`**, which
+was later renamed to `main` to match the remote. If a stale local `main` ever
+reappears tracking an old remote, check `git branch -vv` before pushing.
 
 ---
 
@@ -484,12 +483,9 @@ concepts complete end to end; the chooser page.
 
 ### 9a. Content decisions that need the user, not an agent
 
-- **Settle the publishing account, then set `VITE_SITE_URL` in `.env`.** Until
-  it is set, link previews fall back to relative URLs and may not render an
-  image on some platforms. See the table in §2 — the obvious repo name is
-  already taken by the scrapped build.
-- **Take down the two live GitHub Pages sites** listed in §2, if the user has
-  not already. Both are outward-facing; ask before touching either.
+- **Unpublish canto** (`fulldevstack2/canto`), which the user is handling.
+- **Decide whether `archive/cursor-build` can be deleted**, which depends on
+  whether the Lumo admin portal work in it is still wanted.
 - **The two client reviews in `work.ts`** came from canto and are attributed to
   "Brand film lead" and "Mei & Arun". Confirm they are real and cleared for
   publication before this goes anywhere public.
@@ -610,10 +606,9 @@ Paste this as the first message:
 
 - Dev server: `npm run dev` → http://localhost:4300/blesspoke/
 - Typecheck: `npx tsc -b` · Build: `npm run build`
-- Deploy config is in `.env`. `npm run build` with `VITE_SITE_URL` set produces
-  absolute og: tags; unset, they stay relative.
-- `fulldevstack2/blesspoke` and `fulldevstack2/canto` both exist and both still
-  have Pages enabled. See the table in §2 before deploying anything.
+- Live at <https://fulldevstack2.github.io/blesspoke/>; push to `main` to
+  deploy. `gh run list` and `gh run watch <id>` to follow it.
+- Deploy config is `.env` plus the same two values in the workflow.
 - Playwright and Chromium are installed under `creators-platform/node_modules`
   and `~/.cache/ms-playwright`, which is how the overflow, reveal and reduced-
   motion checks in §8 were run. Import it as
