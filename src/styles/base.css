@@ -133,6 +133,251 @@ p {
   height: 100%;
 }
 
+/* Section choreography. Anything marked data-reveal enters once, when it is
+   scrolled to; useScrollReveal sets --reveal-i so siblings stagger against each
+   other. The value names the flavour, and concepts refine these under their own
+   scope. Motion here is deliberately slow and single-direction — nothing
+   bounces, nothing re-hides on the way back up. */
+[data-reveal] {
+  --reveal-delay: calc(var(--reveal-i, 0) * 80ms);
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 900ms var(--ease-out) var(--reveal-delay),
+    transform 1100ms var(--ease-out) var(--reveal-delay),
+    clip-path 1200ms var(--ease-out) var(--reveal-delay);
+}
+
+/* For photography: the frame fills rather than the picture sliding. */
+[data-reveal="wipe"] {
+  transform: none;
+  clip-path: inset(0 0 100% 0);
+}
+
+/* For rules, staves and seams: drawn rather than faded. */
+[data-reveal="line"] {
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+[data-reveal][data-revealed="true"] {
+  opacity: 1;
+  transform: none;
+}
+
+[data-reveal="wipe"][data-revealed="true"] {
+  clip-path: inset(0 0 0 0);
+}
+
+/* Figures that count up hold their width while the digits change. */
+.tally {
+  font-variant-numeric: tabular-nums;
+}
+
+/* The commission reel: mechanics only. Colour, type and rules come from the
+   concept, which is how one player reads three different ways. */
+.reel {
+  display: grid;
+  gap: var(--space-2xl);
+}
+
+.reel-stage {
+  position: relative;
+  display: grid;
+  gap: var(--space-lg);
+}
+
+.reel-scope {
+  width: 100%;
+  height: clamp(76px, 11vw, 132px);
+}
+
+.reel-transport {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-lg);
+}
+
+.reel-play {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: 0;
+}
+
+/* Triangle and bar-pair drawn in CSS — the site ships no icon assets. */
+.reel-play-mark {
+  width: 11px;
+  height: 13px;
+  background: currentColor;
+  clip-path: polygon(0 0, 100% 50%, 0 100%);
+}
+
+.reel-play-mark[data-playing="true"] {
+  clip-path: none;
+  background: linear-gradient(
+    90deg,
+    currentColor 0 34%,
+    transparent 34% 66%,
+    currentColor 66% 100%
+  );
+}
+
+.reel-seek {
+  position: relative;
+  display: grid;
+  align-items: center;
+  height: 22px;
+}
+
+.reel-seek-rail {
+  position: absolute;
+  inset-inline: 0;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* --played is written straight onto the reel by the frame loop, so the fill
+   tracks the audio without React re-rendering sixty times a second. */
+.reel-seek-fill {
+  width: calc(var(--played, 0) * 100%);
+  height: 100%;
+}
+
+.reel-seek-input {
+  position: relative;
+  width: 100%;
+  height: 22px;
+  margin: 0;
+  appearance: none;
+  background: none;
+  cursor: pointer;
+}
+
+.reel-seek-input::-webkit-slider-runnable-track {
+  height: 22px;
+  background: none;
+}
+
+.reel-seek-input::-webkit-slider-thumb {
+  appearance: none;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.reel-seek-input::-moz-range-track {
+  height: 22px;
+  background: none;
+}
+
+.reel-seek-input::-moz-range-thumb {
+  width: 11px;
+  height: 11px;
+  border: 0;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.reel-time {
+  display: inline-flex;
+  gap: var(--space-2xs);
+  font-variant-numeric: tabular-nums;
+}
+
+.reel-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.reel-item {
+  width: 100%;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  grid-template-areas: "index title kind time";
+  align-items: baseline;
+  gap: var(--space-md);
+  text-align: left;
+  padding: var(--space-sm) 0;
+}
+
+.reel-item-index {
+  grid-area: index;
+}
+.reel-item-title {
+  grid-area: title;
+}
+.reel-item-kind {
+  grid-area: kind;
+}
+.reel-item-time {
+  grid-area: time;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 660px) {
+  .reel-item {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      "index title time"
+      ". kind kind";
+    gap: var(--space-2xs) var(--space-md);
+  }
+
+  .reel-transport {
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: var(--space-md);
+  }
+
+  .reel-time {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Click-to-load film posters. Nothing from YouTube is fetched until asked. */
+.films {
+  display: grid;
+  gap: var(--space-xl);
+}
+
+.film {
+  position: relative;
+  display: grid;
+  gap: var(--space-sm);
+}
+
+.film-frame {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  overflow: hidden;
+}
+
+.film-frame img,
+.film-frame iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  object-fit: cover;
+}
+
+.film-open {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  /* Without this the two implicit rows stretch to fill the frame and the mark
+     drifts a long way from its label. */
+  align-content: center;
+  width: 100%;
+  height: 100%;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

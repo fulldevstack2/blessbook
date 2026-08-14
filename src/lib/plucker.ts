@@ -5,11 +5,7 @@
  * partials. No audio files, and nothing plays until someone asks for it.
  */
 
-declare global {
-  interface Window {
-    webkitAudioContext?: typeof AudioContext;
-  }
-}
+import { audioContext, resumeAudio } from "./audioContext";
 
 export interface ViolinString {
   readonly name: string;
@@ -24,16 +20,6 @@ export const violinStrings: readonly ViolinString[] = [
   { name: "A", label: "A4", frequency: 440.0 },
   { name: "E", label: "E5", frequency: 659.25 },
 ];
-
-let audio: AudioContext | null = null;
-
-function context(): AudioContext | null {
-  if (audio) return audio;
-  const Ctor = window.AudioContext ?? window.webkitAudioContext;
-  if (!Ctor) return null;
-  audio = new Ctor();
-  return audio;
-}
 
 function renderString(ctx: AudioContext, frequency: number, seconds: number): AudioBuffer {
   const rate = ctx.sampleRate;
@@ -63,9 +49,9 @@ function renderString(ctx: AudioContext, frequency: number, seconds: number): Au
 }
 
 export function pluck(frequency: number, seconds = 2.6): void {
-  const ctx = context();
+  const ctx = audioContext();
   if (!ctx) return;
-  if (ctx.state === "suspended") void ctx.resume();
+  resumeAudio(ctx);
 
   const source = ctx.createBufferSource();
   source.buffer = renderString(ctx, frequency, seconds);

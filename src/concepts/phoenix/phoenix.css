@@ -13,8 +13,12 @@
   --ivory-faint: oklch(58% 0.012 85);
   --rule: oklch(34% 0.02 60);
 
-  --display: "Italiana", "Times New Roman", serif;
-  --text: "Commissioner", ui-sans-serif, system-ui, sans-serif;
+  /* Chinese appears in the artist's name and in two commission titles. Neither
+     Latin face carries the glyphs, so both stacks fall through to whatever CJK
+     face the reader's system has rather than to tofu. */
+  --cjk: "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Heiti SC";
+  --display: "Italiana", "Times New Roman", var(--cjk), serif;
+  --text: "Commissioner", ui-sans-serif, system-ui, var(--cjk), sans-serif;
 
   background: var(--lacquer);
   color: var(--ivory);
@@ -860,4 +864,380 @@
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--ivory-faint);
+}
+
+/* ---------- service line ---------- */
+
+.phoenix-service {
+  margin-top: var(--space-lg);
+  max-width: 54ch;
+  font-size: 0.95rem;
+  color: var(--ivory-faint);
+  border-left: 1px solid var(--gold-deep);
+  padding-left: var(--space-md);
+}
+
+/* ---------- the reel ---------- */
+
+.phoenix-section--reel {
+  background: linear-gradient(
+    180deg,
+    var(--lacquer) 0%,
+    var(--lacquer-raised) 40%,
+    var(--lacquer) 100%
+  );
+}
+
+.phoenix .reel {
+  margin-top: var(--space-3xl);
+}
+
+.phoenix .reel-caption {
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ivory-faint);
+}
+
+.phoenix .reel-stage {
+  padding: clamp(var(--space-lg), 3.5vw, var(--space-3xl));
+  border: 1px solid color-mix(in oklab, var(--gold) 30%, transparent);
+  background: var(--lacquer);
+}
+
+.phoenix .reel-kind {
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.phoenix .reel-title {
+  margin-top: var(--space-xs);
+  font-family: var(--display);
+  font-size: clamp(1.7rem, 4vw, 3rem);
+  line-height: 1.04;
+}
+
+.phoenix .reel-note {
+  margin-top: var(--space-sm);
+  max-width: 52ch;
+  font-size: 0.92rem;
+  color: var(--ivory-soft);
+}
+
+/* Canvas cannot resolve var() or color-mix(), so the trace colours are written
+   out in full rather than mixed from --gold. */
+.phoenix .reel-scope {
+  --reel-trace: oklch(78% 0.13 85 / 0.38);
+  --reel-edge: oklch(85% 0.11 85 / 0.85);
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+}
+
+.phoenix .reel-play {
+  color: var(--gold);
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  transition: opacity 240ms var(--ease-out);
+}
+
+.phoenix .reel-play:hover {
+  opacity: 0.72;
+}
+
+.phoenix .reel-seek-rail {
+  background: var(--rule);
+}
+
+.phoenix .reel-seek-fill {
+  background: var(--gold);
+}
+
+.phoenix .reel-seek-input {
+  color: var(--gold);
+}
+
+.phoenix .reel-time {
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  color: var(--ivory-faint);
+}
+
+.phoenix .reel-time-sep {
+  color: var(--gold-deep);
+}
+
+.phoenix .reel-item {
+  border-bottom: 1px solid var(--rule);
+  color: var(--ivory-soft);
+  transition: color 280ms var(--ease-out);
+}
+
+.phoenix .reel-item:hover {
+  color: var(--ivory);
+}
+
+.phoenix .reel-item-index {
+  font-family: var(--display);
+  font-size: 0.95rem;
+  color: var(--gold-deep);
+}
+
+.phoenix .reel-item-title {
+  font-size: 1rem;
+}
+
+.phoenix .reel-item-kind,
+.phoenix .reel-item-time {
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ivory-faint);
+}
+
+.phoenix .reel-item[data-current="true"] {
+  color: var(--ivory);
+}
+
+.phoenix .reel-item[data-current="true"] .reel-item-index,
+.phoenix .reel-item[data-current="true"] .reel-item-title {
+  color: var(--gold);
+}
+
+.phoenix .reel-foot {
+  max-width: 52ch;
+  font-size: 0.88rem;
+  color: var(--ivory-faint);
+}
+
+/* ---------- films ---------- */
+
+.phoenix .films {
+  margin-top: var(--space-2xl);
+}
+
+.phoenix .films-caption {
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ivory-faint);
+}
+
+.phoenix .film-frame {
+  border: 1px solid var(--rule);
+  background: #000;
+  transition: border-color 400ms var(--ease-out);
+}
+
+.phoenix .film:hover .film-frame {
+  border-color: color-mix(in oklab, var(--gold) 50%, transparent);
+}
+
+/* The still holds back until you look at it, then comes up to full colour. */
+.phoenix .film-frame img {
+  filter: grayscale(1) brightness(0.72);
+  transition:
+    filter 700ms var(--ease-out),
+    transform 900ms var(--ease-out);
+}
+
+.phoenix .film:hover .film-frame img {
+  filter: grayscale(0.15) brightness(0.92);
+  transform: scale(1.03);
+}
+
+.phoenix .film-open {
+  gap: var(--space-sm);
+  color: var(--ivory);
+  background: linear-gradient(180deg, transparent 40%, oklch(8% 0.01 48 / 0.72) 100%);
+}
+
+.phoenix .film-open-mark {
+  width: 0;
+  height: 0;
+  border-left: 13px solid var(--gold);
+  border-top: 9px solid transparent;
+  border-bottom: 9px solid transparent;
+}
+
+.phoenix .film-open-word {
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.phoenix .film-title {
+  font-family: var(--display);
+  font-size: clamp(1.3rem, 2.6vw, 1.9rem);
+  line-height: 1.1;
+}
+
+.phoenix .film-note {
+  margin-top: var(--space-2xs);
+  max-width: 56ch;
+  font-size: 0.9rem;
+  color: var(--ivory-soft);
+}
+
+@media (min-width: 900px) {
+  .phoenix .films {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-xl);
+  }
+
+  .phoenix .films-caption {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ---------- words ---------- */
+
+.phoenix-words {
+  list-style: none;
+  margin: var(--space-3xl) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-2xl);
+}
+
+@media (min-width: 760px) {
+  .phoenix-words {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-4xl);
+  }
+}
+
+.phoenix-word {
+  margin: 0;
+  font-family: var(--display);
+  font-size: clamp(1.3rem, 2.6vw, 1.9rem);
+  line-height: 1.28;
+  color: var(--ivory);
+}
+
+.phoenix-word::before {
+  content: "“";
+  color: var(--gold-deep);
+}
+
+.phoenix-word::after {
+  content: "”";
+  color: var(--gold-deep);
+}
+
+.phoenix-word-who {
+  margin-top: var(--space-sm);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ivory-faint);
+}
+
+/* ---------- tiers ---------- */
+
+.phoenix-tiers {
+  list-style: none;
+  margin: var(--space-3xl) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-2xl);
+}
+
+@media (min-width: 780px) {
+  .phoenix-tiers {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-4xl);
+  }
+}
+
+.phoenix-tier {
+  padding-top: var(--space-lg);
+  border-top: 1px solid color-mix(in oklab, var(--gold) 40%, transparent);
+}
+
+.phoenix-tier-price {
+  font-family: var(--display);
+  font-size: clamp(2.2rem, 5vw, 3.4rem);
+  line-height: 1;
+  color: var(--gold);
+}
+
+.phoenix-tier-name {
+  margin-top: var(--space-sm);
+  font-family: var(--display);
+  font-size: 1.5rem;
+}
+
+.phoenix-tier-length {
+  margin-top: var(--space-2xs);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ivory-faint);
+}
+
+.phoenix-tier-summary {
+  margin-top: var(--space-md);
+  max-width: 46ch;
+  font-size: 0.94rem;
+  color: var(--ivory-soft);
+}
+
+.phoenix-tier-list {
+  list-style: none;
+  margin: var(--space-lg) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-xs);
+}
+
+.phoenix-tier-list li {
+  display: grid;
+  grid-template-columns: 1.2rem minmax(0, 1fr);
+  font-size: 0.88rem;
+  color: var(--ivory-faint);
+}
+
+.phoenix-tier-list li::before {
+  content: "·";
+  color: var(--gold);
+}
+
+/* ---------- socials ---------- */
+
+.phoenix-socials {
+  list-style: none;
+  margin: var(--space-4xl) 0 0;
+  padding-top: var(--space-xl);
+  border-top: 1px solid var(--rule);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-lg) var(--space-3xl);
+}
+
+.phoenix-socials a {
+  display: grid;
+  gap: var(--space-2xs);
+  text-decoration: none;
+  color: var(--ivory-soft);
+  transition: color 260ms var(--ease-out);
+}
+
+.phoenix-socials a:hover {
+  color: var(--gold);
+}
+
+.phoenix-social-label {
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ivory-faint);
+}
+
+.phoenix-social-handle {
+  font-family: var(--display);
+  font-size: 1.15rem;
 }

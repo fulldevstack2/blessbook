@@ -1,12 +1,26 @@
+import { useRef } from "react";
 import { ConceptChrome, ConceptSwitch } from "../../components/ConceptChrome";
+import { Films } from "../../components/Films";
+import { Reel } from "../../components/Reel";
 import { Stave } from "../../components/Stave";
 import { StringRow } from "../../components/StringRow";
-import { commission, promise, rights, steps } from "../../content/commission";
+import { Tally } from "../../components/Tally";
+import {
+  commission,
+  promise,
+  proof,
+  rights,
+  service,
+  steps,
+  tiers,
+} from "../../content/commission";
 import { artist, credentials, milestones, tallies, training } from "../../content/dennis";
 import { photos } from "../../content/media";
+import { socials, words } from "../../content/work";
 import { SceneCanvas } from "../../lib/SceneCanvas";
 import { ScrollStage } from "../../lib/ScrollStage";
 import { useFonts } from "../../lib/useFonts";
+import { useScrollReveal } from "../../lib/useScrollReveal";
 import { conceptById } from "../registry";
 import { createPhoenixScene } from "./phoenixScene";
 import "./phoenix.css";
@@ -38,6 +52,8 @@ const cuts = [
 
 export function PhoenixPage() {
   useFonts(concept.fonts);
+  const main = useRef<HTMLElement>(null);
+  useScrollReveal(main);
 
   return (
     <div className="phoenix">
@@ -59,11 +75,7 @@ export function PhoenixPage() {
             <div className="phoenix-hero">
               <div className="phoenix-cuts">
                 {cuts.map((cut, index) => (
-                  <div
-                    key={cut.mark}
-                    className="phoenix-cut"
-                    data-active={stage === index}
-                  >
+                  <div key={cut.mark} className="phoenix-cut" data-active={stage === index}>
                     <span className="phoenix-mark">{cut.mark}</span>
                     {index === 0 ? (
                       <h1>{cut.line}</h1>
@@ -85,28 +97,35 @@ export function PhoenixPage() {
         )}
       </ScrollStage>
 
-      <main id="main" className="phoenix-body">
+      <main id="main" className="phoenix-body" ref={main}>
         <section className="phoenix-plate">
           <img
             src={photos.violin.src}
             width={photos.violin.width}
             height={photos.violin.height}
             alt={photos.violin.alt}
+            data-reveal="wipe"
           />
           <div className="phoenix-plate-caption">
-            <p className="phoenix-plate-name">{concept.instrument.name}</p>
-            <p className="phoenix-plate-meta">
+            <p className="phoenix-plate-name" data-reveal>
+              {concept.instrument.name}
+            </p>
+            <p className="phoenix-plate-meta" data-reveal>
               {concept.instrument.year} · {concept.instrument.material}
             </p>
-            <p className="phoenix-credit">{photos.violin.credit}</p>
+            <p className="phoenix-credit" data-reveal>
+              {photos.violin.credit}
+            </p>
           </div>
         </section>
 
         <section className="phoenix-section">
-          <p className="phoenix-eyebrow">Movement I — The only artist</p>
+          <p className="phoenix-eyebrow" data-reveal>
+            Movement I — The only artist
+          </p>
           <div className="phoenix-portrait">
             <figure style={{ margin: 0 }}>
-              <div className="phoenix-photo">
+              <div className="phoenix-photo" data-reveal="wipe">
                 <img
                   src={photos.live.src}
                   width={photos.live.width}
@@ -119,19 +138,22 @@ export function PhoenixPage() {
             </figure>
 
             <div>
-              <p className="phoenix-artist-name">
+              <p className="phoenix-artist-name" data-reveal>
                 {artist.name}
                 <span className="phoenix-artist-cn">{artist.chineseName}</span>
               </p>
-              <p className="phoenix-roles">
+              <p className="phoenix-roles" data-reveal>
                 {artist.roles} · {artist.city}
               </p>
-              <p className="phoenix-lede" style={{ marginTop: "var(--space-lg)" }}>
+              <p className="phoenix-lede" data-reveal style={{ marginTop: "var(--space-lg)" }}>
                 {artist.paragraph}
+              </p>
+              <p className="phoenix-service" data-reveal>
+                {service.lede}
               </p>
               <dl className="phoenix-figures">
                 {credentials.map((item) => (
-                  <div className="phoenix-figure" key={item.label}>
+                  <div className="phoenix-figure" key={item.label} data-reveal>
                     <dt>{item.label}</dt>
                     <dd>{item.value}</dd>
                   </div>
@@ -143,18 +165,22 @@ export function PhoenixPage() {
 
           <ol className="phoenix-training">
             {training.map((line) => (
-              <li key={line}>{line}</li>
+              <li key={line} data-reveal>
+                {line}
+              </li>
             ))}
           </ol>
         </section>
 
         <section className="phoenix-section">
-          <p className="phoenix-eyebrow">Movement II — The record</p>
+          <p className="phoenix-eyebrow" data-reveal>
+            Movement II — The record
+          </p>
           <div className="phoenix-portrait">
             <div>
               <ul className="phoenix-record" style={{ gridTemplateColumns: "minmax(0,1fr)" }}>
                 {milestones.map((item) => (
-                  <li className="phoenix-record-item" key={item.year}>
+                  <li className="phoenix-record-item" key={item.year} data-reveal>
                     <span className="phoenix-record-year">{item.year}</span>
                     <div>
                       <h3 className="phoenix-record-title">{item.title}</h3>
@@ -165,16 +191,18 @@ export function PhoenixPage() {
               </ul>
               <dl className="phoenix-terms">
                 {tallies.map((item) => (
-                  <div className="phoenix-term" key={item.label}>
+                  <div className="phoenix-term" key={item.label} data-reveal>
                     <dt>{item.label}</dt>
-                    <dd>{item.value}</dd>
+                    <dd>
+                      <Tally value={item.value} />
+                    </dd>
                   </div>
                 ))}
               </dl>
             </div>
 
             <figure style={{ margin: 0 }}>
-              <div className="phoenix-photo">
+              <div className="phoenix-photo" data-reveal="wipe">
                 <img
                   src={photos.seated.src}
                   width={photos.seated.width}
@@ -188,12 +216,28 @@ export function PhoenixPage() {
           </div>
         </section>
 
+        <section className="phoenix-section phoenix-section--reel">
+          <p className="phoenix-eyebrow" data-reveal>
+            Movement III — Ten commissions, played
+          </p>
+          <h2 className="phoenix-h2" data-reveal>
+            Written for someone, once
+          </h2>
+          <p className="phoenix-lede" data-reveal style={{ maxWidth: "48ch" }}>
+            A game trailer, a car launch, a boy's third birthday, a Mandopop
+            single. The same hand behind every one of them.
+          </p>
+          <Reel caption="Press a title to hear it" />
+        </section>
+
         <section className="phoenix-section">
-          <p className="phoenix-eyebrow">Movement III — How a commission runs</p>
+          <p className="phoenix-eyebrow" data-reveal>
+            Movement IV — How a commission runs
+          </p>
           <Stave tempo="Adagio · quarter note = 58" />
           <ol className="phoenix-steps" style={{ marginTop: "var(--space-4xl)" }}>
             {steps.map((step) => (
-              <li className="phoenix-step" key={step.index}>
+              <li className="phoenix-step" key={step.index} data-reveal>
                 <span className="phoenix-step-index">{step.index}</span>
                 <div>
                   <h3 className="phoenix-step-title">
@@ -205,12 +249,37 @@ export function PhoenixPage() {
               </li>
             ))}
           </ol>
+
+          <dl className="phoenix-terms phoenix-proof">
+            {proof.map((item) => (
+              <div className="phoenix-term" key={item.label} data-reveal>
+                <dt>{item.label}</dt>
+                <dd>
+                  <Tally value={item.value} />
+                </dd>
+              </div>
+            ))}
+          </dl>
         </section>
 
         <section className="phoenix-section">
-          <p className="phoenix-eyebrow">Movement IV — What you actually own</p>
-          <h2 className="phoenix-h2">{promise.ownership}</h2>
-          <div className="phoenix-deed">
+          <p className="phoenix-eyebrow" data-reveal>
+            Movement V — In the room
+          </p>
+          <Films caption="Three nights the music was written for" />
+        </section>
+
+        <section className="phoenix-section">
+          <p className="phoenix-eyebrow" data-reveal>
+            Movement VI — What you actually own
+          </p>
+          <h2 className="phoenix-h2" data-reveal>
+            {promise.ownership}
+          </h2>
+          <p className="phoenix-lede" data-reveal style={{ maxWidth: "52ch" }}>
+            {service.against}
+          </p>
+          <div className="phoenix-deed" data-reveal>
             <div className="phoenix-deed-head">
               <p className="phoenix-deed-title">Deed of transfer</p>
               <p className="phoenix-deed-seal">Signed on delivery</p>
@@ -224,29 +293,75 @@ export function PhoenixPage() {
               ))}
             </dl>
           </div>
+
+          <ul className="phoenix-words">
+            {words.map((word) => (
+              <li key={word.text} data-reveal>
+                <blockquote className="phoenix-word">{word.text}</blockquote>
+                <p className="phoenix-word-who">
+                  {word.who} · {word.what} · {word.when}
+                </p>
+              </li>
+            ))}
+          </ul>
         </section>
 
         <section className="phoenix-section">
-          <p className="phoenix-eyebrow">Coda — Commission</p>
-          <h2 className="phoenix-h2">{promise.headline}</h2>
+          <p className="phoenix-eyebrow" data-reveal>
+            Coda — Commission
+          </p>
+          <h2 className="phoenix-h2" data-reveal>
+            {promise.headline}
+          </h2>
+
+          <ul className="phoenix-tiers">
+            {tiers.map((tier) => (
+              <li className="phoenix-tier" key={tier.id} data-reveal>
+                <p className="phoenix-tier-price">
+                  <Tally value={tier.price} />
+                </p>
+                <h3 className="phoenix-tier-name">{tier.name}</h3>
+                <p className="phoenix-tier-length">{tier.length}</p>
+                <p className="phoenix-tier-summary">{tier.summary}</p>
+                <ul className="phoenix-tier-list">
+                  {tier.includes.map((line) => (
+                    <li key={line}>{line}</li>
+                  ))}
+                </ul>
+              </li>
+            ))}
+          </ul>
+
           <dl className="phoenix-terms">
-            <div className="phoenix-term">
-              <dt>From</dt>
-              <dd>{commission.from}</dd>
-            </div>
-            <div className="phoenix-term">
-              <dt>Availability</dt>
-              <dd>{commission.slots}</dd>
-            </div>
-            <div className="phoenix-term">
+            <div className="phoenix-term" data-reveal>
               <dt>Delivery</dt>
               <dd>{commission.turnaround}</dd>
             </div>
+            <div className="phoenix-term" data-reveal>
+              <dt>Revisions</dt>
+              <dd>{commission.revisions}</dd>
+            </div>
+            <div className="phoenix-term" data-reveal>
+              <dt>Availability</dt>
+              <dd>{commission.slots}</dd>
+            </div>
           </dl>
+
           <a className="phoenix-cta" href="#main">
             Write the prompt
           </a>
           <p className="phoenix-note">{commission.note}</p>
+
+          <ul className="phoenix-socials">
+            {socials.map((social) => (
+              <li key={social.label}>
+                <a href={social.href} rel="noreferrer noopener" target="_blank">
+                  <span className="phoenix-social-label">{social.label}</span>
+                  <span className="phoenix-social-handle">{social.handle}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
         </section>
 
         <ConceptSwitch concept={concept} />
