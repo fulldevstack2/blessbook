@@ -1,19 +1,33 @@
+import { useRef } from "react";
 import { ConceptChrome, ConceptSwitch } from "../../components/ConceptChrome";
+import { Films } from "../../components/Films";
+import { Reel } from "../../components/Reel";
 import { Stave } from "../../components/Stave";
 import { StringRow } from "../../components/StringRow";
-import { commission, promise, rights, steps } from "../../content/commission";
+import { Tally } from "../../components/Tally";
+import {
+  commission,
+  promise,
+  proof,
+  rights,
+  service,
+  steps,
+  tiers,
+} from "../../content/commission";
 import { artist, credentials, milestones, tallies, training } from "../../content/dennis";
 import { photos } from "../../content/media";
+import { socials, words } from "../../content/work";
 import { SceneCanvas } from "../../lib/SceneCanvas";
 import { ScrollStage } from "../../lib/ScrollStage";
 import { useFonts } from "../../lib/useFonts";
+import { useScrollReveal } from "../../lib/useScrollReveal";
 import { conceptById } from "../registry";
 import { createDragonScene } from "./dragonScene";
 import "./dragon.css";
 
 const concept = conceptById("dragon");
 
-const numerals = ["一", "二", "三", "四", "五"] as const;
+const numerals = ["一", "二", "三", "四", "五", "六", "七", "八"] as const;
 
 const cuts = [
   {
@@ -55,6 +69,8 @@ function Margin({ index, label }: { index: number; label: string }) {
 
 export function DragonPage() {
   useFonts(concept.fonts);
+  const main = useRef<HTMLElement>(null);
+  useScrollReveal(main);
 
   return (
     <div className="dragon">
@@ -75,11 +91,7 @@ export function DragonPage() {
             <div className="dragon-hero">
               <div className="dragon-cuts">
                 {cuts.map((cut, index) => (
-                  <div
-                    key={cut.latin}
-                    className="dragon-cut"
-                    data-active={stage === index}
-                  >
+                  <div key={cut.latin} className="dragon-cut" data-active={stage === index}>
                     <span className="dragon-mark" lang="zh">
                       {cut.brush}
                     </span>
@@ -104,11 +116,13 @@ export function DragonPage() {
         )}
       </ScrollStage>
 
-      <main id="main" className="dragon-body">
+      <main id="main" className="dragon-body" ref={main}>
         <section className="dragon-section">
           <Margin index={0} label="The only artist" />
           <div>
-            <p className="dragon-name">{artist.name}</p>
+            <p className="dragon-name" data-reveal>
+              {artist.name}
+            </p>
             <div className="dragon-seal-row">
               <span className="dragon-seal" lang="zh" aria-label={artist.chineseName}>
                 {artist.chineseName}
@@ -120,10 +134,15 @@ export function DragonPage() {
 
             <div className="dragon-two dragon-two--wide">
               <div>
-                <p className="dragon-lede">{artist.paragraph}</p>
+                <p className="dragon-lede" data-reveal>
+                  {artist.paragraph}
+                </p>
+                <p className="dragon-service" data-reveal>
+                  {service.lede}
+                </p>
                 <dl className="dragon-figures">
                   {credentials.map((item) => (
-                    <div className="dragon-figure" key={item.label}>
+                    <div className="dragon-figure" key={item.label} data-reveal>
                       <dt>{item.label}</dt>
                       <dd>{item.value}</dd>
                     </div>
@@ -132,7 +151,7 @@ export function DragonPage() {
                 <StringRow caption="The four strings everything is written on — pluck one" />
               </div>
 
-              <figure className="dragon-photo">
+              <figure className="dragon-photo" data-reveal="wipe">
                 <img
                   src={photos.cutout.src}
                   width={photos.cutout.width}
@@ -149,10 +168,12 @@ export function DragonPage() {
         <section className="dragon-section">
           <Margin index={1} label="Training" />
           <div>
-            <h2 className="dragon-h2">Twenty years of paper before the first commission</h2>
+            <h2 className="dragon-h2" data-reveal>
+              Twenty years of paper before the first commission
+            </h2>
             <ul className="dragon-list">
               {training.map((line, index) => (
-                <li key={line}>
+                <li key={line} data-reveal>
                   <span className="dragon-list-mark">{index + 1}</span>
                   <span>{line}</span>
                 </li>
@@ -160,9 +181,11 @@ export function DragonPage() {
             </ul>
             <dl className="dragon-terms">
               {tallies.map((item) => (
-                <div className="dragon-term" key={item.label}>
+                <div className="dragon-term" key={item.label} data-reveal>
                   <dt>{item.label}</dt>
-                  <dd>{item.value}</dd>
+                  <dd>
+                    <Tally value={item.value} />
+                  </dd>
                 </div>
               ))}
             </dl>
@@ -176,7 +199,7 @@ export function DragonPage() {
               <div>
                 <ul className="dragon-list" style={{ marginTop: 0 }}>
                   {milestones.map((item) => (
-                    <li key={item.year}>
+                    <li key={item.year} data-reveal>
                       <span className="dragon-list-mark">{item.year}</span>
                       <span>
                         <strong style={{ fontWeight: 600 }}>{item.title}</strong> — {item.detail}
@@ -185,7 +208,7 @@ export function DragonPage() {
                   ))}
                 </ul>
               </div>
-              <figure className="dragon-photo dragon-photo--tall">
+              <figure className="dragon-photo dragon-photo--tall" data-reveal="wipe">
                 <img
                   src={photos.seated.src}
                   width={photos.seated.width}
@@ -199,14 +222,30 @@ export function DragonPage() {
           </div>
         </section>
 
-        <section className="dragon-section">
-          <Margin index={3} label="How it runs" />
+        <section className="dragon-section dragon-section--reel">
+          <Margin index={3} label="The commissions" />
           <div>
-            <h2 className="dragon-h2">{promise.request}</h2>
+            <h2 className="dragon-h2" data-reveal>
+              Written for someone, once
+            </h2>
+            <p className="dragon-lede" data-reveal>
+              A game trailer, a car launch, a boy's third birthday, a Mandopop
+              single. The same hand behind every one of them.
+            </p>
+            <Reel caption="Press a title to hear it" />
+          </div>
+        </section>
+
+        <section className="dragon-section">
+          <Margin index={4} label="How it runs" />
+          <div>
+            <h2 className="dragon-h2" data-reveal>
+              {promise.request}
+            </h2>
             <Stave tempo="Adagio · quarter note = 58" />
             <ol className="dragon-steps" style={{ marginTop: "var(--space-2xl)" }}>
               {steps.map((step, index) => (
-                <li className="dragon-step" key={step.index}>
+                <li className="dragon-step" key={step.index} data-reveal>
                   <div className="dragon-step-head">
                     <span className="dragon-step-index" aria-hidden>
                       {numerals[index]}
@@ -218,38 +257,95 @@ export function DragonPage() {
                 </li>
               ))}
             </ol>
+
+            <dl className="dragon-terms">
+              {proof.map((item) => (
+                <div className="dragon-term" key={item.label} data-reveal>
+                  <dt>{item.label}</dt>
+                  <dd>
+                    <Tally value={item.value} />
+                  </dd>
+                </div>
+              ))}
+            </dl>
           </div>
         </section>
 
         <section className="dragon-section">
-          <Margin index={4} label="The deed" />
+          <Margin index={5} label="In the room" />
           <div>
-            <h2 className="dragon-h2">{promise.ownership}</h2>
-            <p className="dragon-lede">
-              Everything below transfers on signature. Nothing is retained, licensed
-              back, or quietly kept.
+            <Films caption="Three nights the music was written for" />
+          </div>
+        </section>
+
+        <section className="dragon-section">
+          <Margin index={6} label="The deed" />
+          <div>
+            <h2 className="dragon-h2" data-reveal>
+              {promise.ownership}
+            </h2>
+            <p className="dragon-lede" data-reveal>
+              {service.against}
             </p>
             <dl className="dragon-rights">
               {rights.map((right) => (
-                <div className="dragon-right" key={right.term}>
+                <div className="dragon-right" key={right.term} data-reveal>
                   <dt>{right.term}</dt>
                   <dd>{right.detail}</dd>
                 </div>
               ))}
             </dl>
 
+            <ul className="dragon-words">
+              {words.map((word) => (
+                <li key={word.text} data-reveal>
+                  <blockquote className="dragon-word">{word.text}</blockquote>
+                  <p className="dragon-word-who">
+                    {word.who} · {word.what} · {word.when}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
+        <section className="dragon-section">
+          <Margin index={7} label="Commission" />
+          <div>
+            <h2 className="dragon-h2" data-reveal>
+              {promise.headline}
+            </h2>
+
+            <ul className="dragon-tiers">
+              {tiers.map((tier) => (
+                <li className="dragon-tier" key={tier.id} data-reveal>
+                  <p className="dragon-tier-price">
+                    <Tally value={tier.price} />
+                  </p>
+                  <h3 className="dragon-tier-name">{tier.name}</h3>
+                  <p className="dragon-tier-length">{tier.length}</p>
+                  <p className="dragon-tier-summary">{tier.summary}</p>
+                  <ul className="dragon-tier-list">
+                    {tier.includes.map((line) => (
+                      <li key={line}>{line}</li>
+                    ))}
+                  </ul>
+                </li>
+              ))}
+            </ul>
+
             <dl className="dragon-terms">
-              <div className="dragon-term">
-                <dt>From</dt>
-                <dd>{commission.from}</dd>
-              </div>
-              <div className="dragon-term">
-                <dt>Availability</dt>
-                <dd>{commission.slots}</dd>
-              </div>
-              <div className="dragon-term">
+              <div className="dragon-term" data-reveal>
                 <dt>Delivery</dt>
                 <dd>{commission.turnaround}</dd>
+              </div>
+              <div className="dragon-term" data-reveal>
+                <dt>Revisions</dt>
+                <dd>{commission.revisions}</dd>
+              </div>
+              <div className="dragon-term" data-reveal>
+                <dt>Availability</dt>
+                <dd>{commission.slots}</dd>
               </div>
             </dl>
 
@@ -257,6 +353,17 @@ export function DragonPage() {
               Write the prompt
             </a>
             <p className="dragon-note">{commission.note}</p>
+
+            <ul className="dragon-socials">
+              {socials.map((social) => (
+                <li key={social.label}>
+                  <a href={social.href} rel="noreferrer noopener" target="_blank">
+                    <span className="dragon-social-label">{social.label}</span>
+                    <span className="dragon-social-handle">{social.handle}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
           </div>
         </section>
 

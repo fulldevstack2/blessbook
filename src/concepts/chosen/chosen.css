@@ -13,8 +13,11 @@
   --rule: oklch(32% 0.008 250);
 
   --display: "Anybody", ui-sans-serif, system-ui, sans-serif;
-  --text: "Public Sans", ui-sans-serif, system-ui, sans-serif;
+  --text: "Public Sans", ui-sans-serif, system-ui, var(--cjk), sans-serif;
   --mono: "Martian Mono", ui-monospace, monospace;
+  /* Neither Latin face carries Chinese, and the artist's name and two
+     catalogue titles are in it. */
+  --cjk: "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Heiti SC";
 
   background-color: var(--graphite);
   /* A 2x2 twill, at the threshold of visibility — the material, not a texture. */
@@ -367,7 +370,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: grayscale(1) contrast(1.22) brightness(0.86);
+  filter: grayscale(1) contrast(1.22) brightness(0.8);
 }
 
 .chosen-photo::after {
@@ -682,4 +685,400 @@
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--silver-faint);
+}
+
+/* Motion here is mechanical: shorter travel, quicker settle. Ink drifts on
+   Dragon and gold drifts on Phoenix; a measuring instrument snaps to a value. */
+.chosen [data-reveal] {
+  transform: translateY(10px);
+  transition-duration: 520ms, 620ms, 760ms;
+}
+
+/* ---------- service line ---------- */
+
+.chosen-service {
+  margin-top: var(--space-lg);
+  max-width: 60ch;
+  padding-left: var(--space-md);
+  border-left: 1px solid var(--ember);
+  font-family: var(--mono);
+  font-size: 0.76rem;
+  line-height: 1.9;
+  color: var(--silver-soft);
+}
+
+/* ---------- catalogue ---------- */
+
+.chosen-section--reel {
+  background: var(--graphite-raised);
+}
+
+.chosen .reel {
+  margin-top: var(--space-2xl);
+}
+
+.chosen .reel-caption {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--silver-faint);
+}
+
+.chosen .reel-stage {
+  padding: clamp(var(--space-lg), 3vw, var(--space-2xl));
+  border: 1px solid var(--rule);
+  background: var(--graphite);
+}
+
+.chosen .reel-kind {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ember);
+}
+
+.chosen .reel-title {
+  margin-top: var(--space-xs);
+  font-family: var(--display);
+  font-variation-settings: "wdth" 112, "wght" 600;
+  font-size: clamp(1.4rem, 3.2vw, 2.3rem);
+  line-height: 1.06;
+  text-transform: uppercase;
+}
+
+.chosen .reel-note {
+  margin-top: var(--space-xs);
+  max-width: 56ch;
+  font-size: 0.9rem;
+  color: var(--silver-soft);
+}
+
+/* The trace is a measurement in silver; the playhead is the same ember scan
+   line the hero assembly runs. Written in full — canvas cannot resolve var(). */
+.chosen .reel-scope {
+  --reel-trace: oklch(70% 0.005 250 / 0.34);
+  --reel-edge: oklch(66% 0.17 44 / 0.9);
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+}
+
+.chosen .reel-play {
+  color: var(--ember);
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.chosen .reel-play:hover {
+  color: var(--silver);
+}
+
+.chosen .reel-seek-rail {
+  background: var(--rule);
+}
+
+.chosen .reel-seek-fill {
+  background: var(--ember);
+}
+
+.chosen .reel-seek-input {
+  color: var(--ember);
+}
+
+.chosen .reel-time {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.08em;
+  color: var(--silver-faint);
+}
+
+.chosen .reel-time-sep {
+  color: var(--rule);
+}
+
+.chosen .reel-item {
+  border-bottom: 1px solid var(--rule);
+  color: var(--silver-soft);
+  transition:
+    color 200ms var(--ease-out),
+    background-color 200ms var(--ease-out);
+}
+
+.chosen .reel-item:hover {
+  color: var(--silver);
+  background: var(--graphite-raised);
+}
+
+.chosen .reel-item-index {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.06em;
+  color: var(--silver-faint);
+}
+
+.chosen .reel-item-title {
+  font-size: 0.98rem;
+}
+
+.chosen .reel-item-kind,
+.chosen .reel-item-time {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--silver-faint);
+}
+
+.chosen .reel-item[data-current="true"] {
+  color: var(--silver);
+}
+
+.chosen .reel-item[data-current="true"] .reel-item-index {
+  color: var(--ember);
+}
+
+.chosen .reel-foot {
+  max-width: 60ch;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  line-height: 1.9;
+  color: var(--silver-faint);
+}
+
+/* ---------- documentation ---------- */
+
+.chosen .films {
+  margin-top: var(--space-2xl);
+}
+
+.chosen .films-caption {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--silver-faint);
+}
+
+.chosen .film-frame {
+  border: 1px solid var(--rule);
+  background: var(--graphite-raised);
+}
+
+.chosen .film-frame img {
+  filter: grayscale(1) contrast(1.2) brightness(0.78);
+  transition: filter 500ms var(--ease-out);
+}
+
+.chosen .film:hover .film-frame img {
+  filter: grayscale(0.1) contrast(1.06) brightness(0.94);
+}
+
+.chosen .film-open {
+  gap: var(--space-xs);
+}
+
+.chosen .film-open-mark {
+  width: 0;
+  height: 0;
+  border-left: 12px solid var(--ember);
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+}
+
+.chosen .film-open-word {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ember);
+}
+
+.chosen .film-title {
+  font-family: var(--display);
+  font-variation-settings: "wdth" 108, "wght" 560;
+  font-size: clamp(1.05rem, 2vw, 1.35rem);
+  line-height: 1.14;
+  text-transform: uppercase;
+}
+
+.chosen .film-note {
+  margin-top: var(--space-2xs);
+  max-width: 54ch;
+  font-size: 0.86rem;
+  color: var(--silver-soft);
+}
+
+@media (min-width: 900px) {
+  .chosen .films {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-lg);
+  }
+
+  .chosen .films-caption {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ---------- words ---------- */
+
+.chosen-words {
+  list-style: none;
+  margin: var(--space-2xl) 0 0;
+  padding: 0;
+  display: grid;
+  gap: 1px;
+  background: var(--rule);
+  border: 1px solid var(--rule);
+}
+
+@media (min-width: 760px) {
+  .chosen-words {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.chosen-words li {
+  padding: var(--space-lg);
+  background: var(--graphite);
+}
+
+.chosen-word {
+  margin: 0;
+  font-size: 1.02rem;
+  line-height: 1.6;
+  color: var(--silver);
+}
+
+.chosen-word-who {
+  margin-top: var(--space-sm);
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--silver-faint);
+}
+
+/* ---------- order ---------- */
+
+.chosen-tiers {
+  list-style: none;
+  margin: var(--space-2xl) 0 0;
+  padding: 0;
+  display: grid;
+  gap: 1px;
+  background: var(--rule);
+  border: 1px solid var(--rule);
+}
+
+@media (min-width: 780px) {
+  .chosen-tiers {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.chosen-tier {
+  padding: clamp(var(--space-lg), 3vw, var(--space-2xl));
+  background: var(--graphite);
+}
+
+.chosen-tier-price {
+  font-family: var(--display);
+  font-variation-settings: "wdth" 116, "wght" 640;
+  font-size: clamp(1.9rem, 4vw, 2.8rem);
+  line-height: 1;
+  color: var(--ember);
+}
+
+.chosen-tier-name {
+  margin-top: var(--space-sm);
+  font-family: var(--display);
+  font-variation-settings: "wdth" 108, "wght" 560;
+  font-size: 1.2rem;
+  text-transform: uppercase;
+}
+
+.chosen-tier-length {
+  margin-top: var(--space-2xs);
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--silver-faint);
+}
+
+.chosen-tier-summary {
+  margin-top: var(--space-md);
+  font-size: 0.92rem;
+  color: var(--silver-soft);
+}
+
+.chosen-tier-list {
+  list-style: none;
+  margin: var(--space-lg) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-2xs);
+  counter-reset: spec;
+}
+
+.chosen-tier-list li {
+  display: grid;
+  grid-template-columns: 2.6rem minmax(0, 1fr);
+  gap: var(--space-xs);
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  line-height: 1.8;
+  color: var(--silver-faint);
+  counter-increment: spec;
+}
+
+.chosen-tier-list li::before {
+  content: counter(spec, decimal-leading-zero);
+  color: var(--ember);
+}
+
+/* ---------- socials ---------- */
+
+.chosen-socials {
+  list-style: none;
+  margin: var(--space-3xl) 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1px;
+  background: var(--rule);
+  border: 1px solid var(--rule);
+}
+
+.chosen-socials a {
+  display: grid;
+  gap: var(--space-2xs);
+  padding: var(--space-md);
+  background: var(--graphite);
+  text-decoration: none;
+  color: var(--silver-soft);
+  transition:
+    color 200ms var(--ease-out),
+    background-color 200ms var(--ease-out);
+}
+
+.chosen-socials a:hover {
+  color: var(--ember);
+  background: var(--graphite-raised);
+}
+
+.chosen-social-label {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--silver-faint);
+}
+
+.chosen-social-handle {
+  font-size: 0.94rem;
+  overflow-wrap: anywhere;
 }
