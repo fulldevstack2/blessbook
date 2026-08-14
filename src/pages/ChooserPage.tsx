@@ -66,10 +66,10 @@ export function ChooserPage() {
       <section className="chooser-artist">
         <img
           className="chooser-artist-photo"
-          src={photos.portrait.src}
-          width={photos.portrait.width}
-          height={photos.portrait.height}
-          alt={photos.portrait.alt}
+          src={photos.press.src}
+          width={photos.press.width}
+          height={photos.press.height}
+          alt={photos.press.alt}
         />
         <div>
           <p className="chooser-artist-name">

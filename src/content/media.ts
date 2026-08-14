@@ -31,6 +31,14 @@ export const photos = {
     alt: "Dennis Lau in close-up, eyes closed, mid-phrase on the gold Phoenix violin.",
     credit: "Mosaic Music Entertainment · CC0",
   },
+  /** The official press portrait — larger and sharper than the CC0 crop above. */
+  press: {
+    src: asset("dennis-press.webp"),
+    width: 1000,
+    height: 1000,
+    alt: "Dennis Lau performing with the gold Phoenix electric violin.",
+    credit: "Mosaic Music Entertainment",
+  },
   violin: {
     src: asset("violin-phoenix.webp"),
     width: 1600,
