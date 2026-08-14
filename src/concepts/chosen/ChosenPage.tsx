@@ -27,6 +27,7 @@ import { socials, words } from "../../content/work";
 import { SceneCanvas } from "../../lib/SceneCanvas";
 import { ScrollStage } from "../../lib/ScrollStage";
 import { useFonts } from "../../lib/useFonts";
+import { useParallax } from "../../lib/useParallax";
 import { useScrollReveal } from "../../lib/useScrollReveal";
 import { conceptById } from "../registry";
 import { createChosenScene } from "./chosenScene";
@@ -75,6 +76,7 @@ export function ChosenPage() {
   useFonts(concept.fonts);
   const main = useRef<HTMLElement>(null);
   useScrollReveal(main);
+  useParallax(main);
 
   return (
     <div className="chosen">
@@ -158,7 +160,7 @@ export function ChosenPage() {
               />
             </div>
 
-            <figure className="chosen-photo chosen-photo--tall" data-reveal="wipe">
+            <figure className="chosen-photo chosen-photo--tall" data-reveal="wipe" data-parallax>
               <img
                 src={photos.seated.src}
                 width={photos.seated.width}
@@ -223,7 +225,7 @@ export function ChosenPage() {
               ))}
             </dl>
 
-            <figure className="chosen-photo chosen-photo--wide" data-reveal="wipe">
+            <figure className="chosen-photo chosen-photo--wide" data-reveal="wipe" data-parallax>
               <img
                 src={photos.violin.src}
                 width={photos.violin.width}

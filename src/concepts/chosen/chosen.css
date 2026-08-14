@@ -1082,3 +1082,10 @@
   font-size: 0.94rem;
   overflow-wrap: anywhere;
 }
+
+/* Same drift as the other dark concept, held shorter — this sheet is measured,
+   not romantic. */
+.chosen-photo[data-parallax] img {
+  transform: scale(1.1) translateY(calc(var(--shift, 0) * -2.2%));
+  will-change: transform;
+}

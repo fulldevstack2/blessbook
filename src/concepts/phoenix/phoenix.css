@@ -1241,3 +1241,10 @@
   font-family: var(--display);
   font-size: 1.15rem;
 }
+
+/* The picture drifts inside its own frame as it passes. Scaled up first so the
+   travel can never expose an edge. */
+.phoenix-photo[data-parallax] img {
+  transform: scale(1.12) translateY(calc(var(--shift, 0) * -3%));
+  will-change: transform;
+}

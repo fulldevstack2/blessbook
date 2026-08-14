@@ -20,6 +20,7 @@ import { socials, words } from "../../content/work";
 import { SceneCanvas } from "../../lib/SceneCanvas";
 import { ScrollStage } from "../../lib/ScrollStage";
 import { useFonts } from "../../lib/useFonts";
+import { useParallax } from "../../lib/useParallax";
 import { useScrollReveal } from "../../lib/useScrollReveal";
 import { conceptById } from "../registry";
 import { createPhoenixScene } from "./phoenixScene";
@@ -54,6 +55,7 @@ export function PhoenixPage() {
   useFonts(concept.fonts);
   const main = useRef<HTMLElement>(null);
   useScrollReveal(main);
+  useParallax(main);
 
   return (
     <div className="phoenix">
@@ -125,7 +127,7 @@ export function PhoenixPage() {
           </p>
           <div className="phoenix-portrait">
             <figure style={{ margin: 0 }}>
-              <div className="phoenix-photo" data-reveal="wipe">
+              <div className="phoenix-photo" data-reveal="wipe" data-parallax>
                 <img
                   src={photos.live.src}
                   width={photos.live.width}
@@ -202,7 +204,7 @@ export function PhoenixPage() {
             </div>
 
             <figure style={{ margin: 0 }}>
-              <div className="phoenix-photo" data-reveal="wipe">
+              <div className="phoenix-photo" data-reveal="wipe" data-parallax>
                 <img
                   src={photos.seated.src}
                   width={photos.seated.width}

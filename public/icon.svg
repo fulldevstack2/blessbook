@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Blesspoke">
+  <!-- Four bars for the four open strings, at the heights of a signal — the two
+       things this site is made of. Gold on lacquer, the Phoenix palette. -->
+  <rect width="32" height="32" fill="#241a10" />
+  <g fill="#e0ac4b">
+    <rect x="6" y="13" width="2.5" height="6" rx="1.25" />
+    <rect x="12" y="8" width="2.5" height="16" rx="1.25" />
+    <rect x="18" y="4" width="2.5" height="24" rx="1.25" />
+    <rect x="24" y="11" width="2.5" height="10" rx="1.25" />
+  </g>
+</svg>
