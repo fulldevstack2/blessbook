@@ -1,0 +1,272 @@
+/* The chooser is deliberately plain: a proof sheet. It should not compete with
+   the three concepts it is presenting, so it stays neutral and lets each panel
+   show its own palette. */
+
+.chooser {
+  --ink: oklch(15% 0.004 60);
+  --ink-raised: oklch(20% 0.005 60);
+  --paper: oklch(92% 0.006 80);
+  --paper-soft: oklch(72% 0.006 80);
+  --paper-faint: oklch(52% 0.006 80);
+  --rule: oklch(32% 0.006 60);
+
+  --text: "Commissioner", ui-sans-serif, system-ui, sans-serif;
+  --mono: "Martian Mono", ui-monospace, monospace;
+
+  min-height: 100svh;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--text);
+  font-weight: 300;
+  font-size: 16px;
+  line-height: 1.65;
+}
+
+.chooser-head {
+  padding: clamp(var(--space-2xl), 9vw, var(--space-5xl))
+    clamp(var(--space-lg), 6vw, var(--space-4xl)) var(--space-3xl);
+  display: grid;
+  gap: var(--space-2xl);
+}
+
+@media (min-width: 900px) {
+  .chooser-head {
+    grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+    align-items: end;
+  }
+}
+
+.chooser-wordmark {
+  font-size: clamp(2.6rem, 8vw, 5.4rem);
+  font-weight: 200;
+  letter-spacing: -0.02em;
+  line-height: 0.95;
+  color: var(--paper);
+}
+
+.chooser-kicker {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--paper-faint);
+  margin-bottom: var(--space-md);
+}
+
+.chooser-promise {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-xs);
+}
+
+.chooser-promise li {
+  display: grid;
+  grid-template-columns: 1.6rem minmax(0, 1fr);
+  gap: var(--space-sm);
+  align-items: baseline;
+  padding-bottom: var(--space-xs);
+  border-bottom: 1px solid var(--rule);
+  font-size: 1.05rem;
+  color: var(--paper);
+}
+
+.chooser-promise span {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--paper-faint);
+}
+
+.chooser-note {
+  padding: 0 clamp(var(--space-lg), 6vw, var(--space-4xl)) var(--space-2xl);
+  max-width: 68ch;
+  color: var(--paper-soft);
+}
+
+/* ---------- the three panels ---------- */
+
+.chooser-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0 clamp(var(--space-lg), 6vw, var(--space-4xl))
+    clamp(var(--space-3xl), 8vw, var(--space-5xl));
+  display: grid;
+  gap: var(--space-xl);
+}
+
+@media (min-width: 1000px) {
+  .chooser-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-lg);
+  }
+}
+
+/* Three specimens of the same thing, so they are compared on a level line. */
+.chooser-grid > li {
+  display: flex;
+}
+
+.chooser-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  padding: clamp(var(--space-lg), 3vw, var(--space-2xl));
+  text-decoration: none;
+  border: 1px solid var(--rule);
+  background: var(--panel-bg);
+  color: var(--panel-fg);
+  transition:
+    transform 520ms var(--ease-out),
+    border-color 520ms var(--ease-out);
+}
+
+.chooser-panel:hover {
+  transform: translateY(-6px);
+  border-color: var(--panel-accent);
+}
+
+.chooser-panel-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  opacity: 0.72;
+}
+
+.chooser-panel-name {
+  font-family: var(--panel-display);
+  font-size: clamp(2.4rem, 5vw, 3.6rem);
+  line-height: 0.98;
+}
+
+.chooser-panel-tag {
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--panel-accent);
+}
+
+.chooser-specimen {
+  font-family: var(--panel-display);
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  line-height: 1.16;
+  padding: var(--space-md) 0;
+  border-block: 1px solid color-mix(in oklab, currentColor 18%, transparent);
+}
+
+.chooser-panel-premise {
+  font-size: 0.92rem;
+  line-height: 1.7;
+  opacity: 0.82;
+}
+
+.chooser-panel-object {
+  font-size: 0.85rem;
+  font-style: italic;
+  opacity: 0.62;
+}
+
+.chooser-swatches {
+  display: flex;
+  gap: var(--space-2xs);
+}
+
+.chooser-swatch {
+  flex: 1 1 0;
+  height: 28px;
+  border: 1px solid color-mix(in oklab, currentColor 14%, transparent);
+}
+
+.chooser-panel-cta {
+  margin-top: auto;
+  padding-top: var(--space-sm);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--panel-accent);
+}
+
+/* ---------- whose site this is ---------- */
+
+.chooser-artist {
+  display: grid;
+  gap: var(--space-lg);
+  align-items: center;
+  margin: 0 clamp(var(--space-lg), 6vw, var(--space-4xl)) var(--space-3xl);
+  padding: var(--space-lg) 0;
+  border-block: 1px solid var(--rule);
+}
+
+@media (min-width: 780px) {
+  .chooser-artist {
+    grid-template-columns: 104px minmax(0, 1fr) auto;
+    gap: var(--space-xl);
+  }
+}
+
+.chooser-artist-photo {
+  width: 104px;
+  height: 104px;
+  object-fit: cover;
+  object-position: 50% 22%;
+  filter: grayscale(1) contrast(1.08) brightness(0.98);
+}
+
+.chooser-artist-name {
+  font-size: 1.35rem;
+  font-weight: 300;
+}
+
+.chooser-artist-roles {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--paper-faint);
+  margin-top: var(--space-2xs);
+}
+
+.chooser-artist-line {
+  margin-top: var(--space-xs);
+  max-width: 56ch;
+  color: var(--paper-soft);
+  font-size: 0.95rem;
+}
+
+.chooser-tallies {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-lg) var(--space-2xl);
+}
+
+.chooser-tally dt {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--paper-faint);
+}
+
+.chooser-tally dd {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 300;
+}
+
+.chooser-foot {
+  padding: var(--space-2xl) clamp(var(--space-lg), 6vw, var(--space-4xl))
+    var(--space-4xl);
+  border-top: 1px solid var(--rule);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--paper-faint);
+}

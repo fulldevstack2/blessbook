@@ -1,0 +1,863 @@
+/* Phoenix — gilded.
+   A near-black lacquer surface with one seam of 24K gold. Gold is a hairline and
+   a numeral, never a fill. Display type is thin and very large; the expense is in
+   the space around it. */
+
+.phoenix {
+  --lacquer: oklch(14% 0.014 48);
+  --lacquer-raised: oklch(18.5% 0.016 48);
+  --gold: oklch(78% 0.13 85);
+  --gold-deep: oklch(58% 0.1 72);
+  --ivory: oklch(93% 0.012 85);
+  --ivory-soft: oklch(78% 0.014 85);
+  --ivory-faint: oklch(58% 0.012 85);
+  --rule: oklch(34% 0.02 60);
+
+  --display: "Italiana", "Times New Roman", serif;
+  --text: "Commissioner", ui-sans-serif, system-ui, sans-serif;
+
+  background: var(--lacquer);
+  color: var(--ivory);
+  font-family: var(--text);
+  /* Light type on a dark ground reads thinner than it measures, so the body
+     weight and leading are both a step up from where a light page would sit. */
+  font-weight: 360;
+  font-size: clamp(15px, 0.95rem + 0.15vw, 17px);
+  line-height: 1.74;
+}
+
+.phoenix ::selection {
+  background: var(--gold);
+  color: var(--lacquer);
+}
+
+/* ---------- chrome ---------- */
+
+.phoenix .chrome {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 30;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding: var(--space-lg) clamp(var(--space-md), 4vw, var(--space-3xl));
+  mix-blend-mode: difference;
+  pointer-events: none;
+}
+
+.phoenix .chrome-back,
+.phoenix .chrome-title {
+  pointer-events: auto;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ivory-soft);
+}
+
+.phoenix .chrome-back {
+  text-decoration: none;
+  transition: color 240ms var(--ease-out);
+}
+
+.phoenix .chrome-back:hover {
+  color: var(--ivory);
+}
+
+.phoenix .chrome-title {
+  display: flex;
+  gap: var(--space-sm);
+  margin: 0;
+}
+
+.phoenix .chrome-ordinal {
+  color: var(--gold);
+}
+
+.phoenix .chrome-tag {
+  color: var(--ivory-faint);
+}
+
+/* ---------- hero stage ---------- */
+
+.phoenix-stage {
+  background: var(--lacquer);
+}
+
+/* Depth without a glassy overlay: the room falls off toward the edges. */
+.phoenix-stage::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    68% 58% at 50% 46%,
+    transparent 0%,
+    color-mix(in oklab, var(--lacquer) 82%, transparent) 78%,
+    var(--lacquer) 100%
+  );
+}
+
+.phoenix-frame {
+  position: absolute;
+  inset: clamp(var(--space-md), 2.4vw, var(--space-xl));
+  border: 1px solid color-mix(in oklab, var(--gold) 26%, transparent);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.phoenix-hero {
+  position: relative;
+  z-index: 3;
+  height: 100%;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  padding: clamp(var(--space-2xl), 9vh, var(--space-4xl))
+    clamp(var(--space-lg), 6vw, var(--space-5xl));
+}
+
+.phoenix-cuts {
+  position: relative;
+  align-self: center;
+  max-width: 20ch;
+}
+
+.phoenix-cut {
+  grid-area: 1 / 1;
+  opacity: 0;
+  transform: translateY(26px);
+  transition:
+    opacity 900ms var(--ease-out),
+    transform 1100ms var(--ease-out),
+    filter 900ms var(--ease-out);
+  filter: blur(6px);
+}
+
+.phoenix-cuts {
+  display: grid;
+}
+
+.phoenix-cut[data-active="true"] {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+
+.phoenix-cut h1,
+.phoenix-cut p.phoenix-line {
+  font-family: var(--display);
+  font-size: clamp(2.6rem, 8.4vw, 7.6rem);
+  line-height: 0.94;
+  letter-spacing: 0.005em;
+  color: var(--ivory);
+  margin: 0;
+}
+
+.phoenix-cut .phoenix-sub {
+  margin-top: var(--space-lg);
+  max-width: 34ch;
+  color: var(--ivory-soft);
+  font-size: 0.95rem;
+  line-height: 1.72;
+}
+
+.phoenix-mark {
+  display: block;
+  margin-bottom: var(--space-lg);
+  font-size: 11px;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.phoenix-hero-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-md);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ivory-faint);
+}
+
+.phoenix-progress {
+  flex: 1 1 120px;
+  max-width: 240px;
+  height: 1px;
+  background: var(--rule);
+  position: relative;
+}
+
+.phoenix-progress::after {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: calc(var(--p, 0) * 100%);
+  background: var(--gold);
+}
+
+/* ---------- shared section rhythm ---------- */
+
+.phoenix-body {
+  position: relative;
+  z-index: 4;
+  background: var(--lacquer);
+}
+
+.phoenix-section {
+  padding: var(--space-5xl) clamp(var(--space-lg), 6vw, var(--space-5xl));
+  border-top: 1px solid var(--rule);
+}
+
+.phoenix-eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: var(--space-xl);
+}
+
+.phoenix-h2 {
+  font-family: var(--display);
+  font-size: clamp(2rem, 5vw, 4.2rem);
+  line-height: 1.02;
+  color: var(--ivory);
+}
+
+.phoenix-lede {
+  max-width: 62ch;
+  color: var(--ivory-soft);
+  font-size: 1.05rem;
+  line-height: 1.75;
+}
+
+/* ---------- artist ---------- */
+
+.phoenix-artist {
+  display: grid;
+  gap: clamp(var(--space-2xl), 6vw, var(--space-4xl));
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 900px) {
+  .phoenix-artist {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    align-items: end;
+  }
+}
+
+.phoenix-artist-name {
+  font-family: var(--display);
+  font-size: clamp(3rem, 11vw, 9rem);
+  line-height: 0.86;
+  letter-spacing: 0.01em;
+}
+
+.phoenix-artist-cn {
+  display: block;
+  margin-top: var(--space-md);
+  font-family: var(--text);
+  font-size: clamp(1rem, 2vw, 1.4rem);
+  font-weight: 300;
+  letter-spacing: 0.42em;
+  color: var(--gold);
+}
+
+.phoenix-roles {
+  margin-top: var(--space-lg);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ivory-faint);
+}
+
+.phoenix-figures {
+  list-style: none;
+  padding: 0;
+  margin: var(--space-2xl) 0 0;
+  display: grid;
+  gap: 0;
+}
+
+.phoenix-figure {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding: var(--space-sm) 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.phoenix-figure dt {
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ivory-faint);
+}
+
+.phoenix-figure dd {
+  margin: 0;
+  font-family: var(--display);
+  font-size: 1.5rem;
+  color: var(--ivory);
+}
+
+/* ---------- record ---------- */
+
+.phoenix-record {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: var(--space-xl);
+}
+
+@media (min-width: 760px) {
+  .phoenix-record {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-2xl) var(--space-4xl);
+  }
+}
+
+.phoenix-record-item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--space-lg);
+  align-items: start;
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--rule);
+}
+
+.phoenix-record-year {
+  font-family: var(--display);
+  font-size: 1.35rem;
+  color: var(--gold);
+}
+
+.phoenix-record-title {
+  font-family: var(--display);
+  font-size: 1.6rem;
+  line-height: 1.15;
+}
+
+.phoenix-record-detail {
+  margin-top: var(--space-xs);
+  color: var(--ivory-soft);
+  font-size: 0.94rem;
+}
+
+/* ---------- steps ---------- */
+
+.phoenix-steps {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: var(--space-4xl);
+}
+
+.phoenix-step {
+  display: grid;
+  gap: var(--space-lg);
+  grid-template-columns: minmax(0, 1fr);
+  max-width: 70ch;
+}
+
+@media (min-width: 860px) {
+  .phoenix-step {
+    grid-template-columns: 5rem minmax(0, 1fr);
+    max-width: none;
+  }
+
+  /* Staggered indents so the list reads as a descent, not a table. */
+  .phoenix-step:nth-child(2) {
+    margin-left: 8%;
+  }
+
+  .phoenix-step:nth-child(3) {
+    margin-left: 16%;
+  }
+
+  .phoenix-step:nth-child(4) {
+    margin-left: 24%;
+  }
+}
+
+.phoenix-step-index {
+  font-family: var(--display);
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  line-height: 1;
+  color: var(--gold);
+}
+
+.phoenix-step-title {
+  font-family: var(--display);
+  font-size: clamp(1.6rem, 3.2vw, 2.6rem);
+  line-height: 1.06;
+}
+
+.phoenix-step-marking {
+  display: block;
+  margin-top: var(--space-xs);
+  font-style: italic;
+  font-size: 0.9rem;
+  color: var(--gold-deep);
+  letter-spacing: 0.04em;
+}
+
+.phoenix-step-body {
+  margin-top: var(--space-md);
+  max-width: 56ch;
+  color: var(--ivory-soft);
+}
+
+/* ---------- deed ---------- */
+
+.phoenix-deed {
+  margin-top: var(--space-2xl);
+  border: 1px solid color-mix(in oklab, var(--gold) 30%, transparent);
+  padding: clamp(var(--space-xl), 4vw, var(--space-3xl));
+  background: var(--lacquer-raised);
+}
+
+.phoenix-deed-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  padding-bottom: var(--space-md);
+  border-bottom: 1px solid var(--rule);
+}
+
+.phoenix-deed-title {
+  font-family: var(--display);
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+}
+
+.phoenix-deed-seal {
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.phoenix-rights {
+  margin: 0;
+  display: grid;
+}
+
+.phoenix-right {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-2xs);
+  padding: var(--space-md) 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+@media (min-width: 640px) {
+  .phoenix-right {
+    grid-template-columns: minmax(0, 20ch) minmax(0, 1fr);
+    gap: var(--space-lg);
+    align-items: baseline;
+  }
+}
+
+.phoenix-right:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.phoenix-right dt {
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ivory-faint);
+}
+
+.phoenix-right dd {
+  margin: 0;
+  color: var(--ivory);
+}
+
+/* ---------- commission ---------- */
+
+.phoenix-terms {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xl) var(--space-4xl);
+  margin-top: var(--space-2xl);
+  padding-top: var(--space-xl);
+  border-top: 1px solid var(--rule);
+}
+
+.phoenix-term dt {
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ivory-faint);
+  margin-bottom: var(--space-2xs);
+}
+
+.phoenix-term dd {
+  margin: 0;
+  font-family: var(--display);
+  font-size: clamp(1.5rem, 3vw, 2.4rem);
+  color: var(--ivory);
+}
+
+.phoenix-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-top: var(--space-2xl);
+  padding: var(--space-md) var(--space-2xl);
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  text-decoration: none;
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  transition:
+    background-color 320ms var(--ease-out),
+    color 320ms var(--ease-out);
+}
+
+.phoenix-cta:hover {
+  background: var(--gold);
+  color: var(--lacquer);
+}
+
+.phoenix-note {
+  margin-top: var(--space-md);
+  max-width: 48ch;
+  font-size: 0.88rem;
+  color: var(--ivory-faint);
+}
+
+/* ---------- photography ----------
+   The press shots are lit magenta and blue for the stage. Reducing them to
+   luminosity and pushing gold back through keeps them inside the palette
+   instead of fighting it. */
+
+.phoenix-photo {
+  position: relative;
+  overflow: hidden;
+  background: var(--lacquer);
+  isolation: isolate;
+}
+
+.phoenix-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(1) contrast(1.06) brightness(0.94);
+}
+
+.phoenix-photo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--gold);
+  mix-blend-mode: color;
+  opacity: 0.62;
+  pointer-events: none;
+}
+
+.phoenix-credit {
+  margin-top: var(--space-xs);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ivory-faint);
+}
+
+/* The instrument is already gold on black — it needs no correction at all.
+   The plate matches the photograph's own black so the letterbox has no seam,
+   then feathers back into the lacquer at the left and right edges. */
+.phoenix-plate {
+  position: relative;
+  padding: 0;
+  border-block: 1px solid var(--rule);
+  background: #000;
+}
+
+.phoenix-plate img {
+  width: 100%;
+  height: clamp(320px, 62vh, 720px);
+  object-fit: contain;
+  object-position: center;
+  background: #000;
+}
+
+.phoenix-plate::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    var(--lacquer) 0%,
+    transparent 12%,
+    transparent 88%,
+    var(--lacquer) 100%
+  );
+}
+
+.phoenix-plate-caption {
+  position: absolute;
+  left: clamp(var(--space-lg), 6vw, var(--space-5xl));
+  bottom: var(--space-xl);
+  max-width: 34ch;
+}
+
+.phoenix-plate-name {
+  font-family: var(--display);
+  font-size: clamp(2rem, 5vw, 3.6rem);
+  line-height: 1;
+}
+
+.phoenix-plate-meta {
+  margin-top: var(--space-xs);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.phoenix-portrait {
+  display: grid;
+  gap: var(--space-xl);
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+}
+
+@media (min-width: 900px) {
+  .phoenix-portrait {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: var(--space-4xl);
+  }
+}
+
+.phoenix-portrait .phoenix-photo {
+  aspect-ratio: 4 / 5;
+}
+
+/* ---------- training ---------- */
+
+.phoenix-training {
+  list-style: none;
+  margin: var(--space-xl) 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0;
+  max-width: 68ch;
+}
+
+.phoenix-training li {
+  display: grid;
+  grid-template-columns: 1.6rem minmax(0, 1fr);
+  gap: var(--space-sm);
+  align-items: baseline;
+  padding: var(--space-sm) 0;
+  border-bottom: 1px solid var(--rule);
+  color: var(--ivory-soft);
+  font-size: 0.94rem;
+}
+
+.phoenix-training li::before {
+  content: counter(list-item, upper-roman);
+  font-family: var(--display);
+  color: var(--gold-deep);
+  font-size: 0.9rem;
+}
+
+/* ---------- notation ---------- */
+
+.phoenix .stave {
+  width: 100%;
+  max-width: 520px;
+  height: auto;
+  margin-top: var(--space-xl);
+  overflow: visible;
+}
+
+.phoenix .stave-line {
+  stroke: var(--rule);
+  stroke-width: 1;
+}
+
+.phoenix .stave-head {
+  fill: var(--gold);
+}
+
+.phoenix .stave-head--open {
+  fill: none;
+  stroke: var(--gold);
+  stroke-width: 1.4;
+}
+
+.phoenix .stave-stem {
+  stroke: var(--gold);
+  stroke-width: 1.2;
+}
+
+.phoenix .stave-meter,
+.phoenix .stave-tempo {
+  fill: var(--ivory-faint);
+  font-family: var(--display);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+}
+
+.phoenix .stave-tempo {
+  font-family: var(--text);
+  font-style: italic;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+/* ---------- the strings ---------- */
+
+.phoenix .strings {
+  margin-top: var(--space-2xl);
+  max-width: 520px;
+}
+
+.phoenix .strings-caption {
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ivory-faint);
+  margin-bottom: var(--space-md);
+}
+
+.phoenix .strings-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-2xs);
+}
+
+.phoenix .string {
+  display: grid;
+  grid-template-columns: 2ch minmax(0, 1fr) 4ch;
+  align-items: center;
+  gap: var(--space-md);
+  width: 100%;
+  padding: var(--space-xs) 0;
+  text-align: left;
+  color: var(--ivory-faint);
+  transition: color 280ms var(--ease-out);
+}
+
+.phoenix .string:hover {
+  color: var(--ivory);
+}
+
+.phoenix .string-name {
+  font-family: var(--display);
+  font-size: 1.05rem;
+  color: var(--gold);
+}
+
+.phoenix .string-pitch {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-align: right;
+}
+
+.phoenix .string-wire {
+  height: 1px;
+  background: var(--rule);
+  transform-origin: center;
+}
+
+.phoenix .string:hover .string-wire {
+  background: color-mix(in oklab, var(--gold) 55%, transparent);
+}
+
+.phoenix .string[data-ringing="true"] .string-wire {
+  background: var(--gold);
+  animation: phoenix-vibrate 640ms var(--ease-out);
+}
+
+@keyframes phoenix-vibrate {
+  0% {
+    transform: scaleY(4.5);
+  }
+  100% {
+    transform: scaleY(1);
+  }
+}
+
+/* ---------- concept switch ---------- */
+
+.phoenix .switch {
+  padding: var(--space-4xl) clamp(var(--space-lg), 6vw, var(--space-5xl))
+    var(--space-5xl);
+  border-top: 1px solid var(--rule);
+}
+
+.phoenix .switch-lede {
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ivory-faint);
+  margin-bottom: var(--space-xl);
+}
+
+.phoenix .switch-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-lg);
+}
+
+@media (min-width: 700px) {
+  .phoenix .switch-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-2xl);
+  }
+}
+
+.phoenix .switch-item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: baseline;
+  gap: var(--space-md);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--rule);
+  text-decoration: none;
+  transition: border-color 300ms var(--ease-out);
+}
+
+.phoenix .switch-item:hover {
+  border-color: var(--gold);
+}
+
+.phoenix .switch-ordinal {
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: var(--gold);
+}
+
+.phoenix .switch-name {
+  font-family: var(--display);
+  font-size: clamp(1.8rem, 4vw, 3rem);
+}
+
+.phoenix .switch-tag {
+  grid-column: 2;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ivory-faint);
+}

@@ -1,0 +1,722 @@
+/* Dragon — ink and jade.
+   The only concept in daylight. Warm rice paper, a brush-weight serif, jade
+   hairlines and one cinnabar seal. Structure borrows from a hand scroll: labels
+   sit out in the margin, the text runs in a single measured column. */
+
+.dragon {
+  --paper: oklch(95% 0.012 85);
+  --paper-deep: oklch(91.5% 0.016 82);
+  --ink: oklch(25% 0.014 250);
+  --ink-soft: oklch(43% 0.014 250);
+  --ink-faint: oklch(60% 0.012 250);
+  --jade: oklch(54% 0.078 165);
+  --jade-pale: oklch(84% 0.03 165);
+  --cinnabar: oklch(50% 0.19 32);
+  --rule: oklch(82% 0.014 85);
+
+  --display: "Faustina", Georgia, serif;
+  --text: "Hanken Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --brush: "Ma Shan Zheng", var(--display);
+
+  background-color: var(--paper);
+  /* Paper grain. The physical object this design imitates is a sheet, not a screen. */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+  color: var(--ink);
+  font-family: var(--text);
+  font-weight: 400;
+  font-size: clamp(15px, 0.95rem + 0.2vw, 17.5px);
+  line-height: 1.66;
+}
+
+.dragon ::selection {
+  background: var(--jade-pale);
+  color: var(--ink);
+}
+
+/* ---------- chrome ---------- */
+
+.dragon .chrome {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 30;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding: var(--space-lg) clamp(var(--space-md), 4vw, var(--space-3xl));
+  pointer-events: none;
+}
+
+.dragon .chrome-back,
+.dragon .chrome-title {
+  pointer-events: auto;
+  margin: 0;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  background: color-mix(in oklab, var(--paper) 84%, transparent);
+  padding: var(--space-2xs) var(--space-xs);
+}
+
+.dragon .chrome-back {
+  text-decoration: none;
+}
+
+.dragon .chrome-back:hover {
+  color: var(--cinnabar);
+}
+
+.dragon .chrome-title {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.dragon .chrome-ordinal {
+  color: var(--cinnabar);
+}
+
+.dragon .chrome-tag {
+  color: var(--ink-faint);
+}
+
+/* ---------- hero ---------- */
+
+.dragon-stage {
+  background: transparent;
+}
+
+.dragon-hero {
+  position: relative;
+  z-index: 3;
+  height: 100%;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  padding: clamp(var(--space-2xl), 10vh, var(--space-4xl))
+    clamp(var(--space-lg), 7vw, var(--space-5xl));
+}
+
+.dragon-cuts {
+  display: grid;
+  align-self: center;
+  max-width: 22ch;
+}
+
+.dragon-cut {
+  grid-area: 1 / 1;
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity 900ms var(--ease-out),
+    transform 1000ms var(--ease-out);
+}
+
+.dragon-cut[data-active="true"] {
+  opacity: 1;
+  transform: none;
+}
+
+.dragon-cut h1,
+.dragon-cut .dragon-line {
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(2.4rem, 7.6vw, 6.4rem);
+  line-height: 1.02;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+}
+
+.dragon-cut .dragon-sub {
+  margin-top: var(--space-lg);
+  max-width: 36ch;
+  color: var(--ink-soft);
+  font-size: 0.98rem;
+}
+
+.dragon-mark {
+  display: block;
+  margin-bottom: var(--space-md);
+  font-family: var(--brush);
+  font-size: 1.5rem;
+  color: var(--cinnabar);
+  line-height: 1;
+}
+
+.dragon-mark-latin {
+  display: block;
+  margin-bottom: var(--space-lg);
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--jade);
+}
+
+.dragon-hero-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.dragon-progress {
+  flex: 1 1 120px;
+  max-width: 260px;
+  height: 1px;
+  background: var(--rule);
+  position: relative;
+}
+
+.dragon-progress::after {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: calc(var(--p, 0) * 100%);
+  background: var(--jade);
+}
+
+/* ---------- scroll-style sections ---------- */
+
+.dragon-body {
+  position: relative;
+  z-index: 4;
+  background-color: var(--paper);
+  background-image: inherit;
+}
+
+.dragon-section {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-lg);
+  padding: clamp(var(--space-3xl), 9vw, var(--space-5xl))
+    clamp(var(--space-lg), 7vw, var(--space-5xl));
+  border-top: 1px solid var(--rule);
+}
+
+@media (min-width: 940px) {
+  .dragon-section {
+    grid-template-columns: 11rem minmax(0, 1fr);
+    gap: clamp(var(--space-2xl), 5vw, var(--space-4xl));
+  }
+}
+
+/* Labels live out in the margin, the way a reader's notes would. */
+.dragon-margin {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  gap: var(--space-sm);
+}
+
+@media (min-width: 940px) {
+  .dragon-margin {
+    flex-direction: column;
+    position: sticky;
+    top: var(--space-4xl);
+    align-self: start;
+  }
+}
+
+.dragon-numeral {
+  font-family: var(--brush);
+  font-size: clamp(2rem, 3.4vw, 3rem);
+  line-height: 0.9;
+  color: var(--jade);
+}
+
+.dragon-label {
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.dragon-h2 {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(1.9rem, 4.4vw, 3.4rem);
+  line-height: 1.08;
+  letter-spacing: -0.012em;
+}
+
+.dragon-lede {
+  max-width: 64ch;
+  margin-top: var(--space-md);
+  color: var(--ink-soft);
+  font-size: 1.04rem;
+  line-height: 1.72;
+}
+
+/* ---------- artist ---------- */
+
+.dragon-name {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(2.6rem, 8vw, 6rem);
+  line-height: 0.94;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.dragon-seal-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  margin-top: var(--space-lg);
+  flex-wrap: wrap;
+}
+
+/* A carved seal, pressed in cinnabar — the traditional signature on a scroll. */
+.dragon-seal {
+  display: grid;
+  place-items: center;
+  width: 74px;
+  height: 74px;
+  flex: none;
+  background: var(--cinnabar);
+  color: var(--paper);
+  font-family: var(--brush);
+  font-size: 21px;
+  line-height: 1.06;
+  writing-mode: vertical-rl;
+  letter-spacing: 0.02em;
+}
+
+.dragon-roles {
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  max-width: 30ch;
+}
+
+.dragon-two {
+  display: grid;
+  gap: clamp(var(--space-xl), 4vw, var(--space-3xl));
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  margin-top: var(--space-2xl);
+}
+
+@media (min-width: 820px) {
+  .dragon-two {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .dragon-two--wide {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  }
+}
+
+/* ---------- photography as ink wash ----------
+   Multiply against the paper drops the studio background out entirely, so the
+   photograph behaves like something brushed onto the sheet. */
+
+.dragon-photo {
+  margin: 0;
+}
+
+.dragon-photo img {
+  width: 100%;
+  height: auto;
+  filter: grayscale(1) contrast(1.16) brightness(1.05);
+  mix-blend-mode: multiply;
+}
+
+.dragon-photo--tall img {
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  object-position: top center;
+}
+
+.dragon-credit {
+  margin-top: var(--space-xs);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+/* ---------- lists ---------- */
+
+.dragon-list {
+  list-style: none;
+  margin: var(--space-xl) 0 0;
+  padding: 0;
+  max-width: 68ch;
+}
+
+.dragon-list li {
+  display: grid;
+  grid-template-columns: 2.2rem minmax(0, 1fr);
+  gap: var(--space-md);
+  align-items: baseline;
+  padding: var(--space-sm) 0;
+  border-bottom: 1px solid var(--rule);
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+}
+
+.dragon-list-mark {
+  font-family: var(--display);
+  font-style: italic;
+  color: var(--jade);
+}
+
+.dragon-figures {
+  margin: var(--space-xl) 0 0;
+  display: grid;
+  gap: 0;
+  max-width: 46ch;
+}
+
+.dragon-figure {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding: var(--space-sm) 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.dragon-figure dt {
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.dragon-figure dd {
+  margin: 0;
+  font-family: var(--display);
+  font-size: 1.4rem;
+}
+
+/* ---------- steps ---------- */
+
+.dragon-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-2xl);
+  counter-reset: dragon-step;
+}
+
+.dragon-step {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-xs);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--rule);
+  max-width: 62ch;
+}
+
+.dragon-step-head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+.dragon-step-index {
+  font-family: var(--brush);
+  font-size: 1.5rem;
+  color: var(--cinnabar);
+  line-height: 1;
+}
+
+.dragon-step-title {
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: clamp(1.3rem, 2.6vw, 1.9rem);
+  line-height: 1.16;
+  margin: 0;
+}
+
+.dragon-step-marking {
+  font-family: var(--display);
+  font-style: italic;
+  font-size: 0.92rem;
+  color: var(--jade);
+}
+
+.dragon-step-body {
+  color: var(--ink-soft);
+  font-size: 0.96rem;
+}
+
+/* ---------- rights ---------- */
+
+.dragon-rights {
+  margin: var(--space-xl) 0 0;
+  border-top: 1px solid var(--ink);
+  max-width: 72ch;
+}
+
+.dragon-right {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-2xs);
+  padding: var(--space-md) 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+@media (min-width: 640px) {
+  .dragon-right {
+    grid-template-columns: minmax(0, 22ch) minmax(0, 1fr);
+    gap: var(--space-lg);
+    align-items: baseline;
+  }
+}
+
+.dragon-right dt {
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.dragon-right dd {
+  margin: 0;
+  font-family: var(--display);
+  font-size: 1.05rem;
+}
+
+/* ---------- commission ---------- */
+
+.dragon-terms {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xl) var(--space-3xl);
+  margin-top: var(--space-xl);
+}
+
+.dragon-term dt {
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: var(--space-2xs);
+}
+
+.dragon-term dd {
+  margin: 0;
+  font-family: var(--display);
+  font-size: clamp(1.4rem, 2.8vw, 2.1rem);
+}
+
+.dragon-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-top: var(--space-2xl);
+  padding: var(--space-md) var(--space-2xl);
+  background: var(--cinnabar);
+  color: var(--paper);
+  text-decoration: none;
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  transition: background-color 300ms var(--ease-out);
+}
+
+.dragon-cta:hover {
+  background: var(--ink);
+}
+
+.dragon-note {
+  margin-top: var(--space-md);
+  max-width: 50ch;
+  font-size: 0.88rem;
+  color: var(--ink-faint);
+}
+
+/* ---------- notation ---------- */
+
+.dragon .stave {
+  width: 100%;
+  max-width: 480px;
+  height: auto;
+  margin-top: var(--space-lg);
+  overflow: visible;
+}
+
+.dragon .stave-line {
+  stroke: var(--rule);
+  stroke-width: 1;
+}
+
+.dragon .stave-head {
+  fill: var(--ink);
+}
+
+.dragon .stave-head--open {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1.4;
+}
+
+.dragon .stave-stem {
+  stroke: var(--ink);
+  stroke-width: 1.1;
+}
+
+.dragon .stave-meter {
+  fill: var(--jade);
+  font-family: var(--display);
+  font-size: 11px;
+}
+
+.dragon .stave-tempo {
+  fill: var(--ink-faint);
+  font-family: var(--display);
+  font-style: italic;
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+/* ---------- strings ---------- */
+
+.dragon .strings {
+  margin-top: var(--space-xl);
+  max-width: 460px;
+}
+
+.dragon .strings-caption {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: var(--space-sm);
+}
+
+.dragon .strings-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-2xs);
+}
+
+.dragon .string {
+  display: grid;
+  grid-template-columns: 2ch minmax(0, 1fr) 4ch;
+  align-items: center;
+  gap: var(--space-md);
+  width: 100%;
+  padding: var(--space-xs) 0;
+  text-align: left;
+  color: var(--ink-faint);
+}
+
+.dragon .string:hover {
+  color: var(--ink);
+}
+
+.dragon .string-name {
+  font-family: var(--display);
+  font-size: 1.05rem;
+  color: var(--jade);
+}
+
+.dragon .string-pitch {
+  font-size: 10px;
+  text-align: right;
+}
+
+.dragon .string-wire {
+  height: 1px;
+  background: var(--rule);
+}
+
+.dragon .string:hover .string-wire {
+  background: var(--jade-pale);
+}
+
+.dragon .string[data-ringing="true"] .string-wire {
+  background: var(--cinnabar);
+  animation: dragon-vibrate 620ms var(--ease-out);
+}
+
+@keyframes dragon-vibrate {
+  0% {
+    transform: scaleY(4);
+  }
+  100% {
+    transform: scaleY(1);
+  }
+}
+
+/* ---------- concept switch ---------- */
+
+.dragon .switch {
+  padding: clamp(var(--space-3xl), 7vw, var(--space-4xl))
+    clamp(var(--space-lg), 7vw, var(--space-5xl)) var(--space-5xl);
+  border-top: 1px solid var(--rule);
+}
+
+.dragon .switch-lede {
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: var(--space-lg);
+}
+
+.dragon .switch-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-lg);
+}
+
+@media (min-width: 700px) {
+  .dragon .switch-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-2xl);
+  }
+}
+
+.dragon .switch-item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: baseline;
+  gap: var(--space-md);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--ink);
+  text-decoration: none;
+}
+
+.dragon .switch-item:hover .switch-name {
+  color: var(--cinnabar);
+}
+
+.dragon .switch-ordinal {
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: var(--jade);
+}
+
+.dragon .switch-name {
+  font-family: var(--display);
+  font-size: clamp(1.7rem, 3.6vw, 2.6rem);
+  transition: color 280ms var(--ease-out);
+}
+
+.dragon .switch-tag {
+  grid-column: 2;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
