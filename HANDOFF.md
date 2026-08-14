@@ -1,8 +1,9 @@
 # Blesspoke — handoff
 
-Rewritten 14 Aug 2026, after the session that acted on the previous handoff's
-two priorities, then updated the same day when the user settled the publishing
-question. **This project is simply Blesspoke.** It is not a v2 and there is
+Rewritten 14 Aug 2026, then updated twice the same day: once when the user
+settled the publishing question, and again after the **Dennis-first rebuild**
+described in §1a — the largest change the project has had. Read §1a before
+anything else; it overrides earlier framing wherever the two disagree. **This project is simply Blesspoke.** It is not a v2 and there is
 nothing for it to be a second version of — the earlier attempt has been
 scrapped (see §2). Everything an incoming agent needs to continue without
 re-deriving context. Read this top to bottom once before touching anything.
@@ -13,6 +14,45 @@ re-deriving context. Read this top to bottom once before touching anything.
 
 **Blesspoke** is a premium single-artist commission site for **Dennis Lau
 (刘凯彦)**, Malaysia's foremost electric violinist, composer and producer.
+
+### 1a. The Dennis-first rebuild — read this first
+
+The user's verdict on the previous build: *"we got it wrong we are promoting our
+service first then dennis lau. the whole site is supposed to revolve first and
+foremost about dennis lau and how he's awesome and amazing with all everything
+that he is and his pictures and accolades and everything, and it just happens to
+be this site you can also purchase song."*
+
+Also, verbatim: the Phoenix and Dragon heroes were *"cool but it doesn't relate
+to what the site is about, dennis lau and music, and ellegance, and
+exclusivity"*, *"not world-class enough"*, *"chosen carbon is totally not
+ellegant, replace it with something else"*, and the whole thing was *"lacking
+soul."*
+
+What that means for anyone working here:
+
+1. **He leads, the commission closes.** Every concept runs: hero (him) →
+   instrument and its provenance → who he is → the record → hear him → in the
+   room → who books him → why he keeps going → *then* the commission as a coda.
+   Do not move the commission back up the page.
+2. **A hero must be about him, not a graphic.** Each hero now carries a
+   photograph or a cut-out of Dennis, his name at the largest size on the page,
+   and his own playing. The WebGL is layered *with* him, never instead of him.
+3. **The motion comes from his violin.** `lib/listening.ts` is a shared analyser
+   bus; every scene's `render(progress, elapsed, level)` receives his live
+   signal, so the gold seam, the ink and the pearl all move because he is
+   playing. This is verified, not asserted — see §8.
+4. **Concept 03 is no longer carbon.** It is **Silk and pearl**: cream silk,
+   pearl lustre, gold-thread hairlines, Bodoni Moda, a couture lookbook. It
+   keeps the name *The Chosen* because that is his own line — "The Chosen One —
+   born, raised and tuned to acquire excellence" — and couture *is* selection,
+   which is also what a commission is. The carbon-fibre violin of the same name
+   is still a fact and still appears; only the design language changed.
+5. **Naming rule, decided by the user: provenance only.** Name the people who
+   made something — Alistair Hay of Emerald Guitars, music director Aubrey
+   Suwito, his teachers, the Wang Leehom guitar that started the Phoenix
+   commission, orchestras, brand clients. Never a wall of singers he has backed;
+   that reads as the roster this site refuses to have.
 
 The whole product is three lines:
 
@@ -54,8 +94,14 @@ drawings: **Phoenix**, **Dragon**, **Chosen**.
   profile, his uploads samples, youtube etc. social medias, etc. more content
   for this new site."
 
-**The last two were the previous handoff's priority one and two. Both have now
-been acted on — see §8 for what landed and §9 for what is still open.**
+- "I think we got it wrong we are promoting our service first then dennis lau…
+  Dennis lau has to be the main focus." (See §1a. This is now the governing
+  instruction for the whole site.)
+- "to get inspiration really understand dennis lau, his work, what he does,
+  music and everything. it's lacking soul still."
+
+**All of the above have been acted on — see §8 for what landed and §9 for what is
+still open.**
 
 ---
 
@@ -370,23 +416,33 @@ That last one matters: the mechanism is shared, the feel is not.
 - Paper grain is an inline `feTurbulence` SVG data URI at 5% opacity.
 - Photography uses `mix-blend-mode: multiply` so studio backgrounds drop out.
 
-### 03 Chosen — "Carbon" (dark)
+### 03 Chosen — "Silk and pearl" (light)
 
-- **Object:** a carbon-fibre instrument in a machined case.
-- **Palette:** graphite `oklch(19% 0.006 250)`, silver `oklch(86% 0.004 250)`,
-  ember `oklch(66% 0.17 44)`.
-- **Type:** Anybody (variable **width** axis) + Public Sans (body) + Martian Mono
-  (all labels and measurements).
-- **Layout:** a specification sheet. `§01`–`§08` reference codes, hairline-gridded
-  blocks, `decimal-leading-zero` counters.
-- **Scene:** **instanced point cloud + line segments**, 9,000 points, lifting off
-  a flat measured drawing into a teardrop solid of revolution while an ember scan
-  line runs the body. Points are squares, not discs: a machined object, not a
-  spark.
-- **Choreography:** mechanical. Shorter travel, quicker settle — a measuring
-  instrument snapping to a value rather than something drifting into place.
-- The reel's playhead is the same ember scan line the hero assembly uses, and the
-  catalogue rows are numbered `04.01`–`04.10` like a parts list.
+**Replaced the carbon concept entirely on 14 Aug 2026.** The user's words:
+*"chosen carbon is totally not ellegant, replace it with something else."* The
+name survives because it is his own — "The Chosen One" — and because couture is
+selection, which is exactly what a commission is. The carbon-fibre violin called
+The Chosen is still listed as a fact in the instruments table.
+
+- **Object:** a bolt of cream silk, a single pearl, one gold thread.
+- **Palette:** silk `oklch(96% 0.008 85)`, pearl `oklch(89% 0.018 320)`, gold
+  thread `oklch(76% 0.095 85)`, ink `oklch(23% 0.012 310)`.
+- **Type:** Bodoni Moda (Didone display, optical sizing on) + Jost (body and
+  every label, 300 weight, tracked wide). No mono anywhere — couture labels are
+  letterspaced sans, not machine type.
+- **Layout:** a lookbook. Numbered plates (`Plate I`–`Plate IV` in the hero,
+  `I`–`VIII` down the page), garment-label tags with a gold-thread rule, care-label
+  spec rows, and one centred creed page carrying his own line with nothing else
+  on it.
+- **Scene:** silk in a fragment shader — anisotropic weave stretched along the
+  warp, a broad sheen crossing it, and from 40% scroll a **pearl** gathering out
+  of the light: sphere normal recovered from the disc, off-centre specular, nacre
+  fresnel rim, contact shadow so it sits on the cloth. Small on purpose. Its
+  lustre rises with `uLevel` — when he plays, the silk catches more light.
+- **Choreography:** slower and longer than the other two. Couture does not hurry.
+- The figure in the hero is `dennis-cutout.webp` standing on the cloth. It has
+  real alpha, so **no blend mode or filter is needed** — an earlier attempt used
+  `invert(1)` and turned him into a photographic negative. Don't.
 
 ---
 
@@ -403,6 +459,47 @@ That last one matters: the mechanism is shared, the feel is not.
 | `dennis-seated.webp` | 1000×1123 | his official site | press photo |
 | `dennis-cutout.webp` | 1000×1500 | his official site | press photo, **has real alpha** |
 | `album-the-journey.webp` | 800×800 | his official site | album art, 2015 |
+| `live-gold-violin.webp` | 1920×1080 | frame from his own concert film | The Phoenix Rising, 2016 |
+| `stage-phoenix.webp` | 1920×1080 | frame from his own concert film | The Phoenix Rising, 2016 |
+| `crowd.webp` | 1600×900 | frame from his own concert film | three thousand seats, 2016 |
+| `live-blue.webp` | 1600×900 | frame from his own concert film | The Phoenix Rising, 2016 |
+| `silhouette-sky.webp` | 1920×810 | frame from his own documentary | *The Phoenix Rising*, a film by Eugene Low |
+| `portrait-mono.webp` | 1400×591 | frame from his own documentary | same |
+| `portrait-mono-2.webp` | 1400×591 | frame from his own documentary | same |
+| `poster-the-chosen.webp` | 921×682 | his official site | concert poster, 2019 |
+
+**How the frames were chosen**, in case more are ever needed: `yt-dlp` at
+`height<=1080` from his own channel, `ffmpeg` sampling every 4–6 s, contact
+sheets assembled with Pillow to pick moments by eye, then each pick re-extracted
+at five timestamps 0.2 s apart and scored by the variance of a Laplacian —
+keeping the sharpest, because concert video is soft and motion-blurred more often
+than not. The script is `process_media.py` in the session scratchpad; the method
+matters more than the file.
+
+`public/clients/` — **fourteen brand logos reduced to alpha-only silhouettes**
+(`patek-philippe`, `porsche`, `mercedes`, `audi`, `honda`, `dunhill`, `chivas`,
+`grand-hyatt`, `huawei`, `intel`, `nestle`, `maybank`, `maxis`, `sime-darby`),
+harvested from the client wall on his own site. They carry no colour: each is a
+coverage mask painted with `currentColor` through a CSS `mask-image`, so one asset
+reads correctly on lacquer, on rice paper and on silk. Keying is by distance from
+each logo's own corner-sampled background, which is the only rule that survives
+transparent PNGs, dark-on-white JPEGs and white-on-coloured-field marks at once.
+BMW and Samsung are **deliberately absent** — light marks inside a coloured field,
+and they reduce to blobs.
+
+`public/film/` — `showreel.mp4` (his own 2021 showreel, 10 MB, 1280×720, 67 s,
+self-hosted and click-to-play), `showreel-loop.mp4` (532 KB, silent 14 s cut for
+a hero background if one is ever wanted) and `showreel-poster.webp`. Self-hosted
+rather than embedded: the films section can afford YouTube's player and cookie
+banner, the showreel cannot.
+
+`public/audio/the-journey-live.mp3` — **40 seconds of him playing live**, the
+sound every hero is drawn by. Cut from the full 5:33 of *The Journey* at The
+Phoenix Rising by scoring every 40-second window on RMS, spectral flatness and a
+violin-band-to-bass ratio, then loudness-normalised to −16 LUFS with 2 s/3 s
+fades. The window that won (249–289 s) is the climax. Worth knowing: that mix is
+bass-heavy throughout, so the violin/bass ratio does *not* cleanly isolate violin
+passages — don't trust it alone if you re-cut this.
 
 `public/films/` — `denza.webp`, `seafood.webp`, `theo.webp`, all 1280×720 poster
 frames pulled from YouTube and re-encoded. `theo.webp` is pillarboxed because the
@@ -468,14 +565,53 @@ concepts complete end to end; the chooser page.
   asked.
 - CJK fallback stacks on all three concepts.
 
+**Landed in the Dennis-first rebuild (§1a):**
+
+- **Research.** His record was read out of his own site, his Wikipedia entry and
+  Emerald Guitars' account of the build, then written into `content/dennis.ts`:
+  his mother the pianist, his violin teachers by name, 18 years / 10,000
+  performances / 168,000 in his audiences / 57 songs / 10 awards / five
+  continents, the awards themselves, the orchestras he played in before any of
+  this, the twelve territories, the Donegal story, and both quotes — his
+  soul-mate line and Alistair Hay's.
+- **`content/clients.ts`** — the fourteen brands, and `clientWall` copy.
+- **The four testimonials in `work.ts` are now real and attributed** (UCSI's
+  chairman, Carlsberg Malaysia's MD, A Cut Above, The Factory Music Studio),
+  taken from his own site. The two anonymous commission quotes inherited from
+  canto were never verifiable and are gone.
+- **`lib/listening.ts`** — one analyser bus for the site. `SceneHandle.render`
+  gained a third argument, `level`. The reel's private analyser was deleted and
+  it now feeds the same bus, so one element is never routed twice.
+- **`components/Listen.tsx`** (40 s of him playing, in every hero),
+  **`Showreel.tsx`** (his own reel, self-hosted, click-to-play) and
+  **`ClientWall.tsx`** (masked logos, painted in each concept's ink).
+- **All three heroes re-founded on him**, plus the chooser, which now opens with
+  his name rather than the product's.
+- **Concept 03 rebuilt** as Silk and pearl: new stylesheet, new scene, new page.
+- **The fixed-chrome overlap is fixed** on all three concepts with a scrim in
+  each one's own material. Note the mechanism: an absolutely positioned
+  pseudo-element paints *above* in-flow content, so a scrim belongs on the stage
+  layer under the hero, not on the hero itself. Getting that wrong dims the very
+  words it is meant to protect.
+
 **Verified, not assumed:**
 
 - `tsc -b` clean, `npm run build` green.
-- Zero horizontal overflow and zero stuck reveals at **320 px and 390 px** on all
-  four routes, checked programmatically by walking every element's bounding box.
-- No console or page errors on any route.
-- Reduced motion leaves nothing invisible on any concept and prints final figures.
-- Audio actually plays, the scope actually draws, and track switching works.
+- Zero page-level horizontal overflow and zero stuck reveals at **1440 px and
+  390 px** on all four routes, checked programmatically by walking every
+  element's bounding box. The hero plates report as overflowing their own box on
+  purpose — they are scaled 1.04–1.06 and clipped by `.stage-pin`.
+- No console or page errors on any route. One intermittent 404 from
+  `fonts.gstatic.com` for a Martian Mono weight is Google's own stale CSS, not
+  ours; the stack falls back and the chooser is the only page still asking for
+  that family.
+- Reduced motion leaves nothing invisible on any of the four routes.
+- **The audio-reactive claim is measured, not asserted.** Clicking "Hear him
+  play" on each concept starts `the-journey-live.mp3` and the WebGL canvas
+  redraws: 99% of canvas bytes differ on Phoenix and Chosen, 62% on Dragon.
+- **The Chinese has now actually been seen rendered.** Noto Sans SC was
+  installed into `~/.local/share/fonts` on this machine, so 刘凯彦 and the brush
+  phrases render in screenshots instead of tofu.
 
 ---
 
@@ -519,22 +655,23 @@ confidence. Do not turn it into a parallax demo.
 
 ### 9c. Smaller open items
 
-- The fixed `ConceptChrome` bar overlaps large display type when it scrolls past.
-  Phoenix uses `mix-blend-mode: difference` so it stays legible, but it is
-  untidy. Consider auto-hiding on scroll down.
+- ~~The fixed `ConceptChrome` bar overlaps large display type.~~ **Fixed** — each
+  concept now scrims behind it in its own ground colour.
 - The Dragon `一` numeral renders as a lone horizontal stroke, which is correct
   Chinese but can look like a stray mark in the margin.
 - The Stave phrase is decorative-but-real; it could encode an actual motif from
   one of Dennis's songs.
-- Test on a real phone. Only headless Chromium at 320/390 px has been checked,
-  and **this machine has no CJK fonts installed at all** (`fc-list :lang=zh`
-  returns nothing), so every Chinese glyph renders as tofu here. The fallback
-  stacks are in place, but the Chinese has never actually been *seen* rendered.
-  Check it somewhere with CJK fonts before showing the user.
+- Test on a real phone. Only headless Chromium at 390/1440 px has been checked.
+  CJK now renders locally (Noto Sans SC is installed in
+  `~/.local/share/fonts`), so the Chinese has been seen — but a real device is
+  still a different thing.
 - Lighthouse/performance pass. Three.js is a 464 KB chunk (116 KB gzipped) —
   already manually chunked, but consider lazy-loading scenes per route.
-- The chooser page has not been given any of the new content. It still works and
-  its figures are correct, but it could carry a line about the reel.
+- The chooser now opens with him and carries his record, but it still has no
+  photography beyond the press portrait and says nothing about the showreel.
+- The Dragon `一` numeral note below still applies, and Dragon is the only concept
+  whose hero photograph is a *treatment* (multiplied ink) rather than a
+  photograph — if the user wants him recognisable there, it needs a second image.
 
 ### 9d. Parked — not part of Blesspoke
 

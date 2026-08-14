@@ -2,125 +2,124 @@ import * as THREE from "three";
 import type { SceneContext, SceneHandle } from "../../lib/SceneCanvas";
 
 /**
- * The Chosen violin is a single-piece carbon teardrop. This scene starts as a
- * flat measured drawing and assembles it: points and section rings lift off the
- * sheet into a solid of revolution while an ember scan line runs the length of
- * the body.
+ * Silk, and then a pearl.
+ *
+ * A woven ground with a broad sheen travelling across it; as you scroll, the
+ * light in the weave gathers until it settles into a single pearl with an
+ * iridescent rim. That is the concept's argument in one image — couture is
+ * selection, one thing chosen out of everything available, which is his own word
+ * for himself and also exactly what a commission is.
+ *
+ * Drawn in a fragment shader over one full-screen quad, so it composites
+ * straight onto the silk background rather than sitting in a box. The lustre
+ * breathes with `uLevel`: when Dennis is playing, the silk catches more light.
  */
 
-const POINT_COUNT = 9000;
-const RING_COUNT = 11;
-const RING_SEGMENTS = 72;
-const BODY_HEIGHT = 1.15;
-const BODY_DEPTH = 0.38;
+const vertexShader = /* glsl */ `
+  varying vec2 vUv;
 
-/**
- * Classic teardrop curve: tip at the top, the bulge carried low. The width is
- * set so the body lands near a real violin's proportions, roughly 20cm across
- * to 35cm long.
- */
-function bodyProfile(t: number): { halfWidth: number; y: number } {
-  const halfWidth = Math.sin(t) * Math.pow(Math.sin(t / 2), 1.7) * 1.0;
-  return { halfWidth, y: Math.cos(t) * BODY_HEIGHT };
-}
+  void main() {
+    vUv = uv;
+    gl_Position = vec4(position.xy, 0.0, 1.0);
+  }
+`;
 
-function bodyPoint(t: number, phi: number): THREE.Vector3 {
-  const { halfWidth, y } = bodyProfile(t);
-  return new THREE.Vector3(
-    halfWidth * Math.sin(phi),
-    y,
-    halfWidth * BODY_DEPTH * Math.cos(phi),
-  );
-}
-
-const shared = /* glsl */ `
-  attribute vec3 aSheet;
-  attribute float aSeed;
+const fragmentShader = /* glsl */ `
+  precision highp float;
 
   uniform float uProgress;
   uniform float uTime;
+  uniform float uLevel;
+  uniform float uAspect;
+  uniform vec3 uSilk;
+  uniform vec3 uPearl;
+  uniform vec3 uGold;
+  uniform vec3 uShadow;
 
-  varying float vScan;
-  varying float vDepth;
+  varying vec2 vUv;
 
-  vec3 assemble(vec3 body, vec3 sheet, float seed) {
-    // Parts lift off the drawing at slightly different times, so it reads as an
-    // assembly rather than a single cross-fade.
-    float stagger = 0.34 * seed;
-    float lift = smoothstep(0.05 + stagger, 0.62 + stagger, uProgress);
-    return mix(sheet, body, lift);
+  float hash(vec2 p) {
+    return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
   }
-`;
 
-const pointVertex = /* glsl */ `
-  ${shared}
+  float noise(vec2 p) {
+    vec2 i = floor(p);
+    vec2 f = fract(p);
+    vec2 u = f * f * (3.0 - 2.0 * f);
+    return mix(
+      mix(hash(i), hash(i + vec2(1.0, 0.0)), u.x),
+      mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), u.x),
+      u.y
+    );
+  }
 
-  uniform float uSize;
-  uniform float uPixelRatio;
+  /* Anisotropic: stretched along the warp so it reads as thread rather than as
+     generic noise. Silk is directional, and the eye knows it. */
+  float weave(vec2 p) {
+    float warp = noise(vec2(p.x * 220.0, p.y * 3.0));
+    float weft = noise(vec2(p.x * 3.0, p.y * 220.0));
+    return (warp * 0.55 + weft * 0.45);
+  }
 
   void main() {
-    vec3 pos = assemble(position, aSheet, aSeed);
+    vec2 p = (vUv - 0.5) * vec2(uAspect, 1.0) * 2.0;
 
-    // The scan runs bottom to top once the body has formed.
-    float scanY = mix(-1.4, 1.4, fract(uProgress * 1.6 + uTime * 0.06));
-    vScan = 1.0 - smoothstep(0.0, 0.22, abs(pos.y - scanY));
+    /* ---- the weave ---- */
+    float threads = weave(vUv + vec2(uTime * 0.0008, 0.0));
+    float cloth = (threads - 0.5) * 0.05;
 
-    vec4 mv = modelViewMatrix * vec4(pos, 1.0);
-    vDepth = clamp(-mv.z / 6.0, 0.0, 1.0);
+    /* ---- the sheen: a broad band crossing the cloth ---- */
+    // Travels with scroll, and drifts a little on its own so the fabric is
+    // never quite still.
+    float band = (p.x * 0.42 + p.y * 0.9) - (uProgress * 2.6 - 1.1) - sin(uTime * 0.12) * 0.06;
+    float sheen = exp(-band * band * 2.1);
+    // Playing lifts the lustre: the same light, caught harder.
+    sheen *= 0.5 + uLevel * 0.85;
 
-    gl_Position = projectionMatrix * mv;
-    gl_PointSize = uSize * uPixelRatio * (5.2 / -mv.z);
-  }
-`;
+    /* ---- the pearl, gathering as the scroll ends ---- */
+    float gather = smoothstep(0.4, 0.96, uProgress);
+    vec2 centre = vec2(-0.02, 0.12);
+    vec2 d = p - centre;
+    // Small on purpose. A pearl is precious because it is not large.
+    float pearlRadius = mix(1.5, 0.26, gather);
+    float rr = length(d) / pearlRadius;
 
-const pointFragment = /* glsl */ `
-  precision mediump float;
+    // A crisp silhouette. A pearl has an edge; only its lustre is soft.
+    float inside = (1.0 - smoothstep(0.965, 1.0, rr)) * gather;
 
-  uniform vec3 uSilver;
-  uniform vec3 uEmber;
+    // Shaded as a sphere rather than faked with a blur: the normal is recovered
+    // from the disc, which is what gives it weight on the cloth.
+    float z = sqrt(max(0.0, 1.0 - rr * rr));
+    vec3 n = normalize(vec3(d / pearlRadius, z));
+    vec3 light = normalize(vec3(-0.42, 0.58, 0.7));
+    float diffuse = clamp(dot(n, light), 0.0, 1.0);
+    float spec = pow(diffuse, 46.0);
+    // Nacre: the rim goes iridescent where the surface turns away.
+    float fresnel = pow(1.0 - n.z, 2.6);
+    float phase = fresnel * 2.6 + uTime * 0.04 + uLevel * 1.4;
+    vec3 nacre = 0.5 + 0.5 * cos(6.2831853 * (phase + vec3(0.0, 0.33, 0.67)));
 
-  varying float vScan;
-  varying float vDepth;
+    vec3 pearlColour = mix(uShadow, uPearl, 0.34 + 0.66 * diffuse);
+    pearlColour = mix(pearlColour, mix(uPearl, nacre, 0.44), fresnel * 0.3);
+    // A second, dimmer highlight bounced off the cloth, low and to the right.
+    pearlColour += pow(clamp(dot(n, normalize(vec3(0.4, -0.7, 0.5))), 0.0, 1.0), 8.0) * 0.06;
+    pearlColour += spec * (0.36 + uLevel * 0.5);
+    // Gold thread reads in the lustre when he plays hardest.
+    pearlColour = mix(pearlColour, uGold, spec * uLevel * 0.3);
 
-  void main() {
-    // Square points, not discs: this is a machined object, not a spark.
-    vec2 d = abs(gl_PointCoord - 0.5);
-    if (max(d.x, d.y) > 0.5) discard;
+    // Contact shadow: soft, offset down, so the pearl sits rather than floats.
+    float contact = (1.0 - smoothstep(0.55, 1.35, length((p - centre - vec2(0.02, -0.1)) * vec2(1.0, 2.1)) / pearlRadius)) * gather;
 
-    vec3 tone = mix(uSilver, uEmber, vScan * 0.85);
-    float fade = mix(1.0, 0.42, vDepth);
-    gl_FragColor = vec4(tone, fade * (0.5 + 0.5 * vScan));
-  }
-`;
+    /* ---- composite ---- */
+    vec3 colour = uSilk + cloth;
+    colour = mix(colour, uSilk * 1.05 + uPearl * 0.08, sheen * 0.5);
+    colour = mix(colour, uShadow, contact * 0.16);
+    colour = mix(colour, pearlColour, inside);
 
-const ringVertex = /* glsl */ `
-  ${shared}
-
-  void main() {
-    vec3 pos = assemble(position, aSheet, aSeed);
-    float scanY = mix(-1.4, 1.4, fract(uProgress * 1.6 + uTime * 0.06));
-    vScan = 1.0 - smoothstep(0.0, 0.18, abs(pos.y - scanY));
-
-    vec4 mv = modelViewMatrix * vec4(pos, 1.0);
-    vDepth = clamp(-mv.z / 6.0, 0.0, 1.0);
-    gl_Position = projectionMatrix * mv;
-  }
-`;
-
-const ringFragment = /* glsl */ `
-  precision mediump float;
-
-  uniform vec3 uSilver;
-  uniform vec3 uEmber;
-  uniform float uReveal;
-
-  varying float vScan;
-  varying float vDepth;
-
-  void main() {
-    vec3 tone = mix(uSilver, uEmber, vScan);
-    float fade = mix(0.62, 0.14, vDepth);
-    gl_FragColor = vec4(tone, fade * uReveal * (0.4 + 0.6 * vScan));
+    // Alpha keeps the plate transparent where nothing is happening, so the
+    // page's own silk shows through and there is no visible canvas edge.
+    float alpha = clamp(sheen * 0.34 + contact * 0.2 + inside * 0.98 + abs(cloth) * 5.0, 0.0, 1.0);
+    gl_FragColor = vec4(colour, alpha * 0.94);
   }
 `;
 
@@ -128,166 +127,53 @@ export function createChosenScene({ canvas, reducedMotion }: SceneContext): Scen
   const renderer = new THREE.WebGLRenderer({
     canvas,
     alpha: true,
-    antialias: true,
+    antialias: false,
     powerPreference: "high-performance",
   });
   renderer.setClearColor(0x000000, 0);
 
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 100);
-  const group = new THREE.Group();
-  scene.add(group);
+  const camera = new THREE.Camera();
 
-  let rngState = 0x9e3779b9;
-  const rand = () => {
-    rngState = (rngState * 1664525 + 1013904223) >>> 0;
-    return rngState / 0xffffffff;
-  };
-
-  const silver = new THREE.Color("#c9cdd2");
-  const ember = new THREE.Color("#ff7a3c");
-
-  // ---- point cloud ----
-  const positions = new Float32Array(POINT_COUNT * 3);
-  const sheet = new Float32Array(POINT_COUNT * 3);
-  const seeds = new Float32Array(POINT_COUNT);
-
-  const sheetColumns = 120;
-  for (let i = 0; i < POINT_COUNT; i += 1) {
-    const t = Math.acos(1 - 2 * rand());
-    const phi = rand() * Math.PI * 2;
-    const p = bodyPoint(t, phi);
-    positions[i * 3] = p.x;
-    positions[i * 3 + 1] = p.y;
-    positions[i * 3 + 2] = p.z;
-
-    // The drawing: a flat measured grid, wider than the body and dead flat in z.
-    const col = i % sheetColumns;
-    const row = Math.floor(i / sheetColumns);
-    sheet[i * 3] = (col / (sheetColumns - 1) - 0.5) * 3.4;
-    sheet[i * 3 + 1] = (row / (POINT_COUNT / sheetColumns - 1) - 0.5) * 2.6;
-    sheet[i * 3 + 2] = 0;
-
-    seeds[i] = rand();
-  }
-
-  const pointGeometry = new THREE.BufferGeometry();
-  pointGeometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
-  pointGeometry.setAttribute("aSheet", new THREE.BufferAttribute(sheet, 3));
-  pointGeometry.setAttribute("aSeed", new THREE.BufferAttribute(seeds, 1));
-
-  const pointMaterial = new THREE.ShaderMaterial({
-    vertexShader: pointVertex,
-    fragmentShader: pointFragment,
+  const material = new THREE.ShaderMaterial({
+    vertexShader,
+    fragmentShader,
     transparent: true,
     depthWrite: false,
-    blending: THREE.AdditiveBlending,
     uniforms: {
       uProgress: { value: 0 },
       uTime: { value: 0 },
-      uSize: { value: 2.1 },
-      uPixelRatio: { value: 1 },
-      uSilver: { value: silver },
-      uEmber: { value: ember },
+      uLevel: { value: 0 },
+      uAspect: { value: 1 },
+      uSilk: { value: new THREE.Color("#f4efe4") },
+      uPearl: { value: new THREE.Color("#ebe3e6") },
+      uGold: { value: new THREE.Color("#d8b46a") },
+      uShadow: { value: new THREE.Color("#a1929a") },
     },
   });
 
-  group.add(new THREE.Points(pointGeometry, pointMaterial));
-
-  // ---- section rings ----
-  const ringVertices = RING_COUNT * RING_SEGMENTS * 2;
-  const ringPos = new Float32Array(ringVertices * 3);
-  const ringSheet = new Float32Array(ringVertices * 3);
-  const ringSeed = new Float32Array(ringVertices);
-
-  let cursor = 0;
-  for (let r = 0; r < RING_COUNT; r += 1) {
-    const t = ((r + 1) / (RING_COUNT + 1)) * Math.PI;
-    const { y } = bodyProfile(t);
-    const seed = r / RING_COUNT;
-
-    for (let s = 0; s < RING_SEGMENTS; s += 1) {
-      const a = (s / RING_SEGMENTS) * Math.PI * 2;
-      const b = ((s + 1) / RING_SEGMENTS) * Math.PI * 2;
-
-      for (const phi of [a, b]) {
-        const p = bodyPoint(t, phi);
-        ringPos[cursor * 3] = p.x;
-        ringPos[cursor * 3 + 1] = p.y;
-        ringPos[cursor * 3 + 2] = p.z;
-
-        // On the sheet each ring is a straight measurement line at its own height.
-        ringSheet[cursor * 3] = Math.sin(phi) * 1.5;
-        ringSheet[cursor * 3 + 1] = y;
-        ringSheet[cursor * 3 + 2] = 0;
-
-        ringSeed[cursor] = seed;
-        cursor += 1;
-      }
-    }
-  }
-
-  const ringGeometry = new THREE.BufferGeometry();
-  ringGeometry.setAttribute("position", new THREE.BufferAttribute(ringPos, 3));
-  ringGeometry.setAttribute("aSheet", new THREE.BufferAttribute(ringSheet, 3));
-  ringGeometry.setAttribute("aSeed", new THREE.BufferAttribute(ringSeed, 1));
-
-  const ringMaterial = new THREE.ShaderMaterial({
-    vertexShader: ringVertex,
-    fragmentShader: ringFragment,
-    transparent: true,
-    depthWrite: false,
-    blending: THREE.AdditiveBlending,
-    uniforms: {
-      uProgress: { value: 0 },
-      uTime: { value: 0 },
-      uReveal: { value: 0 },
-      uSilver: { value: silver },
-      uEmber: { value: ember },
-    },
-  });
-
-  group.add(new THREE.LineSegments(ringGeometry, ringMaterial));
+  const quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
+  quad.frustumCulled = false;
+  scene.add(quad);
 
   return {
-    render(progress, elapsed) {
-      const time = reducedMotion ? 0 : elapsed;
-
-      pointMaterial.uniforms.uProgress.value = progress;
-      pointMaterial.uniforms.uTime.value = time;
-      ringMaterial.uniforms.uProgress.value = progress;
-      ringMaterial.uniforms.uTime.value = time;
-      ringMaterial.uniforms.uReveal.value = Math.min(1, Math.max(0, (progress - 0.3) / 0.4));
-
-      // Flat on to the drawing, turning to three-quarter as the body assembles.
-      group.rotation.y = progress * Math.PI * 0.85;
-      group.rotation.x = Math.sin(progress * Math.PI) * 0.16;
-
-      camera.position.set(0, 0, 4.6 - progress * 0.9);
-      camera.lookAt(0, 0, 0);
-
+    render(progress, elapsed, level) {
+      material.uniforms.uProgress.value = progress;
+      // Still under reduced motion, unless the listener started the music.
+      material.uniforms.uTime.value = reducedMotion ? (level > 0.01 ? elapsed : 0) : elapsed;
+      material.uniforms.uLevel.value = level;
       renderer.render(scene, camera);
     },
 
     resize(width, height, dpr) {
       renderer.setPixelRatio(dpr);
       renderer.setSize(width, height, false);
-      pointMaterial.uniforms.uPixelRatio.value = dpr;
-
-      const aspect = width / height;
-      camera.aspect = aspect;
-      camera.updateProjectionMatrix();
-
-      // On a wide screen the drawing sits to the right of the copy, the way it
-      // would on a spec sheet. On a narrow one it goes back behind the text.
-      group.position.x = aspect > 1.15 ? 0.95 : 0;
+      material.uniforms.uAspect.value = width / height;
     },
 
     dispose() {
-      pointGeometry.dispose();
-      pointMaterial.dispose();
-      ringGeometry.dispose();
-      ringMaterial.dispose();
+      quad.geometry.dispose();
+      material.dispose();
       renderer.dispose();
     },
   };

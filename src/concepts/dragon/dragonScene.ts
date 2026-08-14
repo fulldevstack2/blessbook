@@ -22,6 +22,7 @@ const fragmentShader = /* glsl */ `
 
   uniform float uProgress;
   uniform float uTime;
+  uniform float uLevel;
   uniform float uAspect;
   uniform vec3 uInk;
   uniform vec3 uJade;
@@ -123,8 +124,11 @@ const fragmentShader = /* glsl */ `
     float gather = smoothstep(0.55, 1.0, uProgress);
     float radius = mix(0.18, 1.5, open) * (1.0 - 0.55 * gather);
 
-    float edge = length(p) + (turbulence - 0.5) * mix(0.55, 1.35, open);
-    float bloom = smoothstep(radius, radius * 0.28, edge);
+    // The wash breathes with the playing: a bowed note pushes the ink outward
+    // and darkens it, and it settles back in the silence between phrases.
+    float breath = 1.0 + uLevel * 0.34;
+    float edge = length(p) + (turbulence - 0.5) * mix(0.55, 1.35, open) * breath;
+    float bloom = smoothstep(radius * breath, radius * 0.28, edge);
 
     float board = soundboard(p, turbulence) * smoothstep(0.6, 0.99, uProgress);
     float ink = max(bloom * (1.0 - gather * 0.72), board);
@@ -134,7 +138,7 @@ const fragmentShader = /* glsl */ `
     // A trace of cinnabar where the wash is thinnest, like a seal bleeding through.
     tone = mix(tone, uCinnabar, smoothstep(0.06, 0.2, ink) * (1.0 - smoothstep(0.2, 0.42, ink)) * 0.35);
 
-    float alpha = clamp(ink * 0.94, 0.0, 1.0);
+    float alpha = clamp(ink * (0.94 + uLevel * 0.24), 0.0, 1.0);
     gl_FragColor = vec4(tone, alpha);
   }
 `;
@@ -160,6 +164,7 @@ export function createDragonScene({ canvas, reducedMotion }: SceneContext): Scen
     uniforms: {
       uProgress: { value: 0 },
       uTime: { value: 0 },
+      uLevel: { value: 0 },
       uAspect: { value: 1 },
       uInk: { value: new THREE.Color("#1b2430") },
       uJade: { value: new THREE.Color("#6f9a86") },
@@ -172,9 +177,12 @@ export function createDragonScene({ canvas, reducedMotion }: SceneContext): Scen
   scene.add(quad);
 
   return {
-    render(progress, elapsed) {
+    render(progress, elapsed, level) {
       material.uniforms.uProgress.value = progress;
-      material.uniforms.uTime.value = reducedMotion ? 0 : elapsed;
+      // Held still under reduced motion, except while the listener has music
+      // playing — their own gesture, and the only thing allowed to move here.
+      material.uniforms.uTime.value = reducedMotion ? (level > 0.01 ? elapsed : 0) : elapsed;
+      material.uniforms.uLevel.value = level;
       renderer.render(scene, camera);
     },
 

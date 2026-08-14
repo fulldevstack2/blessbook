@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
 import { Link } from "react-router-dom";
 import { commission, promise } from "../content/commission";
-import { artist, tallies } from "../content/dennis";
+import { artist, record } from "../content/dennis";
 import { photos } from "../content/media";
 import { concepts, type Concept } from "../concepts/registry";
 import { useFonts } from "../lib/useFonts";
@@ -36,31 +36,41 @@ export function ChooserPage() {
     <div className="chooser">
       <header className="chooser-head">
         <div>
-          <p className="chooser-kicker">Three designs · one product</p>
-          <h1 className="chooser-wordmark">Blesspoke</h1>
+          <p className="chooser-kicker">
+            {artist.roles} · {artist.city}
+          </p>
+          <h1 className="chooser-wordmark">
+            {artist.name}
+            <span className="chooser-wordmark-cn" lang="zh">
+              {artist.chineseName}
+            </span>
+          </h1>
+          <p className="chooser-showman">{artist.showman}</p>
         </div>
         <ul className="chooser-promise">
           <li>
             <span>01</span>
-            {promise.headline}
+            First anywhere to play a six-string 24K gold violin
           </li>
           <li>
             <span>02</span>
-            {promise.request}
+            Two sold-out concerts of three thousand seats
           </li>
           <li>
             <span>03</span>
-            {promise.ownership}
+            Patek Philippe, Porsche, Dunhill, Grand Hyatt
           </li>
         </ul>
       </header>
 
       <p className="chooser-note">
-        One artist — {artist.name} — and no roster behind him. Below are three complete
-        design directions for the same commission, each named after one of the three
-        instruments Alistair Hay built to his drawings. Open any of them: the whole page
-        is built, scroll included. Pick the one that feels right and that becomes
-        Blesspoke.
+        This is {artist.name}'s site. He has spent eighteen years on stage, in five
+        continents, in front of a hundred and sixty-eight thousand people — and the
+        quietest thing he does is write one song for one person, which is what
+        Blesspoke is. Below are three complete design directions for that site, each
+        named after one of the three instruments Alistair Hay built to his drawings.
+        Open any of them: the whole page is built, scroll included. Pick the one that
+        feels right.
       </p>
 
       <section className="chooser-artist">
@@ -71,17 +81,18 @@ export function ChooserPage() {
           height={photos.press.height}
           alt={photos.press.alt}
         />
+        {/* The masthead above already carries his name and roles, so this card
+            only has to add what it can: the training, and the record. */}
         <div>
-          <p className="chooser-artist-name">
-            {artist.name} <span lang="zh">{artist.chineseName}</span>
-          </p>
+          <p className="chooser-artist-name">Trained from three, on stage since 2006</p>
           <p className="chooser-artist-roles">
-            {artist.roles} · {artist.city}
+            Piano at 3 · Violin at 8 · Grade 8 at 11 · Trinity College London, twice
+            cited for outstanding performance
           </p>
           <p className="chooser-artist-line">{artist.oneLine}</p>
         </div>
         <dl className="chooser-tallies">
-          {tallies.slice(0, 3).map((item) => (
+          {record.slice(0, 4).map((item) => (
             <div className="chooser-tally" key={item.label}>
               <dt>{item.label}</dt>
               <dd>{item.value}</dd>
@@ -89,6 +100,10 @@ export function ChooserPage() {
           ))}
         </dl>
       </section>
+
+      <p className="chooser-kicker chooser-kicker--grid">
+        Three designs · one product · {promise.headline.toLowerCase()}
+      </p>
 
       <ul className="chooser-grid">
         {concepts.map((concept) => (

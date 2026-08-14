@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { demos, timecode } from "../content/work";
 import { audioContext, resumeAudio } from "../lib/audioContext";
+import { listen, waveform } from "../lib/listening";
 import { prefersReducedMotion } from "../lib/prefersReducedMotion";
 
 /**
@@ -34,8 +35,6 @@ export function Reel({ caption, index = twoDigit }: ReelProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const analyserRef = useRef<AnalyserNode | null>(null);
-  const sourceRef = useRef<MediaElementAudioSourceNode | null>(null);
   /** Set when a track change should start playing once the new src is attached. */
   const pending = useRef(false);
 
@@ -44,34 +43,16 @@ export function Reel({ caption, index = twoDigit }: ReelProps) {
 
   const total = measured > 0 ? measured : track.seconds;
 
-  /**
-   * Routed through Web Audio once only — an element gets exactly one source
-   * node for its lifetime, and asking a second time throws.
-   */
-  const connect = useCallback(() => {
-    const element = audioRef.current;
-    if (!element || sourceRef.current) return;
-    const ctx = audioContext();
-    if (!ctx) return;
-
-    const source = ctx.createMediaElementSource(element);
-    const analyser = ctx.createAnalyser();
-    analyser.fftSize = 1024;
-    analyser.smoothingTimeConstant = 0.6;
-    source.connect(analyser).connect(ctx.destination);
-
-    sourceRef.current = source;
-    analyserRef.current = analyser;
-  }, []);
-
   const start = useCallback(() => {
     const element = audioRef.current;
     if (!element) return;
-    connect();
+    // The shared bus owns the analyser, so the scope here and the scenes in the
+    // heroes are reading the same signal.
+    listen(element);
     const ctx = audioContext();
     if (ctx) resumeAudio(ctx);
     void element.play().catch(() => setPlaying(false));
-  }, [connect]);
+  }, []);
 
   const move = useCallback((position: number) => {
     pending.current = true;
@@ -142,7 +123,6 @@ export function Reel({ caption, index = twoDigit }: ReelProps) {
       raf = requestAnimationFrame(draw);
 
       const element = audioRef.current;
-      const analyser = analyserRef.current;
 
       if (element && element.duration > 0) {
         root.style.setProperty("--played", (element.currentTime / element.duration).toFixed(4));
@@ -150,14 +130,13 @@ export function Reel({ caption, index = twoDigit }: ReelProps) {
 
       // On pause the trail decays rather than cutting, so it settles out.
       let peak = 0;
-      if (analyser && element && !element.paused) {
-        analyser.getFloatTimeDomainData(samples);
+      if (element && !element.paused && waveform(samples)) {
         for (let i = 0; i < samples.length; i += 1) {
-          const value = Math.abs(samples[i]);
+          const value = Math.abs(samples[i] as number);
           if (value > peak) peak = value;
         }
       } else {
-        peak = trail[(head - 1 + COLUMNS) % COLUMNS] * 0.9;
+        peak = (trail[(head - 1 + COLUMNS) % COLUMNS] as number) * 0.9;
       }
 
       trail[head] = peak;

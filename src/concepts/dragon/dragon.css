@@ -1105,3 +1105,327 @@
   font-family: var(--display);
   font-size: 1.08rem;
 }
+
+/* ════════════════════════════════════════════════════════════════════════════
+   Dennis first.
+   The commission moves to the end of the scroll, and everything above it is the
+   man: ink, paper, and a record that predates any of this.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+/* ---------- the hero is him, as ink ---------- */
+
+.dragon-hero-plate {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 34% 30%;
+  /* Monochrome and multiplied into the paper: the blown-out sky in the frame
+     disappears into the ground and only the figure survives as ink. This is the
+     one treatment in the whole site that makes a photograph obey a concept
+     rather than sit on top of it.
+     It is also masked off at the right rather than cropped, so the wash runs out
+     into bare paper the way a brush does, and the type has somewhere to sit. */
+  mix-blend-mode: multiply;
+  filter: grayscale(1) contrast(1.34) brightness(1.16);
+  opacity: 0.82;
+  -webkit-mask-image: linear-gradient(
+    97deg,
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 1) 34%,
+    rgba(0, 0, 0, 0) 72%
+  );
+  mask-image: linear-gradient(
+    97deg,
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 1) 34%,
+    rgba(0, 0, 0, 0) 72%
+  );
+  transform: scale(1.04) translateY(calc(var(--p, 0) * -2.5%));
+  will-change: transform;
+}
+
+/* Below the two-column breakpoint the wash runs out downward instead, so the
+   type still lands on paper. */
+@media (max-width: 899px) {
+  .dragon-hero-plate {
+    -webkit-mask-image: linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 1) 0%,
+      rgba(0, 0, 0, 0.9) 30%,
+      rgba(0, 0, 0, 0) 76%
+    );
+    mask-image: linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 1) 0%,
+      rgba(0, 0, 0, 0.9) 30%,
+      rgba(0, 0, 0, 0) 76%
+    );
+    opacity: 0.7;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dragon-hero-plate {
+    transform: scale(1.04);
+  }
+}
+
+/* The figure occupies the left of that frame, so the scroll text moves right of
+   it rather than sitting on his chest. */
+@media (min-width: 900px) {
+  .dragon-cuts {
+    margin-left: 42%;
+    max-width: 26ch;
+  }
+}
+
+.dragon-cut .dragon-line {
+  font-size: clamp(1.8rem, 4.4vw, 3.6rem);
+  line-height: 1.06;
+}
+
+.dragon-hero-roles {
+  margin-top: var(--space-lg);
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.dragon-hero-listen {
+  align-self: end;
+  margin-bottom: var(--space-lg);
+}
+
+.dragon .listen-button {
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--cinnabar);
+}
+
+.dragon .listen-title {
+  font-family: var(--display);
+  font-size: 1.2rem;
+  color: var(--ink);
+}
+
+.dragon .listen-where,
+.dragon .showreel-caption {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.dragon .listen-rail {
+  color: var(--jade);
+}
+
+@media (min-width: 900px) {
+  .dragon-hero-listen {
+    margin-left: 42%;
+  }
+}
+
+/* ---------- teachers, sub-heads ---------- */
+
+.dragon-taught {
+  margin-top: var(--space-xl);
+  display: grid;
+  gap: var(--space-md);
+}
+
+.dragon-taught dt {
+  font-size: 10px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--jade);
+}
+
+.dragon-taught dd {
+  margin: var(--space-2xs) 0 0;
+  color: var(--ink-soft);
+}
+
+.dragon-sub-head {
+  margin-top: var(--space-4xl);
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(1.3rem, 2.4vw, 1.9rem);
+  line-height: 1.2;
+  color: var(--ink);
+}
+
+/* ---------- awards and territories ---------- */
+
+.dragon-awards {
+  list-style: none;
+  margin: var(--space-4xl) 0 0;
+  padding: 0;
+}
+
+.dragon-awards li {
+  display: grid;
+  grid-template-columns: minmax(0, 26ch) minmax(0, 1fr);
+  gap: var(--space-lg);
+  align-items: baseline;
+  padding: var(--space-md) 0;
+  border-top: 1px solid var(--rule);
+}
+
+.dragon-award-name {
+  font-family: var(--display);
+  font-size: 1.2rem;
+  color: var(--ink);
+}
+
+.dragon-award-detail {
+  font-size: 0.9rem;
+  color: var(--ink-faint);
+}
+
+@media (max-width: 640px) {
+  .dragon-awards li {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-2xs);
+  }
+}
+
+.dragon-territories {
+  margin-top: var(--space-2xl);
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--jade);
+}
+
+/* ---------- the two quotes ---------- */
+
+.dragon-quote {
+  margin: var(--space-4xl) 0 0;
+  max-width: 46ch;
+  padding-left: var(--space-xl);
+  border-left: 2px solid var(--jade-pale);
+}
+
+.dragon-quote p {
+  font-family: var(--display);
+  font-style: italic;
+  font-size: clamp(1.3rem, 2.4vw, 1.95rem);
+  line-height: 1.4;
+  color: var(--ink);
+}
+
+.dragon-quote cite {
+  display: block;
+  margin-top: var(--space-md);
+  font-style: normal;
+  font-size: 10px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--cinnabar);
+}
+
+.dragon-quote--maker {
+  margin-top: var(--space-2xl);
+  border-left-color: var(--rule);
+}
+
+.dragon-quote--maker p {
+  font-family: var(--text);
+  font-style: normal;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--ink-soft);
+}
+
+/* A photograph given the full measure rather than a column. */
+.dragon-photo--plate {
+  margin-top: var(--space-4xl);
+  width: 100%;
+}
+
+.dragon-photo--plate img {
+  width: 100%;
+}
+
+/* ---------- who books him ---------- */
+
+.dragon .wall {
+  margin-top: var(--space-md);
+}
+
+.dragon .wall-eyebrow {
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--jade);
+}
+
+.dragon .wall-lede {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(1.6rem, 3.4vw, 2.7rem);
+  line-height: 1.14;
+  color: var(--ink);
+  max-width: 30ch;
+}
+
+.dragon .wall-list {
+  margin-top: var(--space-xl);
+  color: var(--ink-soft);
+  --wall-height: 30px;
+}
+
+.dragon .wall-item {
+  opacity: 0.68;
+  transition: opacity 600ms var(--ease-out);
+}
+
+.dragon .wall-item:hover {
+  opacity: 1;
+}
+
+/* ---------- his showreel ---------- */
+
+.dragon .showreel {
+  margin-top: var(--space-2xl);
+}
+
+.dragon .showreel-frame {
+  border: 1px solid var(--rule);
+}
+
+.dragon .showreel-play {
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--paper);
+  background: color-mix(in oklab, var(--ink) 42%, transparent);
+  transition: background 600ms var(--ease-out);
+}
+
+.dragon .showreel-open:hover .showreel-play {
+  background: color-mix(in oklab, var(--ink) 24%, transparent);
+}
+
+/* The chrome sits over whatever is scrolling past. A short gradient of the
+   concept's own ground keeps it legible without a bar or a border. */
+.dragon .chrome::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: calc(100% + var(--space-2xl));
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    var(--paper) 0%,
+    color-mix(in oklab, var(--paper) 74%, transparent) 54%,
+    transparent 100%
+  );
+}

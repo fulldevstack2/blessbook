@@ -180,18 +180,35 @@ export interface Word {
   readonly what: string;
 }
 
-/** Clients, not performers — this is the one place other voices belong. */
+/**
+ * Clients, not performers — this is the one place other voices belong. All four
+ * are published, attributed testimonials from his own site, which is why they
+ * are named. The two anonymous commission quotes that used to sit here came
+ * from the previous project and were never verified, so they are gone.
+ */
 export const words: readonly Word[] = [
   {
-    text: "Owned the master in a week. Sounded like us, not a library bed.",
-    who: "Brand film lead",
-    when: "Kuala Lumpur, June 2026",
-    what: "Original music track",
+    text: "You are the pride, not only to the university, but to the nation — a shining ambassador to the music industry.",
+    who: "Dato' Dr Peter Ng",
+    when: "Chairman, UCSI Group",
+    what: "On his record",
   },
   {
-    text: "Wedding theme arrived early. Emotional without being syrupy.",
-    who: "Mei & Arun",
-    when: "February 2026",
-    what: "Full original song",
+    text: "Never fails to amaze me with his unique blend and skill of putting his music abilities together.",
+    who: "Winnie Loo",
+    when: "Founder, A Cut Above",
+    what: "On his playing",
+  },
+  {
+    text: "The new generation of artist management, specialising in music-inspired performers, led by the ever talented Dennis Lau.",
+    who: "Soren Ravn",
+    when: "Managing Director, Carlsberg Malaysia",
+    what: "On working with him",
+  },
+  {
+    text: "A great one-stop, worry-free solution, with a myriad of talents to suit the right mood.",
+    who: "Yuri Wong",
+    when: "Founder, The Factory Music Studio",
+    what: "On the work",
   },
 ];

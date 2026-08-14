@@ -1,14 +1,15 @@
 import { useRef } from "react";
+import { ClientWall } from "../../components/ClientWall";
 import { ConceptChrome, ConceptSwitch } from "../../components/ConceptChrome";
 import { Films } from "../../components/Films";
+import { Listen } from "../../components/Listen";
 import { Reel } from "../../components/Reel";
-import { Stave } from "../../components/Stave";
+import { Showreel } from "../../components/Showreel";
 import { StringRow } from "../../components/StringRow";
 import { Tally } from "../../components/Tally";
 import {
   commission,
   promise,
-  proof,
   rights,
   service,
   steps,
@@ -16,9 +17,15 @@ import {
 } from "../../content/commission";
 import {
   artist,
+  awards,
+  calling,
+  commissionStory,
   credentials,
+  halls,
   milestones,
-  tallies,
+  record,
+  teachers,
+  territories,
   training,
   violins,
 } from "../../content/dennis";
@@ -35,41 +42,47 @@ import "./chosen.css";
 
 const concept = conceptById("chosen");
 
+/**
+ * Couture numbers its looks, so this concept numbers its plates. The four cuts
+ * are the same argument the other two make — the man, the instrument, the
+ * record, and only then the commission — in the register of a lookbook.
+ */
 const cuts = [
   {
-    ref: "Ref. 00 — Subject",
-    line: promise.headline,
-    sub: "A song that exists because you asked for it, and for no other reason.",
-  },
-  {
-    ref: "Ref. 01 — Input",
-    line: promise.request,
-    sub: "One paragraph in. One song out. The brief is the prompt, and the prompt is the whole of it.",
-  },
-  {
-    ref: "Ref. 02 — Transfer",
-    line: promise.ownership,
-    sub: "Master and composition transfer to your name on signature. Retained rights: none.",
-  },
-  {
-    ref: "Ref. 03 — Operator",
+    plate: "Plate I",
+    label: "The man",
     line: artist.name,
-    sub: artist.oneLine,
+    sub: artist.showman,
+  },
+  {
+    plate: "Plate II",
+    label: "The instrument",
+    line: "Drawn by him. Built for him. Nobody else has one.",
+    sub: "A six-string violin in carbon fibre and 24K gold, made in Donegal over a year.",
+  },
+  {
+    plate: "Plate III",
+    label: "The record",
+    line: "Ten thousand nights. A hundred and sixty-eight thousand people.",
+    sub: "Five continents, three albums, two sold-out halls of three thousand seats.",
+  },
+  {
+    plate: "Plate IV",
+    label: "The commission",
+    line: "One song. One person. Chosen.",
+    sub: "Couture is selection. So is this.",
   },
 ];
 
-function Head({ reference, title }: { reference: string; title: string }) {
+/** A garment-label tag: the section's number and what it holds. */
+function Tag({ number, label }: { number: string; label: string }) {
   return (
-    <div className="chosen-head" data-reveal>
-      <span className="chosen-head-ref">{reference}</span>
-      <span>{title}</span>
-    </div>
+    <p className="chosen-tag" data-reveal>
+      <span className="chosen-tag-number">{number}</span>
+      <span className="chosen-tag-rule" aria-hidden />
+      <span className="chosen-tag-label">{label}</span>
+    </p>
   );
-}
-
-/** Catalogue rows are numbered against their section, like a real parts list. */
-function catalogueRef(position: number): string {
-  return `04.${String(position + 1).padStart(2, "0")}`;
 }
 
 export function ChosenPage() {
@@ -91,33 +104,54 @@ export function ChosenPage() {
             <SceneCanvas
               factory={createChosenScene}
               progress={progress}
-              label="A flat measured drawing that lifts off the sheet and assembles into the teardrop body of a carbon-fibre violin, scanned by a moving line of light."
+              label="Cream silk with a broad sheen travelling across the weave, gathering as you scroll into a single pearl with an iridescent rim."
             />
-            <div className="chosen-grid" />
 
             <div className="chosen-hero">
-              <div className="chosen-hero-top">
-                <span>Blesspoke</span>
-                <span>Kuala Lumpur · {concept.instrument.year}</span>
-              </div>
-
               <div className="chosen-cuts">
                 {cuts.map((cut, index) => (
-                  <div key={cut.ref} className="chosen-cut" data-active={stage === index}>
-                    <span className="chosen-index">{cut.ref}</span>
+                  <div key={cut.plate} className="chosen-cut" data-active={stage === index}>
+                    <p className="chosen-plate-mark">
+                      <span>{cut.plate}</span>
+                      <span className="chosen-plate-rule" aria-hidden />
+                      <span>{cut.label}</span>
+                    </p>
                     {index === 0 ? (
-                      <h1>{cut.line}</h1>
+                      <h1>
+                        {cut.line}
+                        <span className="chosen-hero-cn" lang="zh">
+                          {artist.chineseName}
+                        </span>
+                      </h1>
                     ) : (
                       <p className="chosen-line">{cut.line}</p>
                     )}
                     <p className="chosen-sub">{cut.sub}</p>
+                    {index === 0 ? (
+                      <p className="chosen-hero-roles">{artist.roles}</p>
+                    ) : null}
                   </div>
                 ))}
               </div>
 
+              {/* The figure stands on the silk: a cut-out on cream, which is how a
+                  fashion house photographs a garment and how this concept
+                  photographs him. */}
+              <img
+                className="chosen-hero-figure"
+                src={photos.cutout.src}
+                width={photos.cutout.width}
+                height={photos.cutout.height}
+                alt={photos.cutout.alt}
+              />
+
+              <div className="chosen-hero-listen">
+                <Listen />
+              </div>
+
               <div className="chosen-hero-foot">
-                <span>Assembly {(stage + 1) * 25}%</span>
-                <span className="chosen-readout" aria-hidden />
+                <span>{artist.city}</span>
+                <span className="chosen-progress" aria-hidden />
                 <span>Scroll</span>
               </div>
             </div>
@@ -126,20 +160,39 @@ export function ChosenPage() {
       </ScrollStage>
 
       <main id="main" className="chosen-body" ref={main}>
-        <section className="chosen-section">
-          <Head reference="§01" title="Subject" />
-          <h2 className="chosen-h2" data-reveal>
-            {artist.name}
-          </h2>
-          <p className="chosen-lede" data-reveal>
-            {artist.paragraph}
+        {/* ---------------- his own line, as the manifesto ---------------- */}
+        <section className="chosen-section chosen-section--creed">
+          <p className="chosen-creed" data-reveal>
+            {artist.chosen}
           </p>
-          <p className="chosen-service" data-reveal>
-            {service.lede}
+          <p className="chosen-creed-note" data-reveal>
+            His words, not ours. This concept is named after them — and after the
+            third instrument he had built, which carries the same name.
           </p>
+        </section>
 
-          <div className="chosen-cols">
-            <div>
+        {/* ---------------- who he is ---------------- */}
+        <section className="chosen-section">
+          <Tag number="I" label="The man" />
+
+          <div className="chosen-spread">
+            <div className="chosen-column">
+              <h2 className="chosen-h2" data-reveal>
+                {artist.name}
+                <span className="chosen-h2-cn" lang="zh">
+                  {artist.chineseName}
+                </span>
+              </h2>
+              <p className="chosen-meta" data-reveal>
+                {artist.roles}
+              </p>
+              <p className="chosen-meta" data-reveal>
+                {artist.city} · born {artist.born}
+              </p>
+              <p className="chosen-lede" data-reveal>
+                {artist.paragraph}
+              </p>
+
               <dl className="chosen-spec">
                 {credentials.map((item) => (
                   <div className="chosen-spec-row" key={item.label} data-reveal>
@@ -147,20 +200,20 @@ export function ChosenPage() {
                     <dd>{item.value}</dd>
                   </div>
                 ))}
-                {training.map((line, index) => (
-                  <div className="chosen-spec-row" key={line} data-reveal>
-                    <dt>Qualification {index + 1}</dt>
-                    <dd>{line}</dd>
-                  </div>
-                ))}
+                <div className="chosen-spec-row" data-reveal>
+                  <dt>Taught piano by</dt>
+                  <dd>{teachers.piano}</dd>
+                </div>
+                <div className="chosen-spec-row" data-reveal>
+                  <dt>Taught violin by</dt>
+                  <dd>{teachers.violin}</dd>
+                </div>
               </dl>
-              <StringRow
-                caption="Open strings — pluck to hear the instrument"
-                readout="frequency"
-              />
+
+              <StringRow caption="Four strings. Pluck one." />
             </div>
 
-            <figure className="chosen-photo chosen-photo--tall" data-reveal="wipe" data-parallax>
+            <figure className="chosen-figure" data-reveal="wipe" data-parallax>
               <img
                 src={photos.seated.src}
                 width={photos.seated.width}
@@ -168,139 +221,203 @@ export function ChosenPage() {
                 alt={photos.seated.alt}
                 loading="lazy"
               />
-              <figcaption className="chosen-caption">
-                <span>{artist.chineseName}</span>
+              <figcaption>
+                <span className="chosen-caption-label">Plate I</span>
                 <span>{photos.seated.credit}</span>
               </figcaption>
             </figure>
           </div>
-        </section>
 
-        <section className="chosen-section">
-          <Head reference="§02" title="Record" />
-          <dl className="chosen-spec" style={{ marginTop: "var(--space-xl)" }}>
-            {milestones.map((item) => (
-              <div className="chosen-spec-row" key={item.year} data-reveal>
-                <dt>{item.year}</dt>
-                <dd>
-                  {item.title} — {item.detail}
-                </dd>
-              </div>
-            ))}
-          </dl>
-          <dl className="chosen-figures">
-            {tallies.map((item) => (
-              <div className="chosen-figure" key={item.label} data-reveal>
-                <dt>{item.label}</dt>
-                <dd>
-                  <Tally value={item.value} />
-                </dd>
-              </div>
-            ))}
-          </dl>
-        </section>
-
-        <section className="chosen-section">
-          <Head reference="§03" title="Instruments" />
-          <h2 className="chosen-h2" data-reveal>
-            Three built to his drawings
-          </h2>
-          <p className="chosen-lede" data-reveal>
-            Alistair Hay of Emerald Guitars cut all three from Dennis's own sketches.
-            This design is named for the last of them — the carbon teardrop, light
-            enough to travel in a whisky case.
-          </p>
-
-          <div className="chosen-cols">
-            <dl className="chosen-spec">
-              {violins.map((instrument) => (
-                <div className="chosen-spec-row" key={instrument.id} data-reveal>
-                  <dt>
-                    {instrument.name} · {instrument.year}
-                  </dt>
-                  <dd>
-                    {instrument.material}. {instrument.note}
-                  </dd>
-                </div>
-              ))}
-            </dl>
-
-            <figure className="chosen-photo chosen-photo--wide" data-reveal="wipe" data-parallax>
-              <img
-                src={photos.violin.src}
-                width={photos.violin.width}
-                height={photos.violin.height}
-                alt={photos.violin.alt}
-                loading="lazy"
-              />
-              <figcaption className="chosen-caption">
-                <span>The Phoenix · 2016</span>
-                <span>{photos.violin.credit}</span>
-              </figcaption>
-            </figure>
-          </div>
-        </section>
-
-        <section className="chosen-section chosen-section--reel">
-          <Head reference="§04" title="Catalogue" />
-          <h2 className="chosen-h2" data-reveal>
-            Ten commissions, on file
-          </h2>
-          <p className="chosen-lede" data-reveal>
-            A game trailer, a car launch, a boy's third birthday, a Mandopop
-            single. Ten briefs with nothing in common but the person who answered
-            them.
-          </p>
-          <Reel caption="Select a row to audition it" index={catalogueRef} />
-        </section>
-
-        <section className="chosen-section">
-          <Head reference="§05" title="Process" />
-          <h2 className="chosen-h2" data-reveal>
-            {promise.request}
-          </h2>
-          <Stave tempo="Adagio · quarter note = 58" />
-          <ol className="chosen-steps">
-            {steps.map((step, index) => (
-              <li className="chosen-step" key={step.index} data-reveal>
-                <span className="chosen-step-ref">Stage {String(index + 1).padStart(2, "0")}</span>
-                <div>
-                  <h3 className="chosen-step-title">
-                    {step.title}
-                    <span className="chosen-step-marking">{step.marking}</span>
-                  </h3>
-                  <p className="chosen-step-body">{step.body}</p>
-                </div>
+          <ol className="chosen-list">
+            {training.map((line) => (
+              <li key={line} data-reveal>
+                {line}
               </li>
             ))}
           </ol>
 
+          <ul className="chosen-list chosen-list--plain">
+            {halls.map((hall) => (
+              <li key={hall} data-reveal>
+                {hall}
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        {/* ---------------- the record ---------------- */}
+        <section className="chosen-section">
+          <Tag number="II" label="The record" />
+
           <dl className="chosen-figures">
-            {proof.map((item) => (
-              <div className="chosen-figure" key={item.label} data-reveal>
-                <dt>{item.label}</dt>
+            {record.map((item) => (
+              <div className="chosen-figures-item" key={item.label} data-reveal>
                 <dd>
                   <Tally value={item.value} />
                 </dd>
+                <dt>{item.label}</dt>
               </div>
             ))}
           </dl>
+
+          <ul className="chosen-timeline">
+            {milestones.map((item) => (
+              <li key={item.year} data-reveal>
+                <span className="chosen-timeline-year">{item.year}</span>
+                <span className="chosen-timeline-title">{item.title}</span>
+                <span className="chosen-timeline-detail">{item.detail}</span>
+              </li>
+            ))}
+          </ul>
+
+          <dl className="chosen-spec chosen-spec--awards">
+            {awards.map((award) => (
+              <div className="chosen-spec-row" key={award.name} data-reveal>
+                <dt>{award.name}</dt>
+                <dd>{award.detail}</dd>
+              </div>
+            ))}
+          </dl>
+
+          <p className="chosen-territories" data-reveal>
+            {territories.join(" · ")}
+          </p>
         </section>
 
+        {/* ---------------- the instruments ---------------- */}
         <section className="chosen-section">
-          <Head reference="§06" title="Documentation" />
-          <Films caption="Three deliveries, filmed in the room" />
-        </section>
+          <Tag number="III" label="Three instruments" />
 
-        <section className="chosen-section">
-          <Head reference="§07" title="Transfer" />
           <h2 className="chosen-h2" data-reveal>
-            {promise.ownership}
+            {commissionStory.lede}
           </h2>
           <p className="chosen-lede" data-reveal>
-            {service.against}
+            {commissionStory.body}
           </p>
-          <dl className="chosen-spec" style={{ marginTop: "var(--space-xl)" }}>
+
+          <figure className="chosen-plate-figure" data-reveal="wipe">
+            <img
+              src={photos.violin.src}
+              width={photos.violin.width}
+              height={photos.violin.height}
+              alt={photos.violin.alt}
+              loading="lazy"
+            />
+            <figcaption>
+              <span className="chosen-caption-label">Plate II</span>
+              <span>{photos.violin.credit}</span>
+            </figcaption>
+          </figure>
+
+          <ul className="chosen-instruments">
+            {violins.map((violin) => (
+              <li key={violin.id} data-reveal>
+                <span className="chosen-instrument-name">{violin.name}</span>
+                <span className="chosen-instrument-year">{violin.year}</span>
+                <span className="chosen-instrument-material">{violin.material}</span>
+                <span className="chosen-instrument-note">{violin.note}</span>
+              </li>
+            ))}
+          </ul>
+
+          <blockquote className="chosen-quote" data-reveal>
+            <p>{commissionStory.quote}</p>
+            <cite>{commissionStory.quoteWho}</cite>
+          </blockquote>
+
+          <blockquote className="chosen-quote chosen-quote--maker" data-reveal>
+            <p>{commissionStory.makerQuote}</p>
+            <cite>{commissionStory.makerWho}</cite>
+          </blockquote>
+        </section>
+
+        {/* ---------------- hear him ---------------- */}
+        <section className="chosen-section chosen-section--reel">
+          <Tag number="IV" label="Hear him" />
+
+          <h2 className="chosen-h2" data-reveal>
+            A minute in a room with him
+          </h2>
+          <Showreel caption="His own reel, in his own cut." />
+
+          <h2 className="chosen-h2" data-reveal style={{ marginTop: "var(--space-5xl)" }}>
+            And this is what he writes when someone asks
+          </h2>
+          <Reel caption="Press a title to hear it" index={(position) => `No. ${position + 1}`} />
+        </section>
+
+        {/* ---------------- in the room ---------------- */}
+        <section className="chosen-section">
+          <Tag number="V" label="In the room" />
+          <Films caption="Three nights the music was written for" />
+        </section>
+
+        {/* ---------------- who books him ---------------- */}
+        <section className="chosen-section">
+          <Tag number="VI" label="Titans of industry" />
+          <ClientWall />
+
+          <ul className="chosen-words">
+            {words.map((word) => (
+              <li key={word.text} data-reveal>
+                <blockquote>{word.text}</blockquote>
+                <p className="chosen-word-who">
+                  {word.who} · {word.when}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        {/* ---------------- the calling: the reason for the name ---------------- */}
+        <section className="chosen-section chosen-section--calling">
+          <Tag number="VII" label="Why he keeps going" />
+
+          <h2 className="chosen-h2 chosen-h2--large" data-reveal>
+            {calling.lede}
+          </h2>
+          <p className="chosen-lede" data-reveal>
+            {calling.body}
+          </p>
+
+          <figure className="chosen-plate-figure chosen-plate-figure--mono" data-reveal="wipe">
+            <img
+              src={photos.silhouette.src}
+              width={photos.silhouette.width}
+              height={photos.silhouette.height}
+              alt={photos.silhouette.alt}
+              loading="lazy"
+            />
+            <figcaption>
+              <span className="chosen-caption-label">Plate III</span>
+              <span>{photos.silhouette.credit}</span>
+            </figcaption>
+          </figure>
+        </section>
+
+        {/* ---------------- and only now, the commission ---------------- */}
+        <section className="chosen-section">
+          <Tag number="VIII" label="Commission" />
+
+          <h2 className="chosen-h2" data-reveal>
+            {promise.headline}
+          </h2>
+          <p className="chosen-lede" data-reveal>
+            {service.lede}
+          </p>
+
+          <ol className="chosen-steps">
+            {steps.map((step) => (
+              <li key={step.index} data-reveal>
+                <span className="chosen-step-index">{step.index}</span>
+                <span className="chosen-step-title">{step.title}</span>
+                <span className="chosen-step-marking">{step.marking}</span>
+                <p className="chosen-step-body">{step.body}</p>
+              </li>
+            ))}
+          </ol>
+
+          <dl className="chosen-spec chosen-spec--rights">
             {rights.map((right) => (
               <div className="chosen-spec-row" key={right.term} data-reveal>
                 <dt>{right.term}</dt>
@@ -309,27 +426,9 @@ export function ChosenPage() {
             ))}
           </dl>
 
-          <ul className="chosen-words">
-            {words.map((word) => (
-              <li key={word.text} data-reveal>
-                <blockquote className="chosen-word">{word.text}</blockquote>
-                <p className="chosen-word-who">
-                  {word.who} · {word.what} · {word.when}
-                </p>
-              </li>
-            ))}
-          </ul>
-        </section>
-
-        <section className="chosen-section">
-          <Head reference="§08" title="Order" />
-          <h2 className="chosen-h2" data-reveal>
-            {promise.headline}
-          </h2>
-
           <ul className="chosen-tiers">
             {tiers.map((tier) => (
-              <li className="chosen-tier" key={tier.id} data-reveal>
+              <li key={tier.id} data-reveal>
                 <p className="chosen-tier-price">
                   <Tally value={tier.price} />
                 </p>
@@ -345,16 +444,16 @@ export function ChosenPage() {
             ))}
           </ul>
 
-          <dl className="chosen-figures">
-            <div className="chosen-figure" data-reveal>
+          <dl className="chosen-spec">
+            <div className="chosen-spec-row" data-reveal>
               <dt>Delivery</dt>
               <dd>{commission.turnaround}</dd>
             </div>
-            <div className="chosen-figure" data-reveal>
+            <div className="chosen-spec-row" data-reveal>
               <dt>Revisions</dt>
               <dd>{commission.revisions}</dd>
             </div>
-            <div className="chosen-figure" data-reveal>
+            <div className="chosen-spec-row" data-reveal>
               <dt>Availability</dt>
               <dd>{commission.slots}</dd>
             </div>

@@ -6,6 +6,12 @@ import type { SceneContext, SceneHandle } from "../../lib/SceneCanvas";
  * feather → gold dust → string. Each vertex carries all three of its positions
  * and the morph happens in the vertex shader, so scrolling costs one uniform
  * write rather than a few thousand CPU writes per frame.
+ *
+ * The string is not decoration. When Dennis is playing — the hero's Listen
+ * control, the showreel, any track in the reel — `uLevel` carries his signal
+ * into the shader and it is his bow that drives the standing wave and lifts the
+ * gold. Silent, it rests. That is the whole point of the image: this is a
+ * violin string, and he is the one moving it.
  */
 
 const SHAFT_SAMPLES = 130;
@@ -20,6 +26,7 @@ const vertexShader = /* glsl */ `
 
   uniform float uProgress;
   uniform float uTime;
+  uniform float uLevel;
 
   varying float vShade;
   varying float vFade;
@@ -36,17 +43,26 @@ const vertexShader = /* glsl */ `
 
     vec3 pos = mix(position, aDust + drift, toDust);
 
+    // The feather breathes with the music before it has come apart, so the hero
+    // answers the first note rather than only the scroll.
+    float breath = uLevel * 0.11 * (0.55 + 0.45 * sin(uTime * 7.4 + aSeed * 6.283));
+    pos += normalize(pos + vec3(0.0001)) * breath;
+
     // The string is taut: a standing wave with nodes at both ends.
     vec3 taut = aString;
     float node = 1.0 - abs(taut.y) / ${SHAFT_HALF.toFixed(2)};
-    taut.x += sin(uTime * 3.2 + taut.y * 3.4) * 0.075 * node;
-    taut.z += cos(uTime * 2.6 + taut.y * 2.8) * 0.03 * node;
+    // Bowed, not idling: amplitude comes from how hard he is playing.
+    float bow = 0.075 + uLevel * 0.46;
+    taut.x += sin(uTime * 3.2 + taut.y * 3.4) * bow * node;
+    taut.z += cos(uTime * 2.6 + taut.y * 2.8) * bow * 0.4 * node;
 
     pos = mix(pos, taut, toString);
 
     vShade = aShade;
     // Dust reads brighter in the middle of the transition, then settles.
-    vFade = 0.42 + 0.58 * (1.0 - abs(uProgress - 0.5) * 1.1);
+    vFade = 0.3 + 0.5 * (1.0 - abs(uProgress - 0.5) * 1.1);
+    // Gold lifts as he plays, and is capped so additive blending cannot blow out.
+    vFade = min(1.0, vFade * (1.0 + uLevel * 0.85));
 
     vec4 mv = modelViewMatrix * vec4(pos, 1.0);
     gl_Position = projectionMatrix * mv;
@@ -82,6 +98,9 @@ export function createPhoenixScene({ canvas, reducedMotion }: SceneContext): Sce
   camera.position.set(0, 0, 5.4);
 
   const group = new THREE.Group();
+  // Left of centre on purpose: the photograph behind this is a man playing, and
+  // the gold belongs beside him rather than across his face.
+  group.position.x = -0.62;
   scene.add(group);
 
   const pairs = SHAFT_SAMPLES * 2 * BARB_SEGMENTS;
@@ -188,6 +207,7 @@ export function createPhoenixScene({ canvas, reducedMotion }: SceneContext): Sce
     uniforms: {
       uProgress: { value: 0 },
       uTime: { value: 0 },
+      uLevel: { value: 0 },
       uDeep: { value: new THREE.Color("#6d4a12") },
       uBright: { value: new THREE.Color("#f2cd7a") },
     },
@@ -197,10 +217,14 @@ export function createPhoenixScene({ canvas, reducedMotion }: SceneContext): Sce
   group.add(plume);
 
   return {
-    render(progress, elapsed) {
-      const time = reducedMotion ? 0 : elapsed;
+    render(progress, elapsed, level) {
+      // Under reduced motion the scene holds still — unless the listener has
+      // started the music, which is their own gesture and is the one thing on
+      // this page allowed to move on its own.
+      const time = reducedMotion ? (level > 0.01 ? elapsed : 0) : elapsed;
       material.uniforms.uProgress.value = progress;
       material.uniforms.uTime.value = time;
+      material.uniforms.uLevel.value = level;
 
       group.rotation.y = progress * Math.PI * 1.35 + (reducedMotion ? 0 : time * 0.05);
       group.rotation.z = Math.sin(progress * Math.PI) * 0.12;

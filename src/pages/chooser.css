@@ -270,3 +270,25 @@
   text-transform: uppercase;
   color: var(--paper-faint);
 }
+
+/* The masthead is his name now, not the product's. */
+.chooser-wordmark-cn {
+  display: block;
+  margin-top: var(--space-sm);
+  font-family: var(--mono);
+  font-size: 0.2em;
+  letter-spacing: 0.32em;
+  color: var(--paper-soft);
+}
+
+.chooser-showman {
+  margin-top: var(--space-lg);
+  max-width: 34ch;
+  color: var(--paper-soft);
+}
+
+.chooser-kicker--grid {
+  margin: var(--space-4xl) 0 var(--space-lg);
+  padding-inline: clamp(var(--space-lg), 6vw, var(--space-4xl));
+  color: var(--paper-faint);
+}

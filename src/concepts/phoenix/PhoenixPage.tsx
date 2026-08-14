@@ -1,20 +1,34 @@
 import { useRef } from "react";
+import { ClientWall } from "../../components/ClientWall";
 import { ConceptChrome, ConceptSwitch } from "../../components/ConceptChrome";
 import { Films } from "../../components/Films";
+import { Listen } from "../../components/Listen";
 import { Reel } from "../../components/Reel";
+import { Showreel } from "../../components/Showreel";
 import { Stave } from "../../components/Stave";
 import { StringRow } from "../../components/StringRow";
 import { Tally } from "../../components/Tally";
 import {
   commission,
   promise,
-  proof,
   rights,
   service,
   steps,
   tiers,
 } from "../../content/commission";
-import { artist, credentials, milestones, tallies, training } from "../../content/dennis";
+import {
+  artist,
+  awards,
+  calling,
+  commissionStory,
+  credentials,
+  halls,
+  milestones,
+  record,
+  teachers,
+  territories,
+  training,
+} from "../../content/dennis";
 import { photos } from "../../content/media";
 import { socials, words } from "../../content/work";
 import { SceneCanvas } from "../../lib/SceneCanvas";
@@ -28,26 +42,31 @@ import "./phoenix.css";
 
 const concept = conceptById("phoenix");
 
+/**
+ * The hero's four cuts. They are about Dennis, in his own order of importance:
+ * who he is, the instrument nobody else has, the record behind it, and only then
+ * the quietest thing he does — which is the commission this site sells.
+ */
 const cuts = [
   {
-    mark: "Blesspoke",
-    line: promise.headline,
-    sub: "A song that exists because you asked for it, and for no other reason.",
-  },
-  {
-    mark: "The ask",
-    line: promise.request,
-    sub: "One paragraph from you. No brief templates, no rounds of stakeholder notes.",
-  },
-  {
-    mark: "The deed",
-    line: promise.ownership,
-    sub: "Master and composition transfer to your name. The artist keeps nothing.",
-  },
-  {
-    mark: "One artist, no roster",
+    mark: "Kuala Lumpur",
     line: artist.name,
-    sub: artist.oneLine,
+    sub: artist.showman,
+  },
+  {
+    mark: "The instrument",
+    line: "The first performer anywhere to play a six-string 24K gold violin",
+    sub: "Carved as a bird's wing in Donegal, and waited a year for.",
+  },
+  {
+    mark: "The record",
+    line: "Ten thousand performances. A hundred and sixty-eight thousand people.",
+    sub: "Five continents, three albums, two sold-out nights of three thousand seats each.",
+  },
+  {
+    mark: "And then this",
+    line: "One song, written for one person",
+    sub: "The quietest thing he does. No audience but you.",
   },
 ];
 
@@ -67,6 +86,15 @@ export function PhoenixPage() {
       <ScrollStage vh={420} cuts={cuts.length} className="phoenix-stage">
         {({ stage, progress }) => (
           <>
+            {/* The photograph is the hero. The scene is the gold on top of it,
+                and once the music plays it is his bow that moves the gold. */}
+            <img
+              className="phoenix-hero-plate"
+              src={photos.goldViolin.src}
+              width={photos.goldViolin.width}
+              height={photos.goldViolin.height}
+              alt={photos.goldViolin.alt}
+            />
             <SceneCanvas
               factory={createPhoenixScene}
               progress={progress}
@@ -80,17 +108,29 @@ export function PhoenixPage() {
                   <div key={cut.mark} className="phoenix-cut" data-active={stage === index}>
                     <span className="phoenix-mark">{cut.mark}</span>
                     {index === 0 ? (
-                      <h1>{cut.line}</h1>
+                      <h1>
+                        {cut.line}
+                        <span className="phoenix-hero-cn" lang="zh">
+                          {artist.chineseName}
+                        </span>
+                      </h1>
                     ) : (
                       <p className="phoenix-line">{cut.line}</p>
                     )}
                     <p className="phoenix-sub">{cut.sub}</p>
+                    {index === 0 ? (
+                      <p className="phoenix-hero-roles">{artist.roles}</p>
+                    ) : null}
                   </div>
                 ))}
               </div>
 
+              <div className="phoenix-hero-listen">
+                <Listen />
+              </div>
+
               <div className="phoenix-hero-foot">
-                <span>Kuala Lumpur</span>
+                <span>Photograph · 2016</span>
                 <span className="phoenix-progress" aria-hidden />
                 <span>Scroll</span>
               </div>
@@ -100,6 +140,7 @@ export function PhoenixPage() {
       </ScrollStage>
 
       <main id="main" className="phoenix-body" ref={main}>
+        {/* ---------------- the instrument, and how it came to exist ---------------- */}
         <section className="phoenix-plate">
           <img
             src={photos.violin.src}
@@ -123,7 +164,30 @@ export function PhoenixPage() {
 
         <section className="phoenix-section">
           <p className="phoenix-eyebrow" data-reveal>
-            Movement I — The only artist
+            {commissionStory.eyebrow}
+          </p>
+          <h2 className="phoenix-h2" data-reveal>
+            {commissionStory.lede}
+          </h2>
+          <p className="phoenix-lede" data-reveal style={{ maxWidth: "54ch" }}>
+            {commissionStory.body}
+          </p>
+
+          <blockquote className="phoenix-quote" data-reveal>
+            <p>{commissionStory.quote}</p>
+            <cite>{commissionStory.quoteWho}</cite>
+          </blockquote>
+
+          <blockquote className="phoenix-quote phoenix-quote--maker" data-reveal>
+            <p>{commissionStory.makerQuote}</p>
+            <cite>{commissionStory.makerWho}</cite>
+          </blockquote>
+        </section>
+
+        {/* ---------------- who he is ---------------- */}
+        <section className="phoenix-section">
+          <p className="phoenix-eyebrow" data-reveal>
+            Movement I — Who he is
           </p>
           <div className="phoenix-portrait">
             <figure style={{ margin: 0 }}>
@@ -142,7 +206,9 @@ export function PhoenixPage() {
             <div>
               <p className="phoenix-artist-name" data-reveal>
                 {artist.name}
-                <span className="phoenix-artist-cn">{artist.chineseName}</span>
+                <span className="phoenix-artist-cn" lang="zh">
+                  {artist.chineseName}
+                </span>
               </p>
               <p className="phoenix-roles" data-reveal>
                 {artist.roles} · {artist.city}
@@ -150,9 +216,7 @@ export function PhoenixPage() {
               <p className="phoenix-lede" data-reveal style={{ marginTop: "var(--space-lg)" }}>
                 {artist.paragraph}
               </p>
-              <p className="phoenix-service" data-reveal>
-                {service.lede}
-              </p>
+
               <dl className="phoenix-figures">
                 {credentials.map((item) => (
                   <div className="phoenix-figure" key={item.label} data-reveal>
@@ -161,6 +225,18 @@ export function PhoenixPage() {
                   </div>
                 ))}
               </dl>
+
+              <dl className="phoenix-taught">
+                <div data-reveal>
+                  <dt>Taught piano by</dt>
+                  <dd>{teachers.piano}</dd>
+                </div>
+                <div data-reveal>
+                  <dt>Taught violin by</dt>
+                  <dd>{teachers.violin}</dd>
+                </div>
+              </dl>
+
               <StringRow caption="The four strings everything is written on — pluck one" />
             </div>
           </div>
@@ -172,12 +248,33 @@ export function PhoenixPage() {
               </li>
             ))}
           </ol>
+
+          <ul className="phoenix-halls">
+            {halls.map((hall) => (
+              <li key={hall} data-reveal>
+                {hall}
+              </li>
+            ))}
+          </ul>
         </section>
 
+        {/* ---------------- the record ---------------- */}
         <section className="phoenix-section">
           <p className="phoenix-eyebrow" data-reveal>
             Movement II — The record
           </p>
+
+          <dl className="phoenix-terms phoenix-record-figures">
+            {record.map((item) => (
+              <div className="phoenix-term" key={item.label} data-reveal>
+                <dt>{item.label}</dt>
+                <dd>
+                  <Tally value={item.value} />
+                </dd>
+              </div>
+            ))}
+          </dl>
+
           <div className="phoenix-portrait">
             <div>
               <ul className="phoenix-record" style={{ gridTemplateColumns: "minmax(0,1fr)" }}>
@@ -191,39 +288,48 @@ export function PhoenixPage() {
                   </li>
                 ))}
               </ul>
-              <dl className="phoenix-terms">
-                {tallies.map((item) => (
-                  <div className="phoenix-term" key={item.label} data-reveal>
-                    <dt>{item.label}</dt>
-                    <dd>
-                      <Tally value={item.value} />
-                    </dd>
-                  </div>
-                ))}
-              </dl>
             </div>
 
             <figure style={{ margin: 0 }}>
               <div className="phoenix-photo" data-reveal="wipe" data-parallax>
                 <img
-                  src={photos.seated.src}
-                  width={photos.seated.width}
-                  height={photos.seated.height}
-                  alt={photos.seated.alt}
+                  src={photos.crowd.src}
+                  width={photos.crowd.width}
+                  height={photos.crowd.height}
+                  alt={photos.crowd.alt}
                   loading="lazy"
                 />
               </div>
-              <figcaption className="phoenix-credit">{photos.seated.credit}</figcaption>
+              <figcaption className="phoenix-credit">{photos.crowd.credit}</figcaption>
             </figure>
           </div>
+
+          <ul className="phoenix-awards">
+            {awards.map((award) => (
+              <li key={award.name} data-reveal>
+                <span className="phoenix-award-name">{award.name}</span>
+                <span className="phoenix-award-detail">{award.detail}</span>
+              </li>
+            ))}
+          </ul>
+
+          <p className="phoenix-territories" data-reveal>
+            {territories.join(" · ")}
+          </p>
         </section>
 
+        {/* ---------------- hear him ---------------- */}
         <section className="phoenix-section phoenix-section--reel">
           <p className="phoenix-eyebrow" data-reveal>
-            Movement III — Ten commissions, played
+            Movement III — Hear him
           </p>
           <h2 className="phoenix-h2" data-reveal>
-            Written for someone, once
+            A minute in a room with him
+          </h2>
+          <Showreel caption="His own reel, in his own cut." />
+
+          <h2 className="phoenix-h2" data-reveal style={{ marginTop: "var(--space-5xl)" }}>
+            And this is what he writes when someone asks
           </h2>
           <p className="phoenix-lede" data-reveal style={{ maxWidth: "48ch" }}>
             A game trailer, a car launch, a boy's third birthday, a Mandopop
@@ -232,11 +338,70 @@ export function PhoenixPage() {
           <Reel caption="Press a title to hear it" />
         </section>
 
+        {/* ---------------- in the room ---------------- */}
         <section className="phoenix-section">
           <p className="phoenix-eyebrow" data-reveal>
-            Movement IV — How a commission runs
+            Movement IV — In the room
           </p>
+          <Films caption="Three nights the music was written for" />
+        </section>
+
+        {/* ---------------- who books him ---------------- */}
+        <section className="phoenix-section">
+          <p className="phoenix-eyebrow" data-reveal>
+            Movement V — Titans of industry
+          </p>
+          <ClientWall />
+
+          <ul className="phoenix-words">
+            {words.map((word) => (
+              <li key={word.text} data-reveal>
+                <blockquote className="phoenix-word">{word.text}</blockquote>
+                <p className="phoenix-word-who">
+                  {word.who} · {word.when}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        {/* ---------------- the calling ---------------- */}
+        <section className="phoenix-section phoenix-section--calling">
+          <p className="phoenix-eyebrow" data-reveal>
+            Movement VI — Why he keeps going
+          </p>
+          <h2 className="phoenix-h2 phoenix-calling-lede" data-reveal>
+            {calling.lede}
+          </h2>
+          <p className="phoenix-lede" data-reveal style={{ maxWidth: "52ch" }}>
+            {calling.body}
+          </p>
+          <figure className="phoenix-silhouette" data-reveal="wipe">
+            <img
+              src={photos.silhouette.src}
+              width={photos.silhouette.width}
+              height={photos.silhouette.height}
+              alt={photos.silhouette.alt}
+              loading="lazy"
+            />
+            <figcaption className="phoenix-credit">{photos.silhouette.credit}</figcaption>
+          </figure>
+        </section>
+
+        {/* ---------------- and only now, the commission ---------------- */}
+        <section className="phoenix-section">
+          <p className="phoenix-eyebrow" data-reveal>
+            Coda — Commission one
+          </p>
+          <h2 className="phoenix-h2" data-reveal>
+            {promise.headline}
+          </h2>
+          <p className="phoenix-lede" data-reveal style={{ maxWidth: "52ch" }}>
+            {service.lede}
+          </p>
+
           <Stave tempo="Adagio · quarter note = 58" />
+
           <ol className="phoenix-steps" style={{ marginTop: "var(--space-4xl)" }}>
             {steps.map((step) => (
               <li className="phoenix-step" key={step.index} data-reveal>
@@ -252,35 +417,6 @@ export function PhoenixPage() {
             ))}
           </ol>
 
-          <dl className="phoenix-terms phoenix-proof">
-            {proof.map((item) => (
-              <div className="phoenix-term" key={item.label} data-reveal>
-                <dt>{item.label}</dt>
-                <dd>
-                  <Tally value={item.value} />
-                </dd>
-              </div>
-            ))}
-          </dl>
-        </section>
-
-        <section className="phoenix-section">
-          <p className="phoenix-eyebrow" data-reveal>
-            Movement V — In the room
-          </p>
-          <Films caption="Three nights the music was written for" />
-        </section>
-
-        <section className="phoenix-section">
-          <p className="phoenix-eyebrow" data-reveal>
-            Movement VI — What you actually own
-          </p>
-          <h2 className="phoenix-h2" data-reveal>
-            {promise.ownership}
-          </h2>
-          <p className="phoenix-lede" data-reveal style={{ maxWidth: "52ch" }}>
-            {service.against}
-          </p>
           <div className="phoenix-deed" data-reveal>
             <div className="phoenix-deed-head">
               <p className="phoenix-deed-title">Deed of transfer</p>
@@ -295,26 +431,6 @@ export function PhoenixPage() {
               ))}
             </dl>
           </div>
-
-          <ul className="phoenix-words">
-            {words.map((word) => (
-              <li key={word.text} data-reveal>
-                <blockquote className="phoenix-word">{word.text}</blockquote>
-                <p className="phoenix-word-who">
-                  {word.who} · {word.what} · {word.when}
-                </p>
-              </li>
-            ))}
-          </ul>
-        </section>
-
-        <section className="phoenix-section">
-          <p className="phoenix-eyebrow" data-reveal>
-            Coda — Commission
-          </p>
-          <h2 className="phoenix-h2" data-reveal>
-            {promise.headline}
-          </h2>
 
           <ul className="phoenix-tiers">
             {tiers.map((tier) => (

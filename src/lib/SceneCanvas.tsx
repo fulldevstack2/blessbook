@@ -1,9 +1,14 @@
 import { useEffect, useRef, type RefObject } from "react";
+import { level as audioLevel, sounding } from "./listening";
 import { prefersReducedMotion } from "./prefersReducedMotion";
 
 export interface SceneHandle {
-  /** Called once per frame. `progress` is 0 → 1 scroll, `elapsed` is seconds. */
-  render(progress: number, elapsed: number): void;
+  /**
+   * Called once per frame. `progress` is 0 → 1 scroll, `elapsed` is seconds, and
+   * `level` is how loudly Dennis is playing right now, 0 → 1 — scenes that want
+   * to be driven by the music read that instead of inventing their own motion.
+   */
+  render(progress: number, elapsed: number, level: number): void;
   resize(width: number, height: number, dpr: number): void;
   dispose(): void;
 }
@@ -75,11 +80,14 @@ export function SceneCanvas({ factory, progress, label, className }: SceneCanvas
       if (!visible) return;
 
       const p = progress.current;
-      // With reduced motion there is nothing to animate between scroll events.
-      if (reducedMotion && Math.abs(p - last) < 0.0005) return;
+      const music = audioLevel();
+      // With reduced motion there is nothing to animate between scroll events —
+      // unless music is playing, which is direct manipulation too: the listener
+      // asked for it, and it is the sound that is moving the picture.
+      if (reducedMotion && Math.abs(p - last) < 0.0005 && !sounding()) return;
       last = p;
 
-      handle.render(p, (now - start) / 1000);
+      handle.render(p, (now - start) / 1000, music);
     };
     raf = requestAnimationFrame(loop);
 

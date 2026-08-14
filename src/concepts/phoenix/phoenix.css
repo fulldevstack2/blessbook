@@ -96,12 +96,29 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: radial-gradient(
-    68% 58% at 50% 46%,
-    transparent 0%,
-    color-mix(in oklab, var(--lacquer) 82%, transparent) 78%,
-    var(--lacquer) 100%
-  );
+  /* Vignette, plus two scrims: one down the side the display type sits on and
+     one up from the floor, so the photograph can be brighter than legibility
+     would otherwise allow. All of it below the hero, which is where a scrim
+     belongs — over the picture, under the words. */
+  background:
+    linear-gradient(
+      100deg,
+      var(--lacquer) 0%,
+      color-mix(in oklab, var(--lacquer) 76%, transparent) 24%,
+      transparent 56%
+    ),
+    linear-gradient(
+      0deg,
+      color-mix(in oklab, var(--lacquer) 90%, transparent) 0%,
+      color-mix(in oklab, var(--lacquer) 44%, transparent) 20%,
+      transparent 40%
+    ),
+    radial-gradient(
+      68% 58% at 50% 46%,
+      transparent 0%,
+      color-mix(in oklab, var(--lacquer) 82%, transparent) 78%,
+      var(--lacquer) 100%
+    );
 }
 
 .phoenix-frame {
@@ -1247,4 +1264,326 @@
 .phoenix-photo[data-parallax] img {
   transform: scale(1.12) translateY(calc(var(--shift, 0) * -3%));
   will-change: transform;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   Dennis first.
+   Everything below serves the same reordering: the man, the instrument, the
+   record, the rooms he plays — and the commission last, as a coda.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+/* ---------- the hero is a photograph of him ---------- */
+
+.phoenix-hero-plate {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 26%;
+  /* The photograph is the ground the gold sits on, so it is pushed down in
+     contrast and pulled toward lacquer. The display type stays the loudest
+     thing in the frame. */
+  filter: brightness(0.62) saturate(0.68) contrast(1.04);
+  transform: scale(1.06) translateY(calc(var(--p, 0) * -3%));
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .phoenix-hero-plate {
+    transform: scale(1.06);
+  }
+}
+
+/* His name is the largest thing on the site. The other cuts step down, because
+   they are claims about him rather than him. */
+.phoenix-cuts {
+  max-width: 30ch;
+}
+
+.phoenix-cut p.phoenix-line {
+  font-size: clamp(1.9rem, 4.6vw, 3.9rem);
+  line-height: 1.04;
+  color: var(--ivory);
+}
+
+.phoenix-hero-cn {
+  display: block;
+  margin-top: var(--space-md);
+  font-size: 0.26em;
+  letter-spacing: 0.24em;
+  color: var(--gold);
+}
+
+.phoenix-hero-roles {
+  margin-top: var(--space-lg);
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--ivory-faint);
+}
+
+.phoenix-hero-listen {
+  align-self: end;
+  margin-bottom: var(--space-xl);
+}
+
+.phoenix .listen-button {
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.phoenix .listen-title {
+  font-family: var(--display);
+  font-size: 1.2rem;
+  color: var(--ivory);
+}
+
+.phoenix .listen-where,
+.phoenix .showreel-caption {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ivory-faint);
+}
+
+.phoenix .listen-rail {
+  color: var(--gold);
+}
+
+/* ---------- the two quotes: his, then his luthier's ---------- */
+
+.phoenix-quote {
+  margin: var(--space-4xl) 0 0;
+  max-width: 46ch;
+  padding-left: var(--space-xl);
+  border-left: 1px solid color-mix(in oklab, var(--gold) 42%, transparent);
+}
+
+.phoenix-quote p {
+  font-family: var(--display);
+  font-size: clamp(1.35rem, 2.6vw, 2.1rem);
+  line-height: 1.36;
+  color: var(--ivory);
+}
+
+.phoenix-quote cite {
+  display: block;
+  margin-top: var(--space-md);
+  font-style: normal;
+  font-size: 10px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.phoenix-quote--maker {
+  margin-top: var(--space-2xl);
+  border-left-color: var(--rule);
+}
+
+.phoenix-quote--maker p {
+  font-family: var(--text);
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--ivory-soft);
+}
+
+/* ---------- who taught him, and where he played before this ---------- */
+
+.phoenix-taught {
+  margin-top: var(--space-xl);
+  display: grid;
+  gap: var(--space-md);
+}
+
+.phoenix-taught dt {
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--ivory-faint);
+}
+
+.phoenix-taught dd {
+  margin: var(--space-2xs) 0 0;
+  color: var(--ivory-soft);
+}
+
+.phoenix-halls {
+  list-style: none;
+  margin: var(--space-2xl) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-sm);
+}
+
+.phoenix-halls li {
+  position: relative;
+  padding-left: var(--space-lg);
+  font-size: 0.95rem;
+  color: var(--ivory-soft);
+}
+
+/* A hairline where a bullet would be. Gold is never a fill. */
+.phoenix-halls li::before {
+  content: "";
+  position: absolute;
+  top: 0.85em;
+  left: 0;
+  width: 10px;
+  height: 1px;
+  background: var(--gold);
+}
+
+/* ---------- the record ---------- */
+
+.phoenix-record-figures {
+  margin-bottom: var(--space-4xl);
+}
+
+.phoenix-awards {
+  list-style: none;
+  margin: var(--space-4xl) 0 0;
+  padding: 0;
+}
+
+.phoenix-awards li {
+  display: grid;
+  grid-template-columns: minmax(0, 24ch) minmax(0, 1fr);
+  gap: var(--space-lg);
+  align-items: baseline;
+  padding: var(--space-md) 0;
+  border-top: 1px solid var(--rule);
+}
+
+.phoenix-award-name {
+  font-family: var(--display);
+  font-size: 1.25rem;
+  color: var(--ivory);
+}
+
+.phoenix-award-detail {
+  font-size: 0.9rem;
+  color: var(--ivory-faint);
+}
+
+@media (max-width: 640px) {
+  .phoenix-awards li {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-2xs);
+  }
+}
+
+.phoenix-territories {
+  margin-top: var(--space-2xl);
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--ivory-faint);
+}
+
+/* ---------- his showreel ---------- */
+
+.phoenix .showreel {
+  margin-top: var(--space-2xl);
+}
+
+.phoenix .showreel-frame {
+  border: 1px solid var(--rule);
+}
+
+.phoenix .showreel-play {
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gold);
+  background: color-mix(in oklab, var(--lacquer) 42%, transparent);
+  transition: background 600ms var(--ease-out);
+}
+
+.phoenix .showreel-open:hover .showreel-play {
+  background: color-mix(in oklab, var(--lacquer) 22%, transparent);
+}
+
+/* ---------- who books him ---------- */
+
+.phoenix .wall {
+  margin-top: var(--space-xl);
+}
+
+.phoenix .wall-eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.phoenix .wall-lede {
+  font-family: var(--display);
+  font-size: clamp(1.7rem, 3.8vw, 3rem);
+  font-weight: 400;
+  line-height: 1.1;
+  color: var(--ivory);
+  max-width: 30ch;
+}
+
+.phoenix .wall-list {
+  margin-top: var(--space-xl);
+  color: var(--ivory-soft);
+  --wall-height: 32px;
+}
+
+.phoenix .wall-item {
+  opacity: 0.72;
+  transition: opacity 600ms var(--ease-out);
+}
+
+.phoenix .wall-item:hover {
+  opacity: 1;
+}
+
+/* ---------- the calling ---------- */
+
+.phoenix-section--calling {
+  border-top: 1px solid var(--rule);
+}
+
+.phoenix-calling-lede {
+  max-width: 24ch;
+}
+
+.phoenix-silhouette {
+  margin: var(--space-4xl) 0 0;
+}
+
+.phoenix-silhouette img {
+  width: 100%;
+  border: 1px solid var(--rule);
+  /* Gilded rather than inverted: the one bright frame on the page, pulled to
+     gold so it belongs to this concept instead of interrupting it. */
+  filter: grayscale(1) brightness(0.82) sepia(0.42) saturate(1.8) hue-rotate(-12deg);
+}
+
+.phoenix-silhouette figcaption {
+  margin-top: var(--space-sm);
+}
+
+/* The chrome sits over whatever is scrolling past. A short gradient of the
+   concept's own ground keeps it legible without a bar or a border. */
+.phoenix .chrome::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: calc(100% + var(--space-2xl));
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    var(--lacquer) 0%,
+    color-mix(in oklab, var(--lacquer) 72%, transparent) 52%,
+    transparent 100%
+  );
 }
