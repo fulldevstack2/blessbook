@@ -2156,3 +2156,121 @@ canvas[hidden] + .phoenix-hero-plate {
     font-size: clamp(2.2rem, 16vw, 4rem);
   }
 }
+
+/* ---------- the veil: this concept's way of arriving ---------- */
+
+.veil {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  pointer-events: auto;
+}
+
+.veil[data-ready="true"] {
+  pointer-events: none;
+}
+
+/* Two halves of a dark room, parted by the seam once the page is ready. */
+.veil-half {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50.2%;
+  background: var(--lacquer);
+  transition: transform 1200ms var(--ease-in-out);
+}
+
+.veil-half--left {
+  left: 0;
+}
+
+.veil-half--right {
+  right: 0;
+}
+
+.veil[data-ready="true"] .veil-half--left {
+  transform: translateX(-100%);
+}
+
+.veil[data-ready="true"] .veil-half--right {
+  transform: translateX(100%);
+}
+
+/* One hairline of gold, drawing itself while the fonts land. */
+.veil-seam {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1px;
+  height: 0;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(180deg, transparent, var(--gold), transparent);
+  animation: veil-draw 1100ms var(--ease-out) forwards;
+}
+
+@keyframes veil-draw {
+  to {
+    height: 74vh;
+  }
+}
+
+.veil[data-ready="true"] .veil-seam {
+  opacity: 0;
+  transition: opacity 500ms var(--ease-out);
+}
+
+.veil-name,
+.veil-mark {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  transition:
+    opacity 500ms var(--ease-out),
+    transform 700ms var(--ease-out);
+}
+
+.veil-name {
+  font-family: var(--display);
+  font-size: clamp(2rem, 6vw, 4rem);
+  line-height: 1;
+  color: var(--ivory);
+}
+
+.veil-cn {
+  display: block;
+  margin-top: var(--space-md);
+  font-family: var(--text);
+  font-size: 11px;
+  letter-spacing: 0.5em;
+  color: var(--gold);
+}
+
+.veil-mark {
+  position: absolute;
+  bottom: clamp(var(--space-xl), 6vh, var(--space-3xl));
+  font-size: 9px;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: var(--ivory-faint);
+}
+
+.veil[data-ready="true"] .veil-name,
+.veil[data-ready="true"] .veil-mark {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .veil-seam {
+    animation: none;
+    height: 60vh;
+  }
+
+  .veil-half,
+  .veil-name,
+  .veil-mark {
+    transition-duration: 1ms;
+  }
+}

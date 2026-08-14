@@ -149,17 +149,12 @@ const fragmentShader = /* glsl */ `
     float edge = length(p) + (turbulence - 0.5) * mix(0.55, 1.35, open) * breath;
     float bloom = smoothstep(radius * breath, radius * 0.28, edge);
 
-    /* The wash used to resolve into a pair of f-holes at the end of the scroll.
-       Read cold it looked like a musical icon dropped on the page rather than
-       something the ink had done, so the scroll now closes the way a scroll
-       actually closes: with a seal pressed into the paper. */
-    vec2 sealP = (p - vec2(0.52, -0.34)) * 3.4;
-    float sealBox = max(abs(sealP.x), abs(sealP.y));
-    float sealEdge = smoothstep(0.5, 0.46, sealBox) - smoothstep(0.4, 0.36, sealBox);
-    float sealInk = sealEdge + smoothstep(0.3, 0.26, sealBox) * 0.55;
-    // Pressed by hand, so the impression is uneven.
-    sealInk *= 0.72 + 0.5 * turbulence;
-    float board = clamp(sealInk, 0.0, 1.0) * smoothstep(0.62, 0.96, uProgress);
+    /* The scroll closes on nothing but the ink.
+       It resolved into f-holes once, and into a stamped seal after that; both
+       read as an object dropped onto the page at the last moment — the seal in
+       particular came out as a pale square floating in the paper. A wash should
+       end the way a wash ends, by settling. */
+    float board = 0.0;
 
     /* ---- him, as ink ----
        His silhouette is sampled from the photograph and its edge is pushed
@@ -178,11 +173,10 @@ const fragmentShader = /* glsl */ `
     // Present from the first frame, and deepest once the wash has opened.
     figure *= 0.62 + 0.38 * open;
 
-    float ink = max(max(bloom * (1.0 - gather * 0.72) * 0.92, figure), board);
+    float ink = max(bloom * (1.0 - gather * 0.78) * 0.92, figure);
 
     // Thin ink goes green before it goes black, the way a wash separates.
     vec3 tone = mix(uJade, uInk, smoothstep(0.25, 0.85, ink));
-    tone = mix(tone, uCinnabar, clamp(board, 0.0, 1.0) * 0.9);
     // A trace of cinnabar where the wash is thinnest, like a seal bleeding through.
     tone = mix(tone, uCinnabar, smoothstep(0.06, 0.2, ink) * (1.0 - smoothstep(0.2, 0.42, ink)) * 0.35);
 

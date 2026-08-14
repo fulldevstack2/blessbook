@@ -1,5 +1,7 @@
 import type { CSSProperties } from "react";
 import { clientMask, clients, clientWall } from "../../content/clients";
+import { useReady } from "../../lib/useReady";
+import { photos } from "../../content/media";
 import { artist, record, territories } from "../../content/dennis";
 import type { Photo } from "../../content/media";
 
@@ -119,5 +121,32 @@ export function Plate({ photo, line, tall = false }: { photo: Photo; line?: stri
         <span className="phoenix-credit">{photo.credit}</span>
       </figcaption>
     </figure>
+  );
+}
+
+
+/**
+ * The curtain this concept raises is a seam of gold.
+ *
+ * It is the same mark the hero is built on: one hairline, struck down the middle
+ * of a black room. It grows while the fonts and the hero photograph load, and
+ * when they land it opens sideways and the page is behind it. Nothing spins.
+ */
+export function Loader() {
+  const ready = useReady(photos.press.src);
+
+  return (
+    <div className="veil" data-ready={ready} aria-hidden={ready}>
+      <div className="veil-half veil-half--left" />
+      <div className="veil-half veil-half--right" />
+      <div className="veil-seam" />
+      <p className="veil-name">
+        Dennis Lau
+        <span className="veil-cn" lang="zh">
+          刘凯彦
+        </span>
+      </p>
+      <p className="veil-mark">01 · Phoenix — Gilded</p>
+    </div>
   );
 }

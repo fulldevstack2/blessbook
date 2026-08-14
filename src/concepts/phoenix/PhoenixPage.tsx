@@ -13,7 +13,7 @@ import { StringRow } from "../../components/StringRow";
 import { Tally } from "../../components/Tally";
 import { Volume } from "../../components/Volume";
 import { Words } from "../../components/Words";
-import { Gauges, Index, Plaques, Plate, Struck } from "./parts";
+import { Gauges, Index, Loader, Plaques, Plate, Struck } from "./parts";
 import {
   commission,
   promise,
@@ -109,6 +109,7 @@ export function PhoenixPage() {
       <a className="skip-link" href="#main">
         Skip to content
       </a>
+      <Loader />
       <ConceptChrome concept={concept} />
       <ScoreRail />
       <Grain />
@@ -332,14 +333,14 @@ export function PhoenixPage() {
             <figure style={{ margin: 0 }}>
               <div className="phoenix-photo" data-reveal="wipe" data-parallax>
                 <img
-                  src={photos.crowd.src}
-                  width={photos.crowd.width}
-                  height={photos.crowd.height}
-                  alt={photos.crowd.alt}
+                  src={photos.liveBlue.src}
+                  width={photos.liveBlue.width}
+                  height={photos.liveBlue.height}
+                  alt={photos.liveBlue.alt}
                   loading="lazy"
                 />
               </div>
-              <figcaption className="phoenix-credit">{photos.crowd.credit}</figcaption>
+              <figcaption className="phoenix-credit">{photos.liveBlue.credit}</figcaption>
             </figure>
           </div>
 
@@ -429,16 +430,7 @@ export function PhoenixPage() {
           <p className="phoenix-lede" data-reveal style={{ maxWidth: "52ch" }}>
             {calling.body}
           </p>
-          <figure className="phoenix-silhouette" data-reveal="wipe">
-            <img
-              src={photos.silhouette.src}
-              width={photos.silhouette.width}
-              height={photos.silhouette.height}
-              alt={photos.silhouette.alt}
-              loading="lazy"
-            />
-            <figcaption className="phoenix-credit">{photos.silhouette.credit}</figcaption>
-          </figure>
+          <Plate photo={photos.silhouette} line="He went looking for it himself." tall />
         </section>
 
         {/* ---------------- and only now, the commission ---------------- */}

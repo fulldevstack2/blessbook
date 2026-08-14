@@ -2104,3 +2104,87 @@ canvas:not([hidden]) + .dragon-hero-plate {
     gap: var(--space-2xl);
   }
 }
+
+/* ---------- the sheet: this concept's way of arriving ---------- */
+
+.sheet {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: var(--paper);
+  transition: opacity 700ms var(--ease-out) 500ms;
+}
+
+.sheet[data-ready="true"] {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* A drop of ink, spreading into the paper while the page loads. */
+.sheet-drop {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--ink) 40%, color-mix(in oklab, var(--ink) 30%, transparent) 70%, transparent 100%);
+  transform: translate(-50%, -50%) scale(1);
+  animation: sheet-bleed 1600ms var(--ease-out) forwards;
+}
+
+@keyframes sheet-bleed {
+  to {
+    transform: translate(-50%, -50%) scale(26);
+    opacity: 0.16;
+  }
+}
+
+/* And a stroke that wipes it away when the paper is ready to be written on. */
+.sheet-wipe {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 100%;
+  background: var(--paper);
+  transform: translateY(-100%);
+  transition: transform 900ms var(--ease-in-out);
+}
+
+.sheet[data-ready="true"] .sheet-wipe {
+  transform: translateY(0);
+}
+
+.sheet-seal {
+  position: relative;
+  z-index: 1;
+  padding: var(--space-md) var(--space-lg);
+  border: 2px solid var(--cinnabar);
+  font-family: var(--brush);
+  font-size: clamp(1.6rem, 5vw, 2.6rem);
+  line-height: 1;
+  color: var(--cinnabar);
+}
+
+.sheet-mark {
+  position: absolute;
+  bottom: clamp(var(--space-xl), 6vh, var(--space-3xl));
+  font-size: 9px;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sheet-drop {
+    animation: none;
+    transform: translate(-50%, -50%) scale(18);
+    opacity: 0.12;
+  }
+
+  .sheet-wipe {
+    transition-duration: 1ms;
+  }
+}

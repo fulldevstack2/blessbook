@@ -2,6 +2,8 @@ import { clients } from "../../content/clients";
 import { films } from "../../content/work";
 import { record } from "../../content/dennis";
 import { useState } from "react";
+import { useReady } from "../../lib/useReady";
+import { photos } from "../../content/media";
 
 /**
  * Nocturne's own furniture.
@@ -126,6 +128,28 @@ export function Interval({ label = "Interval" }: { label?: string }) {
       <span className="interval-rule" />
       <span className="interval-word">{label}</span>
       <span className="interval-rule" />
+    </div>
+  );
+}
+
+
+/**
+ * House lights. One lamp comes up on an empty velvet house while the page loads,
+ * and when it is ready the curtain parts — the same gesture the hero makes, so
+ * arriving and scrolling are one continuous movement.
+ */
+export function Loader() {
+  const ready = useReady(photos.press.src);
+
+  return (
+    <div className="house" data-ready={ready} aria-hidden={ready}>
+      <div className="house-half house-half--left" />
+      <div className="house-half house-half--right" />
+      <span className="house-lamp" />
+      <p className="house-name">
+        <em>the</em> Dennis Lau
+      </p>
+      <p className="house-mark">03 · Nocturne — Velvet and lamplight</p>
     </div>
   );
 }

@@ -3,6 +3,8 @@ import { clients } from "../../content/clients";
 import { territories } from "../../content/dennis";
 import { films } from "../../content/work";
 import { pauseAll } from "../../lib/listening";
+import { useReady } from "../../lib/useReady";
+import { photos } from "../../content/media";
 import { ScrollStage } from "../../lib/ScrollStage";
 import type { Photo } from "../../content/media";
 
@@ -186,6 +188,27 @@ export function FilmScrolls({ caption }: { caption: string }) {
           </figure>
         ))}
       </div>
+    </div>
+  );
+}
+
+
+/**
+ * A drop of ink, spreading while the page loads, and a brush stroke that wipes
+ * it away when the page is ready. Paper first, then the hand, then the work —
+ * which is the order this concept does everything in.
+ */
+export function Loader() {
+  const ready = useReady(photos.silhouette.src);
+
+  return (
+    <div className="sheet" data-ready={ready} aria-hidden={ready}>
+      <span className="sheet-drop" />
+      <span className="sheet-wipe" />
+      <p className="sheet-seal" lang="zh">
+        刘凯彦
+      </p>
+      <p className="sheet-mark">二 · Dragon — Ink and jade</p>
     </div>
   );
 }

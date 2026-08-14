@@ -9,7 +9,7 @@ import { StringRow } from "../../components/StringRow";
 import { Tally } from "../../components/Tally";
 import { Volume } from "../../components/Volume";
 import { Words } from "../../components/Words";
-import { BrushStroke, ClientScroll, FilmScrolls, Stamps, Unroll, Wash } from "./parts";
+import { BrushStroke, ClientScroll, FilmScrolls, Loader, Stamps, Unroll, Wash } from "./parts";
 import {
   commission,
   promise,
@@ -102,6 +102,7 @@ export function DragonPage() {
       <a className="skip-link" href="#main">
         Skip to content
       </a>
+      <Loader />
       <ConceptChrome concept={concept} />
       <Grain />
 

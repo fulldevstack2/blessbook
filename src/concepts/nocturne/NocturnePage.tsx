@@ -9,7 +9,7 @@ import { Showreel } from "../../components/Showreel";
 import { Tally } from "../../components/Tally";
 import { Volume } from "../../components/Volume";
 import { Words } from "../../components/Words";
-import { BoxOffice, Cast, Interval, Programme } from "./parts";
+import { BoxOffice, Cast, Interval, Loader, Programme } from "./parts";
 import { commission, promise, rights, service, steps, tiers } from "../../content/commission";
 import {
   artist,
@@ -137,6 +137,7 @@ export function NocturnePage() {
       <a className="skip-link" href="#main">
         Skip to content
       </a>
+      <Loader />
       <ConceptChrome concept={concept} />
       <Grain />
       <Cursor />
@@ -355,6 +356,13 @@ export function NocturnePage() {
 
         {/* ---------------- hear him ---------------- */}
         <section className="nocturne-act nocturne-act--ivory nocturne-act--reel">
+          {/* The house's own lattice, drifting behind the bill: engraved rules and
+              a warm pool of lamplight, so the page is a printed programme rather
+              than a video on a blank sheet. */}
+          <div className="nocturne-lattice" data-scroll aria-hidden>
+            <span className="nocturne-lattice-glow" />
+          </div>
+
           <div className="nocturne-centred">
             <p className="nocturne-eyebrow" data-reveal>
               ACT IV <em>—</em> HEAR HIM
@@ -364,7 +372,13 @@ export function NocturnePage() {
             </h2>
           </div>
 
-          <Showreel caption="His own reel, in his own cut." />
+          <div className="nocturne-bill" data-scroll>
+            <p className="nocturne-bill-mark" aria-hidden>
+              <span>Programme</span>
+              <span>Film</span>
+            </p>
+            <Showreel caption="His own reel, in his own cut." />
+          </div>
 
           <h3 className="nocturne-sub-head" data-reveal>
             <em>and</em> WHAT HE WRITES <em>when someone asks</em>
@@ -412,8 +426,24 @@ export function NocturnePage() {
           <p className="nocturne-lede nocturne-lede--centre" data-reveal>
             {calling.body}
           </p>
-          <Arch photo={photos.silhouette} caption="Plate III" tall />
         </section>
+
+        {/* Cinemascope, full bleed, no cropping device: the arch was cutting the
+            sky off this frame and making the best photograph on the site look
+            like a keyhole. */}
+        <figure className="nocturne-strip" data-parallax data-scroll>
+          <img
+            src={photos.silhouette.src}
+            width={photos.silhouette.width}
+            height={photos.silhouette.height}
+            alt={photos.silhouette.alt}
+            loading="lazy"
+          />
+          <figcaption>
+            <span>Plate III</span>
+            <span className="nocturne-credit">{photos.silhouette.credit}</span>
+          </figcaption>
+        </figure>
 
         {/* ---------------- the last door ---------------- */}
         <section className="nocturne-act nocturne-act--coda">
