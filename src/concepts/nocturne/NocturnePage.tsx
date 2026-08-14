@@ -1,22 +1,15 @@
 import { useEffect, useRef, useState } from "react";
-import { Band } from "../../components/Band";
-import { ClientWall } from "../../components/ClientWall";
 import { ConceptChrome, ConceptSwitch } from "../../components/ConceptChrome";
 import { Cursor } from "../../components/Cursor";
-import { Field } from "../../components/Field";
-import { Films } from "../../components/Films";
 import { FilmScrub } from "../../components/FilmScrub";
 import { Grain } from "../../components/Grain";
-import { Kinetic } from "../../components/Kinetic";
 import { Listen } from "../../components/Listen";
-import { Marquee } from "../../components/Marquee";
 import { Reel } from "../../components/Reel";
-import { Score } from "../../components/Score";
-import { ScoreRail } from "../../components/ScoreRail";
 import { Showreel } from "../../components/Showreel";
 import { Tally } from "../../components/Tally";
-import { Territories } from "../../components/Territories";
+import { Volume } from "../../components/Volume";
 import { Words } from "../../components/Words";
+import { BoxOffice, Cast, Interval, Programme } from "./parts";
 import { commission, promise, rights, service, steps, tiers } from "../../content/commission";
 import {
   artist,
@@ -26,7 +19,6 @@ import {
   credentials,
   halls,
   milestones,
-  record,
   teachers,
   territories,
   training,
@@ -146,7 +138,6 @@ export function NocturnePage() {
         Skip to content
       </a>
       <ConceptChrome concept={concept} />
-      <ScoreRail />
       <Grain />
       <Cursor />
 
@@ -187,7 +178,10 @@ export function NocturnePage() {
               </div>
 
               <div className="nocturne-hero-foot">
-                <Listen label="Hear him" />
+                <div className="nocturne-hero-play">
+                  <Listen label="Hear him" />
+                  <Volume label="Volume" />
+                </div>
                 <Readout />
               </div>
             </div>
@@ -277,18 +271,7 @@ export function NocturnePage() {
             ACT II <em>—</em> THE RECORD
           </p>
 
-          <dl className="nocturne-figures">
-            {record.map((item) => (
-              <div className="nocturne-figures-item" key={item.label} data-reveal>
-                <dd>
-                  <Tally value={item.value} />
-                </dd>
-                <dt>{item.label}</dt>
-              </div>
-            ))}
-          </dl>
-
-          <Field />
+          <BoxOffice />
 
           <ul className="nocturne-timeline">
             {milestones.map((item) => (
@@ -300,9 +283,8 @@ export function NocturnePage() {
             ))}
           </ul>
 
-          <Territories />
           <p className="nocturne-territories" data-reveal>
-            {territories.map((territory) => territory.name).join(" · ")}
+            <em>played in</em> {territories.map((territory) => territory.name).join(" · ")}
           </p>
 
           <dl className="nocturne-spec nocturne-spec--awards">
@@ -344,7 +326,19 @@ export function NocturnePage() {
                 <cite>{commissionStory.makerWho}</cite>
               </blockquote>
             </div>
-            <Arch photo={photos.violin} caption="Plate II" tall />
+            <figure className="nocturne-plate" data-reveal="wipe" data-parallax>
+              <img
+                src={photos.violin.src}
+                width={photos.violin.width}
+                height={photos.violin.height}
+                alt={photos.violin.alt}
+                loading="lazy"
+              />
+              <figcaption>
+                <span>Plate II</span>
+                <span className="nocturne-credit">{photos.violin.credit}</span>
+              </figcaption>
+            </figure>
           </div>
 
           <ul className="nocturne-instruments">
@@ -360,17 +354,17 @@ export function NocturnePage() {
         </section>
 
         {/* ---------------- hear him ---------------- */}
-        <section className="nocturne-act nocturne-act--ivory">
-          <p className="nocturne-eyebrow" data-reveal>
-            ACT IV <em>—</em> HEAR HIM
-          </p>
-          <Words as="h2" className="nocturne-h2" text="A minute in a room with him" />
-          <Showreel caption="His own reel, in his own cut." />
+        <section className="nocturne-act nocturne-act--ivory nocturne-act--reel">
+          <div className="nocturne-centred">
+            <p className="nocturne-eyebrow" data-reveal>
+              ACT IV <em>—</em> HEAR HIM
+            </p>
+            <h2 className="nocturne-statement nocturne-statement--small" data-reveal>
+              <em>a</em> MINUTE <em>in a room with</em> HIM
+            </h2>
+          </div>
 
-          <h3 className="nocturne-sub-head" data-reveal>
-            <em>and</em> WHAT HE PLAYED, <em>written down</em>
-          </h3>
-          <Score />
+          <Showreel caption="His own reel, in his own cut." />
 
           <h3 className="nocturne-sub-head" data-reveal>
             <em>and</em> WHAT HE WRITES <em>when someone asks</em>
@@ -378,25 +372,22 @@ export function NocturnePage() {
           <Reel caption="Press a title to hear it" index={(position) => `No. ${position + 1}`} />
         </section>
 
-        <Band photo={photos.crowd} line="Three thousand seats, and one song at a time." tall />
+        <Interval />
 
         {/* ---------------- the rooms ---------------- */}
         <section className="nocturne-act">
           <p className="nocturne-eyebrow" data-reveal>
-            ACT V <em>—</em> IN THE ROOM
+            ACT V <em>—</em> TONIGHT&rsquo;S PROGRAMME
           </p>
-          <Films caption="Three nights the music was written for" />
+          <Programme />
         </section>
-
-        <Kinetic />
 
         {/* ---------------- who books him ---------------- */}
         <section className="nocturne-act nocturne-act--ivory">
           <p className="nocturne-eyebrow" data-reveal>
             ACT VI <em>—</em> WHO BOOKS HIM
           </p>
-          <ClientWall />
-          <Marquee />
+          <Cast />
 
           <ul className="nocturne-words">
             {words.map((word) => (

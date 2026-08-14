@@ -18,7 +18,9 @@ import { prefersReducedMotion } from "./prefersReducedMotion";
  * what it says.
  */
 
-const EASE = 0.11;
+/* Heavier than a browser's own scroll, light enough that a flick still lands.
+   Award sites live around here; below 0.07 it starts to feel like syrup. */
+const EASE = 0.085;
 /** A wheel notch in "lines" mode is worth about this many pixels. */
 const LINE = 16;
 
@@ -49,16 +51,45 @@ export function useSmoothScroll(): void {
       frame = requestAnimationFrame(step);
     };
 
-    const onWheel = (event: WheelEvent) => {
-      // Pinch-zoom and horizontal wheels stay the browser's business.
-      if (event.ctrlKey || Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
-      event.preventDefault();
-      const amount = event.deltaMode === 1 ? event.deltaY * LINE : event.deltaY;
+    const push = (amount: number) => {
       target = Math.min(limit(), Math.max(0, target + amount));
       if (!running) {
         running = true;
         frame = requestAnimationFrame(step);
       }
+    };
+
+    const onWheel = (event: WheelEvent) => {
+      // Pinch-zoom and horizontal wheels stay the browser's business.
+      if (event.ctrlKey || Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
+      event.preventDefault();
+      const amount = event.deltaMode === 1 ? event.deltaY * LINE : event.deltaY;
+      push(amount);
+    };
+
+    /**
+     * Keys get the same weight as the wheel. Without this the page moves two
+     * different ways depending on how you asked, which is the sort of
+     * inconsistency you feel without being able to name.
+     */
+    const onKey = (event: KeyboardEvent) => {
+      const target_ = event.target as HTMLElement | null;
+      if (target_ && /^(input|textarea|select)$/i.test(target_.tagName)) return;
+      if (event.metaKey || event.ctrlKey || event.altKey) return;
+
+      const page = window.innerHeight * 0.9;
+      const step_ = 120;
+      const moves: Record<string, number> = {
+        ArrowDown: step_,
+        ArrowUp: -step_,
+        PageDown: page,
+        PageUp: -page,
+        " ": event.shiftKey ? -page : page,
+      };
+      const amount = moves[event.key];
+      if (amount === undefined) return;
+      event.preventDefault();
+      push(amount);
     };
 
     /** Anything that scrolls the page another way — keys, anchors, the bar. */
@@ -69,12 +100,14 @@ export function useSmoothScroll(): void {
     };
 
     window.addEventListener("wheel", onWheel, { passive: false });
+    window.addEventListener("keydown", onKey);
     window.addEventListener("scroll", resync, { passive: true });
     window.addEventListener("resize", resync);
 
     return () => {
       if (frame) cancelAnimationFrame(frame);
       window.removeEventListener("wheel", onWheel);
+      window.removeEventListener("keydown", onKey);
       window.removeEventListener("scroll", resync);
       window.removeEventListener("resize", resync);
     };

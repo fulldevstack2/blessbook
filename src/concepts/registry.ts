@@ -86,8 +86,8 @@ export const concepts: readonly Concept[] = [
       "The concert-hall reading, at night. Oxblood velvet, warm ivory, brass lamplight, and a proscenium arch that every picture is seen through. Scroll walks you from the empty house to the one instrument under the lamp — and the commission is the last door.",
     theme: "dark",
     fonts:
-      "https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:ital,wght@0,400..600;1,400..500&display=swap",
-    display: "Instrument Serif",
+      "https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..600&family=Instrument+Sans:ital,wght@0,400..600;1,400..500&display=swap",
+    display: "Fraunces",
     body: "Instrument Sans",
     swatches: [
       { name: "Velvet", value: "oklch(19% 0.06 22)" },

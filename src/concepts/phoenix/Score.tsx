@@ -1,9 +1,10 @@
 import { useRef, type CSSProperties } from "react";
-import { score, staffPosition } from "../content/score";
-import { listen } from "../lib/listening";
-import { audioContext, resumeAudio } from "../lib/audioContext";
-import { livePhrase } from "../content/media";
-import { useSectionProgress } from "../lib/useSectionProgress";
+import { score, staffPosition } from "../../content/score";
+import { play } from "../../lib/listening";
+import { audioContext, resumeAudio } from "../../lib/audioContext";
+import { livePhrase } from "../../content/media";
+import { useSectionProgress } from "../../lib/useSectionProgress";
+import { Volume } from "../../components/Volume";
 import { useState } from "react";
 
 /**
@@ -114,10 +115,9 @@ export function Score({ caption }: { caption?: string }) {
       element.pause();
       return;
     }
-    listen(element);
     const ctx = audioContext();
     if (ctx) resumeAudio(ctx);
-    void element.play().catch(() => setPlaying(false));
+    play(element);
   };
 
   return (
@@ -222,6 +222,7 @@ export function Score({ caption }: { caption?: string }) {
           <span className="score-play-mark" data-playing={playing} aria-hidden />
           <span>{playing ? "Playing" : "Play the phrase"}</span>
         </button>
+        <Volume label="Playback volume" />
         <p className="score-meta">
           {score.key} · {score.meter} · quarter note = {score.bpm}
         </p>

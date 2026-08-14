@@ -49,6 +49,7 @@ function useScrubber(
     const reduced = prefersReducedMotion();
     const images: (HTMLImageElement | undefined)[] = new Array(frames);
     let stopped = false;
+    let ready = false;
     let raf = 0;
     let drawn = -1;
     let dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -103,6 +104,7 @@ function useScrubber(
 
     const loop = () => {
       raf = requestAnimationFrame(loop);
+      if (!ready) return;
       const index = Math.min(frames - 1, Math.max(0, Math.round(progress.current * (frames - 1))));
       if (index !== drawn) paint(index);
     };
@@ -111,14 +113,18 @@ function useScrubber(
     const observer = new ResizeObserver(size);
     observer.observe(canvas);
 
-    // Load the middle frame first so there is always something to show, then the
-    // rest in order. Under reduced motion the middle frame is all there is.
+    /* The first frame comes first.
+       This used to fetch the middle frame first so that something was on screen
+       immediately, and the result was that an early scroll drew a frame from the
+       middle of the shot and then jumped backwards once the real one arrived. The
+       sequence now loads in order from the top, the loop does not draw until
+       frame one is in, and playback is smooth from the first pixel of scroll. */
     void (async () => {
-      const middle = Math.floor(frames / 2);
-      await load(middle);
-      paint(middle);
+      await load(0);
+      paint(0);
+      ready = true;
       if (reduced) return;
-      for (let i = 0; i < frames && !stopped; i += 1) {
+      for (let i = 1; i < frames && !stopped; i += 1) {
         if (!images[i]) await load(i);
       }
     })();

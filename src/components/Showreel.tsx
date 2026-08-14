@@ -1,7 +1,8 @@
 import { useCallback, useRef, useState } from "react";
 import { showreel } from "../content/media";
 import { audioContext, resumeAudio } from "../lib/audioContext";
-import { listen } from "../lib/listening";
+import { play } from "../lib/listening";
+import { Volume } from "./Volume";
 
 /**
  * His own 2021 showreel, self-hosted and click-to-play.
@@ -16,17 +17,16 @@ export function Showreel({ caption }: { caption: string }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [started, setStarted] = useState(false);
 
-  const play = useCallback(() => {
+  const start = useCallback(() => {
     setStarted(true);
     // The element only exists after the poster is replaced, so play on the next
     // tick — and route it through the shared bus so the heroes react to it too.
     requestAnimationFrame(() => {
       const element = videoRef.current;
       if (!element) return;
-      listen(element);
       const ctx = audioContext();
       if (ctx) resumeAudio(ctx);
-      void element.play().catch(() => undefined);
+      play(element);
     });
   }, []);
 
@@ -43,7 +43,7 @@ export function Showreel({ caption }: { caption: string }) {
             playsInline
           />
         ) : (
-          <button type="button" className="showreel-open" onClick={play}>
+          <button type="button" className="showreel-open" onClick={start}>
             <img
               className="showreel-poster"
               src={showreel.poster}
@@ -61,6 +61,7 @@ export function Showreel({ caption }: { caption: string }) {
       </div>
 
       <figcaption className="showreel-caption">
+        <Volume label="Showreel volume" />
         <span className="showreel-note">{caption}</span>
         <span className="showreel-credit">{showreel.credit}</span>
       </figcaption>

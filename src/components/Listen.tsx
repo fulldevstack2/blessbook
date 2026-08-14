@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { livePhrase } from "../content/media";
 import { audioContext, resumeAudio } from "../lib/audioContext";
-import { listen } from "../lib/listening";
+import { play } from "../lib/listening";
 
 /**
  * Forty seconds of Dennis playing, live, on the gold violin.
@@ -33,10 +33,10 @@ export function Listen({ label = "Hear him play" }: ListenProps) {
       return;
     }
 
-    listen(element);
     const ctx = audioContext();
     if (ctx) resumeAudio(ctx);
-    void element.play().catch(() => setPlaying(false));
+    // Starting anything stops everything else: one player on the site.
+    play(element);
   }, []);
 
   /** Nothing should still be sounding after the listener has left the page. */

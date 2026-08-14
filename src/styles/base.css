@@ -572,14 +572,6 @@ p {
   overflow: visible;
 }
 
-/* `--s` runs 0 → 1 across the whole passage of the section, which would mean the
-   phrase only finished writing as it left the screen. `--draw` compresses that
-   into the section's arrival, so the music is fully ruled and noted by the time
-   it sits in the middle of the viewport. */
-.score {
-  --draw: clamp(0, calc(var(--s, 0) * 2.4 - 0.45), 1);
-}
-
 /* Each element's own arrival: 0 until the scroll reaches it, 1 just after. */
 .score-staff line,
 .score-bars line,
@@ -950,7 +942,9 @@ p {
    ════════════════════════════════════════════════════════════════════════════ */
 .grain {
   position: fixed;
-  inset: -50%;
+  /* Inset used to be negative so the drift had somewhere to go, and on a phone
+     that widened the document. The drift moves the pattern now, not the layer. */
+  inset: 0;
   z-index: 60;
   pointer-events: none;
   opacity: var(--grain-opacity, 0.05);
@@ -958,25 +952,15 @@ p {
   background-image: var(--grain-image);
   background-size: 180px 180px;
   animation: grain-drift 640ms steps(1) infinite;
-  will-change: transform;
+  will-change: background-position;
 }
 
 @keyframes grain-drift {
-  0% {
-    transform: translate3d(0, 0, 0);
-  }
-  25% {
-    transform: translate3d(-3%, 2%, 0);
-  }
-  50% {
-    transform: translate3d(2%, -3%, 0);
-  }
-  75% {
-    transform: translate3d(-2%, -2%, 0);
-  }
-  100% {
-    transform: translate3d(3%, 1%, 0);
-  }
+  0% { background-position: 0 0; }
+  25% { background-position: -37px 22px; }
+  50% { background-position: 24px -31px; }
+  75% { background-position: -19px -24px; }
+  100% { background-position: 33px 11px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1034,8 +1018,6 @@ p {
 
 .field,
 .atlas {
-  /* Compress the section's passage into its arrival, as the score does. */
-  --draw: clamp(0, calc(var(--s, 0) * 2.2 - 0.35), 1);
   margin: 0;
 }
 
@@ -1139,4 +1121,96 @@ p {
   .cursor {
     display: none;
   }
+}
+
+/* The concept bar leaves while you read and returns when you turn around. This
+   replaces the gradient scrim that used to sit under it: a fixed bar with a
+   shade beneath it is the cheapest-looking thing on any page. */
+.chrome {
+  transition:
+    transform 620ms var(--ease-out),
+    opacity 380ms var(--ease-out);
+}
+
+.chrome[data-hidden="true"] {
+  transform: translateY(-130%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chrome {
+    transition: none;
+  }
+}
+
+/* Measured graphics should have finished drawing by the time they are in front
+   of you, not as they leave. */
+.field,
+.atlas,
+.score {
+  --draw: clamp(0, calc(var(--s, 0) * 3 - 0.52), 1);
+}
+
+/* The master fader. Mechanics only — each concept paints it. */
+.volume {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.volume-mark {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 13px;
+  padding: 0;
+}
+
+/* Three rising bars, drawn in CSS: the site ships no icons. */
+.volume-bar {
+  width: 2px;
+  background: currentColor;
+  transition: opacity 300ms var(--ease-out);
+}
+
+.volume-bar:nth-child(1) { height: 5px; }
+.volume-bar:nth-child(2) { height: 9px; }
+.volume-bar:nth-child(3) { height: 13px; }
+
+.volume-mark[data-muted="true"] .volume-bar:nth-child(2),
+.volume-mark[data-muted="true"] .volume-bar:nth-child(3) {
+  opacity: 0.22;
+}
+
+.volume-input {
+  appearance: none;
+  width: clamp(56px, 8vw, 96px);
+  height: 12px;
+  margin: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.volume-input::-webkit-slider-runnable-track,
+.volume-input::-moz-range-track {
+  height: 1px;
+  background: color-mix(in oklch, currentColor 30%, transparent);
+}
+
+.volume-input::-webkit-slider-thumb {
+  appearance: none;
+  width: 9px;
+  height: 9px;
+  margin-top: -4px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.volume-input::-moz-range-thumb {
+  width: 9px;
+  height: 9px;
+  border: 0;
+  border-radius: 50%;
+  background: currentColor;
 }

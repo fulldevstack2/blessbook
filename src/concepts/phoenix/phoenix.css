@@ -1307,7 +1307,16 @@ canvas[hidden] + .phoenix-hero-plate {
 /* His name is the largest thing on the site. The other cuts step down, because
    they are claims about him rather than him. */
 .phoenix-cuts {
-  max-width: 30ch;
+  /* The portrait panel occupies the right of the frame now, so the type keeps to
+     the left of the seam rather than running under him. */
+  max-width: 22ch;
+}
+
+@media (min-width: 1100px) {
+  .phoenix-cuts {
+    max-width: 26ch;
+    padding-right: 44%;
+  }
 }
 
 .phoenix-cut p.phoenix-line {
@@ -1838,4 +1847,312 @@ canvas[hidden] + .phoenix-hero-plate {
   letter-spacing: 0.28em;
   text-transform: uppercase;
   color: var(--ivory-faint);
+}
+
+.phoenix .volume {
+  margin-top: var(--space-md);
+  color: var(--ivory-faint);
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   Phoenix's own furniture. None of this is used by another concept, and none of
+   another concept's presentation is used here. The language is gilding: a
+   hairline of gold, struck numerals, engraved plaques.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+/* ---------- the record, as gilded gauges ---------- */
+
+.gauges {
+  margin-top: var(--space-4xl);
+  display: grid;
+  gap: var(--space-lg);
+}
+
+.gauge {
+  display: grid;
+  grid-template-columns: minmax(0, 22ch) minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: var(--space-lg);
+  padding-bottom: var(--space-sm);
+  border-bottom: 1px solid var(--rule);
+}
+
+.gauge-label {
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--ivory-faint);
+}
+
+.gauge-rule {
+  position: relative;
+  height: 1px;
+  align-self: center;
+  background: var(--rule);
+  overflow: hidden;
+}
+
+/* The gold runs along the rule as the section arrives, each one a beat behind
+   the last. */
+.gauge-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: calc(clamp(0, calc((var(--s, 0) * 2.6 - 0.4) - var(--i, 0) * 0.06), 1) * 100%);
+  background: linear-gradient(90deg, var(--gold-deep), var(--gold));
+}
+
+.gauge-figure {
+  font-family: var(--display);
+  font-size: clamp(1.6rem, 3vw, 2.6rem);
+  line-height: 1;
+  color: var(--ivory);
+}
+
+@media (max-width: 700px) {
+  .gauge {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .gauge-rule {
+    display: none;
+  }
+}
+
+/* ---------- where he has played, struck as an index ---------- */
+
+.index {
+  margin-top: var(--space-4xl);
+}
+
+.index-head {
+  font-size: 10px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.index-list {
+  list-style: none;
+  margin: var(--space-xl) 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 var(--space-4xl);
+}
+
+@media (min-width: 900px) {
+  .index-list {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.index-list li {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-md);
+  padding: var(--space-sm) 0;
+  border-top: 1px solid var(--rule);
+}
+
+.index-number {
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  color: var(--gold-deep);
+}
+
+.index-name {
+  font-family: var(--display);
+  font-size: 1.15rem;
+  color: var(--ivory);
+}
+
+/* ---------- who books him, as engraved plaques ---------- */
+
+.plaques {
+  margin-top: var(--space-xl);
+}
+
+.plaques-eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.plaques-lede {
+  margin-top: var(--space-md);
+  max-width: 30ch;
+  font-family: var(--display);
+  font-size: clamp(1.7rem, 3.8vw, 3rem);
+  font-weight: 400;
+  line-height: 1.1;
+  color: var(--ivory);
+}
+
+.plaques-list {
+  list-style: none;
+  margin: var(--space-3xl) 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--rule);
+  border: 1px solid var(--rule);
+}
+
+@media (min-width: 620px) {
+  .plaques-list {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1000px) {
+  .plaques-list {
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+  }
+}
+
+/* Each mark struck into its own lacquer panel. */
+.plaque {
+  display: grid;
+  place-items: center;
+  padding: var(--space-xl) var(--space-md);
+  background: var(--lacquer);
+  transition: background 600ms var(--ease-out);
+}
+
+.plaque:hover {
+  background: var(--lacquer-raised);
+}
+
+.plaque-mark {
+  display: block;
+  width: 100%;
+  height: 26px;
+  background: var(--ivory-soft);
+  -webkit-mask-image: var(--mask);
+  mask-image: var(--mask);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  opacity: 0.76;
+  transition: opacity 600ms var(--ease-out);
+}
+
+.plaque:hover .plaque-mark {
+  opacity: 1;
+}
+
+/* ---------- his name, struck once ---------- */
+
+.struck {
+  padding: clamp(var(--space-2xl), 8vh, var(--space-5xl)) clamp(var(--space-lg), 6vw, var(--space-5xl));
+  border-block: 1px solid var(--rule);
+  background: color-mix(in oklab, var(--lacquer) 86%, black);
+  text-align: center;
+  overflow: hidden;
+}
+
+.struck-name {
+  display: block;
+  font-family: var(--display);
+  font-size: clamp(2.6rem, 13vw, 12rem);
+  line-height: 0.86;
+  letter-spacing: -0.01em;
+  color: var(--ivory);
+  /* Struck, not scrolled: it settles a fraction as the band passes. */
+  transform: translateY(calc((0.5 - var(--s, 0.5)) * 14px));
+}
+
+.struck-cn {
+  display: block;
+  margin-top: var(--space-lg);
+  font-size: 11px;
+  letter-spacing: 0.6em;
+  color: var(--gold);
+}
+
+/* ---------- the gilded plates between movements ---------- */
+
+.gplate {
+  margin: 0;
+  width: 100%;
+}
+
+.gplate-frame {
+  position: relative;
+  width: 100%;
+  height: clamp(360px, 62vh, 720px);
+  overflow: hidden;
+}
+
+.gplate[data-tall="true"] .gplate-frame {
+  height: clamp(440px, 86vh, 940px);
+}
+
+.gplate-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.82) saturate(0.78) contrast(1.04) sepia(0.14);
+  transform: scale(1.1) translateY(calc(var(--shift, 0) * -4%));
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gplate-frame img {
+    transform: scale(1.02);
+  }
+}
+
+.gplate-caption {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md) var(--space-2xl);
+  padding: var(--space-md) clamp(var(--space-lg), 6vw, var(--space-5xl));
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ivory-faint);
+}
+
+.gplate-line {
+  color: var(--gold);
+}
+
+
+/* ---------- the gilded room on a small screen ---------- */
+
+@media (max-width: 899px) {
+  /* The portrait panel takes the top half at this width, so the type takes the
+     bottom half rather than sitting under him. */
+  .phoenix-cuts {
+    align-self: end;
+    max-width: 100%;
+    padding-right: 0;
+    padding-bottom: var(--space-xl);
+  }
+
+  .phoenix-cut h1 {
+    font-size: clamp(2.4rem, 13vw, 3.6rem);
+  }
+
+  .phoenix-cut p.phoenix-line {
+    font-size: clamp(1.5rem, 8vw, 2.2rem);
+  }
+
+  .gauge {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .index-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .struck-name {
+    font-size: clamp(2.2rem, 16vw, 4rem);
+  }
 }

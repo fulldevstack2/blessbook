@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { concepts, type Concept } from "../concepts/registry";
 
@@ -7,8 +8,45 @@ import { concepts, type Concept } from "../concepts/registry";
  */
 
 export function ConceptChrome({ concept }: { concept: Concept }) {
+  const bar = useRef<HTMLElement>(null);
+
+  /**
+   * The bar leaves while you are reading and comes back the moment you turn
+   * around. It used to sit there permanently behind a gradient scrim, and the
+   * scrim was the thing that looked cheap — a fixed element with a shade under it
+   * always does. Nothing to fade now: it is either present or gone.
+   */
+  useEffect(() => {
+    const element = bar.current;
+    if (!element) return;
+
+    let last = window.scrollY;
+    let frame = 0;
+
+    const measure = () => {
+      frame = 0;
+      const y = window.scrollY;
+      if (y < window.innerHeight * 0.5 || y < last - 6) {
+        element.dataset.hidden = "false";
+      } else if (y > last + 6) {
+        element.dataset.hidden = "true";
+      }
+      last = y;
+    };
+
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(measure);
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      if (frame) cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, []);
+
   return (
-    <header className="chrome">
+    <header className="chrome" ref={bar} data-hidden="false">
       <Link className="chrome-back" to="/">
         <span aria-hidden>&larr;</span> All three
       </Link>

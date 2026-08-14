@@ -79,7 +79,8 @@ const fragmentShader = /* glsl */ `
 
     /* ---- the lamp: one warm source, brighter when he plays ---- */
     float toLamp = length((uv - lamp) * vec2(uAspect, 1.0));
-    float glow = exp(-toLamp * toLamp * 2.4) * (0.85 + uLevel * 0.9);
+    // The lamp lifts a little while he plays. Light, not geometry.
+    float glow = exp(-toLamp * toLamp * 2.4) * (0.9 + uLevel * 0.22);
     float wash = exp(-toLamp * 1.35) * 0.5;
 
     /* ---- behind the cloth: him, lit by that lamp ---- */
@@ -95,7 +96,7 @@ const fragmentShader = /* glsl */ `
 
     // Dust in the beam: only where the light is, drifting upward.
     vec2 mote = vec2(uv.x * 150.0, uv.y * 110.0 - uTime * 0.35);
-    float dust = smoothstep(0.9975, 1.0, hash(floor(mote))) * (glow * 2.2 + uLevel);
+    float dust = smoothstep(0.9975, 1.0, hash(floor(mote))) * glow * 2.2;
     stage += uIvory * dust * 0.9;
 
     /* ---- the cloth, and its parting ---- */
@@ -111,8 +112,9 @@ const fragmentShader = /* glsl */ `
     // Deeper troughs than a plain sine: velvet reads by its shadow, not its sheen.
     float fold = pow(0.5 + 0.5 * sin(foldX), 1.5);
     fold += 0.16 * pow(0.5 + 0.5 * sin(foldX * 2.7 + 1.1), 2.0);
-    // A gentle breath while he plays: velvet is never quite still.
-    fold += sin(uv.y * 5.0 + uTime * 0.7) * 0.05 * uLevel;
+    // Velvet is never quite still, but it does not shake to the beat: this is a
+    // slow drift on its own clock, not an amplitude response.
+    fold += sin(uv.y * 5.0 + uTime * 0.35) * 0.02;
     float weave = noise(uv * vec2(420.0, 160.0)) * 0.06;
 
     vec3 velvet = mix(uVelvet * 0.72, uVelvetLit, pow(clamp(fold, 0.0, 1.0), 1.35));
@@ -123,7 +125,7 @@ const fragmentShader = /* glsl */ `
 
     // A brass thread catching the light down the leading edge.
     float edge = exp(-pow(into / 0.014, 2.0)) * step(0.001, travel);
-    velvet += uBrass * edge * (0.5 + uLevel * 0.6);
+    velvet += uBrass * edge * 0.6;
 
     vec3 colour = mix(stage, velvet, cloth);
 

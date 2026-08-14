@@ -20,7 +20,10 @@
   --rule-ivory: oklch(84% 0.012 70);
 
   --cjk: "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Heiti SC";
-  --display: "Instrument Serif", "Times New Roman", var(--cjk), serif;
+  /* Instrument Serif was too narrow — its caps read as squeezed at display size.
+     Fraunces is wide and warm, and its optical-size axis keeps the big settings
+     from going spindly. WONK is off: this is a concert hall, not a craft bakery. */
+  --display: "Fraunces", "Times New Roman", var(--cjk), serif;
   --text: "Instrument Sans", ui-sans-serif, system-ui, var(--cjk), sans-serif;
 
   background: var(--velvet-deep);
@@ -194,7 +197,9 @@
   margin: 0;
   font-family: var(--display);
   font-weight: 400;
-  line-height: 0.92;
+  font-variation-settings: "SOFT" 18, "WONK" 0, "opsz" 120;
+  line-height: 0.94;
+  letter-spacing: -0.012em;
   color: var(--ivory);
 }
 
@@ -353,6 +358,7 @@
   max-width: 20ch;
   font-family: var(--display);
   font-weight: 400;
+  font-variation-settings: "SOFT" 18, "WONK" 0, "opsz" 100;
   font-size: clamp(2.1rem, 6.4vw, 5.6rem);
   line-height: 0.98;
   color: var(--ivory);
@@ -362,6 +368,7 @@
   max-width: 22ch;
   font-family: var(--display);
   font-weight: 400;
+  font-variation-settings: "SOFT" 16, "WONK" 0, "opsz" 72;
   font-size: clamp(1.9rem, 4.4vw, 3.6rem);
   line-height: 1.02;
   color: var(--ivory);
@@ -1341,4 +1348,372 @@
 .nocturne-act--coda .nocturne-cta:hover {
   background: var(--brass);
   color: var(--velvet-deep);
+}
+
+/* ---------- Nocturne's own furniture ---------- */
+
+.nocturne-hero-play {
+  display: grid;
+  gap: var(--space-md);
+  justify-items: start;
+}
+
+.nocturne .volume {
+  color: color-mix(in oklab, var(--ivory) 58%, transparent);
+}
+
+/* An uncropped plate: the instrument is a landscape object and an arch cuts its
+   wing off, which is exactly the wrong thing to crop. */
+.nocturne-plate {
+  margin: 0;
+  display: grid;
+  gap: var(--space-sm);
+}
+
+.nocturne-plate img {
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--rule);
+  transform: scale(1) translateY(calc(var(--shift, 0) * -1.6%));
+  will-change: transform;
+}
+
+.nocturne-plate figcaption {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-md);
+  font-size: 9px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--ivory) 48%, transparent);
+}
+
+.nocturne-centred {
+  text-align: center;
+}
+
+.nocturne-centred .nocturne-eyebrow {
+  margin-bottom: var(--space-lg);
+}
+
+.nocturne-statement--small {
+  max-width: 24ch;
+  font-size: clamp(1.8rem, 4.6vw, 3.6rem);
+  margin-bottom: var(--space-4xl);
+}
+
+/* The reel act is a lit page, so the showreel sits in a plain 16:9 frame with a
+   hairline — no arch. An arch on a video is a hole punched in a film. */
+.nocturne-act--reel .showreel-frame {
+  border-radius: 2px;
+  border: 1px solid var(--rule-ivory);
+}
+
+/* ---------- the cast page ---------- */
+
+.cast {
+  margin-top: var(--space-2xl);
+}
+
+.cast-head,
+.board-head {
+  font-size: 10px;
+  letter-spacing: 0.36em;
+  text-transform: uppercase;
+  color: var(--brass-deep);
+}
+
+.cast-head em,
+.board-head em {
+  font-family: var(--display);
+  font-size: 15px;
+  font-style: italic;
+  letter-spacing: 0.02em;
+  text-transform: none;
+}
+
+.cast-list {
+  list-style: none;
+  margin: var(--space-2xl) 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0 var(--space-5xl);
+}
+
+@media (min-width: 860px) {
+  .cast-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.cast-item {
+  display: grid;
+  grid-template-columns: auto minmax(var(--space-lg), 1fr) auto;
+  align-items: baseline;
+  gap: var(--space-sm);
+  padding: var(--space-sm) 0;
+  border-bottom: 1px solid color-mix(in oklab, var(--ink) 12%, transparent);
+}
+
+.cast-name {
+  font-family: var(--display);
+  font-size: clamp(1.2rem, 2.2vw, 1.7rem);
+  font-variation-settings: "SOFT" 16, "WONK" 0, "opsz" 40;
+}
+
+/* The dotted leader a programme uses between a name and its part. */
+.cast-leader {
+  height: 1px;
+  align-self: end;
+  margin-bottom: 0.35em;
+  background-image: radial-gradient(currentColor 0.5px, transparent 0.6px);
+  background-size: 5px 1px;
+  background-repeat: repeat-x;
+  opacity: 0.42;
+}
+
+.cast-field {
+  font-size: 9px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--ink) 54%, transparent);
+}
+
+.cast-foot {
+  margin-top: var(--space-2xl);
+  font-size: 0.9rem;
+  color: color-mix(in oklab, var(--ink) 62%, transparent);
+}
+
+/* ---------- the house board ---------- */
+
+.board {
+  margin-top: var(--space-2xl);
+}
+
+.board-list {
+  margin: var(--space-2xl) 0 0;
+  display: grid;
+  gap: 0;
+}
+
+.board-row {
+  display: grid;
+  grid-template-columns: minmax(0, 22ch) minmax(0, 1fr);
+  align-items: baseline;
+  gap: var(--space-lg);
+  padding: var(--space-md) 0;
+  border-top: 1px solid var(--edge);
+}
+
+.board-row dt {
+  font-size: 9px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--ink) 54%, transparent);
+}
+
+.board-row dd {
+  display: grid;
+  grid-template-columns: minmax(var(--space-xl), 1fr) auto;
+  align-items: baseline;
+  gap: var(--space-md);
+  margin: 0;
+}
+
+.board-leader {
+  height: 1px;
+  align-self: end;
+  margin-bottom: 0.42em;
+  background-image: radial-gradient(currentColor 0.5px, transparent 0.6px);
+  background-size: 6px 1px;
+  background-repeat: repeat-x;
+  opacity: 0.36;
+}
+
+.board-figure {
+  font-family: var(--display);
+  font-size: clamp(1.8rem, 3.6vw, 3rem);
+  line-height: 1;
+  font-variation-settings: "SOFT" 16, "WONK" 0, "opsz" 90;
+}
+
+/* ---------- tonight's programme ---------- */
+
+.programme {
+  display: grid;
+  gap: var(--space-2xl);
+}
+
+@media (min-width: 1000px) {
+  .programme {
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+    gap: var(--space-4xl);
+    align-items: start;
+  }
+}
+
+.programme-bill {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border: 1px solid var(--rule);
+}
+
+.programme-open,
+.programme-frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+}
+
+.programme-open img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 900ms var(--ease-out);
+}
+
+.programme-open:hover img {
+  transform: scale(1.03);
+}
+
+.programme-open-word {
+  position: absolute;
+  left: var(--space-lg);
+  bottom: var(--space-lg);
+  font-size: 10px;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--ivory);
+}
+
+.programme-open-word em {
+  font-family: var(--display);
+  font-size: 15px;
+  font-style: italic;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: var(--brass);
+}
+
+.programme-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.programme-item {
+  display: grid;
+  grid-template-columns: 4ch minmax(0, 1fr);
+  gap: var(--space-2xs) var(--space-lg);
+  width: 100%;
+  padding: var(--space-lg) 0;
+  border-top: 1px solid var(--rule);
+  text-align: left;
+  transition: opacity 400ms var(--ease-out);
+  opacity: 0.62;
+}
+
+.programme-item[data-current="true"],
+.programme-item:hover {
+  opacity: 1;
+}
+
+.programme-index {
+  font-family: var(--display);
+  font-size: 1rem;
+  color: var(--brass);
+}
+
+.programme-title {
+  font-family: var(--display);
+  font-size: clamp(1.2rem, 2.2vw, 1.7rem);
+  color: var(--ivory);
+}
+
+.programme-note {
+  grid-column: 2;
+  font-size: 0.9rem;
+  color: color-mix(in oklab, var(--ivory) 66%, transparent);
+}
+
+/* ---------- the interval ---------- */
+
+.interval {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xl);
+  padding: var(--space-4xl) clamp(var(--space-lg), 6vw, var(--space-5xl));
+  max-width: 1360px;
+  margin-inline: auto;
+}
+
+.interval-rule {
+  flex: 1;
+  height: 1px;
+  background: var(--rule);
+}
+
+.interval-word {
+  font-family: var(--display);
+  font-style: italic;
+  font-size: clamp(1.2rem, 2.4vw, 1.9rem);
+  color: var(--brass);
+}
+
+
+/* ---------- the house on a small screen ---------- */
+
+@media (max-width: 760px) {
+  .board-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-2xs);
+  }
+
+  .board-row dd {
+    grid-template-columns: minmax(var(--space-lg), 1fr) auto;
+  }
+
+  .board-figure {
+    font-size: clamp(1.6rem, 9vw, 2.4rem);
+  }
+
+  .cast-item {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .cast-leader {
+    display: none;
+  }
+
+  /* The hero is read, not admired, at this width: less air, more type. */
+  .nocturne-hero {
+    padding-top: clamp(var(--space-2xl), 16vh, var(--space-4xl));
+  }
+
+  .nocturne-cuts {
+    max-width: 100%;
+  }
+
+  .nocturne-side {
+    display: none;
+  }
+
+  .nocturne-hero-foot {
+    gap: var(--space-md);
+  }
+
+  .nocturne-readout {
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+  }
+
+  .interval {
+    padding-block: var(--space-2xl);
+  }
 }

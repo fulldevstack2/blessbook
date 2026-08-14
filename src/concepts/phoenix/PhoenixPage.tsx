@@ -1,23 +1,19 @@
 import { useRef } from "react";
-import { Band } from "../../components/Band";
-import { ClientWall } from "../../components/ClientWall";
 import { ConceptChrome, ConceptSwitch } from "../../components/ConceptChrome";
 import { Grain } from "../../components/Grain";
-import { Kinetic } from "../../components/Kinetic";
-import { Field } from "../../components/Field";
-import { Films } from "../../components/Films";
+import { Films } from "./Films";
 import { FilmScrub } from "../../components/FilmScrub";
 import { Listen } from "../../components/Listen";
-import { Marquee } from "../../components/Marquee";
 import { Reel } from "../../components/Reel";
-import { Score } from "../../components/Score";
-import { ScoreRail } from "../../components/ScoreRail";
+import { Score } from "./Score";
+import { ScoreRail } from "./ScoreRail";
 import { Showreel } from "../../components/Showreel";
-import { Stave } from "../../components/Stave";
+import { Stave } from "./Stave";
 import { StringRow } from "../../components/StringRow";
 import { Tally } from "../../components/Tally";
-import { Territories } from "../../components/Territories";
+import { Volume } from "../../components/Volume";
 import { Words } from "../../components/Words";
+import { Gauges, Index, Plaques, Plate, Struck } from "./parts";
 import {
   commission,
   promise,
@@ -36,7 +32,6 @@ import {
   milestones,
   record,
   teachers,
-  territories,
   training,
 } from "../../content/dennis";
 import { photos } from "../../content/media";
@@ -164,6 +159,7 @@ export function PhoenixPage() {
 
               <div className="phoenix-hero-listen">
                 <Listen />
+                <Volume />
               </div>
 
               <div className="phoenix-hero-foot">
@@ -316,7 +312,7 @@ export function PhoenixPage() {
             ))}
           </dl>
 
-          <Field />
+          <Gauges />
 
           <div className="phoenix-portrait">
             <div>
@@ -356,10 +352,7 @@ export function PhoenixPage() {
             ))}
           </ul>
 
-          <Territories />
-          <p className="phoenix-territories" data-reveal>
-            {territories.map((territory) => territory.name).join(" · ")}
-          </p>
+          <Index />
         </section>
 
         <FilmScrub
@@ -404,15 +397,14 @@ export function PhoenixPage() {
           <Films caption="Three nights the music was written for" />
         </section>
 
-        <Kinetic />
+        <Struck />
 
         {/* ---------------- who books him ---------------- */}
         <section className="phoenix-section phoenix-section--invert">
           <p className="phoenix-eyebrow" data-reveal>
             Movement V — Who books him
           </p>
-          <ClientWall />
-          <Marquee />
+          <Plaques />
 
           <ul className="phoenix-words">
             {words.map((word) => (
@@ -426,7 +418,7 @@ export function PhoenixPage() {
           </ul>
         </section>
 
-        <Band photo={photos.stagePhoenix} line="The night the Phoenix was first played." tall />
+        <Plate photo={photos.stagePhoenix} line="The night the Phoenix was first played." tall />
 
         {/* ---------------- the calling ---------------- */}
         <section className="phoenix-section phoenix-section--calling">

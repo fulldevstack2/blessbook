@@ -1,24 +1,15 @@
 import { useRef } from "react";
-import { Band } from "../../components/Band";
-import { ClientWall } from "../../components/ClientWall";
 import { ConceptChrome, ConceptSwitch } from "../../components/ConceptChrome";
 import { Grain } from "../../components/Grain";
-import { Kinetic } from "../../components/Kinetic";
-import { Field } from "../../components/Field";
-import { Films } from "../../components/Films";
 import { FilmScrub } from "../../components/FilmScrub";
-import { Handscroll } from "../../components/Handscroll";
 import { Listen } from "../../components/Listen";
-import { Marquee } from "../../components/Marquee";
 import { Reel } from "../../components/Reel";
-import { Score } from "../../components/Score";
-import { ScoreRail } from "../../components/ScoreRail";
 import { Showreel } from "../../components/Showreel";
-import { Stave } from "../../components/Stave";
 import { StringRow } from "../../components/StringRow";
 import { Tally } from "../../components/Tally";
-import { Territories } from "../../components/Territories";
+import { Volume } from "../../components/Volume";
 import { Words } from "../../components/Words";
+import { BrushStroke, ClientScroll, FilmScrolls, Stamps, Unroll, Wash } from "./parts";
 import {
   commission,
   promise,
@@ -37,7 +28,6 @@ import {
   milestones,
   record,
   teachers,
-  territories,
   training,
   violins,
 } from "../../content/dennis";
@@ -113,7 +103,6 @@ export function DragonPage() {
         Skip to content
       </a>
       <ConceptChrome concept={concept} />
-      <ScoreRail />
       <Grain />
 
       <ScrollStage vh={420} cuts={cuts.length} className="dragon-stage">
@@ -159,6 +148,7 @@ export function DragonPage() {
 
               <div className="dragon-hero-listen">
                 <Listen />
+                <Volume />
               </div>
 
               <div className="dragon-hero-foot">
@@ -269,7 +259,6 @@ export function DragonPage() {
               ))}
             </dl>
 
-            <Field />
 
             <figure className="dragon-photo dragon-photo--tall" data-reveal="wipe">
               <img
@@ -291,15 +280,12 @@ export function DragonPage() {
               ))}
             </ul>
 
-            <Territories />
-            <p className="dragon-territories" data-reveal>
-              {territories.map((territory) => territory.name).join(" · ")}
-            </p>
+            <Stamps />
           </div>
         </section>
 
         {/* The record, unrolled: pinned, and pulled sideways as you scroll. */}
-        <Handscroll className="dragon-record-scroll" vh={340}>
+        <Unroll className="dragon-record-scroll" vh={340}>
           <div className="dragon-unroll-head">
             <span className="dragon-unroll-mark" lang="zh">
               卷
@@ -313,7 +299,7 @@ export function DragonPage() {
               <p className="dragon-unroll-detail">{item.detail}</p>
             </article>
           ))}
-        </Handscroll>
+        </Unroll>
 
         <section className="dragon-section">
           <Margin index={3} label="The instrument" />
@@ -369,8 +355,8 @@ export function DragonPage() {
             <Words as="h2" className="dragon-h2" text={"A minute in a room with him"} />
             <Showreel caption="His own reel, in his own cut." />
 
-            <Words as="h3" className="dragon-sub-head" text={"And what he played, written down"} />
-            <Score />
+            <Words as="h3" className="dragon-sub-head" text={"And what he played, drawn once"} />
+            <BrushStroke caption="One bow stroke — the phrase he opens The Journey with." />
 
             <Words as="h2" className="dragon-h2" text={"And this is what he writes when someone asks"} style={{ marginTop: "var(--space-5xl)" }} />
             <p className="dragon-lede" data-reveal>
@@ -384,17 +370,14 @@ export function DragonPage() {
         <section className="dragon-section">
           <Margin index={5} label="In the room" />
           <div>
-            <Films caption="Three nights the music was written for" />
+            <FilmScrolls caption="Three nights the music was written for" />
           </div>
         </section>
-
-        <Kinetic />
 
         <section className="dragon-section">
           <Margin index={6} label="Who books him" />
           <div>
-            <ClientWall />
-            <Marquee />
+            <ClientScroll />
 
             <ul className="dragon-words">
               {words.map((word) => (
@@ -409,7 +392,7 @@ export function DragonPage() {
           </div>
         </section>
 
-        <Band photo={photos.crowd} line="A hundred and sixty-eight thousand people, so far." tall />
+        <Wash photo={photos.crowd} line="A hundred and sixty-eight thousand people, so far." />
 
         <section className="dragon-section dragon-section--invert">
           <Margin index={7} label="Why he keeps going" />
@@ -439,7 +422,6 @@ export function DragonPage() {
               {service.lede}
             </p>
 
-            <Stave tempo="Adagio · quarter note = 58" />
             <ol className="dragon-steps" style={{ marginTop: "var(--space-2xl)" }}>
               {steps.map((step, index) => (
                 <li className="dragon-step" key={step.index} data-reveal>

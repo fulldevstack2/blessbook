@@ -143,20 +143,30 @@ const fragmentShader = /* glsl */ `
     float gather = smoothstep(0.55, 1.0, uProgress);
     float radius = mix(0.18, 1.5, open) * (1.0 - 0.55 * gather);
 
-    // The wash breathes with the playing: a bowed note pushes the ink outward
-    // and darkens it, and it settles back in the silence between phrases.
-    float breath = 1.0 + uLevel * 0.34;
+    // No breath from the amplitude: pushing the wash around in time with the
+    // music read as a novelty. The ink moves on its own slow clock.
+    float breath = 1.0;
     float edge = length(p) + (turbulence - 0.5) * mix(0.55, 1.35, open) * breath;
     float bloom = smoothstep(radius * breath, radius * 0.28, edge);
 
-    float board = soundboard(p, turbulence) * smoothstep(0.6, 0.99, uProgress);
+    /* The wash used to resolve into a pair of f-holes at the end of the scroll.
+       Read cold it looked like a musical icon dropped on the page rather than
+       something the ink had done, so the scroll now closes the way a scroll
+       actually closes: with a seal pressed into the paper. */
+    vec2 sealP = (p - vec2(0.52, -0.34)) * 3.4;
+    float sealBox = max(abs(sealP.x), abs(sealP.y));
+    float sealEdge = smoothstep(0.5, 0.46, sealBox) - smoothstep(0.4, 0.36, sealBox);
+    float sealInk = sealEdge + smoothstep(0.3, 0.26, sealBox) * 0.55;
+    // Pressed by hand, so the impression is uneven.
+    sealInk *= 0.72 + 0.5 * turbulence;
+    float board = clamp(sealInk, 0.0, 1.0) * smoothstep(0.62, 0.96, uProgress);
 
     /* ---- him, as ink ----
        His silhouette is sampled from the photograph and its edge is pushed
        around by the same turbulence that moves the wash, so the figure bleeds
        into the water instead of being a picture laid behind it. He holds the
        left of the frame and runs out before the type, the way a brush does. */
-    vec2 photoUv = cover(vUv + (r - vec2(0.5)) * 0.045 * (0.55 + uLevel * 1.2));
+    vec2 photoUv = cover(vUv + (r - vec2(0.5)) * 0.045 * 0.8);
     float dark = 1.0 - grey(texture2D(uPhoto, photoUv).rgb);
     float bleed = (turbulence - 0.5) * mix(0.3, 0.12, open);
     /* Tonal, not binary. Thresholding turned him into black slabs; ink density
@@ -172,10 +182,11 @@ const fragmentShader = /* glsl */ `
 
     // Thin ink goes green before it goes black, the way a wash separates.
     vec3 tone = mix(uJade, uInk, smoothstep(0.25, 0.85, ink));
+    tone = mix(tone, uCinnabar, clamp(board, 0.0, 1.0) * 0.9);
     // A trace of cinnabar where the wash is thinnest, like a seal bleeding through.
     tone = mix(tone, uCinnabar, smoothstep(0.06, 0.2, ink) * (1.0 - smoothstep(0.2, 0.42, ink)) * 0.35);
 
-    float alpha = clamp(ink * (0.94 + uLevel * 0.24), 0.0, 1.0);
+    float alpha = clamp(ink * 0.96, 0.0, 1.0);
     gl_FragColor = vec4(tone, alpha);
   }
 `;
@@ -230,9 +241,7 @@ export function createDragonScene({ canvas, reducedMotion }: SceneContext): Scen
   return {
     render(progress, elapsed, level) {
       material.uniforms.uProgress.value = progress;
-      // Held still under reduced motion, except while the listener has music
-      // playing — their own gesture, and the only thing allowed to move here.
-      material.uniforms.uTime.value = reducedMotion ? (level > 0.01 ? elapsed : 0) : elapsed;
+      material.uniforms.uTime.value = reducedMotion ? 0 : elapsed;
       material.uniforms.uLevel.value = level;
       renderer.render(scene, camera);
     },

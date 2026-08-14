@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { demos, timecode } from "../content/work";
 import { audioContext, resumeAudio } from "../lib/audioContext";
-import { listen, waveform } from "../lib/listening";
+import { play, waveform } from "../lib/listening";
 import { prefersReducedMotion } from "../lib/prefersReducedMotion";
+import { Volume } from "./Volume";
 
 /**
  * Ten real commissions, playable. The scope draws the signal as it arrives —
@@ -47,11 +48,10 @@ export function Reel({ caption, index = twoDigit }: ReelProps) {
     const element = audioRef.current;
     if (!element) return;
     // The shared bus owns the analyser, so the scope here and the scenes in the
-    // heroes are reading the same signal.
-    listen(element);
+    // heroes are reading the same signal — and starting here hushes the hero.
     const ctx = audioContext();
     if (ctx) resumeAudio(ctx);
-    void element.play().catch(() => setPlaying(false));
+    play(element);
   }, []);
 
   const move = useCallback((position: number) => {
@@ -226,6 +226,8 @@ export function Reel({ caption, index = twoDigit }: ReelProps) {
               }}
             />
           </div>
+
+          <Volume label="Playback volume" />
 
           <p className="reel-time">
             <span>{timecode(elapsed)}</span>

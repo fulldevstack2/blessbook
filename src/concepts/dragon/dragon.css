@@ -1710,3 +1710,397 @@ canvas:not([hidden]) + .dragon-hero-plate {
 .dragon-section--invert .atlas {
   --atlas-surface: var(--ink);
 }
+
+.dragon .volume {
+  margin-top: var(--space-md);
+  color: var(--ink-faint);
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   Dragon's own furniture. Nothing here is shared with another concept, and this
+   concept borrows nothing. Everything comes from the same object: a hand scroll
+   that unrolls, is stamped with seals, and is written with a brush.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.unroll {
+  background: transparent;
+}
+
+/* The wash and its veil belong to the hero; a scroll on a table is bare paper. */
+.unroll::after {
+  content: none;
+}
+
+.unroll-frame {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  overflow: hidden;
+}
+
+.unroll-track {
+  display: flex;
+  align-items: stretch;
+  gap: clamp(var(--space-2xl), 5vw, var(--space-5xl));
+  width: max-content;
+  padding-inline: clamp(var(--space-lg), 6vw, var(--space-5xl));
+  transform: translateX(calc(var(--p, 0) * (100vw - 100%)));
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .unroll-frame {
+    overflow-x: auto;
+  }
+
+  .unroll-track {
+    transform: none;
+  }
+}
+
+/* ---------- who has asked for him, written along the scroll ---------- */
+
+.dragon-clients-head {
+  display: grid;
+  align-content: center;
+  gap: var(--space-md);
+  min-width: 18ch;
+}
+
+.dragon-clients-mark {
+  font-family: var(--brush);
+  font-size: clamp(3rem, 7vw, 5.6rem);
+  line-height: 1;
+  color: var(--cinnabar);
+}
+
+.dragon-clients-label {
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--jade);
+}
+
+.dragon-client {
+  display: grid;
+  align-content: center;
+  gap: var(--space-xs);
+  padding-top: var(--space-lg);
+  border-top: 1px solid var(--rule);
+  min-width: 16ch;
+}
+
+.dragon-client-name {
+  font-family: var(--display);
+  font-size: clamp(1.5rem, 3vw, 2.4rem);
+  line-height: 1.1;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.dragon-client-field {
+  font-size: 9px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+/* A chop closing each name, the way a scroll signs off. */
+.dragon-client-seal {
+  width: 16px;
+  height: 16px;
+  background: var(--cinnabar);
+  opacity: 0.9;
+}
+
+/* ---------- territories, stamped ---------- */
+
+.stamps {
+  margin-top: var(--space-4xl);
+}
+
+.stamps-label {
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--jade);
+}
+
+.stamps-label span {
+  font-family: var(--brush);
+  font-size: 1.5rem;
+  letter-spacing: 0;
+  color: var(--cinnabar);
+  vertical-align: -0.2em;
+  margin-right: var(--space-xs);
+}
+
+.stamps-list {
+  list-style: none;
+  margin: var(--space-xl) 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-lg);
+}
+
+/* Each chop set at its own angle, because a hand never stamps twice the same. */
+.stamp {
+  display: grid;
+  place-items: center;
+  padding: var(--space-sm) var(--space-md);
+  border: 2px solid var(--cinnabar);
+  color: var(--cinnabar);
+  transform: rotate(var(--tilt, 0deg));
+}
+
+.stamp-name {
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+
+/* ---------- one bow stroke ---------- */
+
+.brush {
+  margin: var(--space-3xl) 0 0;
+}
+
+.brush-mark {
+  width: 100%;
+  max-width: 900px;
+  height: auto;
+  overflow: visible;
+}
+
+/* The stroke draws itself as the section arrives: wet body first, dry tail after. */
+.brush-body,
+.brush-dry {
+  fill: none;
+  stroke: var(--ink);
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1 - clamp(0, calc(var(--s, 0) * 2.6 - 0.5), 1));
+}
+
+.brush-body {
+  stroke-width: 26;
+  opacity: 0.92;
+}
+
+.brush-dry {
+  stroke-width: 5;
+  opacity: 0.35;
+  stroke-dashoffset: calc(1 - clamp(0, calc(var(--s, 0) * 2.6 - 0.62), 1));
+}
+
+.brush-caption {
+  margin-top: var(--space-md);
+  font-size: 10px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+/* ---------- a photograph washed into the paper ---------- */
+
+.wash {
+  margin: 0;
+  width: 100%;
+}
+
+.wash-frame {
+  width: 100%;
+  height: clamp(340px, 60vh, 700px);
+  overflow: hidden;
+  /* Torn at both edges rather than cut: paper does not have straight ends. */
+  -webkit-mask-image: linear-gradient(180deg, transparent, black 6%, black 94%, transparent);
+  mask-image: linear-gradient(180deg, transparent, black 6%, black 94%, transparent);
+}
+
+.wash-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(1) contrast(1.16) brightness(1.04);
+  mix-blend-mode: multiply;
+  transform: scale(1.08) translateY(calc(var(--shift, 0) * -3%));
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wash-frame img {
+    transform: scale(1.02);
+  }
+}
+
+.wash-caption {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md) var(--space-2xl);
+  padding: var(--space-md) clamp(var(--space-lg), 6vw, var(--space-5xl));
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.wash-line {
+  color: var(--cinnabar);
+}
+
+/* ---------- the films, as three hanging scrolls ---------- */
+
+.scrolls {
+  margin-top: var(--space-xl);
+}
+
+.scrolls-caption {
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.scrolls-row {
+  margin-top: var(--space-2xl);
+  display: grid;
+  gap: var(--space-4xl);
+}
+
+@media (min-width: 900px) {
+  .scrolls-row {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: start;
+  }
+}
+
+.scroll {
+  margin: 0;
+  display: grid;
+  gap: var(--space-sm);
+}
+
+/* The rod a hanging scroll is suspended from. */
+.scroll-rod {
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--ink-soft) 8%, var(--ink-soft) 92%, transparent);
+  opacity: 0.55;
+}
+
+.scroll-frame {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background: var(--paper-deep);
+}
+
+.scroll-open,
+.scroll-media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+}
+
+.scroll-open img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(1) contrast(1.1);
+  transition: filter 700ms var(--ease-out);
+}
+
+.scroll-open:hover img {
+  filter: grayscale(0.35) contrast(1.06);
+}
+
+.scroll-numeral {
+  position: absolute;
+  left: var(--space-md);
+  bottom: var(--space-sm);
+  font-family: var(--brush);
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 1;
+  color: var(--paper);
+  text-shadow: 0 1px 12px oklch(20% 0.02 250 / 0.6);
+}
+
+.scroll-caption {
+  display: grid;
+  gap: var(--space-2xs);
+}
+
+.scroll-title {
+  font-family: var(--display);
+  font-size: 1.15rem;
+  color: var(--ink);
+}
+
+.scroll-note {
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+}
+
+
+/* ---------- the scroll on a small screen ----------
+   The wash ran behind the type at this width and the ink swallowed it. Below the
+   two-column breakpoint the paper wins: the figure sinks, a sheet of paper sits
+   under the words, and the type comes down to a readable size. */
+
+@media (max-width: 899px) {
+  .dragon-hero-plate {
+    opacity: 0.5;
+  }
+
+  .dragon-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(
+      180deg,
+      transparent 0%,
+      color-mix(in oklab, var(--paper) 72%, transparent) 26%,
+      var(--paper) 62%
+    );
+  }
+
+  .dragon-cuts {
+    position: relative;
+    align-self: end;
+    padding-bottom: var(--space-2xl);
+  }
+
+  .dragon-cut h1,
+  .dragon-cut .dragon-line {
+    font-size: clamp(2rem, 11vw, 3.2rem);
+  }
+
+  .dragon-cut .dragon-sub {
+    font-size: 0.92rem;
+  }
+
+  .dragon-hero-listen {
+    margin-left: 0;
+  }
+
+  /* Stamps and seals crowd at this width. */
+  .stamps-list {
+    gap: var(--space-sm);
+  }
+
+  .stamp {
+    padding: var(--space-2xs) var(--space-sm);
+  }
+
+  .dragon-client-name {
+    font-size: clamp(1.2rem, 7vw, 1.8rem);
+  }
+
+  .scrolls-row {
+    gap: var(--space-2xl);
+  }
+}

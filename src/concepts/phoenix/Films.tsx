@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { films } from "../content/work";
+import { films } from "../../content/work";
+import { pauseAll } from "../../lib/listening";
 
 /**
  * Three films of the work in the room it was written for. The poster frames are
@@ -36,7 +37,11 @@ export function Films({ caption }: { caption: string }) {
                 <button
                   type="button"
                   className="film-open"
-                  onClick={() => setOpen(film.id)}
+                  onClick={() => {
+                // A YouTube embed cannot be metered or faded, so stop ours first.
+                pauseAll();
+                setOpen(film.id);
+              }}
                   aria-label={`Play ${film.title} on YouTube`}
                 >
                   <span className="film-open-mark" aria-hidden />

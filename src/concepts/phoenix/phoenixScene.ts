@@ -1,33 +1,25 @@
 import * as THREE from "three";
 import { photos } from "../../content/media";
-import { waveform } from "../../lib/listening";
 import type { SceneContext, SceneHandle } from "../../lib/SceneCanvas";
 
 /**
- * The photograph *is* the scene.
+ * Molten gold, one seam of light, and him framed inside it.
  *
- * An earlier version put a gilded particle plume over a CSS `<img>` of Dennis,
- * and it read exactly as what it was: a graphic sitting on top of a picture. So
- * the picture is now the material. It is uploaded as a texture and everything
- * happens to it inside one shader:
+ * The previous hero sliced the photograph into bands driven by the waveform. On
+ * paper that was a good idea; on screen it was jagged, and because a 1000-pixel
+ * press photograph was being stretched across a 1440-pixel frame it was soft as
+ * well. Jagged and soft is the worst of both.
  *
- *   · it is gradient-mapped into lacquer, deep gold and ivory, so it belongs to
- *     this concept instead of being a colour photograph dropped into it;
- *   · it is sliced into horizontal bands, and each band is displaced by the
- *     amplitude of whatever Dennis is playing at that moment — his own signal
- *     cuts his own photograph;
- *   · five staff lines are ruled across the frame and drawn in as you scroll,
- *     bending with the same signal;
- *   · gold dust is struck off his bright edges, so the gold comes out of him
- *     rather than floating in front of him;
- *   · and as the scroll ends the photograph dissolves upward into that dust, so
- *     the hero has an arc: a man, gilded, becoming music.
+ * So the ground is procedural now — a domain-warped molten metal that is exactly
+ * as sharp as the display it is drawn on, at any size, forever — and the
+ * photograph is composed as an inset panel roughly the size it actually is, so
+ * it is *downsampled* rather than enlarged. Nothing is stretched and nothing is
+ * stepped.
  *
- * One texture, one light, one hand.
+ * The motion is continuous rather than per-frame: the metal flows, a specular
+ * band sweeps it, and the seam of gold down the frame opens as you scroll. His
+ * playing pushes the flow and lifts the seam. That is the whole hero.
  */
-
-const BANDS = 13;
-const WAVE_SIZE = 256;
 
 const vertexShader = /* glsl */ `
   varying vec2 vUv;
@@ -42,13 +34,12 @@ const fragmentShader = /* glsl */ `
   precision highp float;
 
   uniform sampler2D uPhoto;
-  uniform sampler2D uWave;
   uniform float uHasPhoto;
+  uniform float uPhotoAspect;
+  uniform float uAspect;
   uniform float uProgress;
   uniform float uTime;
   uniform float uLevel;
-  uniform float uAspect;
-  uniform float uPhotoAspect;
   uniform vec2 uCursor;
 
   uniform vec3 uLacquer;
@@ -63,156 +54,135 @@ const fragmentShader = /* glsl */ `
     return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
   }
 
-  /* Cover-fit, so the frame is filled at any viewport without squashing him. */
-  vec2 coverBy(vec2 uv, float photoAspect) {
-    float scale = uAspect / photoAspect;
-    if (scale > 1.0) {
-      uv.y = (uv.y - 0.5) / scale + 0.5;
-    } else {
-      uv.x = (uv.x - 0.5) * scale + 0.5;
+  float noise(vec2 p) {
+    vec2 i = floor(p);
+    vec2 f = fract(p);
+    vec2 u = f * f * (3.0 - 2.0 * f);
+    return mix(
+      mix(hash(i), hash(i + vec2(1.0, 0.0)), u.x),
+      mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), u.x),
+      u.y
+    );
+  }
+
+  float fbm(vec2 p) {
+    float total = 0.0;
+    float amp = 0.5;
+    for (int i = 0; i < 5; i++) {
+      total += noise(p) * amp;
+      p *= 2.02;
+      amp *= 0.5;
     }
-    return uv;
+    return total;
   }
 
-  vec2 cover(vec2 uv) {
-    return coverBy(uv, uPhotoAspect);
-  }
-
-  /* Named grey, not luminance: three.js already defines one of those in its
-     shader prefix, and a second body is a compile error. */
   float grey(vec3 c) {
     return dot(c, vec3(0.2126, 0.7152, 0.0722));
   }
 
-  /* Lacquer → deep gold → gold → lit gold → ivory. A gilded photograph rather
-     than a tinted one: the ramp is uneven on purpose, so highlights carry the
-     metal and the shadows stay lacquer. */
-  vec3 gild(float l) {
-    // Open the shadows first: an arena photograph is mostly black, and mapping
-    // that straight onto the ramp threw his face away.
-    float t = pow(clamp(l, 0.0, 1.0), 0.78);
-    vec3 c = mix(uLacquer, uGoldDeep, smoothstep(0.02, 0.26, t));
-    c = mix(c, uGold, smoothstep(0.2, 0.54, t));
-    c = mix(c, uGoldLit, smoothstep(0.5, 0.8, t));
-    c = mix(c, uIvory, smoothstep(0.78, 1.0, t));
-    // Multiply the original tonality back in so it grades rather than posterises.
-    return c * (0.78 + 0.42 * t);
-  }
-
-  float wave(float y) {
-    return texture2D(uWave, vec2(clamp(y, 0.0, 1.0), 0.5)).r;
-  }
-
   void main() {
     vec2 uv = vUv;
+    vec2 p = (uv - 0.5) * vec2(uAspect, 1.0) * 2.2;
 
-    /* ---- the bands: his signal cuts his own photograph ---- */
-    float bandIndex = floor(uv.y * float(${BANDS}));
-    float bandCentre = (bandIndex + 0.5) / float(${BANDS});
-    float amp = wave(bandCentre) - 0.5;
-    // Alternating direction, so it reads as a cut rather than a wobble.
-    float direction = mod(bandIndex, 2.0) < 1.0 ? 1.0 : -1.0;
-    float slice = amp * direction * (0.0035 + uLevel * 0.2);
-    // Scroll widens the cut a little: the picture is most whole at the top.
-    slice *= 0.55 + uProgress * 0.9;
-
-    // A hairline of gold along the shear, so a displaced band reads as a
-    // deliberate cut in the picture rather than as compression noise.
-    float inBand = fract(uv.y * float(${BANDS}));
-    float boundary = min(inBand, 1.0 - inBand);
-    float cut = smoothstep(0.055, 0.0, boundary)
-      * smoothstep(0.005, 0.022, abs(slice));
-
-    // Scroll pushes in, so the frame is visibly moving even before a note plays.
-    vec2 zoomed = (uv - 0.5) * (1.0 - uProgress * 0.1) + 0.5;
-    vec2 photoUv = cover(zoomed + vec2(slice, 0.0));
-
-    /* Chromatic split along the shear. Where his signal has cut the picture the
-       channels separate, which is what makes the slicing legible at a glance
-       rather than something you have to look for. */
-    float split = clamp(abs(slice) * 6.5, 0.0, 1.0) * 0.004;
-    vec3 near = vec3(
-      texture2D(uPhoto, photoUv + vec2(split, 0.0)).r,
-      texture2D(uPhoto, photoUv).g,
-      texture2D(uPhoto, photoUv - vec2(split, 0.0)).b
+    /* ---- molten metal: two domain warps, so it folds rather than ripples ---- */
+    // Constant flow. Driving this from the amplitude made the metal shake in time
+    // with the music, which looked like a novelty filter rather than a material.
+    float flow = uTime * 0.035;
+    vec2 q = vec2(fbm(p * 0.9 + flow), fbm(p * 0.9 + vec2(3.1, 1.7) - flow * 0.8));
+    vec2 r = vec2(
+      fbm(p * 1.1 + 2.0 * q + vec2(1.7, 9.2) + flow * 1.2),
+      fbm(p * 1.1 + 2.0 * q + vec2(8.3, 2.8) - flow * 0.9)
     );
+    float metal = fbm(p * 1.25 + 2.4 * r);
 
-    vec3 photo = near;
-    float l = grey(photo);
+    // Gold reads by its highlight, so the ramp is weighted to the top end.
+    vec3 colour = mix(uLacquer, uGoldDeep, smoothstep(0.34, 0.62, metal));
+    colour = mix(colour, uGold, smoothstep(0.58, 0.78, metal));
+    colour = mix(colour, uGoldLit, smoothstep(0.76, 0.9, metal));
 
-    /* The gild is a grade, not a replacement. Mixing the photograph's own colour
-       back through it keeps his face, the stage reds and the blue LED wall —
-       gilding it outright made a handsome poster of a man you could not see. */
-    // Open the shadows on the colour too, then warm it. Without the lift, mixing
-    // the photograph back in only made the frame darker.
-    vec3 lifted = pow(max(photo, vec3(0.0)), vec3(0.7));
-    vec3 warmed = lifted * vec3(1.06, 0.99, 0.9);
-    vec3 colour = mix(gild(l), warmed, 0.52);
-    colour *= 1.08;
-    if (uHasPhoto < 0.5) {
-      // No texture yet: hold the lacquer ground rather than flashing black.
-      colour = uLacquer;
-      l = 0.0;
+    // A specular band crossing the metal, and a second, slower one behind it.
+    float sweep = sin((uv.x * 1.4 + uv.y * 0.6) * 3.14159 - uTime * 0.22 + uProgress * 2.2);
+    float spec = pow(max(0.0, sweep), 5.0) * 0.45;
+    colour += uGoldLit * spec * smoothstep(0.45, 0.95, metal) * 0.7;
+
+    // The whole field settles toward lacquer away from the seam, so it stays a
+    // dark room with gold in it rather than a gold page.
+    float depth = smoothstep(0.1, 0.85, metal);
+    colour = mix(uLacquer, colour, 0.28 + 0.72 * depth);
+
+    /* ---- one seam of 24K gold, opening as you scroll ---- */
+    float seamX = 0.34;
+    float width = 0.006 + uProgress * 0.05;
+    float seam = exp(-pow((uv.x - seamX) / width, 2.0));
+    // It is brighter where the metal behind it is already lit.
+    colour += mix(uGold, uIvory, 0.35) * seam * 0.72;
+    // And it throws light sideways.
+    colour += uGoldDeep * exp(-pow((uv.x - seamX) / (width * 9.0), 2.0)) * 0.28;
+
+    /* ---- him, framed: a panel, not a stretched backdrop ----
+       On a narrow screen the panel cannot sit beside the type, so it moves above
+       it and the type takes the floor. Same picture, different plate. */
+    float narrow = step(uAspect, 0.95);
+    // On a phone the plate takes the top half and stops well clear of the type.
+    float top = mix(0.08, 0.52, narrow);
+    float bottom = mix(0.94, 0.96, narrow);
+    float right = mix(0.955, 0.94, narrow);
+    float panelHeight = bottom - top;
+    float panelWidth = mix(panelHeight / uAspect * 0.92, 0.88, narrow);
+    float left = right - panelWidth;
+
+    vec2 panel = (uv - vec2(left, top)) / vec2(panelWidth, panelHeight);
+    float inPanel = step(0.0, panel.x) * step(panel.x, 1.0) * step(0.0, panel.y) * step(panel.y, 1.0);
+
+    if (inPanel > 0.5 && uHasPhoto > 0.5) {
+      // Cover-fit inside the panel, with a slow rise as the page scrolls.
+      float panelAspect = panelWidth * uAspect / panelHeight;
+      vec2 shot = panel;
+      shot.y -= uProgress * 0.06;
+      float scale = panelAspect / uPhotoAspect;
+      if (scale > 1.0) {
+        shot.y = (shot.y - 0.5) / scale + 0.5;
+      } else {
+        shot.x = (shot.x - 0.5) * scale + 0.5;
+      }
+
+      vec3 photo = texture2D(uPhoto, shot).rgb;
+      float l = grey(photo);
+      // Lifted, then warmed toward the room's own light rather than regraded.
+      vec3 lifted = pow(max(photo, vec3(0.0)), vec3(0.82)) * vec3(1.06, 0.99, 0.9);
+      vec3 gilded = mix(uLacquer, uGoldDeep, smoothstep(0.05, 0.34, l));
+      gilded = mix(gilded, uGold, smoothstep(0.3, 0.66, l));
+      gilded = mix(gilded, uIvory, smoothstep(0.72, 0.99, l));
+      vec3 framed = mix(gilded, lifted, 0.62) * 1.06;
+
+      // The seam's light falls on him too.
+      framed += uGoldLit * seam * 0.25;
+
+      colour = framed;
     }
 
-    /* ---- his edges, and the gold struck off them ---- */
-    float tap = 0.0022;
-    float lx = grey(texture2D(uPhoto, photoUv + vec2(tap, 0.0)).rgb)
-             - grey(texture2D(uPhoto, photoUv - vec2(tap, 0.0)).rgb);
-    float ly = grey(texture2D(uPhoto, photoUv + vec2(0.0, tap)).rgb)
-             - grey(texture2D(uPhoto, photoUv - vec2(0.0, tap)).rgb);
-    float edge = clamp(length(vec2(lx, ly)) * 3.4, 0.0, 1.0) * uHasPhoto;
+    // A gold hairline around the panel, and a soft drop beneath it.
+    float edgeX = min(abs(uv.x - left), abs(uv.x - right));
+    float edgeY = min(abs(uv.y - top), abs(uv.y - bottom));
+    float onVertical = step(top, uv.y) * step(uv.y, bottom) * exp(-pow(edgeX / 0.0016, 2.0));
+    float onHorizontal = step(left, uv.x) * step(uv.x, right) * exp(-pow(edgeY / 0.0016, 2.0));
+    colour += uGold * max(onVertical, onHorizontal) * 0.55;
 
-    // Dust rises: sparse, deterministic, and only where an edge is lit.
-    vec2 dustCell = vec2(uv.x * 220.0, uv.y * 130.0 - uTime * 0.5 - uProgress * 6.0);
-    float spark = hash(floor(dustCell));
-    float dust = smoothstep(0.974, 1.0, spark) * edge * (0.4 + uLevel * 2.6 + uProgress * 0.9);
+    /* ---- cursor light, room falloff, and the side the type sits on ---- */
+    float pointer = 1.0 - smoothstep(0.0, 0.42, length((uv - uCursor) * vec2(uAspect, 1.0)));
+    colour += uGoldDeep * pointer * 0.12;
 
-    /* ---- the photograph dissolves upward as the scroll ends ---- */
-    float dissolve = smoothstep(0.55, 1.0, uProgress);
-    // Fine enough to read as dust rather than as blocks.
-    float rise = smoothstep(0.0, 0.85, uv.y + (hash(floor(uv * vec2(260.0, 190.0))) - 0.5) * 0.26);
-    float held = 1.0 - dissolve * rise;
-    colour = mix(uLacquer, colour, held);
+    float vignette = 1.0 - smoothstep(0.44, 1.2, length((uv - vec2(0.5)) * vec2(uAspect * 0.8, 1.0)));
+    colour *= 0.58 + 0.42 * vignette;
 
-    /* ---- five staff lines, ruled across and drawn in on scroll ---- */
-    float staff = 0.0;
-    float drawn = smoothstep(0.02, 0.62, uProgress);
-    for (int i = 0; i < 5; i += 1) {
-      float base = 0.13 + float(i) * 0.031;
-      // The lines bend with the playing: a bowed string, not a rule.
-      float bend = sin(uv.x * 7.5 + uTime * 1.6 + float(i) * 0.7) * uLevel * 0.012;
-      float d = abs(uv.y - (base + bend));
-      float line = smoothstep(0.0016, 0.0, d);
-      // They arrive left to right, like a pen.
-      line *= smoothstep(0.0, 0.35, drawn - uv.x * 0.55);
-      staff += line;
-    }
-    staff = clamp(staff, 0.0, 1.0) * (0.52 + uLevel * 0.7);
-
-    /* A barline sweeping the frame with the scroll: the same gesture the engraved
-       score downstairs uses, so the hero and the notation rhyme. */
-    float head = smoothstep(0.0018, 0.0, abs(uv.x - (0.06 + uProgress * 0.88)));
-    head *= smoothstep(0.44, 0.1, abs(uv.y - 0.26)) * (0.3 + uLevel * 0.8);
-
-    /* ---- cursor light: the lacquer catches a highlight near the pointer ---- */
-    float pointer = 1.0 - smoothstep(0.0, 0.38, length((uv - uCursor) * vec2(uAspect, 1.0)));
-    colour += uGoldDeep * pointer * 0.09 * (0.4 + uLevel);
-
-    colour += uGold * staff;
-    colour += uGoldLit * head * 0.5;
-    // Bloom on the loud notes: the whole frame lifts with him.
-    colour += colour * uLevel * 0.4;
-    colour += uGoldLit * dust;
-    colour += uGoldLit * cut * 0.6;
-
-    /* ---- the room falls off, and the type side is held down ---- */
-    float vignette = 1.0 - smoothstep(0.42, 1.15, length((uv - vec2(0.5)) * vec2(uAspect * 0.82, 1.0)));
-    colour *= 0.66 + 0.34 * vignette;
-    float scrim = smoothstep(0.62, 0.02, uv.x);
-    colour = mix(colour, uLacquer, scrim * 0.6);
-    float floorScrim = smoothstep(0.34, 0.0, uv.y);
-    colour = mix(colour, uLacquer, floorScrim * 0.55);
+    // The type sits at the left on a wide screen and along the floor on a narrow
+    // one, so the scrim follows it.
+    float sideScrim = smoothstep(0.42, 0.0, uv.x) * (1.0 - narrow);
+    float baseScrim = smoothstep(0.46, 0.02, uv.y) * narrow;
+    float scrim = max(sideScrim, baseScrim) * (1.0 - inPanel);
+    colour = mix(colour, uLacquer, scrim * 0.72);
+    float floorScrim = smoothstep(0.22, 0.0, uv.y) * (1.0 - inPanel) * (1.0 - narrow);
+    colour = mix(colour, uLacquer, floorScrim * 0.5);
 
     gl_FragColor = vec4(colour, 1.0);
   }
@@ -228,26 +198,18 @@ export function createPhoenixScene({ canvas, reducedMotion }: SceneContext): Sce
   const scene = new THREE.Scene();
   const camera = new THREE.Camera();
 
-  /** His signal, as a texture the shader can index by band. */
-  const waveData = new Uint8Array(WAVE_SIZE).fill(128);
-  const waveTexture = new THREE.DataTexture(waveData, WAVE_SIZE, 1, THREE.RedFormat);
-  waveTexture.minFilter = THREE.LinearFilter;
-  waveTexture.magFilter = THREE.LinearFilter;
-  waveTexture.needsUpdate = true;
-
   const material = new THREE.ShaderMaterial({
     vertexShader,
     fragmentShader,
     uniforms: {
       uPhoto: { value: null },
-      uWave: { value: waveTexture },
       uHasPhoto: { value: 0 },
+      uPhotoAspect: { value: photos.press.width / photos.press.height },
+      uAspect: { value: 1 },
       uProgress: { value: 0 },
       uTime: { value: 0 },
       uLevel: { value: 0 },
-      uAspect: { value: 1 },
-      uPhotoAspect: { value: photos.press.width / photos.press.height },
-      uCursor: { value: new THREE.Vector2(0.72, 0.55) },
+      uCursor: { value: new THREE.Vector2(0.3, 0.6) },
       uLacquer: { value: new THREE.Color("#150f0c") },
       uGoldDeep: { value: new THREE.Color("#6d4a12") },
       uGold: { value: new THREE.Color("#c99a45") },
@@ -256,14 +218,13 @@ export function createPhoenixScene({ canvas, reducedMotion }: SceneContext): Sce
     },
   });
 
-  // The press portrait: the sharpest asset on the site, and the only frame where
-  // his face is lit. The concert stills are soft, and softness reads as a bad
-  // photograph rather than as film once it is this large.
   const loader = new THREE.TextureLoader();
   loader.load(photos.press.src, (texture) => {
     texture.colorSpace = THREE.SRGBColorSpace;
-    texture.minFilter = THREE.LinearFilter;
+    texture.minFilter = THREE.LinearMipmapLinearFilter;
     texture.magFilter = THREE.LinearFilter;
+    texture.generateMipmaps = true;
+    texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
     texture.wrapS = THREE.ClampToEdgeWrapping;
     texture.wrapT = THREE.ClampToEdgeWrapping;
     material.uniforms.uPhoto.value = texture;
@@ -274,9 +235,8 @@ export function createPhoenixScene({ canvas, reducedMotion }: SceneContext): Sce
   quad.frustumCulled = false;
   scene.add(quad);
 
-  /* The cursor light is a desktop nicety, and costs one pointer listener. */
   const cursor = material.uniforms.uCursor.value as THREE.Vector2;
-  const target = new THREE.Vector2(0.72, 0.55);
+  const target = new THREE.Vector2(0.3, 0.6);
   const onPointer = (event: PointerEvent) => {
     const box = canvas.getBoundingClientRect();
     if (box.width === 0 || box.height === 0) return;
@@ -284,42 +244,15 @@ export function createPhoenixScene({ canvas, reducedMotion }: SceneContext): Sce
   };
   window.addEventListener("pointermove", onPointer, { passive: true });
 
-  const samples = new Float32Array(1024) as Float32Array<ArrayBuffer>;
-
   return {
     render(progress, elapsed, level) {
-      const time = reducedMotion ? (level > 0.01 ? elapsed : 0) : elapsed;
       material.uniforms.uProgress.value = progress;
-      material.uniforms.uTime.value = time;
+      // The metal flows on its own clock. It used to be pushed by the amplitude
+      // of whatever was playing, and that read as a gimmick, so the audio no
+      // longer touches this scene's geometry at all.
+      material.uniforms.uTime.value = reducedMotion ? 0 : elapsed;
       material.uniforms.uLevel.value = level;
-
-      // Pull the waveform into the band texture. When nothing is playing the
-      // bands relax back to centre rather than snapping flat.
-      if (waveform(samples)) {
-        const stride = Math.floor(samples.length / WAVE_SIZE);
-        for (let i = 0; i < WAVE_SIZE; i += 1) {
-          let peak = 0;
-          for (let k = 0; k < stride; k += 1) {
-            const value = samples[i * stride + k] as number;
-            if (Math.abs(value) > Math.abs(peak)) peak = value;
-          }
-          waveData[i] = Math.round(Math.max(0, Math.min(255, 128 + peak * 127)));
-        }
-        waveTexture.needsUpdate = true;
-      } else {
-        let moved = false;
-        for (let i = 0; i < WAVE_SIZE; i += 1) {
-          const value = waveData[i] as number;
-          if (value !== 128) {
-            waveData[i] = value + Math.sign(128 - value) * Math.min(3, Math.abs(128 - value));
-            moved = true;
-          }
-        }
-        if (moved) waveTexture.needsUpdate = true;
-      }
-
-      cursor.lerp(target, reducedMotion ? 1 : 0.06);
-
+      cursor.lerp(target, reducedMotion ? 1 : 0.05);
       renderer.render(scene, camera);
     },
 
@@ -332,7 +265,6 @@ export function createPhoenixScene({ canvas, reducedMotion }: SceneContext): Sce
     dispose() {
       window.removeEventListener("pointermove", onPointer);
       (material.uniforms.uPhoto.value as THREE.Texture | null)?.dispose();
-      waveTexture.dispose();
       quad.geometry.dispose();
       material.dispose();
       renderer.dispose();

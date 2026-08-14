@@ -22,8 +22,67 @@ interface Tap {
 }
 
 const taps = new WeakMap<HTMLMediaElement, Tap>();
+/** Iterable, unlike the WeakMap: needed to hush everything else on play. */
+const attached = new Set<HTMLMediaElement>();
 /** The last element to start playing — what "now" means for the visuals. */
 let front: Tap | null = null;
+
+/** One fader for the whole site, so a volume control has something to hold. */
+let master: GainNode | null = null;
+const VOLUME_KEY = "blesspoke:volume";
+let level_ = readStoredVolume();
+
+function readStoredVolume(): number {
+  try {
+    const stored = Number(window.localStorage.getItem(VOLUME_KEY));
+    return Number.isFinite(stored) && stored >= 0 && stored <= 1 ? stored : 0.8;
+  } catch {
+    return 0.8;
+  }
+}
+
+function bus(ctx: AudioContext): GainNode {
+  if (!master) {
+    master = ctx.createGain();
+    master.gain.value = level_;
+    master.connect(ctx.destination);
+  }
+  return master;
+}
+
+/** 0 → 1, remembered between visits. */
+export function volume(): number {
+  return level_;
+}
+
+export function setVolume(next: number): void {
+  level_ = Math.min(1, Math.max(0, next));
+  if (master) master.gain.value = level_;
+  // Elements that never made it onto the bus still need to obey.
+  for (const element of attached) element.volume = level_;
+  try {
+    window.localStorage.setItem(VOLUME_KEY, String(level_));
+  } catch {
+    /* private mode: the setting simply does not persist */
+  }
+}
+
+/**
+ * Start one thing and stop everything else. A hero phrase left playing under a
+ * showreel is the sort of detail that makes a site feel unfinished, and there is
+ * only one player on this site anyway.
+ */
+export function play(element: HTMLMediaElement): void {
+  for (const other of attached) {
+    if (other !== element && !other.paused) other.pause();
+  }
+  listen(element);
+  void element.play().catch(() => undefined);
+}
+
+export function pauseAll(): void {
+  for (const element of attached) if (!element.paused) element.pause();
+}
 
 /** Cached so twenty consumers in one frame cost one analyser read. */
 let cachedLevel = 0;
@@ -36,6 +95,9 @@ let smoothed = 0;
  * second call only marks the element as the one in front.
  */
 export function listen(element: HTMLMediaElement): void {
+  attached.add(element);
+  element.volume = level_;
+
   const existing = taps.get(element);
   if (existing) {
     front = existing;
@@ -56,7 +118,7 @@ export function listen(element: HTMLMediaElement): void {
   const analyser = ctx.createAnalyser();
   analyser.fftSize = 1024;
   analyser.smoothingTimeConstant = 0.6;
-  source.connect(analyser).connect(ctx.destination);
+  source.connect(analyser).connect(bus(ctx));
 
   const tap: Tap = { element, analyser, samples: new Float32Array(analyser.fftSize) };
   taps.set(element, tap);
