@@ -128,7 +128,7 @@ another. Routes:
 | `/blesspoke/` | Chooser — proof sheet of all three concepts |
 | `/blesspoke/phoenix` | Concept 01 |
 | `/blesspoke/dragon` | Concept 02 |
-| `/blesspoke/chosen` | Concept 03 |
+| `/blesspoke/nocturne` | Concept 03 |
 
 ### State of the tree
 
@@ -416,33 +416,42 @@ That last one matters: the mechanism is shared, the feel is not.
 - Paper grain is an inline `feTurbulence` SVG data URI at 5% opacity.
 - Photography uses `mix-blend-mode: multiply` so studio backgrounds drop out.
 
-### 03 Chosen — "Silk and pearl" (light)
+### 03 Nocturne — "Velvet and lamplight" (dark)
 
-**Replaced the carbon concept entirely on 14 Aug 2026.** The user's words:
-*"chosen carbon is totally not ellegant, replace it with something else."* The
-name survives because it is his own — "The Chosen One" — and because couture is
-selection, which is exactly what a commission is. The carbon-fibre violin called
-The Chosen is still listed as a fact in the instruments table.
+**Replaced Silk and Pearl on 15 Aug 2026**, which the user found "too bland and
+boring". Before rebuilding, ten current Awwwards winners were opened in Playwright
+and scrolled — haoqi.design, Vero, ERA Residence, Revelatio, Trionn, 2xA, Obys,
+Mosby's Files, Oliver Gareis, artem — and what they share was written down: a
+WebGL canvas, GSAP with ScrollTrigger, **Lenis-weighted scrolling**, a custom
+cursor, mix-blend-mode used in dozens of places, display type at 120–180px, and
+pages 14,000–25,000px long. Two were close to this brief and taught the most:
+**Vero**, a bespoke atelier whose call to action is literally "Start your
+COMMISSION", for its mixed roman/italic display and its alternation of film
+panels with ivory type pages; and **ERA Residence** for its arch-shaped image
+windows, deep unusual ground colour and rotated micro-caps in the margins.
 
-- **Object:** a bolt of cream silk, a single pearl, one gold thread.
-- **Palette:** silk `oklch(96% 0.008 85)`, pearl `oklch(89% 0.018 320)`, gold
-  thread `oklch(76% 0.095 85)`, ink `oklch(23% 0.012 310)`.
-- **Type:** Bodoni Moda (Didone display, optical sizing on) + Jost (body and
-  every label, 300 weight, tracked wide). No mono anywhere — couture labels are
-  letterspaced sans, not machine type.
-- **Layout:** a lookbook. Numbered plates (`Plate I`–`Plate IV` in the hero,
-  `I`–`VIII` down the page), garment-label tags with a gold-thread rule, care-label
-  spec rows, and one centred creed page carrying his own line with nothing else
-  on it.
-- **Scene:** silk in a fragment shader — anisotropic weave stretched along the
-  warp, a broad sheen crossing it, and from 40% scroll a **pearl** gathering out
-  of the light: sphere normal recovered from the disc, off-centre specular, nacre
-  fresnel rim, contact shadow so it sits on the cloth. Small on purpose. Its
-  lustre rises with `uLevel` — when he plays, the silk catches more light.
-- **Choreography:** slower and longer than the other two. Couture does not hurry.
-- The figure in the hero is `dennis-cutout.webp` standing on the cloth. It has
-  real alpha, so **no blend mode or filter is needed** — an earlier attempt used
-  `invert(1)` and turned him into a photographic negative. Don't.
+None of their looks were copied. The register stayed ours: violin, luxury,
+exclusivity.
+
+- **Premise:** a night at the house. The curtain is down, one lamp is lit, and
+  the scroll walks you from the empty hall to the man to the last door.
+- **Palette:** velvet `oklch(19% 0.06 22)`, deep velvet `oklch(12% 0.045 20)`,
+  ivory `oklch(94% 0.012 80)`, brass `oklch(76% 0.1 78)`.
+- **Type:** **Instrument Serif** and **Instrument Sans** — the display face keeps
+  its italic for the small connecting words, the way a concert programme sets
+  them: *the* Dennis Lau, *one* SONG *written for* ONE PERSON. That device is the
+  whole tone of the concept and is worth protecting.
+- **Scene:** oxblood velvet with real folds under a brass lamp that follows the
+  pointer, dust in the beam, and — as you scroll — the curtain *parts*, both
+  halves travelling outward with their own folds and a brass thread down each
+  leading edge, to reveal him lit behind it. One shader: cloth, photograph, light
+  and dust, so nothing is layered on anything.
+- **Structure:** acts, alternating velvet and ivory grounds so the scroll has a
+  pulse. Every photograph is seen through the same proscenium arch. A line of
+  type travels sideways as you pass it; the wordmark is set enormous on the way
+  out; the coda is back in the dark with a brass door at the end of it.
+- Each act sets `--edge`, so an act can be flipped between velvet and ivory
+  without every rule inside it having to know which ground it is on.
 
 ---
 
@@ -593,6 +602,23 @@ concepts complete end to end; the chooser page.
   pseudo-element paints *above* in-flow content, so a scrim belongs on the stage
   layer under the hero, not on the hero itself. Getting that wrong dims the very
   words it is meant to protect.
+
+**Landed in the award-research pass (15 Aug 2026):**
+
+- **`FilmScrub`** — his own footage scrubbed by the scroll, one sequence per
+  concept, drawn to a canvas from a numbered JPEG sequence in `public/scrub`.
+  Finding uncut runs in dark concert footage defeated both frame-differencing and
+  ffmpeg's own scene detection; the shots were verified by eye, and one of them
+  turned out to be a *dissolve*, which is why the Phoenix sequence starts at
+  98.75s and not at the "clean" 96.0s both detectors reported.
+- **`useSmoothScroll`** — weighted scrolling site-wide, done as real
+  `window.scrollTo` on an animation frame rather than by transforming a wrapper,
+  because a transformed wrapper breaks `position: sticky` and every pinned scene
+  here depends on it. Off for touch and for reduced motion.
+- **`Cursor`**, **`Grain`**, **`Kinetic`**, **`Band`**, **`Handscroll`**,
+  **`Score`**, **`ScoreRail`**, **`Words`**, **`Marquee`**, **`Field`**,
+  **`Territories`** — the shared vocabulary the three concepts now draw on.
+- **Concept 03 rebuilt as Nocturne** (see §6).
 
 **Verified, not assumed:**
 

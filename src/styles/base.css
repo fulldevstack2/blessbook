@@ -1105,3 +1105,38 @@ p {
   fill: currentColor;
   opacity: 0.66;
 }
+
+/* A ring where the pointer is. The system cursor stays: a ring is a flourish,
+   not a replacement, and hiding the real one costs more than it gives. */
+.cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 80;
+  width: 26px;
+  height: 26px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    width 420ms var(--ease-out),
+    height 420ms var(--ease-out),
+    opacity 500ms var(--ease-out);
+}
+
+.cursor[data-ready="true"] {
+  opacity: 0.55;
+}
+
+.cursor[data-over="true"] {
+  width: 46px;
+  height: 46px;
+  opacity: 0.9;
+}
+
+@media (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .cursor {
+    display: none;
+  }
+}

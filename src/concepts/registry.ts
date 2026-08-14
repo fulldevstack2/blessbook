@@ -1,6 +1,6 @@
 import { violins, type Violin } from "../content/dennis";
 
-export type ConceptId = "phoenix" | "dragon" | "chosen";
+export type ConceptId = "phoenix" | "dragon" | "nocturne";
 
 export interface Swatch {
   readonly name: string;
@@ -25,7 +25,7 @@ export interface Concept {
   readonly instrument: Violin;
 }
 
-function violin(id: ConceptId): Violin {
+function violin(id: Violin["id"]): Violin {
   const found = violins.find((v) => v.id === id);
   if (!found) throw new Error(`no violin registered for ${id}`);
   return found;
@@ -76,25 +76,27 @@ export const concepts: readonly Concept[] = [
     instrument: violin("dragon"),
   },
   {
-    id: "chosen",
+    id: "nocturne",
     ordinal: "03",
-    path: "/chosen",
-    name: "Chosen",
-    tagline: "Silk and pearl",
-    object: "A bolt of cream silk, a single pearl, and one gold thread.",
+    path: "/nocturne",
+    name: "Nocturne",
+    tagline: "Velvet and lamplight",
+    object: "A velvet house before the doors open, and one lamp still lit.",
     premise:
-      "The couture reading, and his own word for himself: the chosen one. Cream silk, pearl lustre, hairlines of gold thread and a Didone cut fine enough to belong on a garment label. Scroll gathers the light in the weave until it settles into a single pearl.",
-    theme: "light",
+      "The concert-hall reading, at night. Oxblood velvet, warm ivory, brass lamplight, and a proscenium arch that every picture is seen through. Scroll walks you from the empty house to the one instrument under the lamp — and the commission is the last door.",
+    theme: "dark",
     fonts:
-      "https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..800;1,6..96,400..600&family=Jost:wght@200..500&display=swap",
-    display: "Bodoni Moda",
-    body: "Jost",
+      "https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:ital,wght@0,400..600;1,400..500&display=swap",
+    display: "Instrument Serif",
+    body: "Instrument Sans",
     swatches: [
-      { name: "Silk", value: "oklch(96% 0.008 85)" },
-      { name: "Pearl", value: "oklch(89% 0.018 320)" },
-      { name: "Gold thread", value: "oklch(76% 0.095 85)" },
-      { name: "Ink", value: "oklch(23% 0.012 310)" },
+      { name: "Velvet", value: "oklch(19% 0.06 22)" },
+      { name: "Ivory", value: "oklch(94% 0.012 80)" },
+      { name: "Brass", value: "oklch(76% 0.1 78)" },
+      { name: "Rose", value: "oklch(72% 0.09 20)" },
     ],
+    /* Named for the hour rather than for an instrument — the other two carry the
+       violins. The third violin, The Chosen, is still in the record below. */
     instrument: violin("chosen"),
   },
 ];
