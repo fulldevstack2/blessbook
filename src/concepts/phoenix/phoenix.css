@@ -1718,3 +1718,124 @@ canvas[hidden] + .phoenix-hero-plate {
 .phoenix .band-line {
   color: var(--gold);
 }
+
+/* ---------- the scrubbed footage ---------- */
+
+.phoenix-scrub {
+  background: var(--lacquer);
+}
+
+.phoenix-scrub .scrub-canvas {
+  /* Warmed toward the concept without losing the stage's own reds and whites. */
+  filter: saturate(0.92) contrast(1.04) sepia(0.1) brightness(0.94);
+}
+
+.phoenix-scrub .scrub-mark {
+  color: var(--gold);
+}
+
+.phoenix-scrub .scrub-line {
+  font-family: var(--display);
+  font-size: clamp(1.5rem, 3.2vw, 2.6rem);
+  line-height: 1.1;
+  color: var(--ivory);
+}
+
+/* A floor scrim, so the beats read against a lit stage. */
+.phoenix-scrub::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    0deg,
+    color-mix(in oklab, var(--lacquer) 88%, transparent) 0%,
+    color-mix(in oklab, var(--lacquer) 30%, transparent) 34%,
+    transparent 58%
+  );
+}
+
+/* ---------- grain, and the name band ---------- */
+
+.phoenix .grain {
+  --grain-opacity: 0.075;
+  --grain-blend: overlay;
+}
+
+.phoenix .kinetic {
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  background: color-mix(in oklab, var(--lacquer) 82%, black);
+  color: var(--ivory);
+  font-family: var(--display);
+}
+
+.phoenix .kinetic-dot {
+  color: var(--gold);
+}
+
+/* ---------- one section against the grain of the rest ----------
+   A page that is one colour from top to bottom reads as a template, however good
+   that colour is. This is the turn: ivory, with the lacquer type inverted onto
+   it, for the section that names his clients. */
+.phoenix-section--invert {
+  background: var(--ivory);
+  color: var(--lacquer);
+  border-top: none;
+}
+
+.phoenix-section--invert .phoenix-eyebrow,
+.phoenix-section--invert .wall-eyebrow {
+  color: var(--gold-deep);
+}
+
+.phoenix-section--invert .phoenix-h2,
+.phoenix-section--invert .wall-lede,
+.phoenix-section--invert .phoenix-word {
+  color: var(--lacquer);
+}
+
+.phoenix-section--invert .wall-list {
+  color: color-mix(in oklab, var(--lacquer) 82%, transparent);
+}
+
+.phoenix-section--invert .phoenix-word-who {
+  color: color-mix(in oklab, var(--lacquer) 62%, transparent);
+}
+
+.phoenix-section--invert .wall-item {
+  opacity: 0.86;
+}
+
+/* The strip inherits ivory from the concept, which is invisible on an ivory
+   ground. Inverted sections re-ink it. */
+.phoenix-section--invert .marquee {
+  color: color-mix(in oklab, var(--lacquer) 74%, transparent);
+  border-color: color-mix(in oklab, var(--lacquer) 20%, transparent);
+}
+
+/* ---------- the record, as graphics ---------- */
+
+/* Mark colour validated against the lacquer surface: OKLCH L inside the dark
+   band, and past 3:1 contrast. */
+.phoenix .field,
+.phoenix .atlas {
+  margin-top: var(--space-4xl);
+  color: #b8863a;
+  --atlas-surface: var(--lacquer);
+}
+
+.phoenix .field-total {
+  font-family: var(--display);
+  font-size: clamp(2.4rem, 5vw, 4rem);
+  line-height: 1;
+  color: var(--ivory);
+}
+
+.phoenix .field-label,
+.phoenix .field-note {
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--ivory-faint);
+}

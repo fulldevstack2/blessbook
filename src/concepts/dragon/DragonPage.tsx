@@ -2,7 +2,11 @@ import { useRef } from "react";
 import { Band } from "../../components/Band";
 import { ClientWall } from "../../components/ClientWall";
 import { ConceptChrome, ConceptSwitch } from "../../components/ConceptChrome";
+import { Grain } from "../../components/Grain";
+import { Kinetic } from "../../components/Kinetic";
+import { Field } from "../../components/Field";
 import { Films } from "../../components/Films";
+import { FilmScrub } from "../../components/FilmScrub";
 import { Handscroll } from "../../components/Handscroll";
 import { Listen } from "../../components/Listen";
 import { Marquee } from "../../components/Marquee";
@@ -13,6 +17,7 @@ import { Showreel } from "../../components/Showreel";
 import { Stave } from "../../components/Stave";
 import { StringRow } from "../../components/StringRow";
 import { Tally } from "../../components/Tally";
+import { Territories } from "../../components/Territories";
 import { Words } from "../../components/Words";
 import {
   commission,
@@ -109,6 +114,7 @@ export function DragonPage() {
       </a>
       <ConceptChrome concept={concept} />
       <ScoreRail />
+      <Grain />
 
       <ScrollStage vh={420} cuts={cuts.length} className="dragon-stage">
         {({ stage, progress }) => (
@@ -263,6 +269,8 @@ export function DragonPage() {
               ))}
             </dl>
 
+            <Field />
+
             <figure className="dragon-photo dragon-photo--tall" data-reveal="wipe">
               <img
                 src={photos.seated.src}
@@ -283,8 +291,9 @@ export function DragonPage() {
               ))}
             </ul>
 
+            <Territories />
             <p className="dragon-territories" data-reveal>
-              {territories.join(" · ")}
+              {territories.map((territory) => territory.name).join(" · ")}
             </p>
           </div>
         </section>
@@ -342,7 +351,17 @@ export function DragonPage() {
           </div>
         </section>
 
-        <Band photo={photos.portraitMonoTwo} line="Between the takes." />
+        <FilmScrub
+          sequence="dragon"
+          frames={80}
+          vh={340}
+          className="dragon-scrub"
+          label="Dennis Lau in silhouette against a bright, clouded sky, drawing the bow across the violin."
+          beats={[
+            { mark: "一弓", line: "One bow stroke, and the whole phrase follows." },
+            { mark: "Scroll", line: "You are drawing it." },
+          ]}
+        />
 
         <section className="dragon-section dragon-section--reel">
           <Margin index={4} label="Hear him" />
@@ -369,8 +388,10 @@ export function DragonPage() {
           </div>
         </section>
 
+        <Kinetic />
+
         <section className="dragon-section">
-          <Margin index={6} label="Titans of industry" />
+          <Margin index={6} label="Who books him" />
           <div>
             <ClientWall />
             <Marquee />
@@ -390,7 +411,7 @@ export function DragonPage() {
 
         <Band photo={photos.crowd} line="A hundred and sixty-eight thousand people, so far." tall />
 
-        <section className="dragon-section">
+        <section className="dragon-section dragon-section--invert">
           <Margin index={7} label="Why he keeps going" />
           <div>
             <Words as="h2" className="dragon-h2" text={calling.lede} />

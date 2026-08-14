@@ -1606,3 +1606,107 @@ canvas:not([hidden]) + .dragon-hero-plate {
 .dragon .band-line {
   color: var(--cinnabar);
 }
+
+/* ---------- the scrubbed footage ---------- */
+
+.dragon-scrub {
+  background: var(--paper);
+}
+
+.dragon-scrub .scrub-canvas {
+  filter: grayscale(1) contrast(1.22) brightness(1.06);
+  mix-blend-mode: multiply;
+}
+
+.dragon-scrub::after {
+  content: none;
+}
+
+.dragon-scrub .scrub-mark {
+  font-family: var(--brush);
+  font-size: 1.4rem;
+  letter-spacing: 0.1em;
+  text-transform: none;
+  color: var(--cinnabar);
+}
+
+.dragon-scrub .scrub-line {
+  font-family: var(--display);
+  font-size: clamp(1.4rem, 3vw, 2.4rem);
+  line-height: 1.14;
+  color: var(--ink);
+}
+
+/* ---------- grain, and the name band ---------- */
+
+.dragon .grain {
+  /* Multiplied rather than overlaid: on paper it should read as tooth. */
+  --grain-opacity: 0.055;
+  --grain-blend: multiply;
+}
+
+.dragon .kinetic {
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  color: var(--ink);
+  font-family: var(--display);
+}
+
+.dragon .kinetic-dot {
+  color: var(--cinnabar);
+}
+
+/* The turn: ink, with the paper inverted onto it, for his calling. */
+.dragon-section--invert {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.dragon-section--invert .dragon-h2,
+.dragon-section--invert .dragon-numeral {
+  color: var(--paper);
+}
+
+.dragon-section--invert .dragon-lede,
+.dragon-section--invert .dragon-word {
+  color: color-mix(in oklab, var(--paper) 82%, transparent);
+}
+
+.dragon-section--invert .dragon-label {
+  color: var(--jade-pale);
+}
+
+.dragon-section--invert .marquee {
+  color: color-mix(in oklab, var(--paper) 70%, transparent);
+  border-color: color-mix(in oklab, var(--paper) 22%, transparent);
+}
+
+/* ---------- the record, as graphics ---------- */
+
+/* Jade, validated against the paper surface. */
+.dragon .field,
+.dragon .atlas {
+  margin-top: var(--space-4xl);
+  color: #4a8a72;
+  --atlas-surface: var(--paper);
+}
+
+.dragon .field-total {
+  font-family: var(--display);
+  font-size: clamp(2.2rem, 4.6vw, 3.6rem);
+  line-height: 1;
+  color: var(--ink);
+}
+
+.dragon .field-label,
+.dragon .field-note {
+  font-size: 10px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.dragon-section--invert .field,
+.dragon-section--invert .atlas {
+  --atlas-surface: var(--ink);
+}

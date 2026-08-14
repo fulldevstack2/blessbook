@@ -2,7 +2,11 @@ import { useRef } from "react";
 import { Band } from "../../components/Band";
 import { ClientWall } from "../../components/ClientWall";
 import { ConceptChrome, ConceptSwitch } from "../../components/ConceptChrome";
+import { Grain } from "../../components/Grain";
+import { Kinetic } from "../../components/Kinetic";
+import { Field } from "../../components/Field";
 import { Films } from "../../components/Films";
+import { FilmScrub } from "../../components/FilmScrub";
 import { Listen } from "../../components/Listen";
 import { Marquee } from "../../components/Marquee";
 import { Reel } from "../../components/Reel";
@@ -11,6 +15,7 @@ import { ScoreRail } from "../../components/ScoreRail";
 import { Showreel } from "../../components/Showreel";
 import { StringRow } from "../../components/StringRow";
 import { Tally } from "../../components/Tally";
+import { Territories } from "../../components/Territories";
 import { Words } from "../../components/Words";
 import {
   commission,
@@ -103,6 +108,7 @@ export function ChosenPage() {
       </a>
       <ConceptChrome concept={concept} />
       <ScoreRail />
+      <Grain />
 
       <ScrollStage vh={420} cuts={cuts.length} className="chosen-stage">
         {({ stage, progress }) => (
@@ -265,6 +271,8 @@ export function ChosenPage() {
             ))}
           </dl>
 
+          <Field />
+
           <ul className="chosen-timeline">
             {milestones.map((item) => (
               <li key={item.year} data-reveal>
@@ -284,8 +292,9 @@ export function ChosenPage() {
             ))}
           </dl>
 
+          <Territories />
           <p className="chosen-territories" data-reveal>
-            {territories.join(" · ")}
+            {territories.map((territory) => territory.name).join(" · ")}
           </p>
         </section>
 
@@ -334,7 +343,17 @@ export function ChosenPage() {
           </blockquote>
         </section>
 
-        <Band photo={photos.liveBlue} line="Plate IV — under the beam, mid-phrase." />
+        <FilmScrub
+          sequence="chosen"
+          frames={87}
+          vh={340}
+          className="chosen-scrub"
+          label="The Phoenix violin turning on its own reflection, its carved wing catching the light from silver into gold."
+          beats={[
+            { mark: "Plate V", line: "One instrument, turned in the light." },
+            { mark: "Carbon fibre, 24K gold", line: "Six strings. Nobody else has one." },
+          ]}
+        />
 
         {/* ---------------- hear him ---------------- */}
         <section className="chosen-section chosen-section--reel">
@@ -356,9 +375,11 @@ export function ChosenPage() {
           <Films caption="Three nights the music was written for" />
         </section>
 
+        <Kinetic />
+
         {/* ---------------- who books him ---------------- */}
-        <section className="chosen-section">
-          <Tag number="VI" label="Titans of industry" />
+        <section className="chosen-section chosen-section--invert">
+          <Tag number="VI" label="Who books him" />
           <ClientWall />
           <Marquee />
 

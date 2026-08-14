@@ -26,7 +26,7 @@ import type { SceneContext, SceneHandle } from "../../lib/SceneCanvas";
  * One texture, one light, one hand.
  */
 
-const BANDS = 18;
+const BANDS = 13;
 const WAVE_SIZE = 256;
 
 const vertexShader = /* glsl */ `
@@ -64,14 +64,18 @@ const fragmentShader = /* glsl */ `
   }
 
   /* Cover-fit, so the frame is filled at any viewport without squashing him. */
-  vec2 cover(vec2 uv) {
-    float scale = uAspect / uPhotoAspect;
+  vec2 coverBy(vec2 uv, float photoAspect) {
+    float scale = uAspect / photoAspect;
     if (scale > 1.0) {
       uv.y = (uv.y - 0.5) / scale + 0.5;
     } else {
       uv.x = (uv.x - 0.5) * scale + 0.5;
     }
     return uv;
+  }
+
+  vec2 cover(vec2 uv) {
+    return coverBy(uv, uPhotoAspect);
   }
 
   /* Named grey, not luminance: three.js already defines one of those in its
@@ -108,7 +112,7 @@ const fragmentShader = /* glsl */ `
     float amp = wave(bandCentre) - 0.5;
     // Alternating direction, so it reads as a cut rather than a wobble.
     float direction = mod(bandIndex, 2.0) < 1.0 ? 1.0 : -1.0;
-    float slice = amp * direction * (0.014 + uLevel * 0.115);
+    float slice = amp * direction * (0.0035 + uLevel * 0.2);
     // Scroll widens the cut a little: the picture is most whole at the top.
     slice *= 0.55 + uProgress * 0.9;
 
@@ -116,13 +120,35 @@ const fragmentShader = /* glsl */ `
     // deliberate cut in the picture rather than as compression noise.
     float inBand = fract(uv.y * float(${BANDS}));
     float boundary = min(inBand, 1.0 - inBand);
-    float cut = smoothstep(0.055, 0.0, boundary) * clamp(abs(slice) * 26.0, 0.0, 1.0);
+    float cut = smoothstep(0.055, 0.0, boundary)
+      * smoothstep(0.005, 0.022, abs(slice));
 
-    vec2 photoUv = cover(uv + vec2(slice, 0.0));
-    vec3 photo = texture2D(uPhoto, photoUv).rgb;
+    // Scroll pushes in, so the frame is visibly moving even before a note plays.
+    vec2 zoomed = (uv - 0.5) * (1.0 - uProgress * 0.1) + 0.5;
+    vec2 photoUv = cover(zoomed + vec2(slice, 0.0));
+
+    /* Chromatic split along the shear. Where his signal has cut the picture the
+       channels separate, which is what makes the slicing legible at a glance
+       rather than something you have to look for. */
+    float split = clamp(abs(slice) * 6.5, 0.0, 1.0) * 0.004;
+    vec3 near = vec3(
+      texture2D(uPhoto, photoUv + vec2(split, 0.0)).r,
+      texture2D(uPhoto, photoUv).g,
+      texture2D(uPhoto, photoUv - vec2(split, 0.0)).b
+    );
+
+    vec3 photo = near;
     float l = grey(photo);
 
-    vec3 colour = gild(l);
+    /* The gild is a grade, not a replacement. Mixing the photograph's own colour
+       back through it keeps his face, the stage reds and the blue LED wall —
+       gilding it outright made a handsome poster of a man you could not see. */
+    // Open the shadows on the colour too, then warm it. Without the lift, mixing
+    // the photograph back in only made the frame darker.
+    vec3 lifted = pow(max(photo, vec3(0.0)), vec3(0.7));
+    vec3 warmed = lifted * vec3(1.06, 0.99, 0.9);
+    vec3 colour = mix(gild(l), warmed, 0.52);
+    colour *= 1.08;
     if (uHasPhoto < 0.5) {
       // No texture yet: hold the lacquer ground rather than flashing black.
       colour = uLacquer;
@@ -140,11 +166,12 @@ const fragmentShader = /* glsl */ `
     // Dust rises: sparse, deterministic, and only where an edge is lit.
     vec2 dustCell = vec2(uv.x * 220.0, uv.y * 130.0 - uTime * 0.5 - uProgress * 6.0);
     float spark = hash(floor(dustCell));
-    float dust = smoothstep(0.982, 1.0, spark) * edge * (0.3 + uLevel * 2.0 + uProgress * 0.8);
+    float dust = smoothstep(0.974, 1.0, spark) * edge * (0.4 + uLevel * 2.6 + uProgress * 0.9);
 
     /* ---- the photograph dissolves upward as the scroll ends ---- */
     float dissolve = smoothstep(0.55, 1.0, uProgress);
-    float rise = smoothstep(0.0, 0.85, uv.y + (hash(floor(uv * vec2(90.0, 70.0))) - 0.5) * 0.22);
+    // Fine enough to read as dust rather than as blocks.
+    float rise = smoothstep(0.0, 0.85, uv.y + (hash(floor(uv * vec2(260.0, 190.0))) - 0.5) * 0.26);
     float held = 1.0 - dissolve * rise;
     colour = mix(uLacquer, colour, held);
 
@@ -161,21 +188,29 @@ const fragmentShader = /* glsl */ `
       line *= smoothstep(0.0, 0.35, drawn - uv.x * 0.55);
       staff += line;
     }
-    staff = clamp(staff, 0.0, 1.0) * (0.46 + uLevel * 0.6);
+    staff = clamp(staff, 0.0, 1.0) * (0.52 + uLevel * 0.7);
+
+    /* A barline sweeping the frame with the scroll: the same gesture the engraved
+       score downstairs uses, so the hero and the notation rhyme. */
+    float head = smoothstep(0.0018, 0.0, abs(uv.x - (0.06 + uProgress * 0.88)));
+    head *= smoothstep(0.44, 0.1, abs(uv.y - 0.26)) * (0.3 + uLevel * 0.8);
 
     /* ---- cursor light: the lacquer catches a highlight near the pointer ---- */
     float pointer = 1.0 - smoothstep(0.0, 0.38, length((uv - uCursor) * vec2(uAspect, 1.0)));
     colour += uGoldDeep * pointer * 0.09 * (0.4 + uLevel);
 
     colour += uGold * staff;
+    colour += uGoldLit * head * 0.5;
+    // Bloom on the loud notes: the whole frame lifts with him.
+    colour += colour * uLevel * 0.4;
     colour += uGoldLit * dust;
     colour += uGoldLit * cut * 0.6;
 
     /* ---- the room falls off, and the type side is held down ---- */
     float vignette = 1.0 - smoothstep(0.42, 1.15, length((uv - vec2(0.5)) * vec2(uAspect * 0.82, 1.0)));
-    colour *= 0.6 + 0.4 * vignette;
+    colour *= 0.66 + 0.34 * vignette;
     float scrim = smoothstep(0.62, 0.02, uv.x);
-    colour = mix(colour, uLacquer, scrim * 0.66);
+    colour = mix(colour, uLacquer, scrim * 0.6);
     float floorScrim = smoothstep(0.34, 0.0, uv.y);
     colour = mix(colour, uLacquer, floorScrim * 0.55);
 
@@ -211,7 +246,7 @@ export function createPhoenixScene({ canvas, reducedMotion }: SceneContext): Sce
       uTime: { value: 0 },
       uLevel: { value: 0 },
       uAspect: { value: 1 },
-      uPhotoAspect: { value: photos.goldViolin.width / photos.goldViolin.height },
+      uPhotoAspect: { value: photos.press.width / photos.press.height },
       uCursor: { value: new THREE.Vector2(0.72, 0.55) },
       uLacquer: { value: new THREE.Color("#150f0c") },
       uGoldDeep: { value: new THREE.Color("#6d4a12") },
@@ -221,8 +256,11 @@ export function createPhoenixScene({ canvas, reducedMotion }: SceneContext): Sce
     },
   });
 
+  // The press portrait: the sharpest asset on the site, and the only frame where
+  // his face is lit. The concert stills are soft, and softness reads as a bad
+  // photograph rather than as film once it is this large.
   const loader = new THREE.TextureLoader();
-  loader.load(photos.goldViolin.src, (texture) => {
+  loader.load(photos.press.src, (texture) => {
     texture.colorSpace = THREE.SRGBColorSpace;
     texture.minFilter = THREE.LinearFilter;
     texture.magFilter = THREE.LinearFilter;

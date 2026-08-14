@@ -99,20 +99,31 @@ export const halls: readonly string[] = [
   "Speaker, TEDx",
 ];
 
-/** Territories he has performed in, as he lists them. */
-export const territories: readonly string[] = [
-  "Malaysia",
-  "Singapore",
-  "Indonesia",
-  "Thailand",
-  "Hong Kong",
-  "Macau",
-  "China",
-  "Korea",
-  "India",
-  "Sri Lanka",
-  "Australia",
-  "London",
+export interface Territory {
+  readonly name: string;
+  /** Degrees. Carried here so the map is drawn from data rather than traced. */
+  readonly lat: number;
+  readonly lon: number;
+}
+
+/**
+ * Territories he has performed in, as he lists them, with a coordinate each so
+ * the site can plot them instead of printing them. Cities where he named a city,
+ * country centroids where he named a country.
+ */
+export const territories: readonly Territory[] = [
+  { name: "Malaysia", lat: 3.14, lon: 101.69 },
+  { name: "Singapore", lat: 1.35, lon: 103.82 },
+  { name: "Indonesia", lat: -6.21, lon: 106.85 },
+  { name: "Thailand", lat: 13.76, lon: 100.5 },
+  { name: "Hong Kong", lat: 22.32, lon: 114.17 },
+  { name: "Macau", lat: 22.2, lon: 113.54 },
+  { name: "China", lat: 31.23, lon: 121.47 },
+  { name: "Korea", lat: 37.57, lon: 126.98 },
+  { name: "India", lat: 19.08, lon: 72.88 },
+  { name: "Sri Lanka", lat: 6.93, lon: 79.86 },
+  { name: "Australia", lat: -37.81, lon: 144.96 },
+  { name: "London", lat: 51.51, lon: -0.13 },
 ];
 
 export interface Milestone {

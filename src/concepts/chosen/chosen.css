@@ -1372,3 +1372,98 @@
 .chosen .band-line {
   color: var(--gold-deep);
 }
+
+/* ---------- the scrubbed footage ---------- */
+
+.chosen-scrub {
+  background: oklch(12% 0.008 300);
+}
+
+.chosen-scrub .scrub-canvas {
+  filter: contrast(1.06) saturate(0.96);
+}
+
+.chosen-scrub .scrub-mark {
+  color: var(--gold);
+}
+
+.chosen-scrub .scrub-line {
+  font-family: var(--display);
+  font-size: clamp(1.5rem, 3.2vw, 2.6rem);
+  line-height: 1.08;
+  color: var(--silk);
+}
+
+/* ---------- grain, and the name band ---------- */
+
+.chosen .grain {
+  --grain-opacity: 0.04;
+  --grain-blend: multiply;
+}
+
+.chosen .kinetic {
+  border-top: 1px solid var(--thread);
+  border-bottom: 1px solid var(--thread);
+  color: var(--ink);
+  font-family: var(--display);
+}
+
+.chosen .kinetic-dot {
+  color: var(--gold-deep);
+}
+
+/* The turn: graphite under silk type, for the section that names his clients. */
+.chosen-section--invert {
+  background: oklch(19% 0.01 305);
+  color: var(--silk);
+  max-width: none;
+}
+
+.chosen-section--invert > * {
+  max-width: 1320px;
+  margin-inline: auto;
+}
+
+.chosen-section--invert .chosen-h2,
+.chosen-section--invert .wall-lede {
+  color: var(--silk);
+}
+
+.chosen-section--invert .chosen-tag,
+.chosen-section--invert .wall-list {
+  color: color-mix(in oklab, var(--silk) 78%, transparent);
+}
+
+.chosen-section--invert .chosen-words blockquote {
+  color: var(--silk);
+}
+
+.chosen-section--invert .marquee {
+  color: color-mix(in oklab, var(--silk) 70%, transparent);
+  border-color: color-mix(in oklab, var(--silk) 22%, transparent);
+}
+
+/* ---------- the record, as graphics ---------- */
+
+/* Gold, validated against the silk surface. */
+.chosen .field,
+.chosen .atlas {
+  margin-top: var(--space-4xl);
+  color: #a8823f;
+  --atlas-surface: var(--silk);
+}
+
+.chosen .field-total {
+  font-family: var(--display);
+  font-size: clamp(2.2rem, 4.6vw, 3.6rem);
+  line-height: 1;
+  color: var(--ink);
+}
+
+.chosen .field-label,
+.chosen .field-note {
+  font-size: 9px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}

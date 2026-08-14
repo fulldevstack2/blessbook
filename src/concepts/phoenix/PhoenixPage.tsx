@@ -2,7 +2,11 @@ import { useRef } from "react";
 import { Band } from "../../components/Band";
 import { ClientWall } from "../../components/ClientWall";
 import { ConceptChrome, ConceptSwitch } from "../../components/ConceptChrome";
+import { Grain } from "../../components/Grain";
+import { Kinetic } from "../../components/Kinetic";
+import { Field } from "../../components/Field";
 import { Films } from "../../components/Films";
+import { FilmScrub } from "../../components/FilmScrub";
 import { Listen } from "../../components/Listen";
 import { Marquee } from "../../components/Marquee";
 import { Reel } from "../../components/Reel";
@@ -12,6 +16,7 @@ import { Showreel } from "../../components/Showreel";
 import { Stave } from "../../components/Stave";
 import { StringRow } from "../../components/StringRow";
 import { Tally } from "../../components/Tally";
+import { Territories } from "../../components/Territories";
 import { Words } from "../../components/Words";
 import {
   commission,
@@ -111,6 +116,7 @@ export function PhoenixPage() {
       </a>
       <ConceptChrome concept={concept} />
       <ScoreRail />
+      <Grain />
 
       <ScrollStage vh={420} cuts={cuts.length} className="phoenix-stage">
         {({ stage, progress }) => (
@@ -126,10 +132,10 @@ export function PhoenixPage() {
             />
             <img
               className="phoenix-hero-plate"
-              src={photos.goldViolin.src}
-              width={photos.goldViolin.width}
-              height={photos.goldViolin.height}
-              alt={photos.goldViolin.alt}
+              src={photos.press.src}
+              width={photos.press.width}
+              height={photos.press.height}
+              alt={photos.press.alt}
             />
             <div className="phoenix-frame" />
 
@@ -310,6 +316,8 @@ export function PhoenixPage() {
             ))}
           </dl>
 
+          <Field />
+
           <div className="phoenix-portrait">
             <div>
               <ul className="phoenix-record" style={{ gridTemplateColumns: "minmax(0,1fr)" }}>
@@ -348,12 +356,24 @@ export function PhoenixPage() {
             ))}
           </ul>
 
+          <Territories />
           <p className="phoenix-territories" data-reveal>
-            {territories.join(" · ")}
+            {territories.map((territory) => territory.name).join(" · ")}
           </p>
         </section>
 
-        <Band photo={photos.crowd} line="Three thousand seats, twice, sold out." />
+        <FilmScrub
+          sequence="phoenix"
+          frames={77}
+          vh={360}
+          className="phoenix-scrub"
+          label="Dennis Lau alone on stage under a fan of white beams, playing to a three-thousand-seat hall."
+          beats={[
+            { mark: "The Phoenix Rising, 2016", line: "Three thousand seats. Sold out." },
+            { mark: "And again in 2019", line: "The first Malaysian instrumentalist to do it twice." },
+            { mark: "Scroll", line: "You are moving the bow." },
+          ]}
+        />
 
         {/* ---------------- hear him ---------------- */}
         <section className="phoenix-section phoenix-section--reel">
@@ -384,10 +404,12 @@ export function PhoenixPage() {
           <Films caption="Three nights the music was written for" />
         </section>
 
+        <Kinetic />
+
         {/* ---------------- who books him ---------------- */}
-        <section className="phoenix-section">
+        <section className="phoenix-section phoenix-section--invert">
           <p className="phoenix-eyebrow" data-reveal>
-            Movement V — Titans of industry
+            Movement V — Who books him
           </p>
           <ClientWall />
           <Marquee />
