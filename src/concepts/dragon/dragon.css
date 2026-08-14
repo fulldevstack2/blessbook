@@ -1146,7 +1146,13 @@
    man: ink, paper, and a record that predates any of this.
    ════════════════════════════════════════════════════════════════════════════ */
 
-/* ---------- the hero is him, as ink ---------- */
+/* ---------- the hero photograph, as a fallback only ---------- */
+
+/* The shader bleeds this image into the ink itself, which CSS cannot do. This
+   element is what a browser with no WebGL gets instead. */
+canvas:not([hidden]) + .dragon-hero-plate {
+  opacity: 0;
+}
 
 .dragon-hero-plate {
   position: absolute;
@@ -1476,4 +1482,127 @@
 .dragon-born {
   display: block;
   margin-top: var(--space-2xs);
+}
+
+/* ---------- the engraved phrase, and the drifting client strip ---------- */
+
+.dragon .score {
+  margin-top: var(--space-2xl);
+  color: var(--ink);
+}
+
+.dragon .score-sheet {
+  max-width: 880px;
+}
+
+.dragon .score-playhead {
+  color: var(--cinnabar);
+}
+
+.dragon .score-play {
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--cinnabar);
+}
+
+.dragon .score-meta,
+.dragon .score-provenance {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.dragon .marquee {
+  margin-top: var(--space-4xl);
+  padding-block: var(--space-lg);
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  color: var(--ink-soft);
+  --marquee-height: 24px;
+}
+
+/* ---------- the record, unrolled sideways ---------- */
+
+.dragon-record-scroll {
+  background: transparent;
+}
+
+/* The wash and the veil belong to the hero stage only; this pinned frame is
+   bare paper, so the record reads like a scroll on a table. */
+.dragon-record-scroll::after {
+  content: none;
+}
+
+.dragon-unroll-head {
+  display: grid;
+  align-content: center;
+  gap: var(--space-md);
+  min-width: 22ch;
+}
+
+.dragon-unroll-mark {
+  font-family: var(--brush);
+  font-size: clamp(3rem, 7vw, 6rem);
+  line-height: 1;
+  color: var(--cinnabar);
+}
+
+.dragon-unroll-label {
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--jade);
+}
+
+.dragon-unroll-item {
+  display: grid;
+  align-content: center;
+  gap: var(--space-sm);
+  width: clamp(280px, 30vw, 420px);
+  padding-top: var(--space-lg);
+  border-top: 1px solid var(--rule);
+}
+
+.dragon-unroll-year {
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--jade);
+}
+
+.dragon-unroll-title {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(1.6rem, 3.2vw, 2.6rem);
+  line-height: 1.1;
+  color: var(--ink);
+}
+
+.dragon-unroll-detail {
+  color: var(--ink-soft);
+  font-size: 0.96rem;
+}
+
+.dragon .rail {
+  color: var(--ink);
+}
+
+/* ---------- the photographic bands ---------- */
+
+.dragon .band-frame img {
+  filter: grayscale(1) contrast(1.1) brightness(1.02);
+  mix-blend-mode: multiply;
+}
+
+.dragon .band-caption {
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.dragon .band-line {
+  color: var(--cinnabar);
 }

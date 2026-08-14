@@ -1,5 +1,6 @@
 import type { CSSProperties } from "react";
 import { clientMask, clients, clientWall } from "../content/clients";
+import { Words } from "./Words";
 
 /**
  * The people who could book anyone, and booked him.
@@ -16,9 +17,7 @@ export function ClientWall() {
       <p className="wall-eyebrow" data-reveal>
         {clientWall.eyebrow}
       </p>
-      <h2 className="wall-lede" data-reveal>
-        {clientWall.lede}
-      </h2>
+      <Words as="h2" className="wall-lede" text={clientWall.lede} />
 
       <ul className="wall-list">
         {clients.map((client, index) => (

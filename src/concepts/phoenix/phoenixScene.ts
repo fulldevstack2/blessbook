@@ -1,237 +1,286 @@
 import * as THREE from "three";
+import { photos } from "../../content/media";
+import { waveform } from "../../lib/listening";
 import type { SceneContext, SceneHandle } from "../../lib/SceneCanvas";
 
 /**
- * A gilded plume that comes apart and reassembles as a single vibrating string:
- * feather → gold dust → string. Each vertex carries all three of its positions
- * and the morph happens in the vertex shader, so scrolling costs one uniform
- * write rather than a few thousand CPU writes per frame.
+ * The photograph *is* the scene.
  *
- * The string is not decoration. When Dennis is playing — the hero's Listen
- * control, the showreel, any track in the reel — `uLevel` carries his signal
- * into the shader and it is his bow that drives the standing wave and lifts the
- * gold. Silent, it rests. That is the whole point of the image: this is a
- * violin string, and he is the one moving it.
+ * An earlier version put a gilded particle plume over a CSS `<img>` of Dennis,
+ * and it read exactly as what it was: a graphic sitting on top of a picture. So
+ * the picture is now the material. It is uploaded as a texture and everything
+ * happens to it inside one shader:
+ *
+ *   · it is gradient-mapped into lacquer, deep gold and ivory, so it belongs to
+ *     this concept instead of being a colour photograph dropped into it;
+ *   · it is sliced into horizontal bands, and each band is displaced by the
+ *     amplitude of whatever Dennis is playing at that moment — his own signal
+ *     cuts his own photograph;
+ *   · five staff lines are ruled across the frame and drawn in as you scroll,
+ *     bending with the same signal;
+ *   · gold dust is struck off his bright edges, so the gold comes out of him
+ *     rather than floating in front of him;
+ *   · and as the scroll ends the photograph dissolves upward into that dust, so
+ *     the hero has an arc: a man, gilded, becoming music.
+ *
+ * One texture, one light, one hand.
  */
 
-const SHAFT_SAMPLES = 130;
-const BARB_SEGMENTS = 8;
-const SHAFT_HALF = 2.1;
+const BANDS = 18;
+const WAVE_SIZE = 256;
 
 const vertexShader = /* glsl */ `
-  attribute vec3 aDust;
-  attribute vec3 aString;
-  attribute float aSeed;
-  attribute float aShade;
-
-  uniform float uProgress;
-  uniform float uTime;
-  uniform float uLevel;
-
-  varying float vShade;
-  varying float vFade;
+  varying vec2 vUv;
 
   void main() {
-    float toDust = smoothstep(0.06, 0.46, uProgress);
-    float toString = smoothstep(0.52, 0.94, uProgress);
-
-    vec3 drift = vec3(
-      sin(uTime * 0.55 + aSeed * 6.283),
-      cos(uTime * 0.43 + aSeed * 4.117),
-      sin(uTime * 0.37 + aSeed * 2.719)
-    ) * 0.14;
-
-    vec3 pos = mix(position, aDust + drift, toDust);
-
-    // The feather breathes with the music before it has come apart, so the hero
-    // answers the first note rather than only the scroll.
-    float breath = uLevel * 0.11 * (0.55 + 0.45 * sin(uTime * 7.4 + aSeed * 6.283));
-    pos += normalize(pos + vec3(0.0001)) * breath;
-
-    // The string is taut: a standing wave with nodes at both ends.
-    vec3 taut = aString;
-    float node = 1.0 - abs(taut.y) / ${SHAFT_HALF.toFixed(2)};
-    // Bowed, not idling: amplitude comes from how hard he is playing.
-    float bow = 0.075 + uLevel * 0.46;
-    taut.x += sin(uTime * 3.2 + taut.y * 3.4) * bow * node;
-    taut.z += cos(uTime * 2.6 + taut.y * 2.8) * bow * 0.4 * node;
-
-    pos = mix(pos, taut, toString);
-
-    vShade = aShade;
-    // Dust reads brighter in the middle of the transition, then settles.
-    vFade = 0.3 + 0.5 * (1.0 - abs(uProgress - 0.5) * 1.1);
-    // Gold lifts as he plays, and is capped so additive blending cannot blow out.
-    vFade = min(1.0, vFade * (1.0 + uLevel * 0.85));
-
-    vec4 mv = modelViewMatrix * vec4(pos, 1.0);
-    gl_Position = projectionMatrix * mv;
+    vUv = uv;
+    gl_Position = vec4(position.xy, 0.0, 1.0);
   }
 `;
 
 const fragmentShader = /* glsl */ `
-  precision mediump float;
+  precision highp float;
 
-  uniform vec3 uDeep;
-  uniform vec3 uBright;
+  uniform sampler2D uPhoto;
+  uniform sampler2D uWave;
+  uniform float uHasPhoto;
+  uniform float uProgress;
+  uniform float uTime;
+  uniform float uLevel;
+  uniform float uAspect;
+  uniform float uPhotoAspect;
+  uniform vec2 uCursor;
 
-  varying float vShade;
-  varying float vFade;
+  uniform vec3 uLacquer;
+  uniform vec3 uGoldDeep;
+  uniform vec3 uGold;
+  uniform vec3 uGoldLit;
+  uniform vec3 uIvory;
+
+  varying vec2 vUv;
+
+  float hash(vec2 p) {
+    return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
+  }
+
+  /* Cover-fit, so the frame is filled at any viewport without squashing him. */
+  vec2 cover(vec2 uv) {
+    float scale = uAspect / uPhotoAspect;
+    if (scale > 1.0) {
+      uv.y = (uv.y - 0.5) / scale + 0.5;
+    } else {
+      uv.x = (uv.x - 0.5) * scale + 0.5;
+    }
+    return uv;
+  }
+
+  /* Named grey, not luminance: three.js already defines one of those in its
+     shader prefix, and a second body is a compile error. */
+  float grey(vec3 c) {
+    return dot(c, vec3(0.2126, 0.7152, 0.0722));
+  }
+
+  /* Lacquer → deep gold → gold → lit gold → ivory. A gilded photograph rather
+     than a tinted one: the ramp is uneven on purpose, so highlights carry the
+     metal and the shadows stay lacquer. */
+  vec3 gild(float l) {
+    // Open the shadows first: an arena photograph is mostly black, and mapping
+    // that straight onto the ramp threw his face away.
+    float t = pow(clamp(l, 0.0, 1.0), 0.78);
+    vec3 c = mix(uLacquer, uGoldDeep, smoothstep(0.02, 0.26, t));
+    c = mix(c, uGold, smoothstep(0.2, 0.54, t));
+    c = mix(c, uGoldLit, smoothstep(0.5, 0.8, t));
+    c = mix(c, uIvory, smoothstep(0.78, 1.0, t));
+    // Multiply the original tonality back in so it grades rather than posterises.
+    return c * (0.78 + 0.42 * t);
+  }
+
+  float wave(float y) {
+    return texture2D(uWave, vec2(clamp(y, 0.0, 1.0), 0.5)).r;
+  }
 
   void main() {
-    vec3 gold = mix(uDeep, uBright, vShade);
-    gl_FragColor = vec4(gold, vFade * (0.28 + 0.72 * vShade));
+    vec2 uv = vUv;
+
+    /* ---- the bands: his signal cuts his own photograph ---- */
+    float bandIndex = floor(uv.y * float(${BANDS}));
+    float bandCentre = (bandIndex + 0.5) / float(${BANDS});
+    float amp = wave(bandCentre) - 0.5;
+    // Alternating direction, so it reads as a cut rather than a wobble.
+    float direction = mod(bandIndex, 2.0) < 1.0 ? 1.0 : -1.0;
+    float slice = amp * direction * (0.014 + uLevel * 0.115);
+    // Scroll widens the cut a little: the picture is most whole at the top.
+    slice *= 0.55 + uProgress * 0.9;
+
+    // A hairline of gold along the shear, so a displaced band reads as a
+    // deliberate cut in the picture rather than as compression noise.
+    float inBand = fract(uv.y * float(${BANDS}));
+    float boundary = min(inBand, 1.0 - inBand);
+    float cut = smoothstep(0.055, 0.0, boundary) * clamp(abs(slice) * 26.0, 0.0, 1.0);
+
+    vec2 photoUv = cover(uv + vec2(slice, 0.0));
+    vec3 photo = texture2D(uPhoto, photoUv).rgb;
+    float l = grey(photo);
+
+    vec3 colour = gild(l);
+    if (uHasPhoto < 0.5) {
+      // No texture yet: hold the lacquer ground rather than flashing black.
+      colour = uLacquer;
+      l = 0.0;
+    }
+
+    /* ---- his edges, and the gold struck off them ---- */
+    float tap = 0.0022;
+    float lx = grey(texture2D(uPhoto, photoUv + vec2(tap, 0.0)).rgb)
+             - grey(texture2D(uPhoto, photoUv - vec2(tap, 0.0)).rgb);
+    float ly = grey(texture2D(uPhoto, photoUv + vec2(0.0, tap)).rgb)
+             - grey(texture2D(uPhoto, photoUv - vec2(0.0, tap)).rgb);
+    float edge = clamp(length(vec2(lx, ly)) * 3.4, 0.0, 1.0) * uHasPhoto;
+
+    // Dust rises: sparse, deterministic, and only where an edge is lit.
+    vec2 dustCell = vec2(uv.x * 220.0, uv.y * 130.0 - uTime * 0.5 - uProgress * 6.0);
+    float spark = hash(floor(dustCell));
+    float dust = smoothstep(0.982, 1.0, spark) * edge * (0.3 + uLevel * 2.0 + uProgress * 0.8);
+
+    /* ---- the photograph dissolves upward as the scroll ends ---- */
+    float dissolve = smoothstep(0.55, 1.0, uProgress);
+    float rise = smoothstep(0.0, 0.85, uv.y + (hash(floor(uv * vec2(90.0, 70.0))) - 0.5) * 0.22);
+    float held = 1.0 - dissolve * rise;
+    colour = mix(uLacquer, colour, held);
+
+    /* ---- five staff lines, ruled across and drawn in on scroll ---- */
+    float staff = 0.0;
+    float drawn = smoothstep(0.02, 0.62, uProgress);
+    for (int i = 0; i < 5; i += 1) {
+      float base = 0.13 + float(i) * 0.031;
+      // The lines bend with the playing: a bowed string, not a rule.
+      float bend = sin(uv.x * 7.5 + uTime * 1.6 + float(i) * 0.7) * uLevel * 0.012;
+      float d = abs(uv.y - (base + bend));
+      float line = smoothstep(0.0016, 0.0, d);
+      // They arrive left to right, like a pen.
+      line *= smoothstep(0.0, 0.35, drawn - uv.x * 0.55);
+      staff += line;
+    }
+    staff = clamp(staff, 0.0, 1.0) * (0.46 + uLevel * 0.6);
+
+    /* ---- cursor light: the lacquer catches a highlight near the pointer ---- */
+    float pointer = 1.0 - smoothstep(0.0, 0.38, length((uv - uCursor) * vec2(uAspect, 1.0)));
+    colour += uGoldDeep * pointer * 0.09 * (0.4 + uLevel);
+
+    colour += uGold * staff;
+    colour += uGoldLit * dust;
+    colour += uGoldLit * cut * 0.6;
+
+    /* ---- the room falls off, and the type side is held down ---- */
+    float vignette = 1.0 - smoothstep(0.42, 1.15, length((uv - vec2(0.5)) * vec2(uAspect * 0.82, 1.0)));
+    colour *= 0.6 + 0.4 * vignette;
+    float scrim = smoothstep(0.62, 0.02, uv.x);
+    colour = mix(colour, uLacquer, scrim * 0.66);
+    float floorScrim = smoothstep(0.34, 0.0, uv.y);
+    colour = mix(colour, uLacquer, floorScrim * 0.55);
+
+    gl_FragColor = vec4(colour, 1.0);
   }
 `;
 
 export function createPhoenixScene({ canvas, reducedMotion }: SceneContext): SceneHandle {
   const renderer = new THREE.WebGLRenderer({
     canvas,
-    alpha: true,
-    antialias: true,
+    antialias: false,
     powerPreference: "high-performance",
   });
-  renderer.setClearColor(0x000000, 0);
 
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 100);
-  camera.position.set(0, 0, 5.4);
+  const camera = new THREE.Camera();
 
-  const group = new THREE.Group();
-  // Left of centre on purpose: the photograph behind this is a man playing, and
-  // the gold belongs beside him rather than across his face.
-  group.position.x = -0.62;
-  scene.add(group);
-
-  const pairs = SHAFT_SAMPLES * 2 * BARB_SEGMENTS;
-  const vertexCount = pairs * 2;
-
-  const position = new Float32Array(vertexCount * 3);
-  const dust = new Float32Array(vertexCount * 3);
-  const string = new Float32Array(vertexCount * 3);
-  const seed = new Float32Array(vertexCount);
-  const shade = new Float32Array(vertexCount);
-
-  // Deterministic pseudo-random so the plume is identical on every load.
-  let rngState = 0x2f6e2b1;
-  const rand = () => {
-    rngState = (rngState * 1664525 + 1013904223) >>> 0;
-    return rngState / 0xffffffff;
-  };
-
-  const featherPoint = (t: number, side: number, u: number) => {
-    const y = -SHAFT_HALF + t * SHAFT_HALF * 2;
-    // Envelope: widest at the middle, tapering to a point at each end.
-    const envelope = Math.pow(Math.sin(Math.PI * t), 0.72);
-    const length = 1.08 * envelope;
-    const wobble = 1 + Math.sin(t * 41.3) * 0.06;
-
-    return {
-      x: side * length * u * wobble + Math.sin(t * Math.PI) * 0.1,
-      // Barbs sweep toward the tip rather than sitting square to the shaft.
-      y: y + length * 0.5 * u * u,
-      z: Math.sin(u * Math.PI) * 0.2 * side + Math.sin(t * 17.7) * 0.05,
-    };
-  };
-
-  // Tips catch the light; the shaft stays deep.
-  const envelopeShade = (t: number) => 0.15 + Math.sin(Math.PI * t) * 0.35;
-
-  let cursor = 0;
-  const write = (
-    target: Float32Array,
-    index: number,
-    x: number,
-    y: number,
-    z: number,
-  ) => {
-    target[index * 3] = x;
-    target[index * 3 + 1] = y;
-    target[index * 3 + 2] = z;
-  };
-
-  for (let s = 0; s < SHAFT_SAMPLES; s += 1) {
-    const t = (s + 0.5) / SHAFT_SAMPLES;
-
-    for (const side of [-1, 1]) {
-      // One swirl target per barb so it travels as a clump, not as loose points.
-      const theta = rand() * Math.PI * 2;
-      const radius = 1.15 + rand() * 1.5;
-      const dustY = (rand() - 0.5) * 4.4;
-      const spiral = theta + dustY * 0.75;
-      const barbSeed = rand();
-
-      // The string keeps the barb's height ordering so the collapse reads as a gather.
-      const stringY = -SHAFT_HALF + t * SHAFT_HALF * 2 + (rand() - 0.5) * 0.08;
-
-      for (let k = 0; k < BARB_SEGMENTS; k += 1) {
-        const u0 = k / BARB_SEGMENTS;
-        const u1 = (k + 1) / BARB_SEGMENTS;
-
-        for (const u of [u0, u1]) {
-          const p = featherPoint(t, side, u);
-          write(position, cursor, p.x, p.y, p.z);
-
-          const r = radius + u * 0.5;
-          write(
-            dust,
-            cursor,
-            Math.cos(spiral) * r,
-            dustY + u * 0.3,
-            Math.sin(spiral) * r,
-          );
-
-          write(string, cursor, (rand() - 0.5) * 0.03, stringY, (rand() - 0.5) * 0.03);
-
-          seed[cursor] = barbSeed;
-          shade[cursor] = Math.min(1, u * 0.75 + envelopeShade(t));
-          cursor += 1;
-        }
-      }
-    }
-  }
-
-  const geometry = new THREE.BufferGeometry();
-  geometry.setAttribute("position", new THREE.BufferAttribute(position, 3));
-  geometry.setAttribute("aDust", new THREE.BufferAttribute(dust, 3));
-  geometry.setAttribute("aString", new THREE.BufferAttribute(string, 3));
-  geometry.setAttribute("aSeed", new THREE.BufferAttribute(seed, 1));
-  geometry.setAttribute("aShade", new THREE.BufferAttribute(shade, 1));
+  /** His signal, as a texture the shader can index by band. */
+  const waveData = new Uint8Array(WAVE_SIZE).fill(128);
+  const waveTexture = new THREE.DataTexture(waveData, WAVE_SIZE, 1, THREE.RedFormat);
+  waveTexture.minFilter = THREE.LinearFilter;
+  waveTexture.magFilter = THREE.LinearFilter;
+  waveTexture.needsUpdate = true;
 
   const material = new THREE.ShaderMaterial({
     vertexShader,
     fragmentShader,
-    transparent: true,
-    depthWrite: false,
-    blending: THREE.AdditiveBlending,
     uniforms: {
+      uPhoto: { value: null },
+      uWave: { value: waveTexture },
+      uHasPhoto: { value: 0 },
       uProgress: { value: 0 },
       uTime: { value: 0 },
       uLevel: { value: 0 },
-      uDeep: { value: new THREE.Color("#6d4a12") },
-      uBright: { value: new THREE.Color("#f2cd7a") },
+      uAspect: { value: 1 },
+      uPhotoAspect: { value: photos.goldViolin.width / photos.goldViolin.height },
+      uCursor: { value: new THREE.Vector2(0.72, 0.55) },
+      uLacquer: { value: new THREE.Color("#150f0c") },
+      uGoldDeep: { value: new THREE.Color("#6d4a12") },
+      uGold: { value: new THREE.Color("#c99a45") },
+      uGoldLit: { value: new THREE.Color("#f2cd7a") },
+      uIvory: { value: new THREE.Color("#f7ecd6") },
     },
   });
 
-  const plume = new THREE.LineSegments(geometry, material);
-  group.add(plume);
+  const loader = new THREE.TextureLoader();
+  loader.load(photos.goldViolin.src, (texture) => {
+    texture.colorSpace = THREE.SRGBColorSpace;
+    texture.minFilter = THREE.LinearFilter;
+    texture.magFilter = THREE.LinearFilter;
+    texture.wrapS = THREE.ClampToEdgeWrapping;
+    texture.wrapT = THREE.ClampToEdgeWrapping;
+    material.uniforms.uPhoto.value = texture;
+    material.uniforms.uHasPhoto.value = 1;
+  });
+
+  const quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
+  quad.frustumCulled = false;
+  scene.add(quad);
+
+  /* The cursor light is a desktop nicety, and costs one pointer listener. */
+  const cursor = material.uniforms.uCursor.value as THREE.Vector2;
+  const target = new THREE.Vector2(0.72, 0.55);
+  const onPointer = (event: PointerEvent) => {
+    const box = canvas.getBoundingClientRect();
+    if (box.width === 0 || box.height === 0) return;
+    target.set((event.clientX - box.left) / box.width, 1 - (event.clientY - box.top) / box.height);
+  };
+  window.addEventListener("pointermove", onPointer, { passive: true });
+
+  const samples = new Float32Array(1024) as Float32Array<ArrayBuffer>;
 
   return {
     render(progress, elapsed, level) {
-      // Under reduced motion the scene holds still — unless the listener has
-      // started the music, which is their own gesture and is the one thing on
-      // this page allowed to move on its own.
       const time = reducedMotion ? (level > 0.01 ? elapsed : 0) : elapsed;
       material.uniforms.uProgress.value = progress;
       material.uniforms.uTime.value = time;
       material.uniforms.uLevel.value = level;
 
-      group.rotation.y = progress * Math.PI * 1.35 + (reducedMotion ? 0 : time * 0.05);
-      group.rotation.z = Math.sin(progress * Math.PI) * 0.12;
-      group.position.y = -progress * 0.35;
+      // Pull the waveform into the band texture. When nothing is playing the
+      // bands relax back to centre rather than snapping flat.
+      if (waveform(samples)) {
+        const stride = Math.floor(samples.length / WAVE_SIZE);
+        for (let i = 0; i < WAVE_SIZE; i += 1) {
+          let peak = 0;
+          for (let k = 0; k < stride; k += 1) {
+            const value = samples[i * stride + k] as number;
+            if (Math.abs(value) > Math.abs(peak)) peak = value;
+          }
+          waveData[i] = Math.round(Math.max(0, Math.min(255, 128 + peak * 127)));
+        }
+        waveTexture.needsUpdate = true;
+      } else {
+        let moved = false;
+        for (let i = 0; i < WAVE_SIZE; i += 1) {
+          const value = waveData[i] as number;
+          if (value !== 128) {
+            waveData[i] = value + Math.sign(128 - value) * Math.min(3, Math.abs(128 - value));
+            moved = true;
+          }
+        }
+        if (moved) waveTexture.needsUpdate = true;
+      }
 
-      camera.position.z = 5.4 - progress * 1.9;
-      camera.lookAt(0, 0, 0);
+      cursor.lerp(target, reducedMotion ? 1 : 0.06);
 
       renderer.render(scene, camera);
     },
@@ -239,12 +288,14 @@ export function createPhoenixScene({ canvas, reducedMotion }: SceneContext): Sce
     resize(width, height, dpr) {
       renderer.setPixelRatio(dpr);
       renderer.setSize(width, height, false);
-      camera.aspect = width / height;
-      camera.updateProjectionMatrix();
+      material.uniforms.uAspect.value = width / height;
     },
 
     dispose() {
-      geometry.dispose();
+      window.removeEventListener("pointermove", onPointer);
+      (material.uniforms.uPhoto.value as THREE.Texture | null)?.dispose();
+      waveTexture.dispose();
+      quad.geometry.dispose();
       material.dispose();
       renderer.dispose();
     },

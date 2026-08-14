@@ -198,6 +198,12 @@
 }
 
 /* The figure stands on the cloth, cut out, as a house photographs a garment. */
+/* The shader draws him lit by the sheen; this is only for browsers with no
+   WebGL, where the canvas is hidden. */
+.chosen-stage:not(:has(canvas[hidden])) .chosen-hero-figure {
+  opacity: 0;
+}
+
 .chosen-hero-figure {
   position: absolute;
   right: clamp(var(--space-lg), 6vw, var(--space-5xl));
@@ -1296,4 +1302,73 @@
     color-mix(in oklab, var(--silk) 76%, transparent) 54%,
     transparent 100%
   );
+}
+
+/* ---------- the engraved phrase, and the drifting client strip ---------- */
+
+.chosen-sub-head {
+  margin-top: var(--space-5xl);
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(1.3rem, 2.6vw, 2rem);
+  line-height: 1.16;
+  color: var(--ink);
+}
+
+.chosen .score {
+  margin-top: var(--space-xl);
+  color: var(--ink);
+}
+
+.chosen .score-sheet {
+  max-width: 860px;
+}
+
+.chosen .score-playhead {
+  color: var(--gold-deep);
+}
+
+.chosen .score-play {
+  font-size: 9px;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--gold-deep);
+}
+
+.chosen .score-meta,
+.chosen .score-provenance {
+  font-size: 9px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.chosen .marquee {
+  margin-top: var(--space-4xl);
+  padding-block: var(--space-lg);
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  color: var(--ink-soft);
+  --marquee-height: 24px;
+}
+
+.chosen .rail {
+  color: var(--gold-deep);
+}
+
+/* ---------- the photographic bands ---------- */
+
+.chosen .band-frame img {
+  filter: grayscale(0.42) contrast(1.04) brightness(1.02);
+}
+
+.chosen .band-caption {
+  font-size: 9px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.chosen .band-line {
+  color: var(--gold-deep);
 }

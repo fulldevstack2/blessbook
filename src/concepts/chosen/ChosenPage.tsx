@@ -1,12 +1,17 @@
 import { useRef } from "react";
+import { Band } from "../../components/Band";
 import { ClientWall } from "../../components/ClientWall";
 import { ConceptChrome, ConceptSwitch } from "../../components/ConceptChrome";
 import { Films } from "../../components/Films";
 import { Listen } from "../../components/Listen";
+import { Marquee } from "../../components/Marquee";
 import { Reel } from "../../components/Reel";
+import { Score } from "../../components/Score";
+import { ScoreRail } from "../../components/ScoreRail";
 import { Showreel } from "../../components/Showreel";
 import { StringRow } from "../../components/StringRow";
 import { Tally } from "../../components/Tally";
+import { Words } from "../../components/Words";
 import {
   commission,
   promise,
@@ -97,6 +102,7 @@ export function ChosenPage() {
         Skip to content
       </a>
       <ConceptChrome concept={concept} />
+      <ScoreRail />
 
       <ScrollStage vh={420} cuts={cuts.length} className="chosen-stage">
         {({ stage, progress }) => (
@@ -134,9 +140,8 @@ export function ChosenPage() {
                 ))}
               </div>
 
-              {/* The figure stands on the silk: a cut-out on cream, which is how a
-                  fashion house photographs a garment and how this concept
-                  photographs him. */}
+              {/* He is drawn inside the shader, where the sheen crossing the silk
+                  also crosses him. This <img> is the no-WebGL fallback. */}
               <img
                 className="chosen-hero-figure"
                 src={photos.cutout.src}
@@ -288,9 +293,7 @@ export function ChosenPage() {
         <section className="chosen-section">
           <Tag number="III" label="Three instruments" />
 
-          <h2 className="chosen-h2" data-reveal>
-            {commissionStory.lede}
-          </h2>
+          <Words as="h2" className="chosen-h2" text={commissionStory.lede} />
           <p className="chosen-lede" data-reveal>
             {commissionStory.body}
           </p>
@@ -331,18 +334,19 @@ export function ChosenPage() {
           </blockquote>
         </section>
 
+        <Band photo={photos.liveBlue} line="Plate IV — under the beam, mid-phrase." />
+
         {/* ---------------- hear him ---------------- */}
         <section className="chosen-section chosen-section--reel">
           <Tag number="IV" label="Hear him" />
 
-          <h2 className="chosen-h2" data-reveal>
-            A minute in a room with him
-          </h2>
+          <Words as="h2" className="chosen-h2" text={"A minute in a room with him"} />
           <Showreel caption="His own reel, in his own cut." />
 
-          <h2 className="chosen-h2" data-reveal style={{ marginTop: "var(--space-5xl)" }}>
-            And this is what he writes when someone asks
-          </h2>
+          <Words as="h3" className="chosen-sub-head" text={"And what he played, written down"} />
+          <Score />
+
+          <Words as="h2" className="chosen-h2" text={"And this is what he writes when someone asks"} style={{ marginTop: "var(--space-5xl)" }} />
           <Reel caption="Press a title to hear it" index={(position) => `No. ${position + 1}`} />
         </section>
 
@@ -356,6 +360,7 @@ export function ChosenPage() {
         <section className="chosen-section">
           <Tag number="VI" label="Titans of industry" />
           <ClientWall />
+          <Marquee />
 
           <ul className="chosen-words">
             {words.map((word) => (
@@ -369,13 +374,13 @@ export function ChosenPage() {
           </ul>
         </section>
 
+        <Band photo={photos.crowd} line="Three thousand seats, and one song at a time." tall />
+
         {/* ---------------- the calling: the reason for the name ---------------- */}
         <section className="chosen-section chosen-section--calling">
           <Tag number="VII" label="Why he keeps going" />
 
-          <h2 className="chosen-h2 chosen-h2--large" data-reveal>
-            {calling.lede}
-          </h2>
+          <Words as="h2" className="chosen-h2 chosen-h2--large" text={calling.lede} />
           <p className="chosen-lede" data-reveal>
             {calling.body}
           </p>
@@ -399,9 +404,7 @@ export function ChosenPage() {
         <section className="chosen-section">
           <Tag number="VIII" label="Commission" />
 
-          <h2 className="chosen-h2" data-reveal>
-            {promise.headline}
-          </h2>
+          <Words as="h2" className="chosen-h2" text={promise.headline} />
           <p className="chosen-lede" data-reveal>
             {service.lede}
           </p>

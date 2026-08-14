@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { photos } from "../../content/media";
 import type { SceneContext, SceneHandle } from "../../lib/SceneCanvas";
 
 /**
@@ -27,6 +28,9 @@ const vertexShader = /* glsl */ `
 const fragmentShader = /* glsl */ `
   precision highp float;
 
+  uniform sampler2D uFigure;
+  uniform float uHasFigure;
+  uniform float uFigureAspect;
   uniform float uProgress;
   uniform float uTime;
   uniform float uLevel;
@@ -117,9 +121,51 @@ const fragmentShader = /* glsl */ `
     colour = mix(colour, uShadow, contact * 0.16);
     colour = mix(colour, pearlColour, inside);
 
+    /* ---- and him, standing on the cloth, lit by the same sheen ----
+       He used to be a CSS <img> sitting on top of this canvas, which is exactly
+       what it looked like. Inside the shader the sheen crossing the silk also
+       crosses him: it catches his shoulder and the edge of his jacket as it
+       passes, and the cloth takes a shadow under his feet. One light. */
+    float figureHeight = 0.92;
+    float figureWidth = figureHeight * uFigureAspect / uAspect;
+    vec2 figureOrigin = vec2(0.975 - figureWidth, 0.0);
+    vec2 f = (vUv - figureOrigin) / vec2(figureWidth, figureHeight);
+
+    vec4 figure = vec4(0.0);
+    float figureEdge = 0.0;
+    if (uHasFigure > 0.5 && f.x > 0.0 && f.x < 1.0 && f.y > 0.0 && f.y < 1.0) {
+      // three.js already flips images on upload, so v maps straight through:
+      // inverting it here stood him on his head.
+      vec2 sampleUv = f;
+      figure = texture2D(uFigure, sampleUv);
+      float tap = 0.004;
+      float ax = texture2D(uFigure, sampleUv + vec2(tap, 0.0)).a
+               - texture2D(uFigure, sampleUv - vec2(tap, 0.0)).a;
+      float ay = texture2D(uFigure, sampleUv + vec2(0.0, tap)).a
+               - texture2D(uFigure, sampleUv - vec2(0.0, tap)).a;
+      figureEdge = clamp(length(vec2(ax, ay)) * 2.2, 0.0, 1.0);
+    }
+
+    // Desaturated a step, to sit inside the concept's palette.
+    vec3 figureColour = mix(vec3(dot(figure.rgb, vec3(0.2126, 0.7152, 0.0722))), figure.rgb, 0.68);
+    // The sheen lights him where it is passing, and his rim takes gold with it.
+    figureColour += sheen * (0.16 + uLevel * 0.22);
+    figureColour = mix(figureColour, uGold, figureEdge * sheen * 0.42);
+
+    // A shadow on the cloth beneath him, so he is standing rather than pasted.
+    float footShadow = (1.0 - smoothstep(0.0, 0.16, abs(vUv.y - 0.035)))
+      * (1.0 - smoothstep(0.0, figureWidth * 0.46, abs(vUv.x - (figureOrigin.x + figureWidth * 0.52))))
+      * 0.16;
+    colour = mix(colour, uShadow, footShadow);
+
+    colour = mix(colour, figureColour, figure.a);
+
     // Alpha keeps the plate transparent where nothing is happening, so the
     // page's own silk shows through and there is no visible canvas edge.
-    float alpha = clamp(sheen * 0.34 + contact * 0.2 + inside * 0.98 + abs(cloth) * 5.0, 0.0, 1.0);
+    float alpha = clamp(
+      sheen * 0.34 + contact * 0.2 + inside * 0.98 + abs(cloth) * 5.0 + footShadow * 3.0,
+      0.0, 1.0);
+    alpha = max(alpha, figure.a);
     gl_FragColor = vec4(colour, alpha * 0.94);
   }
 `;
@@ -146,11 +192,25 @@ export function createChosenScene({ canvas, reducedMotion }: SceneContext): Scen
       uTime: { value: 0 },
       uLevel: { value: 0 },
       uAspect: { value: 1 },
+      uFigure: { value: null },
+      uHasFigure: { value: 0 },
+      uFigureAspect: { value: photos.cutout.width / photos.cutout.height },
       uSilk: { value: new THREE.Color("#f4efe4") },
       uPearl: { value: new THREE.Color("#ebe3e6") },
       uGold: { value: new THREE.Color("#d8b46a") },
       uShadow: { value: new THREE.Color("#a1929a") },
     },
+  });
+
+  const loader = new THREE.TextureLoader();
+  loader.load(photos.cutout.src, (texture) => {
+    texture.colorSpace = THREE.SRGBColorSpace;
+    texture.minFilter = THREE.LinearFilter;
+    texture.magFilter = THREE.LinearFilter;
+    texture.wrapS = THREE.ClampToEdgeWrapping;
+    texture.wrapT = THREE.ClampToEdgeWrapping;
+    material.uniforms.uFigure.value = texture;
+    material.uniforms.uHasFigure.value = 1;
   });
 
   const quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
@@ -173,6 +233,7 @@ export function createChosenScene({ canvas, reducedMotion }: SceneContext): Scen
     },
 
     dispose() {
+      (material.uniforms.uFigure.value as THREE.Texture | null)?.dispose();
       quad.geometry.dispose();
       material.dispose();
       renderer.dispose();

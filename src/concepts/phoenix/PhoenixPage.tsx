@@ -1,13 +1,18 @@
 import { useRef } from "react";
+import { Band } from "../../components/Band";
 import { ClientWall } from "../../components/ClientWall";
 import { ConceptChrome, ConceptSwitch } from "../../components/ConceptChrome";
 import { Films } from "../../components/Films";
 import { Listen } from "../../components/Listen";
+import { Marquee } from "../../components/Marquee";
 import { Reel } from "../../components/Reel";
+import { Score } from "../../components/Score";
+import { ScoreRail } from "../../components/ScoreRail";
 import { Showreel } from "../../components/Showreel";
 import { Stave } from "../../components/Stave";
 import { StringRow } from "../../components/StringRow";
 import { Tally } from "../../components/Tally";
+import { Words } from "../../components/Words";
 import {
   commission,
   promise,
@@ -70,6 +75,29 @@ const cuts = [
   },
 ];
 
+/**
+ * The instrument's own three beats. It is pinned while these are read, so the
+ * object gets the same treatment as the man: held still and turned, rather than
+ * scrolled past as a picture with a caption.
+ */
+const instrumentBeats = [
+  {
+    mark: concept.instrument.name,
+    line: `${concept.instrument.year} · ${concept.instrument.material}`,
+    note: photos.violin.credit,
+  },
+  {
+    mark: "Drawn by him",
+    line: "Nobody had built one. He asked anyway, and waited a year.",
+    note: commissionStory.eyebrow,
+  },
+  {
+    mark: "Unveiled",
+    line: "22 October 2016, in front of three thousand people.",
+    note: "The Phoenix Rising",
+  },
+];
+
 export function PhoenixPage() {
   useFonts(concept.fonts);
   const main = useRef<HTMLElement>(null);
@@ -82,23 +110,26 @@ export function PhoenixPage() {
         Skip to content
       </a>
       <ConceptChrome concept={concept} />
+      <ScoreRail />
 
       <ScrollStage vh={420} cuts={cuts.length} className="phoenix-stage">
         {({ stage, progress }) => (
           <>
-            {/* The photograph is the hero. The scene is the gold on top of it,
-                and once the music plays it is his bow that moves the gold. */}
+            {/* The scene *is* the photograph: it is uploaded as a texture,
+                gilded, sliced by his own signal and finally dissolved into gold
+                dust. The <img> below it is the no-WebGL fallback, and is
+                invisible whenever the canvas is doing its job. */}
+            <SceneCanvas
+              factory={createPhoenixScene}
+              progress={progress}
+              label="Dennis Lau playing the gold Phoenix violin, gilded into lacquer and gold, sliced into bands by the sound of his own playing, with five staff lines ruled across the frame and gold dust rising off his edges."
+            />
             <img
               className="phoenix-hero-plate"
               src={photos.goldViolin.src}
               width={photos.goldViolin.width}
               height={photos.goldViolin.height}
               alt={photos.goldViolin.alt}
-            />
-            <SceneCanvas
-              factory={createPhoenixScene}
-              progress={progress}
-              label="A gilded plume, shaped like the wing of the Phoenix violin, that scatters into gold dust and draws back together as a single vibrating string."
             />
             <div className="phoenix-frame" />
 
@@ -140,35 +171,39 @@ export function PhoenixPage() {
       </ScrollStage>
 
       <main id="main" className="phoenix-body" ref={main}>
-        {/* ---------------- the instrument, and how it came to exist ---------------- */}
-        <section className="phoenix-plate">
-          <img
-            src={photos.violin.src}
-            width={photos.violin.width}
-            height={photos.violin.height}
-            alt={photos.violin.alt}
-            data-reveal="wipe"
-          />
-          <div className="phoenix-plate-caption">
-            <p className="phoenix-plate-name" data-reveal>
-              {concept.instrument.name}
-            </p>
-            <p className="phoenix-plate-meta" data-reveal>
-              {concept.instrument.year} · {concept.instrument.material}
-            </p>
-            <p className="phoenix-credit" data-reveal>
-              {photos.violin.credit}
-            </p>
-          </div>
-        </section>
+        {/* ---------------- the instrument, pinned and turning ---------------- */}
+        <ScrollStage vh={300} cuts={instrumentBeats.length} className="phoenix-instrument">
+          {({ stage }) => (
+            <>
+              <img
+                className="phoenix-instrument-photo"
+                src={photos.violin.src}
+                width={photos.violin.width}
+                height={photos.violin.height}
+                alt={photos.violin.alt}
+              />
+              <div className="phoenix-instrument-beats">
+                {instrumentBeats.map((beat, index) => (
+                  <div
+                    className="phoenix-instrument-beat"
+                    key={beat.mark}
+                    data-active={stage === index}
+                  >
+                    <span className="phoenix-mark">{beat.mark}</span>
+                    <p className="phoenix-instrument-line">{beat.line}</p>
+                    {beat.note ? <p className="phoenix-credit">{beat.note}</p> : null}
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+        </ScrollStage>
 
         <section className="phoenix-section">
           <p className="phoenix-eyebrow" data-reveal>
             {commissionStory.eyebrow}
           </p>
-          <h2 className="phoenix-h2" data-reveal>
-            {commissionStory.lede}
-          </h2>
+          <Words as="h2" className="phoenix-h2" text={commissionStory.lede} />
           <p className="phoenix-lede" data-reveal style={{ maxWidth: "54ch" }}>
             {commissionStory.body}
           </p>
@@ -318,19 +353,22 @@ export function PhoenixPage() {
           </p>
         </section>
 
+        <Band photo={photos.crowd} line="Three thousand seats, twice, sold out." />
+
         {/* ---------------- hear him ---------------- */}
         <section className="phoenix-section phoenix-section--reel">
           <p className="phoenix-eyebrow" data-reveal>
             Movement III — Hear him
           </p>
-          <h2 className="phoenix-h2" data-reveal>
-            A minute in a room with him
-          </h2>
+          <Words as="h2" className="phoenix-h2" text={"A minute in a room with him"} />
           <Showreel caption="His own reel, in his own cut." />
 
-          <h2 className="phoenix-h2" data-reveal style={{ marginTop: "var(--space-5xl)" }}>
-            And this is what he writes when someone asks
-          </h2>
+          <p className="phoenix-eyebrow" data-reveal style={{ marginTop: "var(--space-5xl)" }}>
+            And what he played, written down
+          </p>
+          <Score />
+
+          <Words as="h2" className="phoenix-h2" text={"And this is what he writes when someone asks"} style={{ marginTop: "var(--space-5xl)" }} />
           <p className="phoenix-lede" data-reveal style={{ maxWidth: "48ch" }}>
             A game trailer, a car launch, a boy's third birthday, a Mandopop
             single. The same hand behind every one of them.
@@ -352,6 +390,7 @@ export function PhoenixPage() {
             Movement V — Titans of industry
           </p>
           <ClientWall />
+          <Marquee />
 
           <ul className="phoenix-words">
             {words.map((word) => (
@@ -365,14 +404,14 @@ export function PhoenixPage() {
           </ul>
         </section>
 
+        <Band photo={photos.stagePhoenix} line="The night the Phoenix was first played." tall />
+
         {/* ---------------- the calling ---------------- */}
         <section className="phoenix-section phoenix-section--calling">
           <p className="phoenix-eyebrow" data-reveal>
             Movement VI — Why he keeps going
           </p>
-          <h2 className="phoenix-h2 phoenix-calling-lede" data-reveal>
-            {calling.lede}
-          </h2>
+          <Words as="h2" className="phoenix-h2 phoenix-calling-lede" text={calling.lede} />
           <p className="phoenix-lede" data-reveal style={{ maxWidth: "52ch" }}>
             {calling.body}
           </p>
@@ -393,9 +432,7 @@ export function PhoenixPage() {
           <p className="phoenix-eyebrow" data-reveal>
             Coda — Commission one
           </p>
-          <h2 className="phoenix-h2" data-reveal>
-            {promise.headline}
-          </h2>
+          <Words as="h2" className="phoenix-h2" text={promise.headline} />
           <p className="phoenix-lede" data-reveal style={{ maxWidth: "52ch" }}>
             {service.lede}
           </p>

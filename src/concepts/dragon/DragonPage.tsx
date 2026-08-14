@@ -1,13 +1,19 @@
 import { useRef } from "react";
+import { Band } from "../../components/Band";
 import { ClientWall } from "../../components/ClientWall";
 import { ConceptChrome, ConceptSwitch } from "../../components/ConceptChrome";
 import { Films } from "../../components/Films";
+import { Handscroll } from "../../components/Handscroll";
 import { Listen } from "../../components/Listen";
+import { Marquee } from "../../components/Marquee";
 import { Reel } from "../../components/Reel";
+import { Score } from "../../components/Score";
+import { ScoreRail } from "../../components/ScoreRail";
 import { Showreel } from "../../components/Showreel";
 import { Stave } from "../../components/Stave";
 import { StringRow } from "../../components/StringRow";
 import { Tally } from "../../components/Tally";
+import { Words } from "../../components/Words";
 import {
   commission,
   promise,
@@ -102,24 +108,26 @@ export function DragonPage() {
         Skip to content
       </a>
       <ConceptChrome concept={concept} />
+      <ScoreRail />
 
       <ScrollStage vh={420} cuts={cuts.length} className="dragon-stage">
         {({ stage, progress }) => (
           <>
-            {/* Him, as ink. The photograph is monochrome and multiplied into the
-                paper, so the white sky disappears and only the figure is left —
-                which is what this concept does to everything it touches. */}
+            {/* He is inside the shader: his silhouette is sampled from the
+                photograph and bled into the same ink field as the wash, so the
+                figure and the water are one material. The <img> below is the
+                no-WebGL fallback. */}
+            <SceneCanvas
+              factory={createDragonScene}
+              progress={progress}
+              label="Dennis Lau in silhouette, drawn as ink bleeding into water, the wash opening around him and settling into the two f-holes of a violin."
+            />
             <img
               className="dragon-hero-plate"
               src={photos.silhouette.src}
               width={photos.silhouette.width}
               height={photos.silhouette.height}
               alt={photos.silhouette.alt}
-            />
-            <SceneCanvas
-              factory={createDragonScene}
-              progress={progress}
-              label="Ink dropped into water, blooming outward and then drawing back together into the two f-holes of a violin."
             />
 
             <div className="dragon-hero">
@@ -219,9 +227,7 @@ export function DragonPage() {
         <section className="dragon-section">
           <Margin index={1} label="Training" />
           <div>
-            <h2 className="dragon-h2" data-reveal>
-              Twenty years of paper before the first commission
-            </h2>
+            <Words as="h2" className="dragon-h2" text={"Twenty years of paper before the first commission"} />
             <ul className="dragon-list">
               {training.map((line, index) => (
                 <li key={line} data-reveal>
@@ -231,9 +237,7 @@ export function DragonPage() {
               ))}
             </ul>
 
-            <h3 className="dragon-sub-head" data-reveal>
-              And where he played before any of this
-            </h3>
+            <Words as="h3" className="dragon-sub-head" text={"And where he played before any of this"} />
             <ul className="dragon-list">
               {halls.map((hall, index) => (
                 <li key={hall} data-reveal>
@@ -259,30 +263,16 @@ export function DragonPage() {
               ))}
             </dl>
 
-            <div className="dragon-two">
-              <div>
-                <ul className="dragon-list" style={{ marginTop: 0 }}>
-                  {milestones.map((item) => (
-                    <li key={item.year} data-reveal>
-                      <span className="dragon-list-mark">{item.year}</span>
-                      <span>
-                        <strong style={{ fontWeight: 600 }}>{item.title}</strong> — {item.detail}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <figure className="dragon-photo dragon-photo--tall" data-reveal="wipe">
-                <img
-                  src={photos.seated.src}
-                  width={photos.seated.width}
-                  height={photos.seated.height}
-                  alt={photos.seated.alt}
-                  loading="lazy"
-                />
-                <figcaption className="dragon-credit">{photos.seated.credit}</figcaption>
-              </figure>
-            </div>
+            <figure className="dragon-photo dragon-photo--tall" data-reveal="wipe">
+              <img
+                src={photos.seated.src}
+                width={photos.seated.width}
+                height={photos.seated.height}
+                alt={photos.seated.alt}
+                loading="lazy"
+              />
+              <figcaption className="dragon-credit">{photos.seated.credit}</figcaption>
+            </figure>
 
             <ul className="dragon-awards">
               {awards.map((award) => (
@@ -299,12 +289,27 @@ export function DragonPage() {
           </div>
         </section>
 
+        {/* The record, unrolled: pinned, and pulled sideways as you scroll. */}
+        <Handscroll className="dragon-record-scroll" vh={340}>
+          <div className="dragon-unroll-head">
+            <span className="dragon-unroll-mark" lang="zh">
+              卷
+            </span>
+            <span className="dragon-unroll-label">Unroll the record</span>
+          </div>
+          {milestones.map((item) => (
+            <article className="dragon-unroll-item" key={item.year}>
+              <span className="dragon-unroll-year">{item.year}</span>
+              <h3 className="dragon-unroll-title">{item.title}</h3>
+              <p className="dragon-unroll-detail">{item.detail}</p>
+            </article>
+          ))}
+        </Handscroll>
+
         <section className="dragon-section">
           <Margin index={3} label="The instrument" />
           <div>
-            <h2 className="dragon-h2" data-reveal>
-              {commissionStory.lede}
-            </h2>
+            <Words as="h2" className="dragon-h2" text={commissionStory.lede} />
             <p className="dragon-lede" data-reveal>
               {commissionStory.body}
             </p>
@@ -337,17 +342,18 @@ export function DragonPage() {
           </div>
         </section>
 
+        <Band photo={photos.portraitMonoTwo} line="Between the takes." />
+
         <section className="dragon-section dragon-section--reel">
           <Margin index={4} label="Hear him" />
           <div>
-            <h2 className="dragon-h2" data-reveal>
-              A minute in a room with him
-            </h2>
+            <Words as="h2" className="dragon-h2" text={"A minute in a room with him"} />
             <Showreel caption="His own reel, in his own cut." />
 
-            <h2 className="dragon-h2" data-reveal style={{ marginTop: "var(--space-5xl)" }}>
-              And this is what he writes when someone asks
-            </h2>
+            <Words as="h3" className="dragon-sub-head" text={"And what he played, written down"} />
+            <Score />
+
+            <Words as="h2" className="dragon-h2" text={"And this is what he writes when someone asks"} style={{ marginTop: "var(--space-5xl)" }} />
             <p className="dragon-lede" data-reveal>
               A game trailer, a car launch, a boy's third birthday, a Mandopop
               single. The same hand behind every one of them.
@@ -367,6 +373,7 @@ export function DragonPage() {
           <Margin index={6} label="Titans of industry" />
           <div>
             <ClientWall />
+            <Marquee />
 
             <ul className="dragon-words">
               {words.map((word) => (
@@ -381,12 +388,12 @@ export function DragonPage() {
           </div>
         </section>
 
+        <Band photo={photos.crowd} line="A hundred and sixty-eight thousand people, so far." tall />
+
         <section className="dragon-section">
           <Margin index={7} label="Why he keeps going" />
           <div>
-            <h2 className="dragon-h2" data-reveal>
-              {calling.lede}
-            </h2>
+            <Words as="h2" className="dragon-h2" text={calling.lede} />
             <p className="dragon-lede" data-reveal>
               {calling.body}
             </p>
@@ -406,9 +413,7 @@ export function DragonPage() {
         <section className="dragon-section">
           <Margin index={8} label="Commission" />
           <div>
-            <h2 className="dragon-h2" data-reveal>
-              {promise.headline}
-            </h2>
+            <Words as="h2" className="dragon-h2" text={promise.headline} />
             <p className="dragon-lede" data-reveal>
               {service.lede}
             </p>
@@ -429,9 +434,7 @@ export function DragonPage() {
               ))}
             </ol>
 
-            <h3 className="dragon-sub-head" data-reveal>
-              {promise.ownership}
-            </h3>
+            <Words as="h3" className="dragon-sub-head" text={promise.ownership} />
             <p className="dragon-lede" data-reveal>
               {service.against}
             </p>

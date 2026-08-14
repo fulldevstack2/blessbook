@@ -1,8 +1,9 @@
 import * as THREE from "three";
+import { photos } from "../../content/media";
 import type { SceneContext, SceneHandle } from "../../lib/SceneCanvas";
 
 /**
- * Ink dropped into water. A domain-warped noise field blooms outward as you
+ * Him, dropped into water as ink. A domain-warped noise field blooms outward as you
  * scroll, then draws itself back in and settles into the two f-holes of a
  * violin. Drawn entirely in a fragment shader over a full-screen quad, so it
  * composites straight onto the paper background.
@@ -20,6 +21,9 @@ const vertexShader = /* glsl */ `
 const fragmentShader = /* glsl */ `
   precision highp float;
 
+  uniform sampler2D uPhoto;
+  uniform float uHasPhoto;
+  uniform float uPhotoAspect;
   uniform float uProgress;
   uniform float uTime;
   uniform float uLevel;
@@ -32,6 +36,21 @@ const fragmentShader = /* glsl */ `
 
   float hash(vec2 p) {
     return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
+  }
+
+  /* Named grey, not luminance: three.js already defines one of those. */
+  float grey(vec3 c) {
+    return dot(c, vec3(0.2126, 0.7152, 0.0722));
+  }
+
+  vec2 cover(vec2 uv) {
+    float scale = uAspect / uPhotoAspect;
+    if (scale > 1.0) {
+      uv.y = (uv.y - 0.5) / scale + 0.5;
+    } else {
+      uv.x = (uv.x - 0.5) * scale + 0.5;
+    }
+    return uv;
   }
 
   float noise(vec2 p) {
@@ -131,7 +150,25 @@ const fragmentShader = /* glsl */ `
     float bloom = smoothstep(radius * breath, radius * 0.28, edge);
 
     float board = soundboard(p, turbulence) * smoothstep(0.6, 0.99, uProgress);
-    float ink = max(bloom * (1.0 - gather * 0.72), board);
+
+    /* ---- him, as ink ----
+       His silhouette is sampled from the photograph and its edge is pushed
+       around by the same turbulence that moves the wash, so the figure bleeds
+       into the water instead of being a picture laid behind it. He holds the
+       left of the frame and runs out before the type, the way a brush does. */
+    vec2 photoUv = cover(vUv + (r - vec2(0.5)) * 0.045 * (0.55 + uLevel * 1.2));
+    float dark = 1.0 - grey(texture2D(uPhoto, photoUv).rgb);
+    float bleed = (turbulence - 0.5) * mix(0.3, 0.12, open);
+    /* Tonal, not binary. Thresholding turned him into black slabs; ink density
+       has to follow the photograph's own values, with the mid-tones staying
+       grey so the wash reads as a wash and the paper still breathes. */
+    float figure = pow(clamp(dark * 0.98 + bleed * 0.55, 0.0, 1.0), 1.42) * uHasPhoto;
+    // Runs out to bare paper on the right, and lifts off the floor.
+    figure *= smoothstep(0.72, 0.3, vUv.x) * smoothstep(0.0, 0.12, vUv.y);
+    // Present from the first frame, and deepest once the wash has opened.
+    figure *= 0.62 + 0.38 * open;
+
+    float ink = max(max(bloom * (1.0 - gather * 0.72) * 0.92, figure), board);
 
     // Thin ink goes green before it goes black, the way a wash separates.
     vec3 tone = mix(uJade, uInk, smoothstep(0.25, 0.85, ink));
@@ -162,6 +199,9 @@ export function createDragonScene({ canvas, reducedMotion }: SceneContext): Scen
     depthTest: false,
     depthWrite: false,
     uniforms: {
+      uPhoto: { value: null },
+      uHasPhoto: { value: 0 },
+      uPhotoAspect: { value: photos.silhouette.width / photos.silhouette.height },
       uProgress: { value: 0 },
       uTime: { value: 0 },
       uLevel: { value: 0 },
@@ -170,6 +210,17 @@ export function createDragonScene({ canvas, reducedMotion }: SceneContext): Scen
       uJade: { value: new THREE.Color("#6f9a86") },
       uCinnabar: { value: new THREE.Color("#a8402a") },
     },
+  });
+
+  const loader = new THREE.TextureLoader();
+  loader.load(photos.silhouette.src, (texture) => {
+    texture.colorSpace = THREE.SRGBColorSpace;
+    texture.minFilter = THREE.LinearFilter;
+    texture.magFilter = THREE.LinearFilter;
+    texture.wrapS = THREE.ClampToEdgeWrapping;
+    texture.wrapT = THREE.ClampToEdgeWrapping;
+    material.uniforms.uPhoto.value = texture;
+    material.uniforms.uHasPhoto.value = 1;
   });
 
   const quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
@@ -194,6 +245,7 @@ export function createDragonScene({ canvas, reducedMotion }: SceneContext): Scen
     },
 
     dispose() {
+      (material.uniforms.uPhoto.value as THREE.Texture | null)?.dispose();
       quad.geometry.dispose();
       material.dispose();
       renderer.dispose();

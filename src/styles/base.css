@@ -553,3 +553,346 @@ p {
 /* The pinned stage is kept under reduced motion: it advances only as fast as the
    user scrolls, so it stays direct manipulation rather than autoplaying motion.
    What gets switched off is idle drift inside the WebGL scenes. */
+
+/* ════════════════════════════════════════════════════════════════════════════
+   Engraved notation. Mechanics only: geometry, and progress-driven drawing. The
+   concept supplies the ink. `--s` comes from useSectionProgress, `--t` is each
+   element's own position along the phrase, so everything writes itself left to
+   right as the section passes — the same way a hand would.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.score {
+  display: grid;
+  gap: var(--space-lg);
+}
+
+.score-sheet {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+/* `--s` runs 0 → 1 across the whole passage of the section, which would mean the
+   phrase only finished writing as it left the screen. `--draw` compresses that
+   into the section's arrival, so the music is fully ruled and noted by the time
+   it sits in the middle of the viewport. */
+.score {
+  --draw: clamp(0, calc(var(--s, 0) * 2.4 - 0.45), 1);
+}
+
+/* Each element's own arrival: 0 until the scroll reaches it, 1 just after. */
+.score-staff line,
+.score-bars line,
+.score-beams polygon,
+.score-note {
+  --arrive: clamp(0, calc((var(--draw) - var(--t, 0)) * 7), 1);
+}
+
+.score-staff line {
+  stroke: currentColor;
+  stroke-width: 1;
+  opacity: 0.34;
+  /* pathLength is 1 on these lines, so the dash maths is in plain fractions. */
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1 - clamp(0, calc((var(--draw) - var(--t, 0)) * 1.8), 1));
+}
+
+.score-bars line {
+  stroke: currentColor;
+  stroke-width: 1.3;
+  opacity: calc(var(--arrive) * 0.45);
+}
+
+.score-beams polygon,
+.score-head {
+  fill: currentColor;
+}
+
+.score-stem {
+  stroke: currentColor;
+  stroke-width: 1.9;
+}
+
+.score-beams polygon {
+  opacity: var(--arrive);
+}
+
+.score-note {
+  opacity: var(--arrive);
+  transform: translateY(calc((1 - var(--arrive)) * 7px));
+}
+
+.score-playhead {
+  stroke: currentColor;
+  stroke-width: 1.4;
+  opacity: 0;
+  transform: translateX(calc(var(--played, 0) * var(--span) * 1px));
+  transition:
+    transform 280ms linear,
+    opacity 400ms var(--ease-out);
+}
+
+.score[data-playing="true"] .score-playhead {
+  opacity: 0.85;
+}
+
+.score-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-sm) var(--space-2xl);
+}
+
+.score-play {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: 0;
+}
+
+.score-play-mark {
+  width: 10px;
+  height: 12px;
+  background: currentColor;
+  clip-path: polygon(0 0, 100% 50%, 0 100%);
+}
+
+.score-play-mark[data-playing="true"] {
+  clip-path: none;
+  background: linear-gradient(
+    90deg,
+    currentColor 0 34%,
+    transparent 34% 66%,
+    currentColor 66% 100%
+  );
+}
+
+/* A strip that never stops moving: the client wall, read as a tempo strip. Two
+   identical halves, translated by half their own width, so the loop is seamless
+   without cloning anything at runtime. */
+.marquee {
+  position: relative;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
+  mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee-drift var(--marquee-duration, 46s) linear infinite;
+}
+
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+.marquee-half {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4xl);
+  padding-right: var(--space-4xl);
+}
+
+.marquee-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  white-space: nowrap;
+}
+
+.marquee-mark {
+  display: block;
+  width: var(--marquee-mark, 92px);
+  height: var(--marquee-height, 26px);
+  background: currentColor;
+  -webkit-mask-image: var(--mask);
+  mask-image: var(--mask);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+@keyframes marquee-drift {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+  }
+
+  .marquee {
+    overflow-x: auto;
+  }
+}
+
+/* Headings that arrive a word at a time, each climbing out from behind its own
+   edge. The container itself is exempt from the usual fade so the words carry
+   the whole movement. */
+[data-reveal="words"] {
+  opacity: 1;
+  transform: none;
+}
+
+.word {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  /* Descenders would be clipped by the mask without this. */
+  padding-bottom: 0.16em;
+  margin-bottom: -0.16em;
+}
+
+.word-in {
+  display: inline-block;
+  transform: translateY(115%);
+  transition: transform 1100ms var(--ease-out) calc(var(--i, 0) * 1ms);
+}
+
+[data-reveal="words"][data-revealed="true"] .word-in {
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .word-in {
+    transform: none;
+  }
+}
+
+/* The stave down the margin, with a notehead riding it as the page passes. */
+/* Right-hand margin, not left: the left is where every heading, eyebrow and
+   caption on this site begins, and a pinned hand-scroll pulls content straight
+   through that column. The right margin is empty on all three concepts. */
+.rail {
+  position: fixed;
+  top: 50%;
+  right: clamp(10px, 1.6vw, 26px);
+  z-index: 20;
+  display: none;
+  width: 26px;
+  height: 42vh;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+@media (min-width: 1180px) {
+  .rail {
+    display: block;
+  }
+}
+
+.rail-staff {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+}
+
+.rail-line {
+  width: 1px;
+  height: 100%;
+  background: currentColor;
+  opacity: 0.24;
+}
+
+/* The head sits on the stave and travels its length, one bar at a time. */
+.rail-head {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 7px;
+  height: 5px;
+  margin-left: -3.5px;
+  border-radius: 50%;
+  background: currentColor;
+  transform: translateY(calc(var(--page, 0) * (42vh - 5px))) rotate(-20deg);
+  transition: transform 220ms linear;
+}
+
+/* Content that travels sideways while the page travels down. `--p` comes from
+   the pinned stage; `100vw - 100%` is exactly how far the track has to go. */
+.handscroll-frame {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  overflow: hidden;
+}
+
+.handscroll-track {
+  display: flex;
+  align-items: stretch;
+  gap: clamp(var(--space-2xl), 5vw, var(--space-5xl));
+  width: max-content;
+  padding-inline: clamp(var(--space-lg), 6vw, var(--space-5xl));
+  transform: translateX(calc(var(--p, 0) * (100vw - 100%)));
+  will-change: transform;
+}
+
+/* Where the rail is visible, the track stops short of it rather than passing
+   underneath. */
+@media (min-width: 1180px) {
+  .handscroll-track {
+    padding-right: 96px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* No pinning games: it becomes a row you can push with your own thumb. */
+  .handscroll-frame {
+    overflow-x: auto;
+  }
+
+  .handscroll-track {
+    transform: none;
+  }
+}
+
+/* A full-bleed photographic breath between sections. The frame clips, so the
+   picture can drift inside it as the band passes. */
+.band {
+  position: relative;
+  margin: 0;
+  width: 100%;
+}
+
+.band-frame {
+  position: relative;
+  width: 100%;
+  height: clamp(360px, 62vh, 720px);
+  overflow: hidden;
+}
+
+.band[data-tall="true"] .band-frame {
+  height: clamp(440px, 86vh, 940px);
+}
+
+.band-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Scaled first so the drift can never expose an edge. */
+  transform: scale(1.12) translateY(calc(var(--shift, 0) * -4%));
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .band-frame img {
+    transform: scale(1.02);
+  }
+}
+
+.band-caption {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md) var(--space-2xl);
+  padding: var(--space-md) clamp(var(--space-lg), 6vw, var(--space-5xl));
+}
