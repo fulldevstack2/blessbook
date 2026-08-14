@@ -8,12 +8,12 @@
       name="description"
       content="One prompt. One request. One song, written and produced for you by Dennis Lau — guaranteed in seven days or less, and the ownership is yours."
     />
-    <link rel="icon" href="/blesspoke/icon.svg" type="image/svg+xml" />
-    <link rel="apple-touch-icon" href="/blesspoke/icon.svg" />
+    <link rel="icon" href="%VITE_BASE%icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="%VITE_BASE%icon.svg" />
 
-    <!-- Absolute URLs, because link scrapers do not resolve relative ones.
-         Update the origin if this ends up published anywhere but GitHub Pages
-         under /blesspoke/. -->
+    <!-- The origin comes from VITE_SITE_URL at build time; see .env. Link
+         scrapers do not reliably resolve a relative image, so once the
+         publishing account is settled this must be an absolute URL. -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Blesspoke" />
     <meta property="og:title" content="Blesspoke — Create your own song" />
@@ -21,8 +21,8 @@
       property="og:description"
       content="One prompt. One request. One song, written and produced for you by Dennis Lau — guaranteed in seven days or less, and the ownership is yours."
     />
-    <meta property="og:url" content="https://fulldevstack2.github.io/blesspoke/" />
-    <meta property="og:image" content="https://fulldevstack2.github.io/blesspoke/og.jpg" />
+    <meta property="og:url" content="%VITE_SITE_URL%/" />
+    <meta property="og:image" content="%VITE_SITE_URL%/og.jpg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta
@@ -35,7 +35,7 @@
       name="twitter:description"
       content="One song, written and produced for you by Dennis Lau. Guaranteed in seven days or less."
     />
-    <meta name="twitter:image" content="https://fulldevstack2.github.io/blesspoke/og.jpg" />
+    <meta name="twitter:image" content="%VITE_SITE_URL%/og.jpg" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

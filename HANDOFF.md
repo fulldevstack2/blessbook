@@ -1,7 +1,10 @@
 # Blesspoke — handoff
 
 Rewritten 14 Aug 2026, after the session that acted on the previous handoff's
-two priorities. Everything an incoming agent needs to continue without
+two priorities, then updated the same day when the user settled the publishing
+question. **This project is simply Blesspoke.** It is not a v2 and there is
+nothing for it to be a second version of — the earlier attempt has been
+scrapped (see §2). Everything an incoming agent needs to continue without
 re-deriving context. Read this top to bottom once before touching anything.
 
 ---
@@ -59,12 +62,12 @@ been acted on — see §8 for what landed and §9 for what is still open.**
 ## 2. Where things are, and how to run it
 
 ```
-/home/malkuth/projects/blesspoke-v2      <- THIS project. All work happens here.
-/home/malkuth/projects/creators-platform <- "canto", the previous project. Source of Dennis content.
+/home/malkuth/projects/blesspoke         <- THIS project. All work happens here.
+/home/malkuth/projects/creators-platform <- "canto", the previous project. Local source of Dennis content.
 ```
 
 ```bash
-cd /home/malkuth/projects/blesspoke-v2
+cd /home/malkuth/projects/blesspoke
 npm install          # already done
 npm run dev          # Vite on http://localhost:4300/blesspoke/
 npm run build        # tsc -b && vite build && cp dist/index.html dist/404.html
@@ -84,24 +87,48 @@ another. Routes:
 ### State of the tree
 
 - `tsc -b` clean, `npm run build` green.
-- **It is now a git repository** with four commits. There is an undo.
-- Nothing has been pushed anywhere. No GitHub repo named `blesspoke` exists.
-  `vite.config.ts` sets `base: "/blesspoke/"` in anticipation of GitHub Pages at
-  `<user>.github.io/blesspoke/`, and the build copies `index.html` to `404.html`
-  for SPA routing. **`index.html` currently hardcodes
-  `https://fulldevstack2.github.io/blesspoke/` in the og:url and og:image tags**,
-  inferred from the canto repo being `fulldevstack2/canto`. Scrapers will not
-  resolve a relative og:image, so it had to be absolute — but confirm the origin
-  with the user and correct it before anyone shares a link.
+- **It is now a git repository.** There is an undo. `git log --oneline` is the
+  fastest orientation to what landed when.
+- **Nothing from this project has been pushed anywhere.** The user has decided
+  the target is a **GitHub Pages project repo**, so the site will be served from
+  a subpath and `base` stays `/blesspoke/`. The build copies `index.html` to
+  `404.html` for SPA routing.
+- **The publishing account is not settled.** Deploy config now lives in `.env`
+  rather than being hardcoded: `VITE_BASE` drives the base path and the icon
+  href, `VITE_SITE_URL` drives the og:/twitter: origin. `VITE_SITE_URL` is
+  deliberately **empty**, which leaves the link-preview tags relative — degraded
+  but not wrong. Filling it in is the only change needed, and it is verified to
+  produce correct absolute URLs when set.
 - Confirm with the user before creating a repo or deploying.
 
-### Why `blesspoke-v2` and not `blesspoke`
+### What was scrapped, and what is still live
 
-A **different Cursor agent was working concurrently** in a directory called
-`blesspoke`. The user chose "Scrap it and let me rebuild Blesspoke from scratch
-my own way," so this clean directory was created. If you find a
-`/home/malkuth/projects/blesspoke`, it is not ours; do not merge from it without
-asking.
+An **earlier Blesspoke, built by a different Cursor agent**, exists at
+`/home/malkuth/projects/blesspoke` and was pushed to `fulldevstack2/blesspoke`.
+The user chose "Scrap it and let me rebuild Blesspoke from scratch my own way,"
+and has now confirmed that build is scrapped outright. Its local directory was
+deleted and this project took its place on disk. **Nothing was lost: that commit
+is still on GitHub.**
+
+Two things were live on GitHub Pages when this was written, and **this agent did
+not take either down** — the user said they would handle it:
+
+| URL | Repo | Status |
+|---|---|---|
+| `https://fulldevstack2.github.io/blesspoke/` | `fulldevstack2/blesspoke` | public, Pages on, the **scrapped** Cursor build |
+| `https://fulldevstack2.github.io/canto/` | `fulldevstack2/canto` | public, Pages on, to be unpublished |
+
+Note the collision: the scrapped site occupies the exact repo name and URL this
+project would want. Deploying here means either taking that repo over — which
+replaces the old content at the same URL — or picking a different account or
+repo name. **That is an open decision; do not resolve it yourself.** There are
+three GitHub accounts authenticated on this machine (`fulldevstack2`,
+`sportal-dev-team`, `devfakhzan`), and the global git identity is `devfakhzan`,
+so it is not safe to assume which one this should ship under.
+
+Canto stays on disk as the local source of Dennis's content, which is fine —
+everything needed has already been copied across and Blesspoke has no runtime
+dependency on it.
 
 ---
 
@@ -457,8 +484,12 @@ concepts complete end to end; the chooser page.
 
 ### 9a. Content decisions that need the user, not an agent
 
-- **Confirm the deploy origin.** `index.html` guesses
-  `fulldevstack2.github.io/blesspoke`. Wrong origin means broken link previews.
+- **Settle the publishing account, then set `VITE_SITE_URL` in `.env`.** Until
+  it is set, link previews fall back to relative URLs and may not render an
+  image on some platforms. See the table in §2 — the obvious repo name is
+  already taken by the scrapped build.
+- **Take down the two live GitHub Pages sites** listed in §2, if the user has
+  not already. Both are outward-facing; ask before touching either.
 - **The two client reviews in `work.ts`** came from canto and are attributed to
   "Brand film lead" and "Mei & Arun". Confirm they are real and cleared for
   publication before this goes anywhere public.
@@ -550,7 +581,7 @@ Style conventions in this repo specifically:
 ## 11. How to continue in Claude CLI
 
 ```bash
-cd /home/malkuth/projects/blesspoke-v2
+cd /home/malkuth/projects/blesspoke
 claude
 ```
 
@@ -579,8 +610,10 @@ Paste this as the first message:
 
 - Dev server: `npm run dev` → http://localhost:4300/blesspoke/
 - Typecheck: `npx tsc -b` · Build: `npm run build`
-- Canto repo on GitHub is `fulldevstack2/canto`, deployed via GitHub Pages.
-- No `blesspoke` GitHub repo exists yet — ask the user before creating one.
+- Deploy config is in `.env`. `npm run build` with `VITE_SITE_URL` set produces
+  absolute og: tags; unset, they stay relative.
+- `fulldevstack2/blesspoke` and `fulldevstack2/canto` both exist and both still
+  have Pages enabled. See the table in §2 before deploying anything.
 - Playwright and Chromium are installed under `creators-platform/node_modules`
   and `~/.cache/ms-playwright`, which is how the overflow, reveal and reduced-
   motion checks in §8 were run. Import it as
