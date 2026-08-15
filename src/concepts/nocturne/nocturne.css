@@ -2455,18 +2455,31 @@
 }
 
 /* ---------- tonight's running order ---------- */
+/* ---------- the order of the evening, lit one step at a time ---------- */
 
+/* A lighting bar down the left, four fittings on it, and a lantern that slides
+   between them throwing a beam across the page. The other two concepts strike a
+   numeral or brush a mark beside the live row; a house has one lamp and points
+   it, and everything it is not pointing at stays in the dark. */
 .nocturne .running {
-  display: grid;
-  align-content: center;
-  gap: clamp(24px, 5vh, 56px);
-  padding: clamp(var(--space-2xl), 9vh, var(--space-4xl))
-    clamp(var(--space-lg), 6vw, var(--space-5xl));
   background: var(--velvet-deep);
   overflow: hidden;
 }
 
+/* --travel comes down from the component as the cut index, so the bar, the
+   lamp and the four steps are all reading the same number. */
+.nocturne .running-inner {
+  display: grid;
+  grid-template-columns: clamp(66px, 8vw, 116px) minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr);
+  column-gap: clamp(18px, 3.4vw, 56px);
+  row-gap: clamp(20px, 4vh, 52px);
+  height: 100%;
+  padding: clamp(40px, 8vh, 96px) clamp(var(--space-lg), 6vw, var(--space-5xl));
+}
+
 .nocturne .running-head {
+  grid-column: 1 / -1;
   font-family: var(--display);
   font-weight: 300;
   font-size: clamp(1rem, 2vw, 1.5rem);
@@ -2482,107 +2495,252 @@
   color: var(--brass);
 }
 
-/* All four stand on the board at once. The lamp is what moves. */
-.nocturne .running-list {
+/* ---- the bar ---- */
+
+.nocturne .running-bar {
+  /* Where the lamp hangs, as a fraction of the bar. Named once so the lamp and
+     the track can never disagree about it. */
+  --lamp-at: calc(var(--first, 0.125) + var(--travel, 0) * var(--span, 0.75));
+
+  position: relative;
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.nocturne .running-track {
+  position: absolute;
+  inset: 0;
+  transition: transform 860ms var(--ease-in-out);
+}
+
+.nocturne .running-rail {
+  position: absolute;
+  left: 50%;
+  top: 4%;
+  bottom: 4%;
+  width: 2px;
+  transform: translateX(-50%);
+  background: linear-gradient(
+    180deg,
+    transparent,
+    color-mix(in oklab, var(--brass) 34%, transparent) 10%,
+    color-mix(in oklab, var(--brass) 34%, transparent) 90%,
+    transparent
+  );
+}
+
+/* One per step, sitting exactly where that step's row centres. */
+.nocturne .running-fitting {
+  position: absolute;
+  left: 50%;
+  top: calc(var(--pos, 0) * 100%);
+  transform: translate(-50%, -50%);
   display: grid;
-  gap: clamp(14px, 2.4vh, 26px);
-  max-width: 1000px;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid color-mix(in oklab, var(--brass) 34%, transparent);
+  border-radius: 50%;
+  background: var(--velvet-deep);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: color-mix(in oklab, var(--brass) 62%, transparent);
+  transition:
+    color 520ms var(--ease-out),
+    border-color 520ms var(--ease-out);
+}
+
+/* The fitting the lamp is hanging on. */
+.nocturne .running-fitting[data-lit="true"] {
+  border-color: var(--brass);
+  color: var(--brass);
+}
+
+/* ---- the lantern ---- */
+
+.nocturne .running-lamp {
+  position: absolute;
+  left: 50%;
+  top: calc(var(--lamp-at) * 100%);
+  z-index: 2;
+  width: clamp(44px, 5vw, 62px);
+  transform: translate(-50%, -50%);
+  color: var(--brass);
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.6));
+  transition: top 860ms var(--ease-in-out);
+}
+
+.nocturne .running-lantern {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.nocturne .running-lens {
+  fill: #fff2d6;
+  filter: drop-shadow(0 0 7px var(--brass));
+}
+
+/* The beam. A radial fade gives it the falloff and the clip gives it the
+   spread, so it widens across the page the way a lantern's does rather than
+   sitting there as an ellipse. It is allowed to run past the bar: only the
+   section clips it. */
+.nocturne .running-beam {
+  position: absolute;
+  left: 72%;
+  top: 50%;
+  z-index: -1;
+  width: 200vw;
+  height: clamp(170px, 30vh, 330px);
+  transform: translateY(-50%);
+  background: radial-gradient(
+    46% 46% at 0% 50%,
+    color-mix(in oklab, var(--brass) 26%, transparent) 0%,
+    color-mix(in oklab, var(--brass) 8%, transparent) 30%,
+    transparent 64%
+  );
+  clip-path: polygon(0 44%, 100% 10%, 100% 90%, 0 56%);
+  pointer-events: none;
+}
+
+/* ---- the four steps ---- */
+
+.nocturne .running-list {
+  position: relative;
+  z-index: 1;
+  grid-column: 2;
+  grid-row: 2;
+  display: grid;
+  /* Every step takes an equal share of the row, which is what lets the fittings
+     and the lamp be positioned arithmetically against them. */
+  grid-auto-rows: minmax(0, 1fr);
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
+/* Lit by its distance from the lamp rather than by the cut index, so the beam
+   and the type it lands on can never disagree. `abs()` would say this more
+   plainly and is too new to rely on. */
 .nocturne .running-step {
+  --d: max(calc(var(--travel) - var(--at, 0)), calc(var(--at, 0) - var(--travel)));
+  --near: clamp(0, calc(1 - var(--d) * 3.6), 1);
+
+  align-self: center;
   display: grid;
-  grid-template-columns: auto auto minmax(0, 1fr) auto;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: baseline;
-  gap: var(--space-md);
-  padding-block: var(--space-xs);
-  color: color-mix(in oklab, var(--ivory) 26%, transparent);
-  transition: color 700ms var(--ease-out);
-}
-
-.nocturne .running-step[data-past="true"] {
-  color: color-mix(in oklab, var(--ivory) 40%, transparent);
-}
-
-.nocturne .running-step[data-active="true"] {
-  color: var(--ivory);
-}
-
-.nocturne .running-index {
-  font-family: var(--display);
-  font-size: 0.95rem;
-  color: var(--brass);
-  opacity: 0.5;
-  transition: opacity 700ms var(--ease-out);
-}
-
-.nocturne .running-step[data-active="true"] .running-index {
-  opacity: 1;
+  column-gap: var(--space-md);
+  row-gap: var(--space-xs);
+  opacity: calc(0.2 + var(--near) * 0.8);
+  transform: translateX(calc((1 - var(--near)) * -14px));
+  transition:
+    opacity 520ms var(--ease-out),
+    transform 620ms var(--ease-out);
 }
 
 .nocturne .running-title {
+  grid-column: 1;
   font-family: var(--display);
   font-weight: 300;
-  font-size: clamp(1.5rem, 4vw, 3rem);
-  line-height: 1.05;
+  font-size: clamp(1.35rem, 3vw, 2.4rem);
+  line-height: 1.1;
+  color: var(--ivory);
+  text-shadow: 0 0 calc(var(--near) * 30px) color-mix(in oklab, var(--brass) 34%, transparent);
 }
 
 .nocturne .running-leader {
+  grid-column: 2;
   height: 1px;
   background: repeating-linear-gradient(
     90deg,
-    color-mix(in oklab, var(--brass) 34%, transparent) 0 2px,
+    color-mix(in oklab, var(--ivory) 30%, transparent) 0 2px,
     transparent 2px 7px
   );
-  transform: translateY(-0.3em);
 }
 
 .nocturne .running-marking {
+  grid-column: 3;
   font-family: var(--display);
   font-style: italic;
-  font-size: 0.9rem;
-  color: color-mix(in oklab, var(--brass) 82%, transparent);
+  font-size: clamp(0.8rem, 1.4vw, 1rem);
+  color: var(--brass);
 }
 
-/* The line being played opens; the others stay closed. */
 .nocturne .running-body {
-  grid-column: 2 / -1;
-  max-width: 58ch;
+  grid-column: 1 / -1;
+  max-width: 62ch;
   margin: 0;
-  color: color-mix(in oklab, var(--ivory) 66%, transparent);
-  line-height: 1.72;
-  display: grid;
-  grid-template-rows: 0fr;
-  opacity: 0;
-  transition:
-    grid-template-rows 760ms var(--ease-out),
-    opacity 620ms var(--ease-out);
-  overflow: hidden;
+  color: var(--ivory-soft);
 }
 
-.nocturne .running-step[data-active="true"] .running-body {
-  grid-template-rows: 1fr;
-  opacity: 1;
-  margin-top: var(--space-sm);
-}
-
+/* On a phone the four steps cannot share the height: a paragraph set in a
+   column this narrow is taller than a quarter of the frame on its own, so equal
+   rows put every step on top of the one above it. One cue at a time instead,
+   which is what a lighting bar is for anyway. The steps are stacked in the same
+   box and the lamp brings each one up as it lands on its fitting. */
 @media (max-width: 760px) {
-  .nocturne .running-step {
-    grid-template-columns: auto minmax(0, 1fr);
+  .nocturne .running-inner {
+    grid-template-columns: 44px minmax(0, 1fr);
+    column-gap: var(--space-md);
+    padding-inline: var(--space-md);
+  }
+
+  .nocturne .running-fitting {
+    width: 24px;
+    height: 24px;
+    font-size: 9px;
+  }
+
+  /* The lamp holds the centre and the bar runs past it, so the beam always
+     lands on the step being read. Travelling the lamp instead left it lighting
+     the bottom of the frame while the type sat centred in the middle. */
+  .nocturne .running-lamp {
+    top: 50%;
+    width: 34px;
+    transition: none;
+  }
+
+  .nocturne .running-track {
+    transform: translateY(calc((0.5 - var(--lamp-at)) * 100%));
   }
 
   .nocturne .running-leader,
   .nocturne .running-marking {
     display: none;
   }
+
+  .nocturne .running-list {
+    display: block;
+  }
+
+  .nocturne .running-step {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-content: center;
+    gap: var(--space-sm);
+    /* Fully out, not dimmed: a stack of four at a fifth each is unreadable. */
+    opacity: var(--near);
+  }
+
+  .nocturne .running-body {
+    font-size: 0.94rem;
+  }
 }
 
+/* With motion turned down the bar holds still and the whole running order is
+   simply readable, which is what it is for. */
 @media (prefers-reduced-motion: reduce) {
-  .nocturne .running-body {
-    grid-template-rows: 1fr;
+  .nocturne .running-step {
     opacity: 1;
+    transform: none;
+  }
+
+  .nocturne .running-beam {
+    opacity: 0.5;
   }
 }
 

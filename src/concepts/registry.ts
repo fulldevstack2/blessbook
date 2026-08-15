@@ -31,14 +31,35 @@ function violin(id: Violin["id"]): Violin {
   return found;
 }
 
-/* Nocturne first. It opens on a whole room rather than on a detail, so it is
-   the strongest of the three to meet on the sheet, and the ordinals follow the
-   order they are shown in: a panel labelled 03 sitting first would be its own
-   small confusion. */
+/* Phoenix first: it is the most opulent of the three and the closest to the
+   gold instrument the whole site is built around, so it is the strongest thing
+   to meet on the sheet. The ordinals follow the order they are shown in, and
+   each loader reads its number from here rather than carrying its own copy. */
 export const concepts: readonly Concept[] = [
   {
-    id: "nocturne",
+    id: "phoenix",
     ordinal: "01",
+    path: "/phoenix",
+    name: "Phoenix",
+    tagline: "Gilded",
+    object: "A gold-leaf lacquer screen, and a velvet-lined flight case.",
+    premise:
+      "The most opulent of the three, and the closest to the gold Phoenix violin itself. Near-black lacquer, one seam of 24K gold, and fine display type. Everything on the page is lit the way an object is lit in a dark room.",
+    theme: "dark",
+    fonts:
+      "https://fonts.googleapis.com/css2?family=Italiana&family=Bodoni+Moda:opsz,wght@6..96,500..900&family=Commissioner:wght@200..800&display=swap",
+    display: "Italiana",
+    body: "Commissioner",
+    swatches: [
+      { name: "Lacquer", value: "oklch(16% 0.018 40)" },
+      { name: "24K", value: "oklch(78% 0.13 85)" },
+      { name: "Ivory", value: "oklch(93% 0.014 85)" },
+    ],
+    instrument: violin("phoenix"),
+  },
+  {
+    id: "nocturne",
+    ordinal: "02",
     path: "/nocturne",
     name: "Nocturne",
     tagline: "Velvet and lamplight",
@@ -59,27 +80,6 @@ export const concepts: readonly Concept[] = [
     /* Named for the hour rather than for an instrument — the other two carry the
        violins. The third violin, The Chosen, is still in the record below. */
     instrument: violin("chosen"),
-  },
-  {
-    id: "phoenix",
-    ordinal: "02",
-    path: "/phoenix",
-    name: "Phoenix",
-    tagline: "Gilded",
-    object: "A gold-leaf lacquer screen, and a velvet-lined flight case.",
-    premise:
-      "The most opulent of the three, and the closest to the gold Phoenix violin itself. Near-black lacquer, one seam of 24K gold, and fine display type. Everything on the page is lit the way an object is lit in a dark room.",
-    theme: "dark",
-    fonts:
-      "https://fonts.googleapis.com/css2?family=Italiana&family=Bodoni+Moda:opsz,wght@6..96,500..900&family=Commissioner:wght@200..800&display=swap",
-    display: "Italiana",
-    body: "Commissioner",
-    swatches: [
-      { name: "Lacquer", value: "oklch(16% 0.018 40)" },
-      { name: "24K", value: "oklch(78% 0.13 85)" },
-      { name: "Ivory", value: "oklch(93% 0.014 85)" },
-    ],
-    instrument: violin("phoenix"),
   },
   {
     id: "dragon",

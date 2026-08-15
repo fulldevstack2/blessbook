@@ -1,7 +1,7 @@
 import { clients } from "../../content/clients";
 import { films } from "../../content/work";
 import { record } from "../../content/dennis";
-import { useState } from "react";
+import { useState, type CSSProperties } from "react";
 import { useReady } from "../../lib/useReady";
 import { useTypeset } from "../../lib/useTypeset";
 import { photos } from "../../content/media";
@@ -292,19 +292,84 @@ export function Enquiry() {
  * four lines stand together on a board and the lamp moves down them, so you can
  * see what has happened and what is still to come at the same time.
  */
+/**
+ * The four steps, lit one at a time by a lamp that travels the bar.
+ *
+ * All three concepts run this section off the same pinned stage, and all three
+ * were the same list with one row picked out: Phoenix strikes a numeral beside
+ * it, Dragon brushes a mark, and this one had neither, which made it the plain
+ * one. A house does not highlight a row. It has one lamp, it points it at the
+ * thing being done, and everything else stays in the dark, so that is what this
+ * does: a lighting bar down the left, four fittings on it at the four steps, and
+ * a lantern that slides between them throwing a beam across the page.
+ *
+ * The lamp travels continuously off `--p` and each step lights by its *distance*
+ * from the lamp rather than off the discrete cut index, so the beam and the type
+ * it lands on can never disagree. `abs()` would say that more plainly and is too
+ * new to rely on, so the distance is `max(a - b, b - a)`.
+ */
 export function Process() {
+  const last = steps.length - 1;
+  /* The bar and the list are the same grid row, and the list gives every step an
+     equal share of it, so a step's centre sits at (i + 0.5) / n of the height.
+     The fittings are placed on that, and the lamp travels between the first and
+     the last of them. Passed down rather than computed in CSS so the arithmetic
+     never has to know how many steps there are. */
+  const rail = {
+    "--first": 0.5 / steps.length,
+    "--span": last / steps.length,
+  } as CSSProperties;
+
   return (
     <ScrollStage vh={100 * (steps.length + 1)} cuts={steps.length} className="running">
       {({ stage }) => (
-        <>
+        /* The lamp is placed on the cut index, not on raw scroll. Driven
+           continuously it spent most of its time hanging between two fittings
+           with nothing properly lit; a lighting cue lands on its fitting and
+           stays there, and the glide between them is a transition. */
+        <div className="running-inner" style={{ "--travel": stage / last } as CSSProperties}>
           <p className="running-head">
             <em>the</em> ORDER <em>of the</em> EVENING
           </p>
 
+          <div className="running-bar" style={rail} aria-hidden>
+            {/* Rail and fittings move as one piece, which is what lets a narrow
+                screen hold the lamp still and slide the bar past it instead. */}
+            <span className="running-track">
+              <span className="running-rail" />
+              {steps.map((step, index) => (
+                <span
+                  className="running-fitting"
+                  key={step.index}
+                  data-lit={index === stage}
+                  style={{ "--pos": (index + 0.5) / steps.length } as CSSProperties}
+                >
+                  {step.index}
+                </span>
+              ))}
+            </span>
+
+            <span className="running-lamp">
+              <svg viewBox="0 0 52 46" className="running-lantern">
+                <g fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round">
+                  <path d="M15 1.5V9" />
+                  <path d="M8.5 16.5 32 9.5v27L8.5 29.5Z" fill="#2a1a12" />
+                  <path d="M32 9.5 45 3.5M32 36.5 45 42.5" />
+                </g>
+                <ellipse className="running-lens" cx="32" cy="23" rx="2.6" ry="13.4" />
+              </svg>
+              <span className="running-beam" />
+            </span>
+          </div>
+
           <ol className="running-list">
             {steps.map((step, index) => (
-              <li className="running-step" key={step.index} data-active={index === stage} data-past={index < stage}>
-                <span className="running-index">{step.index}</span>
+              <li
+                className="running-step"
+                key={step.index}
+                data-active={index === stage}
+                style={{ "--at": index / last } as CSSProperties}
+              >
                 <span className="running-title">{step.title}</span>
                 <span className="running-leader" aria-hidden />
                 <span className="running-marking">{step.marking}</span>
@@ -312,7 +377,7 @@ export function Process() {
               </li>
             ))}
           </ol>
-        </>
+        </div>
       )}
     </ScrollStage>
   );
