@@ -1727,7 +1727,15 @@ canvas:not([hidden]) + .dragon-hero-plate {
   gap: clamp(var(--space-2xl), 5vw, var(--space-5xl));
   width: max-content;
   padding-inline: clamp(var(--space-lg), 6vw, var(--space-5xl));
-  transform: translateX(calc(var(--p, 0) * (100vw - 100%)));
+  /* The travel runs a little past the end.
+
+     `100vw - 100%` lands the track's right edge exactly on the viewport's, which
+     means the last name is only wholly in frame at the final pixel of a 300vh
+     scroll: stop a hair short, or let momentum settle a hair short, and it is
+     clipped. The tail carries it further left so the last name arrives properly
+     inside the frame and stays there. */
+  --unroll-tail: clamp(28px, 11vw, 96px);
+  transform: translateX(calc(var(--p, 0) * (var(--unroll-frame, 100vw) - 100% - var(--unroll-tail))));
   will-change: transform;
 }
 

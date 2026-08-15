@@ -1,4 +1,4 @@
-import { useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { clients } from "../../content/clients";
 import { territories } from "../../content/dennis";
 import { films } from "../../content/work";
@@ -35,10 +35,29 @@ export function Unroll({
   className?: string;
   children: ReactNode;
 }) {
+  const frame = useRef<HTMLDivElement>(null);
+
+  /* How far the scroll has to carry the track is the frame's width minus the
+     track's, and the frame is not the viewport: on a wide screen it sits in a
+     column with margins either side. The travel was written against `100vw`,
+     so on desktop it stopped some four hundred pixels short and the last names
+     on the scroll could never be reached at all. The frame measures itself. */
+  useEffect(() => {
+    const element = frame.current;
+    if (!element) return;
+    const measure = () => {
+      element.style.setProperty("--unroll-frame", `${Math.round(element.clientWidth)}px`);
+    };
+    measure();
+    const watcher = new ResizeObserver(measure);
+    watcher.observe(element);
+    return () => watcher.disconnect();
+  }, []);
+
   return (
     <ScrollStage vh={vh} cuts={1} className={`unroll ${className ?? ""}`}>
       {() => (
-        <div className="unroll-frame">
+        <div className="unroll-frame" ref={frame}>
           <div className="unroll-track">{children}</div>
         </div>
       )}
