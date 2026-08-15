@@ -119,14 +119,14 @@ export function DragonPage() {
             <SceneCanvas
               factory={createDragonScene}
               progress={progress}
-              label="Dennis Lau in silhouette, drawn as ink bleeding into water, the wash opening around him and settling into the two f-holes of a violin."
+              label="Dennis Lau in silhouette, playing, drawn as ink on paper with a wash opening around him as the page scrolls."
             />
             <img
               className="dragon-hero-plate"
-              src={photos.silhouette.src}
-              width={photos.silhouette.width}
-              height={photos.silhouette.height}
-              alt={photos.silhouette.alt}
+              src={photos.silhouettePose.src}
+              width={photos.silhouettePose.width}
+              height={photos.silhouettePose.height}
+              alt={photos.silhouettePose.alt}
             />
 
             <div className="dragon-hero">
@@ -156,7 +156,7 @@ export function DragonPage() {
               </div>
 
               <div className="dragon-hero-foot">
-                <span>{photos.silhouette.credit}</span>
+                <span>{photos.silhouettePose.credit}</span>
                 <span className="dragon-progress" aria-hidden />
                 <span>Scroll</span>
               </div>

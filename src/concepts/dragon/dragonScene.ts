@@ -43,72 +43,41 @@ const fragmentShader = /* glsl */ `
     return dot(c, vec3(0.2126, 0.7152, 0.0722));
   }
 
-  /* Him, cut out of the photograph by tone rather than by shape.
+  /* Him, read straight off the plate.
 
-     Most of that 2.37:1 frame is not him: a cloud bank runs down the whole left
-     edge and sweeps across the top, and it is dark. Two attempts to fence it off
-     geometrically both failed, and they failed for the same reason — the cloud
-     is not beside him, it is *against* him, meeting his shoulder at the top and
-     his boots at the bottom. A box cut him with a ruled edge down the chest; an
-     ellipse fixed the ruled edge and then dissolved his outline instead, which
-     is the white fade around him.
+     The plate is a studio silhouette on white — see silhouettePose in media.ts.
+     That is the whole reason there is no apparatus here at all: the ground is
+     254 out of 255 and he is under 60, so the plate's own darkness *is* the ink.
+     No threshold, no mask, no crop, no box around his shoulders.
 
-     Neither was necessary. Measured off the still, his silhouette runs 9–17 out
-     of 255 and the nearest cloud runs 25–31: they never touch. So the cut is a
-     threshold in that gap, and there is no mask at all. The cloud is not
-     excluded, it simply is not dark enough to be ink.
+     The earlier plate was a frame from the concert film, and every attempt to
+     use it failed the same way: a cloud bank pressed against his shoulder and
+     his boots, dark as he was, and nothing separates two things that touch and
+     match. That is what this replaces. */
 
-     The numbers below are linear, because the texture is tagged sRGB and the
-     sampler converts on read: 18/255 and 26/255 sRGB, either side of 22. */
-  const float HIM_DARK = 0.0058;
-  const float HIM_LIGHT = 0.0105;
-  const float HIM_HEIGHT = 0.97;
+  /* Where he stands on the plate: his own bounding box, measured off it. */
+  const vec2 HIM_CENTRE = vec2(0.569, 0.524);
+  const float HIM_HEIGHT = 0.928;
 
-  /* The focus argument is where along the photograph's width the crop is
-     centred.
+  /* Fit him to the frame, rather than cropping the frame to him.
 
-     It matters on a phone. This still is 2.37 to 1 and he stands at the far
-     left of it; cover-fitting that into a portrait viewport keeps about a fifth
-     of the width, and centred, that fifth is sky. The hero simply had no man in
-     it. Anchoring the crop on him puts him back. */
-  vec2 cover(vec2 uv, float focus) {
-    float scale = uAspect / uPhotoAspect;
-    if (scale > 1.0) {
-      uv.y = (uv.y - 0.5) / scale + 0.5;
-    } else {
-      uv.x = (uv.x - 0.5) * scale + focus;
-    }
-    return uv;
-  }
+     Cover-fitting is what a background image does, and it is wrong for a figure:
+     it decides how much of a man you see from the shape of the window. So the
+     scale comes from him — he is given a share of the frame's height, and the
+     horizontal factor is derived from the two aspect ratios so nothing is
+     stretched. He lands upright, whole, and the same proportions on every
+     screen; only how much room he gets, and which side he stands on, change.
 
-  /* Fit him, rather than cropping to him.
-
-     Cover-fitting a 2.37 to 1 photograph into a portrait phone keeps a fifth of
-     its width. Anchoring that fifth on him does not help: a vertical sliver of a
-     man, blown up, is an abstract smudge and not a figure. So on a phone the
-     figure is *scaled* to the frame instead. The scale factors are worked out
-     from the two aspect ratios so nothing is stretched: he lands upright, whole,
-     and about half the height of the screen, with bare paper around him. */
-  vec2 fitFigure(vec2 uv) {
-    /* Where he stands in the photograph, and where he should stand on screen.
-
-       Both were measured off the still rather than guessed. He runs the whole
-       height of a 2.37:1 frame between x 0.20 and 0.50 — body on the left of
-       that, violin and bow reaching across the rest — so the anchor is the
-       centre of that box.
-
-       The share is how much of the frame's height he gets. At 0.30 he was a
-       third of a tall screen: a small grey mark in a lot of bare paper, on a
-       page whose entire subject is him. */
-    const vec2 inPhoto = vec2(0.35, 0.485);
-    const vec2 onScreen = vec2(0.56, 0.42);
-    const float share = 0.52;
+     He is not mirrored. On this plate he already faces left, which is into the
+     page on a phone, where the type is a left-hand column and he stands to the
+     right of it. On a wide screen the type moves right and so does he. */
+  vec2 fitFigure(vec2 uv, float narrow) {
+    float share = mix(0.78, 0.55, narrow);
+    vec2 onScreen = mix(vec2(0.245, 0.47), vec2(0.72, 0.47), narrow);
 
     float ky = HIM_HEIGHT / share;
-    // Negative, so he is mirrored and looks back into the page rather than out
-    // of it. He stands to the right of the type, so he has to face left.
-    float kx = -ky * uAspect / uPhotoAspect;
-    return inPhoto + (uv - onScreen) * vec2(kx, ky);
+    float kx = ky * uAspect / uPhotoAspect;
+    return HIM_CENTRE + (uv - onScreen) * vec2(kx, ky);
   }
 
   float noise(vec2 p) {
@@ -215,102 +184,84 @@ const fragmentShader = /* glsl */ `
     float board = 0.0;
 
     /* ---- him, as ink ----
-       His silhouette is sampled from the photograph and its edge is pushed
-       around by the same turbulence that moves the wash, so the figure bleeds
-       into the water instead of being a picture laid behind it. He holds the
-       left of the frame and runs out before the type, the way a brush does. */
+
+       Read straight off the plate, at full resolution, with nothing done to it.
+
+       Everything that used to happen here was damage. The plate was thresholded
+       to a flat stencil, the stencil was warped by turbulence, and the warped
+       edge was chewed by a second, finer noise — three operations whose combined
+       effect was to take a sharp studio photograph and make it look like a bad
+       scan of itself. All three existed to solve a problem the old plate had and
+       this one does not: separating him from a background that was as dark as he
+       was.
+
+       This plate is a cut-out on white. Its own values are already exactly the
+       ink — the ground lands on zero and what is left is him, with the edges the
+       photographer's lens gave him and the pinstripes and the rim light on his
+       sleeve still in it. That internal detail is the difference between a
+       figure and a sticker, and it survives only if nothing here flattens it. */
     float narrow = step(uAspect, 0.95);
-    vec2 wobble = vUv + (r - vec2(0.5)) * 0.045 * 0.8;
-    vec2 photoUv = narrow > 0.5 ? fitFigure(wobble) : cover(wobble, 0.5);
-    /* Past the edge of the plate there is only paper, never a smeared last row.
-       Softened, so the wash runs out the way a brush does rather than ending on
-       a rectangle. */
-    /* Wide runs out softly at the plate edge, as it always did. Narrow only
-       needs to know where the photograph stops, because the threshold does the
-       rest — so the guard is a hairline rather than a fade, and his outline
-       arrives intact. */
+
+    /* The one liberty taken, and it is small: a slow drift of the sample point,
+       so the ink is not quite still on the page. Two pixels, not fourteen — at
+       fourteen it was wider than his forearm. */
+    vec2 wobble = vUv + (r - vec2(0.5)) * 0.045 * 0.09;
+    vec2 photoUv = fitFigure(wobble, narrow);
+
+    // Outside the plate there is only paper, and the sampler clamps to white.
     vec2 plateEdge = min(photoUv, 1.0 - photoUv);
-    float guard = mix(0.20, 0.012, narrow);
-    float inFrame = smoothstep(0.0, guard, plateEdge.x) * smoothstep(0.0, guard, plateEdge.y);
+    float inFrame = smoothstep(0.0, 0.004, plateEdge.x) * smoothstep(0.0, 0.004, plateEdge.y);
 
-    /* Wide keeps the photograph's own values: at that size the sky's gradient is
-       most of what the wash is made of, and a threshold there turns him into a
-       slab. Narrow is a silhouette against a bright sky and nothing else, so it
-       is cut at the tone that separates him from the weather. */
     float lit = grey(texture2D(uPhoto, photoUv).rgb);
-    float tonal = 1.0 - lit;
-
-    /* A threshold is a cliff, and a cliff blown up to half a phone screen is a
-       staircase. Two things take that out, and neither of them is a blur.
-
-       The ramp is scaled by how fast the tone is changing on screen — so the
-       edge is about a pixel wide however far the picture is magnified, which is
-       what antialiasing means and is the part that removes the steps.
-
-       Then the cut point itself is walked around by two noises: a fine one for
-       the tooth of the paper, and a slow drifting one so the boundary is never
-       quite still. Ink on paper does not have a fixed edge; it creeps along the
-       fibres and it is still moving while it dries. That is the part that makes
-       it look drawn rather than keyed. */
-    /* The fibre is measured in the photograph's own space, not the screen's, for
-       two reasons: it stays put on him instead of crawling underneath him as the
-       page scrolls, and its frequency lands at a couple of pixels rather than a
-       dozen. At a dozen it stopped being tooth and became scallops cut out of
-       his back. */
-    float fibre = noise(photoUv * vec2(uPhotoAspect, 1.0) * 320.0);
-    float creep = fbm(vUv * vec2(uAspect, 1.0) * 7.0 - uTime * 0.02);
-    float mid = 0.5 * (HIM_DARK + HIM_LIGHT)
-      + (fibre - 0.5) * 0.0013
-      + (creep - 0.5) * 0.0011;
-    float aa = max(fwidth(lit) * 1.25, 0.0005);
-    float cut = 1.0 - smoothstep(mid - aa, mid + aa, lit);
-
-    float dark = mix(tonal, cut, narrow) * inFrame;
-    float bleed = (turbulence - 0.5) * mix(0.3, 0.12, open);
-    /* Tonal, not binary. Thresholding turned him into black slabs; ink density
-       has to follow the photograph's own values, with the mid-tones staying
-       grey so the wash reads as a wash and the paper still breathes. */
-    float figure = pow(clamp(dark * 0.98 + bleed * 0.55, 0.0, 1.0), 1.42) * uHasPhoto;
-    // Runs out to bare paper on the right, and lifts off the floor.
-    /* He runs out before the type. On a wide screen the type is beside him, so
-       the wash ends around two thirds across; on a phone the type is below him,
-       so he fades into the paper on the way down instead. */
-    figure *= mix(smoothstep(0.72, 0.3, vUv.x), 1.0, narrow)
-      * smoothstep(0.0, 0.12, vUv.y)
-      * mix(1.0, smoothstep(0.03, 0.13, vUv.y), narrow);
+    /* The floor lifts the ground clear of zero — the white is 254, not 255, and
+       without it the whole sheet carries a film of ink. The gain restores what
+       that costs him. */
+    float figure = clamp((1.0 - lit - 0.03) * 1.18, 0.0, 1.0) * inFrame * uHasPhoto;
+    // Lifts off the floor of the frame rather than being sawn off by it.
+    figure *= smoothstep(0.0, 0.05, vUv.y);
     // Present from the first frame, and deepest once the wash has opened.
-    // Solid on a phone, because a silhouette is solid; the bleed above is what
-    // keeps its edge brushed rather than cut out with scissors.
-    figure *= (0.62 + 0.38 * open) * mix(1.0, 1.3, narrow);
+    figure *= 0.86 + 0.14 * open;
 
-    /* On a phone he stands in the lower right, and the wash was settling on top
-       of him there. The bloom is pulled back over that corner so the figure has
-       clean paper to be read against; the wash keeps the rest of the sheet. */
-    /* The corner he stands in is kept clear of the wash, and kept clearer the
-       further the wash opens: by the last cut the bloom is at its widest and was
-       settling straight on top of him. It follows the whole of him now, not just
-       his feet. */
-    /* Pulled back less than it was. Between taking three quarters of the bloom
-       off his corner and diluting the rest to 0.6, a narrow sheet came out
-       almost bare — and bare paper with a small grey man on it is not restraint,
-       it is an empty page. He needs clean paper immediately around him, not a
-       whole side of the sheet. */
-    float clearForHim = mix(
+    /* The wash used to be held off the corner he stands in, because it settled
+       on top of a figure that was itself only a shade of the same grey. He is
+       ink now and the wash cannot cover him, so it gets the sheet back — only
+       the type's own column is kept open, and only on a narrow screen where the
+       type sits over the wash rather than beside it. */
+    float clearForType = mix(
       1.0,
-      1.0 - (0.52 + 0.18 * open) * smoothstep(0.24, 0.60, vUv.x) * smoothstep(0.80, 0.14, vUv.y),
+      1.0 - 0.42 * smoothstep(0.62, 0.14, vUv.x),
       narrow
     );
     /* Diluted on a phone. At that width the wash filled most of the sheet and
        stopped reading as ink in water, which is pale and open, and started
        reading as grey smoke. */
-    float ink = max(bloom * (1.0 - gather * 0.78) * 0.92 * clearForHim * mix(1.0, 0.82, narrow), figure);
+    /* Held back at the top of the scroll. The drop starts small and centred, and
+       a small centred drop sitting behind the name is not a wash, it is a
+       smudge on the paper. The sheet opens bare — him on it and nothing else —
+       and the ink arrives once the page is moving, which is the metaphor
+       anyway: it is dropped in, it is not already there. */
+    float wash = bloom * (1.0 - gather * 0.78) * 0.92 * clearForType
+      * mix(1.0, 0.82, narrow) * smoothstep(0.015, 0.16, uProgress);
 
-    // Thin ink goes green before it goes black, the way a wash separates.
-    vec3 tone = mix(uJade, uInk, smoothstep(0.25, 0.85, ink));
+    /* The wash and the man are two different things and used to be one number,
+       which is what made him look cheap. Thin ink goes green before it goes
+       black — true of a wash, and the reason for the jade — but he is not a
+       wash. He is lit from behind, so the plate hands over a bright edge down
+       his front, and running that through the same ramp turned his bow arm and
+       his leading leg pale green. He is one colour at whatever density the
+       photograph gives him; the ramp belongs to the water around him. */
+    vec3 washTone = mix(uJade, uInk, smoothstep(0.25, 0.85, wash));
     // A trace of cinnabar where the wash is thinnest, like a seal bleeding through.
-    tone = mix(tone, uCinnabar, smoothstep(0.06, 0.2, ink) * (1.0 - smoothstep(0.2, 0.42, ink)) * 0.35);
+    washTone = mix(washTone, uCinnabar, smoothstep(0.06, 0.2, wash) * (1.0 - smoothstep(0.2, 0.42, wash)) * 0.35);
 
-    float alpha = clamp(ink * 0.96, 0.0, 1.0);
+    // Him over the water, composited properly rather than taken as a maximum.
+    float washA = clamp(wash * 0.96, 0.0, 1.0);
+    float figA = clamp(figure * 0.96, 0.0, 1.0);
+    float alpha = figA + washA * (1.0 - figA);
+    vec3 tone = alpha > 0.0001
+      ? (uInk * figA + washTone * washA * (1.0 - figA)) / alpha
+      : washTone;
+
     gl_FragColor = vec4(tone, alpha);
   }
 `;
@@ -336,7 +287,7 @@ export function createDragonScene({ canvas, reducedMotion }: SceneContext): Scen
     uniforms: {
       uPhoto: { value: null },
       uHasPhoto: { value: 0 },
-      uPhotoAspect: { value: photos.silhouette.width / photos.silhouette.height },
+      uPhotoAspect: { value: photos.silhouettePose.width / photos.silhouettePose.height },
       uProgress: { value: 0 },
       uTime: { value: 0 },
       uLevel: { value: 0 },
@@ -348,7 +299,7 @@ export function createDragonScene({ canvas, reducedMotion }: SceneContext): Scen
   });
 
   const loader = new THREE.TextureLoader();
-  loader.load(photos.silhouette.src, (texture) => {
+  loader.load(photos.silhouettePose.src, (texture) => {
     texture.colorSpace = THREE.SRGBColorSpace;
     /* Mipmapped, and this is the whole reason his outline was a staircase.
 

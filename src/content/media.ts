@@ -110,6 +110,22 @@ export const photos = {
     alt: "Dennis Lau playing under blue light, the gold violin catching the beam.",
     credit: "The Phoenix Rising Concert, 2016",
   },
+  /**
+   * A studio silhouette, cut out on white: the whole man, playing, in one clean
+   * shape. Dragon draws its hero from this rather than from the film frame
+   * below, and the difference is not resolution — it is that there is nothing in
+   * the frame except him. The frame version has cloud banks pressed against his
+   * shoulder and his boots, and no threshold or crop can separate those from him
+   * because they touch. Here the background is 254 out of 255 and he is under
+   * 60, so the concept's ink is exactly the figure and nothing else.
+   */
+  silhouettePose: {
+    src: asset("silhouette-pose.webp"),
+    width: 1024,
+    height: 1536,
+    alt: "Dennis Lau in silhouette against white, standing wide, bow drawn across the violin under his chin.",
+    credit: "Dennis Lau press",
+  },
   /** The quietest image on the site, and the most useful one. */
   silhouette: {
     src: asset("silhouette-sky.webp"),

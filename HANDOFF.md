@@ -753,6 +753,17 @@ frames pulled from YouTube and re-encoded. `theo.webp` is pillarboxed because th
 source video is 1:1; cropping it to the content would cut the title card, so it
 is left alone and the black frame absorbs it.
 
+`public/dennis/silhouette-pose.webp` — the Dragon hero's plate. A studio
+silhouette of him playing, cut out on white, 1024×1536, 63 KB at WebP q92
+(lossless was 676 KB and differed by 256 pixels out of 1.5 million at the
+threshold, which is not a trade worth 600 KB). It replaced a frame from the
+concert film, and the reason is worth keeping: in that frame a cloud bank was
+pressed against his shoulder and his boots and was as dark as he was, so nothing
+— no threshold, no box, no ellipse — could separate them, because they touched
+and they matched. Here the ground is 254 and he is under 60, so the plate's own
+values *are* the ink and the shader does nothing to him but change his colour.
+If this is ever re-cut, keep the white ground and keep him whole in frame.
+
 `public/audio/` — the ten demos, **39 MB, shipped as the original 192 kbps MP3s,
 untranscoded**. That was a deliberate call: this site's whole pitch is production
 quality, and generational loss on a music producer's own demo reel undermines it.
