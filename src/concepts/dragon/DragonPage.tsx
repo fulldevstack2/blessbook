@@ -133,7 +133,7 @@ export function DragonPage() {
               <div className="dragon-cuts">
                 {cuts.map((cut, index) => (
                   <div key={cut.latin} className="dragon-cut" data-active={stage === index}>
-                    <span className="dragon-mark" lang="zh">
+                    <span className="dragon-mark" lang="zh" data-name={index === 0}>
                       {cut.brush}
                     </span>
                     <span className="dragon-mark-latin">{cut.latin}</span>

@@ -89,9 +89,9 @@ export const concepts: readonly Concept[] = [
     path: "/dragon",
     name: "Dragon",
     tagline: "Ink and jade",
-    object: "An ink-wash scroll, and a jade seal pressed in cinnabar.",
+    object: "An ink-wash scroll, jade hairlines, and a carved seal in the margin.",
     premise:
-      "The only one of the three in daylight, and the one that leans on the Chinese side of the name. Warm rice paper, a brush-weight serif, jade rules and a cinnabar seal. It reads as a hand scroll, and it unrolls sideways as you go.",
+      "The only one of the three in daylight, and the one that leans on the Chinese side of the name. Warm rice paper, a brush-weight serif, jade rules and a carved seal. It reads as a hand scroll, and it unrolls sideways as you go.",
     theme: "light",
     fonts:
       "https://fonts.googleapis.com/css2?family=Faustina:ital,wght@0,300..800;1,300..800&family=Hanken+Grotesk:wght@300..800&family=Ma+Shan+Zheng&display=swap",

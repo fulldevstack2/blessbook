@@ -43,6 +43,24 @@ const fragmentShader = /* glsl */ `
     return dot(c, vec3(0.2126, 0.7152, 0.0722));
   }
 
+  /* Him, in the photograph — as an ellipse, not a box.
+
+     Most of that 2.37:1 frame is not him. A cloud bank runs down the whole left
+     edge and sweeps across the top, and it is darker than he is, so a plate that
+     is the whole photograph hands the wash a slab of cloud over his head and
+     another across his violin. That is what it did.
+
+     A rectangle does not fix it either, and it is worth saying why: the cloud
+     is not beside him, it is *against* him. It meets his shoulder at the top
+     and his boots at the bottom, and every straight cut that excludes it cuts
+     him too — which is how the crop ended up as a black slab with a ruled edge
+     down the middle of his chest. An ellipse with a wide soft edge takes what
+     is his and lets the rest fall off into paper, and a soft edge is what this
+     concept is made of: everything else on the sheet is a wash running out. */
+  const vec2 HIM_CENTRE = vec2(0.335, 0.44);
+  const vec2 HIM_RADIUS = vec2(0.146, 0.50);
+  const float HIM_HEIGHT = 0.97;
+
   /* The focus argument is where along the photograph's width the crop is
      centred.
 
@@ -69,12 +87,21 @@ const fragmentShader = /* glsl */ `
      from the two aspect ratios so nothing is stretched: he lands upright, whole,
      and about half the height of the screen, with bare paper around him. */
   vec2 fitFigure(vec2 uv) {
-    // Where he stands in the photograph, and where he should stand on screen.
-    const vec2 inPhoto = vec2(0.17, 0.56);
-    const vec2 onScreen = vec2(0.85, 0.33);
-    const float share = 0.30;
+    /* Where he stands in the photograph, and where he should stand on screen.
 
-    float ky = 0.9 / share;
+       Both were measured off the still rather than guessed. He runs the whole
+       height of a 2.37:1 frame between x 0.20 and 0.50 — body on the left of
+       that, violin and bow reaching across the rest — so the anchor is the
+       centre of that box.
+
+       The share is how much of the frame's height he gets. At 0.30 he was a
+       third of a tall screen: a small grey mark in a lot of bare paper, on a
+       page whose entire subject is him. */
+    const vec2 inPhoto = vec2(0.35, 0.485);
+    const vec2 onScreen = vec2(0.56, 0.42);
+    const float share = 0.52;
+
+    float ky = HIM_HEIGHT / share;
     // Negative, so he is mirrored and looks back into the page rather than out
     // of it. He stands to the right of the type, so he has to face left.
     float kx = -ky * uAspect / uPhotoAspect;
@@ -195,8 +222,13 @@ const fragmentShader = /* glsl */ `
     /* Past the edge of the plate there is only paper, never a smeared last row.
        Softened, so the wash runs out the way a brush does rather than ending on
        a rectangle. */
+    /* Wide takes the whole photograph, as it always did, and runs out at the
+       plate edge. Narrow takes the ellipse around him. */
     vec2 plateEdge = min(photoUv, 1.0 - photoUv);
-    float inFrame = smoothstep(0.0, 0.20, plateEdge.x) * smoothstep(0.0, 0.20, plateEdge.y);
+    float wideFrame = smoothstep(0.0, 0.20, plateEdge.x) * smoothstep(0.0, 0.20, plateEdge.y);
+    float oval = length((photoUv - HIM_CENTRE) / HIM_RADIUS);
+    float narrowFrame = 1.0 - smoothstep(0.52, 1.0, oval);
+    float inFrame = mix(wideFrame, narrowFrame, narrow);
     float dark = (1.0 - grey(texture2D(uPhoto, photoUv).rgb)) * inFrame;
     float bleed = (turbulence - 0.5) * mix(0.3, 0.12, open);
     /* Tonal, not binary. Thresholding turned him into black slabs; ink density
@@ -211,7 +243,7 @@ const fragmentShader = /* glsl */ `
       * smoothstep(0.0, 0.12, vUv.y)
       * mix(1.0, smoothstep(0.03, 0.13, vUv.y), narrow);
     // Present from the first frame, and deepest once the wash has opened.
-    figure *= (0.62 + 0.38 * open) * mix(1.0, 1.5, narrow);
+    figure *= (0.62 + 0.38 * open) * mix(1.0, 1.9, narrow);
 
     /* On a phone he stands in the lower right, and the wash was settling on top
        of him there. The bloom is pulled back over that corner so the figure has
@@ -220,15 +252,20 @@ const fragmentShader = /* glsl */ `
        further the wash opens: by the last cut the bloom is at its widest and was
        settling straight on top of him. It follows the whole of him now, not just
        his feet. */
+    /* Pulled back less than it was. Between taking three quarters of the bloom
+       off his corner and diluting the rest to 0.6, a narrow sheet came out
+       almost bare — and bare paper with a small grey man on it is not restraint,
+       it is an empty page. He needs clean paper immediately around him, not a
+       whole side of the sheet. */
     float clearForHim = mix(
       1.0,
-      1.0 - (0.74 + 0.22 * open) * smoothstep(0.20, 0.56, vUv.x) * smoothstep(0.82, 0.24, vUv.y),
+      1.0 - (0.52 + 0.18 * open) * smoothstep(0.24, 0.60, vUv.x) * smoothstep(0.80, 0.14, vUv.y),
       narrow
     );
     /* Diluted on a phone. At that width the wash filled most of the sheet and
        stopped reading as ink in water, which is pale and open, and started
        reading as grey smoke. */
-    float ink = max(bloom * (1.0 - gather * 0.78) * 0.92 * clearForHim * mix(1.0, 0.6, narrow), figure);
+    float ink = max(bloom * (1.0 - gather * 0.78) * 0.92 * clearForHim * mix(1.0, 0.82, narrow), figure);
 
     // Thin ink goes green before it goes black, the way a wash separates.
     vec3 tone = mix(uJade, uInk, smoothstep(0.25, 0.85, ink));

@@ -1,7 +1,8 @@
 /* Dragon — ink and jade.
    The only concept in daylight. Warm rice paper, a brush-weight serif, jade
-   hairlines and one cinnabar seal. Structure borrows from a hand scroll: labels
-   sit out in the margin, the text runs in a single measured column. */
+   hairlines, and cinnabar for the marks but never for his name. Structure
+   borrows from a hand scroll: labels sit out in the margin, the text runs in a
+   single measured column. */
 
 .dragon {
   --paper: oklch(95% 0.012 85);
@@ -184,6 +185,13 @@
   line-height: 1;
 }
 
+/* Never his name. Writing a living person's name in red is what you do to the
+   dead, and cinnabar is this concept's accent everywhere else — so the brush
+   phrases keep it and the one cut that is his name is brushed in ink. */
+.dragon-mark[data-name="true"] {
+  color: var(--ink);
+}
+
 .dragon-mark-latin {
   display: block;
   margin-bottom: var(--space-lg);
@@ -314,14 +322,20 @@
   flex-wrap: wrap;
 }
 
-/* A carved seal, pressed in cinnabar — the traditional signature on a scroll. */
+/* A carved seal, the traditional signature on a scroll.
+
+   Pressed in ink rather than cinnabar. A red name chop is the one place the
+   convention allows a name and red together — the characters are cut out of the
+   ground rather than written in it, and every scroll ever mounted carries one —
+   but the rule on this site is simpler than the convention: his name is never
+   red, and a seal is still a seal in ink. */
 .dragon-seal {
   display: grid;
   place-items: center;
   width: 74px;
   height: 74px;
   flex: none;
-  background: var(--cinnabar);
+  background: var(--ink);
   color: var(--paper);
   font-family: var(--brush);
   font-size: 21px;

@@ -147,6 +147,39 @@ const fragmentShader = /* glsl */ `
        goes down into the metal, so the type has ground rather than an edge. */
     float hold = inPanel * mix(1.0, smoothstep(0.0, 0.36, panel.y), narrow);
 
+    /* ---- on a phone, the gilding comes off him ----
+
+       A phone scroll had nothing to watch. The picture rose a few percent and a
+       light crossed it, which is a screensaver, not an event — and this concept
+       is called Gilded, which was a word nowhere in the picture.
+
+       So on a narrow frame he starts as a gold statue: the duotone below,
+       already computed for the grade, taken almost pure. Scrolling melts it off
+       him from the head down and the photograph underneath comes through behind
+       a hot rim, the way real gilding lifts. He is never absent, which is the
+       whole reason it is a change of material rather than a dissolve — a hero
+       whose subject is missing until you scroll is a hero with no subject.
+
+       The front is the frame's own height roughened by the metal's grain, so
+       the edge is torn rather than ruled, and the grain is not animated: a
+       moving noise under a scroll-driven front makes the edge shimmer, and the
+       edge is the thing being watched. */
+    float melt = 1.0;
+    float meltRim = 0.0;
+    if (narrow > 0.5) {
+      /* The grain is kept small deliberately. At a third of the frame height it
+         smeared the front over a band that read as fog, and gilding does not
+         fog — it lifts along an edge. Enough roughness to tear it, not enough
+         to lose it. */
+      float grain = fbm(uv * vec2(uAspect, 1.0) * 4.6);
+      float field = uv.y + grain * 0.15 - 0.075;
+      // From above the frame to below it, finished with a third of the scroll
+      // left over, which is where the shaft of light takes it on.
+      float front = mix(1.24, -0.12, clamp(uProgress / 0.68, 0.0, 1.0));
+      melt = smoothstep(front - 0.07, front + 0.015, field);
+      meltRim = exp(-pow((field - front) / 0.032, 2.0));
+    }
+
     if (inPanel > 0.5 && uHasPhoto > 0.5) {
       /* Cover-fit inside the panel, with a slow rise as the page scrolls.
 
@@ -176,13 +209,23 @@ const fragmentShader = /* glsl */ `
       vec3 gilded = mix(uLacquer, uGoldDeep, smoothstep(0.05, 0.34, l));
       gilded = mix(gilded, uGold, smoothstep(0.3, 0.66, l));
       gilded = mix(gilded, uIvory, smoothstep(0.72, 0.99, l));
-      vec3 framed = mix(gilded, lifted, 0.62) * 1.06;
+      /* Wide: one settled grade. Narrow: metal at the top of the scroll and
+         photograph at the bottom of it, with the front travelling between. */
+      float grade = mix(0.62, mix(0.04, 0.84, melt), narrow);
+      vec3 framed = mix(gilded, lifted, grade) * 1.06;
+
+      // Gold runs hotter while it is still on him.
+      framed += uGold * (1.0 - melt) * narrow * 0.16;
 
       // The seam's light falls on him too.
       framed += uGoldLit * seam * 0.25;
 
       colour = mix(colour, framed, hold);
     }
+
+    // The rim the gilding lifts along: the hottest gold in the frame, and the
+    // only thing in it that is moving because you are scrolling.
+    colour += mix(uGold, uIvory, 0.42) * meltRim * 0.8 * uPanelOn;
 
     /* A gold hairline around the panel, and a soft drop beneath it. Only where
        there is an edge to rule: on a phone the picture has no bottom, and a
