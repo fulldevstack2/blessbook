@@ -199,22 +199,22 @@ const fragmentShader = /* glsl */ `
       float head = -0.62 + uProgress * 1.45;
 
       // The beam: a bright core inside a wide, soft spill.
-      float core = exp(-pow((across - head) / 0.055, 2.0));
+      float core = exp(-pow((across - head) / 0.075, 2.0));
       float spill = exp(-pow((across - head) / 0.30, 2.0));
 
       // It falls off down the frame, the way a beam from the rig does.
       float reach = smoothstep(-0.15, 0.72, uv.y);
 
-      colour += mix(uGold, uIvory, 0.5) * core * 0.95 * reach;
-      colour += uGoldDeep * spill * 0.46 * reach;
+      colour += mix(uGold, uIvory, 0.35) * core * 0.38 * reach;
+      colour += uGoldDeep * spill * 0.38 * reach;
       // And whatever it lands on lights up rather than merely being overlaid.
-      colour *= 1.0 + spill * 0.85 * reach;
+      colour *= 1.0 + spill * 0.48 * reach;
 
       /* Dust in the beam. There is always dust in a beam, and it is the single
          cheapest thing that makes a light look like it is in a room. */
       vec2 mote = vec2(uv.x * 190.0, uv.y * 130.0 - uTime * 0.30);
       float dust = smoothstep(0.9965, 1.0, hash(floor(mote)));
-      colour += uIvory * dust * spill * 3.0 * reach;
+      colour += uIvory * dust * spill * 1.8 * reach;
     }
 
     /* ---- cursor light, room falloff, and the side the type sits on ---- */
