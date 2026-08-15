@@ -43,22 +43,25 @@ const fragmentShader = /* glsl */ `
     return dot(c, vec3(0.2126, 0.7152, 0.0722));
   }
 
-  /* Him, in the photograph — as an ellipse, not a box.
+  /* Him, cut out of the photograph by tone rather than by shape.
 
-     Most of that 2.37:1 frame is not him. A cloud bank runs down the whole left
-     edge and sweeps across the top, and it is darker than he is, so a plate that
-     is the whole photograph hands the wash a slab of cloud over his head and
-     another across his violin. That is what it did.
+     Most of that 2.37:1 frame is not him: a cloud bank runs down the whole left
+     edge and sweeps across the top, and it is dark. Two attempts to fence it off
+     geometrically both failed, and they failed for the same reason — the cloud
+     is not beside him, it is *against* him, meeting his shoulder at the top and
+     his boots at the bottom. A box cut him with a ruled edge down the chest; an
+     ellipse fixed the ruled edge and then dissolved his outline instead, which
+     is the white fade around him.
 
-     A rectangle does not fix it either, and it is worth saying why: the cloud
-     is not beside him, it is *against* him. It meets his shoulder at the top
-     and his boots at the bottom, and every straight cut that excludes it cuts
-     him too — which is how the crop ended up as a black slab with a ruled edge
-     down the middle of his chest. An ellipse with a wide soft edge takes what
-     is his and lets the rest fall off into paper, and a soft edge is what this
-     concept is made of: everything else on the sheet is a wash running out. */
-  const vec2 HIM_CENTRE = vec2(0.335, 0.44);
-  const vec2 HIM_RADIUS = vec2(0.146, 0.50);
+     Neither was necessary. Measured off the still, his silhouette runs 9–17 out
+     of 255 and the nearest cloud runs 25–31: they never touch. So the cut is a
+     threshold in that gap, and there is no mask at all. The cloud is not
+     excluded, it simply is not dark enough to be ink.
+
+     The numbers below are linear, because the texture is tagged sRGB and the
+     sampler converts on read: 18/255 and 26/255 sRGB, either side of 22. */
+  const float HIM_DARK = 0.0058;
+  const float HIM_LIGHT = 0.0105;
   const float HIM_HEIGHT = 0.97;
 
   /* The focus argument is where along the photograph's width the crop is
@@ -222,14 +225,47 @@ const fragmentShader = /* glsl */ `
     /* Past the edge of the plate there is only paper, never a smeared last row.
        Softened, so the wash runs out the way a brush does rather than ending on
        a rectangle. */
-    /* Wide takes the whole photograph, as it always did, and runs out at the
-       plate edge. Narrow takes the ellipse around him. */
+    /* Wide runs out softly at the plate edge, as it always did. Narrow only
+       needs to know where the photograph stops, because the threshold does the
+       rest — so the guard is a hairline rather than a fade, and his outline
+       arrives intact. */
     vec2 plateEdge = min(photoUv, 1.0 - photoUv);
-    float wideFrame = smoothstep(0.0, 0.20, plateEdge.x) * smoothstep(0.0, 0.20, plateEdge.y);
-    float oval = length((photoUv - HIM_CENTRE) / HIM_RADIUS);
-    float narrowFrame = 1.0 - smoothstep(0.52, 1.0, oval);
-    float inFrame = mix(wideFrame, narrowFrame, narrow);
-    float dark = (1.0 - grey(texture2D(uPhoto, photoUv).rgb)) * inFrame;
+    float guard = mix(0.20, 0.012, narrow);
+    float inFrame = smoothstep(0.0, guard, plateEdge.x) * smoothstep(0.0, guard, plateEdge.y);
+
+    /* Wide keeps the photograph's own values: at that size the sky's gradient is
+       most of what the wash is made of, and a threshold there turns him into a
+       slab. Narrow is a silhouette against a bright sky and nothing else, so it
+       is cut at the tone that separates him from the weather. */
+    float lit = grey(texture2D(uPhoto, photoUv).rgb);
+    float tonal = 1.0 - lit;
+
+    /* A threshold is a cliff, and a cliff blown up to half a phone screen is a
+       staircase. Two things take that out, and neither of them is a blur.
+
+       The ramp is scaled by how fast the tone is changing on screen — so the
+       edge is about a pixel wide however far the picture is magnified, which is
+       what antialiasing means and is the part that removes the steps.
+
+       Then the cut point itself is walked around by two noises: a fine one for
+       the tooth of the paper, and a slow drifting one so the boundary is never
+       quite still. Ink on paper does not have a fixed edge; it creeps along the
+       fibres and it is still moving while it dries. That is the part that makes
+       it look drawn rather than keyed. */
+    /* The fibre is measured in the photograph's own space, not the screen's, for
+       two reasons: it stays put on him instead of crawling underneath him as the
+       page scrolls, and its frequency lands at a couple of pixels rather than a
+       dozen. At a dozen it stopped being tooth and became scallops cut out of
+       his back. */
+    float fibre = noise(photoUv * vec2(uPhotoAspect, 1.0) * 320.0);
+    float creep = fbm(vUv * vec2(uAspect, 1.0) * 7.0 - uTime * 0.02);
+    float mid = 0.5 * (HIM_DARK + HIM_LIGHT)
+      + (fibre - 0.5) * 0.0013
+      + (creep - 0.5) * 0.0011;
+    float aa = max(fwidth(lit) * 1.25, 0.0005);
+    float cut = 1.0 - smoothstep(mid - aa, mid + aa, lit);
+
+    float dark = mix(tonal, cut, narrow) * inFrame;
     float bleed = (turbulence - 0.5) * mix(0.3, 0.12, open);
     /* Tonal, not binary. Thresholding turned him into black slabs; ink density
        has to follow the photograph's own values, with the mid-tones staying
@@ -243,7 +279,9 @@ const fragmentShader = /* glsl */ `
       * smoothstep(0.0, 0.12, vUv.y)
       * mix(1.0, smoothstep(0.03, 0.13, vUv.y), narrow);
     // Present from the first frame, and deepest once the wash has opened.
-    figure *= (0.62 + 0.38 * open) * mix(1.0, 1.9, narrow);
+    // Solid on a phone, because a silhouette is solid; the bleed above is what
+    // keeps its edge brushed rather than cut out with scissors.
+    figure *= (0.62 + 0.38 * open) * mix(1.0, 1.3, narrow);
 
     /* On a phone he stands in the lower right, and the wash was settling on top
        of him there. The bloom is pulled back over that corner so the figure has
@@ -312,8 +350,19 @@ export function createDragonScene({ canvas, reducedMotion }: SceneContext): Scen
   const loader = new THREE.TextureLoader();
   loader.load(photos.silhouette.src, (texture) => {
     texture.colorSpace = THREE.SRGBColorSpace;
-    texture.minFilter = THREE.LinearFilter;
+    /* Mipmapped, and this is the whole reason his outline was a staircase.
+
+       He occupies about 1150 px of a 3840 px still and lands in roughly 640
+       device pixels of a phone, so the plate is being *minified* — and a
+       minified texture read with a plain linear filter samples one texel per
+       pixel and skips the rest, which aliases. Thresholding that turns the
+       aliasing into hard steps along every edge that is nearly vertical.
+       Trilinear plus anisotropy prefilters it, so the tone arriving at the
+       threshold is smooth and the edge comes out of it clean. */
+    texture.minFilter = THREE.LinearMipmapLinearFilter;
     texture.magFilter = THREE.LinearFilter;
+    texture.generateMipmaps = true;
+    texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
     texture.wrapS = THREE.ClampToEdgeWrapping;
     texture.wrapT = THREE.ClampToEdgeWrapping;
     material.uniforms.uPhoto.value = texture;

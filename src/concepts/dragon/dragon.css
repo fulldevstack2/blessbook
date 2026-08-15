@@ -111,16 +111,27 @@
   );
 }
 
-/* Single column below the two-column breakpoint, so the veil comes up from the
-   floor where the type is instead of in from the side. */
+/* Below the two-column breakpoint the veil still comes in from the side, not up
+   from the floor. It used to rise from the bottom, which put its heaviest paper
+   exactly where his legs are and washed him out from the hips down — the type on
+   a narrow screen is a left-hand column top to bottom, and he stands to the
+   right of all of it, so that is where the paper belongs. A thin floor layer is
+   kept for the credit and the scroll cue. */
 @media (max-width: 899px) {
   .dragon-stage::after {
-    background: linear-gradient(
-      0deg,
-      color-mix(in oklab, var(--paper) 88%, transparent) 0%,
-      color-mix(in oklab, var(--paper) 62%, transparent) 34%,
-      transparent 68%
-    );
+    background:
+      linear-gradient(
+        94deg,
+        color-mix(in oklab, var(--paper) 88%, transparent) 0%,
+        color-mix(in oklab, var(--paper) 60%, transparent) 34%,
+        color-mix(in oklab, var(--paper) 18%, transparent) 58%,
+        transparent 76%
+      ),
+      linear-gradient(
+        0deg,
+        color-mix(in oklab, var(--paper) 46%, transparent) 0%,
+        transparent 24%
+      );
   }
 }
 
@@ -1778,11 +1789,45 @@ canvas:not([hidden]) + .dragon-hero-plate {
   content: none;
 }
 
+.unroll {
+  --unroll-head: clamp(116px, 32vw, 280px);
+}
+
 .unroll-frame {
+  position: relative;
   display: flex;
   align-items: center;
   height: 100%;
   overflow: hidden;
+}
+
+/* The mount. Everything on the track has left the frame long before a three
+   screen pin is over, so the one thing that has to stay — what the section is —
+   is held here instead, and the names roll up behind it. The paper it is
+   written on runs out to the right so they arrive from open sheet rather than
+   from under a panel edge. */
+.unroll-head {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 2;
+  width: var(--unroll-head);
+  display: grid;
+  align-content: center;
+  gap: var(--space-md);
+  padding-inline: clamp(var(--space-lg), 6vw, var(--space-5xl)) var(--space-md);
+  pointer-events: none;
+  /* Opaque nearly all the way across, and out over the last tenth. A long soft
+     tail left names sitting half-erased under it, which reads as a rendering
+     fault rather than as a scroll rolling up behind its mount. */
+  background: linear-gradient(
+    90deg,
+    var(--paper) 0%,
+    var(--paper) 88%,
+    color-mix(in oklab, var(--paper) 46%, transparent) 96%,
+    transparent 100%
+  );
 }
 
 .unroll-track {
@@ -1815,11 +1860,16 @@ canvas:not([hidden]) + .dragon-hero-plate {
 
 /* ---------- who has asked for him, written along the scroll ---------- */
 
+/* Sits in the mount now rather than at the head of the track, so it carries no
+   width of its own. */
 .dragon-clients-head {
   display: grid;
-  align-content: center;
-  gap: var(--space-md);
-  min-width: min(18ch, 70vw);
+  gap: var(--space-sm);
+}
+
+/* The names start clear of the mount and pass behind it on the way out. */
+.dragon-clients .unroll-track {
+  padding-inline-start: calc(var(--unroll-head) + clamp(var(--space-lg), 4vw, var(--space-3xl)));
 }
 
 .dragon-clients-mark {

@@ -30,10 +30,13 @@ import { conceptById, violin } from "../registry";
 export function Unroll({
   vh = 320,
   className,
+  head,
   children,
 }: {
   vh?: number;
   className?: string;
+  /** Stays on the mount while the scroll runs past it. See the note below. */
+  head?: ReactNode;
   children: ReactNode;
 }) {
   const frame = useRef<HTMLDivElement>(null);
@@ -58,7 +61,14 @@ export function Unroll({
   return (
     <ScrollStage vh={vh} cuts={1} className={`unroll ${className ?? ""}`}>
       {() => (
+        /* The head does not travel. A hand scroll is unrolled *past* its
+           mount, and the mount is what the title is written on — but the
+           practical reason is that this frame is pinned for three screens, and
+           anything on the track has left the room by the second one. On a phone
+           that meant the section announced itself for half a second and then
+           spent the rest of the scroll as an unlabelled list of names. */
         <div className="unroll-frame" ref={frame}>
+          {head ? <div className="unroll-head">{head}</div> : null}
           <div className="unroll-track">{children}</div>
         </div>
       )}
@@ -73,13 +83,18 @@ export function Unroll({
  */
 export function ClientScroll() {
   return (
-    <Unroll className="dragon-clients" vh={300}>
-      <div className="dragon-clients-head">
-        <span className="dragon-clients-mark" lang="zh">
-          请
-        </span>
-        <span className="dragon-clients-label">Clients</span>
-      </div>
+    <Unroll
+      className="dragon-clients"
+      vh={300}
+      head={
+        <div className="dragon-clients-head">
+          <span className="dragon-clients-mark" lang="zh">
+            请
+          </span>
+          <span className="dragon-clients-label">Who books him</span>
+        </div>
+      }
+    >
       {clients.map((client, index) => (
         <div
           className="dragon-client"
