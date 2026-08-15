@@ -4,22 +4,19 @@ import { Grain } from "../../components/Grain";
 import { Films } from "./Films";
 import { FilmScrub } from "../../components/FilmScrub";
 import { Listen } from "../../components/Listen";
+import { NowPlaying } from "../../components/NowPlaying";
 import { Reel } from "../../components/Reel";
-import { Score } from "./Score";
-import { ScoreRail } from "./ScoreRail";
+import { Groove } from "./Groove";
 import { Showreel } from "../../components/Showreel";
-import { Stave } from "./Stave";
 import { StringRow } from "../../components/StringRow";
-import { Tally } from "../../components/Tally";
 import { Volume } from "../../components/Volume";
 import { Words } from "../../components/Words";
-import { Gauges, Index, Loader, Plaques, Plate, Struck } from "./parts";
+import { Band, Enquiry, Figure, Gauges, Index, Loader, Marking, Plate, Plumb, Process, Struck } from "./parts";
 import {
   commission,
   promise,
   rights,
   service,
-  steps,
   tiers,
 } from "../../content/commission";
 import {
@@ -61,17 +58,12 @@ const cuts = [
   {
     mark: "The instrument",
     line: "The first six-string 24K gold violin ever played on a stage",
-    sub: "Carved as a bird's wing in Donegal, and waited a year for.",
+    sub: "Alistair Hay carved it as a bird's wing in Donegal, and it took him a year.",
   },
   {
     mark: "The record",
-    line: "Ten thousand performances. A hundred and sixty-eight thousand people.",
-    sub: "Five continents, three albums, two sold-out nights of three thousand seats each.",
-  },
-  {
-    mark: "And then this",
-    line: "One song, written for one person",
-    sub: "The quietest thing he does. No audience but you.",
+    line: "Ten thousand performances in front of a hundred and sixty-eight thousand people",
+    sub: "Across five continents, with three albums and two sold-out nights of three thousand seats.",
   },
 ];
 
@@ -88,12 +80,12 @@ const instrumentBeats = [
   },
   {
     mark: "Drawn by him",
-    line: "Nobody had built one. He asked anyway, and waited a year.",
+    line: "Nobody had built one before, so Dennis asked, and then waited a year.",
     note: commissionStory.eyebrow,
   },
   {
     mark: "Unveiled",
-    line: "22 October 2016, in front of three thousand people.",
+    line: "Unveiled on 22 October 2016 in front of three thousand people",
     note: "The Phoenix Rising",
   },
 ];
@@ -110,8 +102,9 @@ export function PhoenixPage() {
         Skip to content
       </a>
       <Loader />
+      <NowPlaying />
       <ConceptChrome concept={concept} />
-      <ScoreRail />
+      <Plumb />
       <Grain />
 
       <ScrollStage vh={420} cuts={cuts.length} className="phoenix-stage">
@@ -225,7 +218,7 @@ export function PhoenixPage() {
         {/* ---------------- who he is ---------------- */}
         <section className="phoenix-section">
           <p className="phoenix-eyebrow" data-reveal>
-            Movement I — Who he is
+            Movement I · Who he is
           </p>
           <div className="phoenix-portrait">
             <figure style={{ margin: 0 }}>
@@ -275,7 +268,7 @@ export function PhoenixPage() {
                 </div>
               </dl>
 
-              <StringRow caption="The four strings everything is written on — pluck one" />
+              <StringRow caption="Pluck one of the four strings he writes on" />
             </div>
           </div>
 
@@ -299,7 +292,7 @@ export function PhoenixPage() {
         {/* ---------------- the record ---------------- */}
         <section className="phoenix-section">
           <p className="phoenix-eyebrow" data-reveal>
-            Movement II — The record
+            Movement II · The record
           </p>
 
           <dl className="phoenix-terms phoenix-record-figures">
@@ -307,7 +300,7 @@ export function PhoenixPage() {
               <div className="phoenix-term" key={item.label} data-reveal>
                 <dt>{item.label}</dt>
                 <dd>
-                  <Tally value={item.value} />
+                  <Figure value={item.value} />
                 </dd>
               </div>
             ))}
@@ -358,31 +351,32 @@ export function PhoenixPage() {
 
         <FilmScrub
           sequence="phoenix"
+          focus={0.63}
           frames={77}
           vh={360}
           className="phoenix-scrub"
           label="Dennis Lau alone on stage under a fan of white beams, playing to a three-thousand-seat hall."
           beats={[
-            { mark: "The Phoenix Rising, 2016", line: "Three thousand seats. Sold out." },
+            { mark: "The Phoenix Rising, 2016", line: "Three thousand seats, sold out, on his own name." },
             { mark: "And again in 2019", line: "The first Malaysian instrumentalist to do it twice." },
-            { mark: "Scroll", line: "You are moving the bow." },
+            { mark: "Music director, Aubrey Suwito", line: "A full band behind him, and the violin out in front of it." },
           ]}
         />
 
         {/* ---------------- hear him ---------------- */}
         <section className="phoenix-section phoenix-section--reel">
           <p className="phoenix-eyebrow" data-reveal>
-            Movement III — Hear him
+            Movement III · Hear him
           </p>
-          <Words as="h2" className="phoenix-h2" text={"A minute in a room with him"} />
-          <Showreel caption="His own reel, in his own cut." />
+          <Words as="h2" className="phoenix-h2" text={"Sixty seconds of him playing"} />
+          <Showreel caption="His own reel, cut by him." />
 
           <p className="phoenix-eyebrow" data-reveal style={{ marginTop: "var(--space-5xl)" }}>
-            And what he played, written down
+            The Journey, as he played it
           </p>
-          <Score />
+          <Groove />
 
-          <Words as="h2" className="phoenix-h2" text={"And this is what he writes when someone asks"} style={{ marginTop: "var(--space-5xl)" }} />
+          <Words as="h2" className="phoenix-h2" text={"Written to order"} style={{ marginTop: "var(--space-5xl)" }} />
           <p className="phoenix-lede" data-reveal style={{ maxWidth: "48ch" }}>
             A game trailer, a car launch, a boy's third birthday, a Mandopop
             single. The same hand behind every one of them.
@@ -393,19 +387,17 @@ export function PhoenixPage() {
         {/* ---------------- in the room ---------------- */}
         <section className="phoenix-section">
           <p className="phoenix-eyebrow" data-reveal>
-            Movement IV — In the room
+            Movement IV · In the room
           </p>
-          <Films caption="Three nights the music was written for" />
+          <Films caption="Three films he scored" />
         </section>
 
         <Struck />
 
         {/* ---------------- who books him ---------------- */}
+        <Band />
+
         <section className="phoenix-section phoenix-section--invert">
-          <p className="phoenix-eyebrow" data-reveal>
-            Movement V — Who books him
-          </p>
-          <Plaques />
 
           <ul className="phoenix-words">
             {words.map((word) => (
@@ -419,46 +411,36 @@ export function PhoenixPage() {
           </ul>
         </section>
 
-        <Plate photo={photos.stagePhoenix} line="The night the Phoenix was first played." tall />
+        <Plate photo={photos.stagePhoenix} line="The Phoenix's first night, October 2016" tall />
 
         {/* ---------------- the calling ---------------- */}
         <section className="phoenix-section phoenix-section--calling">
           <p className="phoenix-eyebrow" data-reveal>
-            Movement VI — Why he keeps going
+            Movement VI · The calling
           </p>
           <Words as="h2" className="phoenix-h2 phoenix-calling-lede" text={calling.lede} />
           <p className="phoenix-lede" data-reveal style={{ maxWidth: "52ch" }}>
             {calling.body}
           </p>
-          <Plate photo={photos.silhouette} line="He went looking for it himself." tall />
+          <Plate photo={photos.silhouette} line="Away from the stage" tall />
         </section>
 
         {/* ---------------- and only now, the commission ---------------- */}
         <section className="phoenix-section">
           <p className="phoenix-eyebrow" data-reveal>
-            Coda — Commission one
+            Coda · Commission one
           </p>
           <Words as="h2" className="phoenix-h2" text={promise.headline} />
           <p className="phoenix-lede" data-reveal style={{ maxWidth: "52ch" }}>
             {service.lede}
           </p>
 
-          <Stave tempo="Adagio · quarter note = 58" />
+          <Marking text="Adagio" />
+        </section>
 
-          <ol className="phoenix-steps" style={{ marginTop: "var(--space-4xl)" }}>
-            {steps.map((step) => (
-              <li className="phoenix-step" key={step.index} data-reveal>
-                <span className="phoenix-step-index">{step.index}</span>
-                <div>
-                  <h3 className="phoenix-step-title">
-                    {step.title}
-                    <span className="phoenix-step-marking">{step.marking}</span>
-                  </h3>
-                  <p className="phoenix-step-body">{step.body}</p>
-                </div>
-              </li>
-            ))}
-          </ol>
+        <Process />
+
+        <section className="phoenix-section">
 
           <div className="phoenix-deed" data-reveal>
             <div className="phoenix-deed-head">
@@ -479,7 +461,7 @@ export function PhoenixPage() {
             {tiers.map((tier) => (
               <li className="phoenix-tier" key={tier.id} data-reveal>
                 <p className="phoenix-tier-price">
-                  <Tally value={tier.price} />
+                  <Figure value={tier.price} />
                 </p>
                 <h3 className="phoenix-tier-name">{tier.name}</h3>
                 <p className="phoenix-tier-length">{tier.length}</p>
@@ -507,10 +489,7 @@ export function PhoenixPage() {
               <dd>{commission.slots}</dd>
             </div>
           </dl>
-
-          <a className="phoenix-cta" href="#main">
-            Write the prompt
-          </a>
+          <Enquiry />
           <p className="phoenix-note">{commission.note}</p>
 
           <ul className="phoenix-socials">

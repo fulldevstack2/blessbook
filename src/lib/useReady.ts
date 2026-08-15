@@ -8,9 +8,16 @@ import { useEffect, useState } from "react";
  * reflows, which is the single most common way an expensive site looks cheap.
  * So: the fonts, the one image the hero cannot do without, and a floor on the
  * duration so the reveal is a gesture rather than a flicker.
+ *
+ * It also holds the page still until the arrival has finished. Scrolling during
+ * a transition put you halfway into a gesture you never saw begin, which reads
+ * as a bug even when everything is working; a curtain does not go up early
+ * because somebody in the stalls leaned forward.
  */
 
 const FLOOR_MS = 1100;
+/** Long enough to cover the loader's own exit. */
+const HOLD_MS = 900;
 
 export function useReady(criticalImage?: string): boolean {
   const [ready, setReady] = useState(false);
@@ -42,6 +49,43 @@ export function useReady(criticalImage?: string): boolean {
       cancelled = true;
     };
   }, [criticalImage]);
+
+  /* The house is held until the arrival is over. Rather than setting overflow
+     hidden — which takes the scrollbar away and shifts the whole layout at the
+     worst possible moment — the input itself is refused. */
+  useEffect(() => {
+    const root = document.documentElement;
+
+    if (!ready) {
+      root.dataset.loading = "true";
+      window.scrollTo(0, 0);
+
+      const stop = (event: Event) => event.preventDefault();
+      const stopKeys = (event: KeyboardEvent) => {
+        if (["ArrowUp", "ArrowDown", "PageUp", "PageDown", "Home", "End", " "].includes(event.key)) {
+          event.preventDefault();
+        }
+      };
+      const pin = () => window.scrollTo(0, 0);
+
+      window.addEventListener("wheel", stop, { passive: false });
+      window.addEventListener("touchmove", stop, { passive: false });
+      window.addEventListener("keydown", stopKeys);
+      window.addEventListener("scroll", pin, { passive: true });
+
+      return () => {
+        window.removeEventListener("wheel", stop);
+        window.removeEventListener("touchmove", stop);
+        window.removeEventListener("keydown", stopKeys);
+        window.removeEventListener("scroll", pin);
+      };
+    }
+
+    const timer = window.setTimeout(() => {
+      delete root.dataset.loading;
+    }, HOLD_MS);
+    return () => window.clearTimeout(timer);
+  }, [ready]);
 
   return ready;
 }

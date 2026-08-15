@@ -1206,6 +1206,21 @@
   filter: contrast(1.06) saturate(0.94);
 }
 
+/* A scrim under the words: the sequence passes through frames light enough to
+   swallow ivory type. */
+.nocturne-scrub .scrub-beats::before {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 62%;
+  background: linear-gradient(
+    to top,
+    color-mix(in oklab, var(--velvet-deep) 88%, transparent),
+    transparent
+  );
+  pointer-events: none;
+}
+
 .nocturne-scrub .scrub-mark {
   color: var(--brass);
 }
@@ -1720,9 +1735,16 @@
 }
 
 /* Engraved rules drifting behind the programme: printed, not decorative. */
+/* The bleed is vertical only. Horizontal bleed on an absolutely positioned
+   child widened the document by a few pixels on tablet and phone, which is all
+   it takes to give the whole page a sideways scroll. */
+.nocturne-act--reel {
+  overflow: hidden;
+}
+
 .nocturne-lattice {
   position: absolute;
-  inset: -10% -5%;
+  inset: -10% 0;
   pointer-events: none;
   opacity: 0.34;
   background-image:
@@ -1780,6 +1802,9 @@
   position: relative;
   margin: 0;
   width: 100%;
+  /* The picture inside is held slightly oversize so it can drift; without this
+     the overhang widens the document and the whole page scrolls sideways. */
+  overflow: hidden;
   background: var(--velvet-deep);
 }
 
@@ -1792,6 +1817,17 @@
   filter: contrast(1.06) brightness(0.96) sepia(0.14) saturate(0.86);
   transform: scale(1.06) translateY(calc(var(--shift, 0) * -3%));
   will-change: transform;
+}
+
+/* On a phone a fixed height turns this into a keyhole. The frame is 2.37 to 1
+   and he stands at its left edge, so cropping it to a portrait box leaves a
+   column of cloud and no man in it. Narrow screens get the whole picture as a
+   band instead, which is what it is. */
+@media (max-width: 760px) {
+  .nocturne-strip img {
+    height: auto;
+    transform: scale(1.02);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1813,164 +1849,74 @@
 
 /* ---------- the house: this concept's way of arriving ---------- */
 
+/* ---------- the arrival: the name, and nothing else ----------
+
+   Two scenes were tried here and both were wrong. A curtain, which the hero
+   already opens; then a lit stage, which was a second piece of scenery competing
+   with the one the page is actually built on. The name is enough. It is set the
+   way a title page is set, a rule draws under it, and it leaves. */
+
 .house {
   position: fixed;
   inset: 0;
   z-index: 100;
   display: grid;
-  place-items: center;
+  /* align-content, not just align-items: without it the two auto rows stretch
+     to half the viewport each and the rule ends up adrift below the name. */
+  align-content: center;
+  justify-items: center;
   overflow: hidden;
+  background: radial-gradient(
+      120% 90% at 50% 8%,
+      color-mix(in oklab, var(--velvet) 30%, #060305) 0%,
+      transparent 62%
+    ),
+    #070305;
 }
 
 .house[data-ready="true"] {
   pointer-events: none;
-}
-
-/* The same gesture the hero makes: two halves of velvet, parting.
-
-   The folds are irregular and soft-edged on purpose. A repeating gradient with
-   hard stops was the first attempt and it read as a drawn curtain in a children's
-   book — real cloth has no two folds the same width and no hard edge anywhere,
-   so this is a hand-set gradient with uneven stops, a nap that darkens toward the
-   floor, and a shadow under the valance. */
-.house-half {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 50.4%;
-  background-image:
-    /* the nap: velvet is darker where it hangs */
-    linear-gradient(
-      180deg,
-      color-mix(in oklab, var(--velvet-deep) 82%, black) 0%,
-      transparent 18%,
-      transparent 62%,
-      color-mix(in oklab, var(--velvet-deep) 74%, black) 100%
-    ),
-    /* the folds: uneven widths, every edge soft */
-    linear-gradient(
-      90deg,
-      color-mix(in oklab, var(--velvet-deep) 88%, black) 0%,
-      var(--velvet) 4%,
-      color-mix(in oklab, var(--velvet-lit) 62%, var(--velvet)) 9%,
-      var(--velvet) 15%,
-      color-mix(in oklab, var(--velvet-deep) 76%, black) 21%,
-      var(--velvet) 27%,
-      color-mix(in oklab, var(--velvet-lit) 78%, var(--velvet)) 33%,
-      var(--velvet) 39%,
-      color-mix(in oklab, var(--velvet-deep) 80%, black) 46%,
-      var(--velvet) 52%,
-      color-mix(in oklab, var(--velvet-lit) 58%, var(--velvet)) 58%,
-      var(--velvet) 65%,
-      color-mix(in oklab, var(--velvet-deep) 72%, black) 72%,
-      var(--velvet) 79%,
-      color-mix(in oklab, var(--velvet-lit) 70%, var(--velvet)) 86%,
-      var(--velvet) 93%,
-      color-mix(in oklab, var(--velvet-deep) 88%, black) 100%
-    );
-  transition: transform 1500ms var(--ease-in-out);
-}
-
-/* The leading edge catches the lamp, and the cloth behind it falls into shadow. */
-.house-half::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-
-.house-half--left::after {
-  background: linear-gradient(
-    90deg,
-    transparent 70%,
-    color-mix(in oklab, var(--brass) 16%, transparent) 97%,
-    color-mix(in oklab, var(--brass) 34%, transparent) 100%
-  );
-}
-
-.house-half--right::after {
-  background: linear-gradient(
-    270deg,
-    transparent 70%,
-    color-mix(in oklab, var(--brass) 16%, transparent) 97%,
-    color-mix(in oklab, var(--brass) 34%, transparent) 100%
-  );
-}
-
-.house-half--left {
-  left: 0;
-}
-
-.house-half--right {
-  right: 0;
-}
-
-.house[data-ready="true"] .house-half--left {
-  transform: translateX(-100%);
-}
-
-.house[data-ready="true"] .house-half--right {
-  transform: translateX(100%);
-}
-
-/* One lamp, coming up on an empty house. */
-.house::before {
-  content: "";
-  position: absolute;
-  inset: 0 0 auto 0;
-  height: 22vh;
-  z-index: 1;
-  pointer-events: none;
-  background: linear-gradient(
-    180deg,
-    color-mix(in oklab, var(--velvet-deep) 92%, black) 0%,
-    transparent 100%
-  );
-  transition: opacity 700ms var(--ease-out);
-}
-
-.house[data-ready="true"]::before {
   opacity: 0;
-}
-
-.house-lamp {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(
-    38% 34% at 50% 46%,
-    color-mix(in oklab, var(--brass) 44%, transparent) 0%,
-    transparent 72%
-  );
-  opacity: 0;
-  animation: house-lamp 1500ms var(--ease-out) forwards;
-}
-
-@keyframes house-lamp {
-  to {
-    opacity: 1;
-  }
-}
-
-.house-name,
-.house-mark {
-  position: relative;
-  z-index: 1;
-  text-align: center;
-  transition:
-    opacity 600ms var(--ease-out),
-    transform 800ms var(--ease-out);
+  transition: opacity 720ms var(--ease-out) 420ms;
 }
 
 .house-name {
+  display: grid;
+  justify-items: center;
+  gap: 0.02em;
   font-family: var(--display);
-  font-size: clamp(2rem, 6vw, 4.2rem);
-  line-height: 1;
+  font-weight: 300;
+  font-size: clamp(2.6rem, 8vw, 6.4rem);
+  line-height: 0.94;
   color: var(--ivory);
+  text-align: center;
+  opacity: 0;
+  transform: translateY(16px);
+  animation: house-set 1500ms var(--ease-out) 120ms forwards;
 }
 
 .house-name em {
   font-style: italic;
+  font-size: 0.52em;
+  letter-spacing: 0.02em;
   color: var(--brass);
+}
+
+/* A rule drawn out from the centre, the width of the name. */
+.house-rule {
+  position: relative;
+  width: min(320px, 44vw);
+  height: 1px;
+  margin-top: clamp(20px, 3vh, 34px);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in oklab, var(--brass) 70%, transparent) 20%,
+    color-mix(in oklab, var(--brass) 70%, transparent) 80%,
+    transparent
+  );
+  transform: scaleX(0);
+  animation: house-draw 1400ms var(--ease-out) 560ms forwards;
 }
 
 .house-mark {
@@ -1979,24 +1925,539 @@
   font-size: 9px;
   letter-spacing: 0.42em;
   text-transform: uppercase;
-  color: color-mix(in oklab, var(--ivory) 52%, transparent);
+  color: color-mix(in oklab, var(--ivory) 46%, transparent);
+  opacity: 0;
+  animation: house-set 1400ms var(--ease-out) 760ms forwards;
 }
 
 .house[data-ready="true"] .house-name,
 .house[data-ready="true"] .house-mark {
   opacity: 0;
-  transform: translateY(-10px);
+  transform: translateY(-12px);
+  transition:
+    opacity 520ms var(--ease-out),
+    transform 620ms var(--ease-out);
+}
+
+.house[data-ready="true"] .house-rule {
+  transform: scaleX(0);
+  transition: transform 560ms var(--ease-out);
+}
+
+@keyframes house-set {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes house-draw {
+  to {
+    transform: scaleX(1);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .house-lamp {
-    animation: none;
-    opacity: 1;
+  .house-name,
+  .house-rule,
+  .house-mark {
+    animation-duration: 1ms;
+    transition-duration: 1ms;
+  }
+}
+
+/* ---------- the sticky player: a brass-edged tab off the programme ---------- */
+
+.nocturne .playing {
+  padding: 12px clamp(15px, 2vw, 22px);
+  background: color-mix(in oklab, var(--velvet-deep) 94%, transparent);
+  border: 1px solid color-mix(in oklab, var(--brass) 34%, transparent);
+  border-radius: 2px;
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklab, var(--brass) 22%, transparent),
+    0 20px 46px rgb(0 0 0 / 60%);
+  backdrop-filter: blur(12px);
+}
+
+.nocturne .playing-stop {
+  color: var(--brass);
+}
+
+.nocturne .playing-stop-mark {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.nocturne .playing-title {
+  font-family: var(--display);
+  font-size: 1rem;
+  color: var(--ivory);
+}
+
+.nocturne .playing-where {
+  font-family: var(--display);
+  font-style: italic;
+  font-size: 0.78rem;
+  color: color-mix(in oklab, var(--ivory) 62%, transparent);
+}
+
+/* ---------- narrow screens ----------
+
+   Three things go wrong on a phone and they all reduce to width. The chrome
+   tagline wraps onto the title, the proscenium's round head becomes a dome
+   because the frame is taller than it is wide, and ivory type on lit velvet
+   loses the contrast it has when the cloth is further away. */
+
+@media (max-width: 560px) {
+  .nocturne .chrome-tag {
+    display: none;
+  }
+}
+
+@media (max-width: 899px) {
+  /* A pool of the house's own dark behind the type, so the words sit on
+     something. Positioned, because the hero's children are in flow and an
+     absolute layer would otherwise paint over them. */
+  .nocturne-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: radial-gradient(
+      120% 58% at 50% 46%,
+      color-mix(in oklab, var(--velvet-deep) 82%, transparent) 0%,
+      color-mix(in oklab, var(--velvet-deep) 46%, transparent) 52%,
+      transparent 82%
+    );
   }
 
-  .house-half,
-  .house-name,
-  .house-mark {
-    transition-duration: 1ms;
+  .nocturne-cuts,
+  .nocturne-hero-foot {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+/* ---------- figures, slotted into the board ---------- */
+
+.nocturne .slotfig {
+  position: relative;
+  display: inline-block;
+  padding-top: 0.22em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* The rule the figure is set beneath, which draws first. */
+.nocturne .slotfig-rule {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: color-mix(in oklab, var(--brass) 60%, transparent);
+  transform: scaleX(0);
+  transform-origin: right center;
+  transition: transform 520ms var(--ease-out) var(--reveal-delay);
+}
+
+/* And the figure rises into its slot from behind it. */
+.nocturne .slotfig-value {
+  display: inline-block;
+  clip-path: inset(112% 0 0 0);
+  transform: translateY(0.3em);
+  transition:
+    clip-path 700ms var(--ease-out) calc(var(--reveal-delay) + 160ms),
+    transform 760ms var(--ease-out) calc(var(--reveal-delay) + 160ms);
+}
+
+.nocturne [data-reveal="slot"] {
+  opacity: 1;
+  transform: none;
+}
+
+.nocturne [data-reveal="slot"][data-revealed="true"] .slotfig-rule {
+  transform: scaleX(1);
+}
+
+.nocturne [data-reveal="slot"][data-revealed="true"] .slotfig-value {
+  clip-path: inset(0 0 0 0);
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nocturne .slotfig-rule,
+  .nocturne .slotfig-value {
+    transform: none;
+    clip-path: inset(0 0 0 0);
+    transition: none;
+  }
+}
+
+/* ---------- the request, as a card left at the desk ---------- */
+
+.nocturne .card {
+  margin-top: var(--space-4xl);
+  padding: clamp(24px, 4vw, 52px);
+  background: color-mix(in oklab, var(--velvet-deep) 88%, transparent);
+  border: 1px solid color-mix(in oklab, var(--brass) 30%, transparent);
+  box-shadow: inset 0 1px 0 color-mix(in oklab, var(--brass) 18%, transparent);
+}
+
+.nocturne .card-eyebrow {
+  font-size: 10px;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--brass);
+}
+
+.nocturne .card-head {
+  margin-top: var(--space-sm);
+  font-family: var(--display);
+  font-weight: 300;
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  line-height: 1.04;
+  color: var(--ivory);
+}
+
+.nocturne .card-head em {
+  font-style: italic;
+  color: var(--brass);
+}
+
+.nocturne .card-lede {
+  margin-top: var(--space-md);
+  max-width: 54ch;
+  color: color-mix(in oklab, var(--ivory) 74%, transparent);
+  line-height: 1.72;
+}
+
+.nocturne .card-body {
+  display: grid;
+  gap: clamp(20px, 3vw, 32px);
+  margin-top: clamp(26px, 4vw, 44px);
+}
+
+@media (min-width: 760px) {
+  .nocturne .card-body {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .nocturne .card-field--wide,
+  .nocturne .card-choice,
+  .nocturne .card-send {
+    grid-column: 1 / -1;
+  }
+}
+
+.nocturne .card-field {
+  display: grid;
+  gap: var(--space-xs);
+}
+
+.nocturne .card-label {
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--ivory) 52%, transparent);
+}
+
+/* Brass rules, the way a booking card is ruled. */
+.nocturne .card-field input,
+.nocturne .card-field textarea {
+  width: 100%;
+  padding: var(--space-sm) var(--space-sm) var(--space-sm) 0;
+  border: 0;
+  border-bottom: 1px solid color-mix(in oklab, var(--brass) 34%, transparent);
+  background: none;
+  color: var(--ivory);
+  font-family: var(--display);
+  font-weight: 300;
+  font-size: 1.05rem;
+  line-height: 1.7;
+  transition: border-color 320ms var(--ease-out);
+}
+
+.nocturne .card-field textarea {
+  resize: vertical;
+  min-height: 8em;
+}
+
+.nocturne .card-field input::placeholder,
+.nocturne .card-field textarea::placeholder {
+  color: color-mix(in oklab, var(--ivory) 34%, transparent);
+}
+
+.nocturne .card-field input:focus,
+.nocturne .card-field textarea:focus {
+  outline: none;
+  border-bottom-color: var(--brass);
+}
+
+.nocturne .card-problem {
+  font-family: var(--display);
+  font-style: italic;
+  font-size: 0.85rem;
+  color: var(--rose);
+}
+
+.nocturne .card-choice {
+  display: grid;
+  gap: var(--space-xs);
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.nocturne .card-choice legend {
+  margin-bottom: var(--space-sm);
+}
+
+/* Set like a line on a programme: name, leader, price. */
+.nocturne .card-option {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-md);
+  padding: var(--space-xs) 0;
+  cursor: pointer;
+  color: color-mix(in oklab, var(--ivory) 66%, transparent);
+  transition: color 300ms var(--ease-out);
+}
+
+.nocturne .card-option input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.nocturne .card-option-name {
+  font-family: var(--display);
+  font-size: 1.05rem;
+}
+
+.nocturne .card-option-leader {
+  flex: 1;
+  height: 1px;
+  background: repeating-linear-gradient(
+    90deg,
+    color-mix(in oklab, var(--brass) 40%, transparent) 0 2px,
+    transparent 2px 6px
+  );
+}
+
+.nocturne .card-option-price {
+  font-variant-numeric: tabular-nums;
+  color: color-mix(in oklab, var(--brass) 88%, transparent);
+}
+
+.nocturne .card-option[data-chosen="true"] {
+  color: var(--ivory);
+}
+
+.nocturne .card-option[data-chosen="true"] .card-option-leader {
+  background: var(--brass);
+}
+
+.nocturne .card-send {
+  justify-self: start;
+  padding: var(--space-md) clamp(24px, 4vw, 44px);
+  border: 1px solid var(--brass);
+  background: none;
+  cursor: pointer;
+  font-family: var(--display);
+  font-size: 0.95rem;
+  letter-spacing: 0.14em;
+  color: var(--brass);
+  transition:
+    background 360ms var(--ease-out),
+    color 360ms var(--ease-out);
+}
+
+.nocturne .card-send:hover:not(:disabled) {
+  background: var(--brass);
+  color: var(--velvet-deep);
+}
+
+.nocturne .card-send:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+/* Stamped when it is taken. */
+.nocturne .card-sent {
+  margin-top: clamp(26px, 4vw, 42px);
+  padding-top: clamp(20px, 3vw, 32px);
+  border-top: 1px solid color-mix(in oklab, var(--brass) 40%, transparent);
+}
+
+.nocturne .card-stamp {
+  display: inline-block;
+  padding: var(--space-xs) var(--space-lg);
+  border: 2px solid var(--rose);
+  color: var(--rose);
+  font-size: 11px;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  transform: rotate(-3deg);
+}
+
+.nocturne .card-sent-head {
+  margin-top: var(--space-lg);
+  font-family: var(--display);
+  font-size: clamp(1.3rem, 3vw, 1.9rem);
+  color: var(--ivory);
+}
+
+.nocturne .card-sent-body {
+  margin-top: var(--space-sm);
+  max-width: 52ch;
+  color: color-mix(in oklab, var(--ivory) 70%, transparent);
+  line-height: 1.72;
+}
+
+.nocturne .card-again {
+  margin-top: var(--space-xl);
+  padding: 0;
+  border: 0;
+  border-bottom: 1px solid color-mix(in oklab, var(--brass) 40%, transparent);
+  background: none;
+  cursor: pointer;
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--ivory) 56%, transparent);
+}
+
+/* ---------- tonight's running order ---------- */
+
+.nocturne .running {
+  display: grid;
+  align-content: center;
+  gap: clamp(24px, 5vh, 56px);
+  padding: clamp(var(--space-2xl), 9vh, var(--space-4xl))
+    clamp(var(--space-lg), 6vw, var(--space-5xl));
+  background: var(--velvet-deep);
+  overflow: hidden;
+}
+
+.nocturne .running-head {
+  font-family: var(--display);
+  font-weight: 300;
+  font-size: clamp(1rem, 2vw, 1.5rem);
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--ivory) 62%, transparent);
+}
+
+.nocturne .running-head em {
+  font-style: italic;
+  text-transform: none;
+  letter-spacing: 0.02em;
+  color: var(--brass);
+}
+
+/* All four stand on the board at once. The lamp is what moves. */
+.nocturne .running-list {
+  display: grid;
+  gap: clamp(14px, 2.4vh, 26px);
+  max-width: 1000px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.nocturne .running-step {
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: var(--space-md);
+  padding-block: var(--space-xs);
+  color: color-mix(in oklab, var(--ivory) 26%, transparent);
+  transition: color 700ms var(--ease-out);
+}
+
+.nocturne .running-step[data-past="true"] {
+  color: color-mix(in oklab, var(--ivory) 40%, transparent);
+}
+
+.nocturne .running-step[data-active="true"] {
+  color: var(--ivory);
+}
+
+.nocturne .running-index {
+  font-family: var(--display);
+  font-size: 0.95rem;
+  color: var(--brass);
+  opacity: 0.5;
+  transition: opacity 700ms var(--ease-out);
+}
+
+.nocturne .running-step[data-active="true"] .running-index {
+  opacity: 1;
+}
+
+.nocturne .running-title {
+  font-family: var(--display);
+  font-weight: 300;
+  font-size: clamp(1.5rem, 4vw, 3rem);
+  line-height: 1.05;
+}
+
+.nocturne .running-leader {
+  height: 1px;
+  background: repeating-linear-gradient(
+    90deg,
+    color-mix(in oklab, var(--brass) 34%, transparent) 0 2px,
+    transparent 2px 7px
+  );
+  transform: translateY(-0.3em);
+}
+
+.nocturne .running-marking {
+  font-family: var(--display);
+  font-style: italic;
+  font-size: 0.9rem;
+  color: color-mix(in oklab, var(--brass) 82%, transparent);
+}
+
+/* The line being played opens; the others stay closed. */
+.nocturne .running-body {
+  grid-column: 2 / -1;
+  max-width: 58ch;
+  margin: 0;
+  color: color-mix(in oklab, var(--ivory) 66%, transparent);
+  line-height: 1.72;
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition:
+    grid-template-rows 760ms var(--ease-out),
+    opacity 620ms var(--ease-out);
+  overflow: hidden;
+}
+
+.nocturne .running-step[data-active="true"] .running-body {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  margin-top: var(--space-sm);
+}
+
+@media (max-width: 760px) {
+  .nocturne .running-step {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .nocturne .running-leader,
+  .nocturne .running-marking {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nocturne .running-body {
+    grid-template-rows: 1fr;
+    opacity: 1;
   }
 }

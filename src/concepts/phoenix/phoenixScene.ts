@@ -41,6 +41,7 @@ const fragmentShader = /* glsl */ `
   uniform float uTime;
   uniform float uLevel;
   uniform vec2 uCursor;
+  uniform float uPanelOn;
 
   uniform vec3 uLacquer;
   uniform vec3 uGoldDeep;
@@ -111,7 +112,11 @@ const fragmentShader = /* glsl */ `
     colour = mix(uLacquer, colour, 0.28 + 0.72 * depth);
 
     /* ---- one seam of 24K gold, opening as you scroll ---- */
-    float seamX = 0.34;
+    /* The seam sits left of the type on a wide screen. On a phone the type runs
+       the full measure, so the seam moves to the far side rather than drawing a
+       line through his name. */
+    float narrowSeam = step(uAspect, 0.95);
+    float seamX = mix(0.34, 0.9, narrowSeam);
     float width = 0.006 + uProgress * 0.05;
     float seam = exp(-pow((uv.x - seamX) / width, 2.0));
     // It is brighter where the metal behind it is already lit.
@@ -124,27 +129,37 @@ const fragmentShader = /* glsl */ `
        it and the type takes the floor. Same picture, different plate. */
     float narrow = step(uAspect, 0.95);
     // On a phone the plate takes the top half and stops well clear of the type.
-    float top = mix(0.08, 0.52, narrow);
-    float bottom = mix(0.94, 0.96, narrow);
-    float right = mix(0.955, 0.94, narrow);
+    float top = mix(0.08, 0.44, narrow);
+    float bottom = mix(0.94, 0.965, narrow);
+    float right = mix(0.955, 0.955, narrow);
     float panelHeight = bottom - top;
-    float panelWidth = mix(panelHeight / uAspect * 0.92, 0.88, narrow);
+    float panelWidth = mix(panelHeight / uAspect * 0.92, 0.91, narrow);
     float left = right - panelWidth;
 
     vec2 panel = (uv - vec2(left, top)) / vec2(panelWidth, panelHeight);
-    float inPanel = step(0.0, panel.x) * step(panel.x, 1.0) * step(0.0, panel.y) * step(panel.y, 1.0);
+    float inPanel = step(0.0, panel.x) * step(panel.x, 1.0) * step(0.0, panel.y) * step(panel.y, 1.0) * uPanelOn;
 
     if (inPanel > 0.5 && uHasPhoto > 0.5) {
-      // Cover-fit inside the panel, with a slow rise as the page scrolls.
+      /* Cover-fit inside the panel, with a slow rise as the page scrolls.
+
+         The rise used to be a straight subtraction from the sample coordinate,
+         which walked it off the top of the photograph: past the edge the sampler
+         clamps, and the last row of pixels smears down the bottom of the plate as
+         a hard dark band. So the plate is held slightly zoomed in and the rise is
+         bounded by exactly the margin that zoom creates — it can never run out
+         of picture. */
       float panelAspect = panelWidth * uAspect / panelHeight;
-      vec2 shot = panel;
-      shot.y -= uProgress * 0.06;
+      const float zoom = 1.09;
+      vec2 shot = (panel - 0.5) / zoom + 0.5;
+      shot.y += (uProgress - 0.5) * (1.0 - 1.0 / zoom);
+
       float scale = panelAspect / uPhotoAspect;
       if (scale > 1.0) {
         shot.y = (shot.y - 0.5) / scale + 0.5;
       } else {
         shot.x = (shot.x - 0.5) * scale + 0.5;
       }
+      shot = clamp(shot, vec2(0.0), vec2(1.0));
 
       vec3 photo = texture2D(uPhoto, shot).rgb;
       float l = grey(photo);
@@ -166,7 +181,7 @@ const fragmentShader = /* glsl */ `
     float edgeY = min(abs(uv.y - top), abs(uv.y - bottom));
     float onVertical = step(top, uv.y) * step(uv.y, bottom) * exp(-pow(edgeX / 0.0016, 2.0));
     float onHorizontal = step(left, uv.x) * step(uv.x, right) * exp(-pow(edgeY / 0.0016, 2.0));
-    colour += uGold * max(onVertical, onHorizontal) * 0.55;
+    colour += uGold * max(onVertical, onHorizontal) * 0.55 * uPanelOn;
 
     /* ---- cursor light, room falloff, and the side the type sits on ---- */
     float pointer = 1.0 - smoothstep(0.0, 0.42, length((uv - uCursor) * vec2(uAspect, 1.0)));
@@ -175,12 +190,23 @@ const fragmentShader = /* glsl */ `
     float vignette = 1.0 - smoothstep(0.44, 1.2, length((uv - vec2(0.5)) * vec2(uAspect * 0.8, 1.0)));
     colour *= 0.58 + 0.42 * vignette;
 
-    // The type sits at the left on a wide screen and along the floor on a narrow
-    // one, so the scrim follows it.
+    /* The type sits at the left on a wide screen and along the floor on a narrow
+       one, so the scrim follows it.
+
+       On a phone the scrim runs *through* the plate rather than stopping at its
+       edge. Excluding it there was the reason his name was unreadable: bright
+       ivory type set straight onto a lit photograph of a man in a gold jacket.
+       A picture that a caption sits on has to be darkened under the caption;
+       that is true of every magazine ever printed. */
     float sideScrim = smoothstep(0.42, 0.0, uv.x) * (1.0 - narrow);
-    float baseScrim = smoothstep(0.46, 0.02, uv.y) * narrow;
-    float scrim = max(sideScrim, baseScrim) * (1.0 - inPanel);
-    colour = mix(colour, uLacquer, scrim * 0.72);
+    /* The band the type occupies on a phone is the *lower* third of the plate,
+       not the floor of the frame, so the scrim has to reach up into the picture
+       that far. His face stays clear at the top of the plate; everything below
+       it is taken down until ivory type on a lit stage photograph has somewhere
+       to sit. */
+    float baseScrim = smoothstep(0.86, 0.40, uv.y) * narrow;
+    float scrim = max(sideScrim * (1.0 - inPanel), baseScrim);
+    colour = mix(colour, uLacquer, scrim * 0.86);
     float floorScrim = smoothstep(0.22, 0.0, uv.y) * (1.0 - inPanel) * (1.0 - narrow);
     colour = mix(colour, uLacquer, floorScrim * 0.5);
 
@@ -188,7 +214,7 @@ const fragmentShader = /* glsl */ `
   }
 `;
 
-export function createPhoenixScene({ canvas, reducedMotion }: SceneContext): SceneHandle {
+function build({ canvas, reducedMotion }: SceneContext, panel: boolean): SceneHandle {
   const renderer = new THREE.WebGLRenderer({
     canvas,
     antialias: false,
@@ -210,6 +236,7 @@ export function createPhoenixScene({ canvas, reducedMotion }: SceneContext): Sce
       uTime: { value: 0 },
       uLevel: { value: 0 },
       uCursor: { value: new THREE.Vector2(0.3, 0.6) },
+      uPanelOn: { value: panel ? 1 : 0 },
       uLacquer: { value: new THREE.Color("#150f0c") },
       uGoldDeep: { value: new THREE.Color("#6d4a12") },
       uGold: { value: new THREE.Color("#c99a45") },
@@ -270,4 +297,18 @@ export function createPhoenixScene({ canvas, reducedMotion }: SceneContext): Sce
       renderer.dispose();
     },
   };
+}
+
+/** The hero: molten gold with him framed inside it. */
+export function createPhoenixScene(context: SceneContext): SceneHandle {
+  return build(context, true);
+}
+
+/**
+ * The loader: the same room, without the portrait. Holding the whole hero up as
+ * a loading screen showed the page before the page, and the name had to compete
+ * with a photograph for the two seconds it was on screen.
+ */
+export function createPhoenixVeilScene(context: SceneContext): SceneHandle {
+  return build(context, false);
 }

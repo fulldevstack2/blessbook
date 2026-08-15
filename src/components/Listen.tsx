@@ -36,7 +36,7 @@ export function Listen({ label = "Hear him play" }: ListenProps) {
     const ctx = audioContext();
     if (ctx) resumeAudio(ctx);
     // Starting anything stops everything else: one player on the site.
-    play(element);
+    play(element, { title: livePhrase.title, where: livePhrase.where });
   }, []);
 
   /** Nothing should still be sounding after the listener has left the page. */

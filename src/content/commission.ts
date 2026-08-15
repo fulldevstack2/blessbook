@@ -17,25 +17,25 @@ export const steps: readonly Step[] = [
   {
     index: "I",
     title: "Write the prompt",
-    body: "One paragraph. A name, an occasion, a room, the thing you cannot say out loud. There is no form with twenty fields — the prompt is the brief.",
+    body: "One paragraph is enough: a name, an occasion, a room, the thing you cannot say out loud. Leave an address with it and the whole thing lands in his team's inbox.",
     marking: "rubato",
   },
   {
     index: "II",
-    title: "Dennis composes",
-    body: "Violin and piano first, then production. Written and tracked in Kuala Lumpur by the artist himself. Nobody is subcontracted, because there is nobody else.",
+    title: "They write back",
+    body: "His team replies from their own address, usually the same day, and everything after this happens in that thread. Ask for anything you forgot to say.",
     marking: "con sordino",
   },
   {
     index: "III",
-    title: "You hear it inside the week",
-    body: "A private preview, guaranteed in seven days or less. Two requests for change are included and expected — this is a commission, not a purchase.",
+    title: "A sample arrives",
+    body: "Dennis writes it on violin and piano and produces it himself in Kuala Lumpur, and a private preview comes back to you inside seven days. Two rounds of changes are included.",
     marking: "una corda",
   },
   {
     index: "IV",
-    title: "The deed",
-    body: "Masters, stems and full copyright transfer to your name on signature. Dennis keeps no publishing, no royalty, no right to re-release.",
+    title: "Payment, then the song",
+    body: "When you are happy with it they send payment details. Once that clears, the full mix, the stems and the deed of transfer come back the same way, and Dennis keeps no publishing and no royalty in it.",
     marking: "sempre",
   },
 ];
@@ -73,9 +73,9 @@ export const tiers: readonly Tier[] = [
     id: "song",
     name: "Full original song",
     price: "USD 2,500",
-    length: "3–4 minutes",
+    length: "3 to 4 minutes",
     summary:
-      "A finished song with lyrics if you want them, conceptualised, composed, curated and produced by Dennis himself.",
+      "A finished song, with lyrics if you want them, written and produced end to end by Dennis.",
     includes: [
       "Original composition and production",
       "Lyrics written if required",
@@ -90,7 +90,7 @@ export const tiers: readonly Tier[] = [
     price: "USD 1,500",
     length: "Up to 90 seconds",
     summary:
-      "For a campaign, a brand film, an opening, a launch. Short-form, but written for you and owned by you outright.",
+      "For a campaign, a brand film, an opening or a launch: short-form, written for you and owned by you outright.",
     includes: [
       "Original track built to the brief",
       "Lyrics written if required",
@@ -112,13 +112,36 @@ export const proof: readonly { readonly label: string; readonly value: string }[
   { label: "Average delivery", value: "5 days" },
 ];
 
+/** What the form asks for, and what it says while it is asking. Shared, because
+    it is the same request in three different sets of clothes. */
+export const enquiry = {
+  eyebrow: "Start the commission",
+  headline: "Write the prompt",
+  lede: "One paragraph, and an address his team can reply to. Everything after this happens by email: the questions, the sample, the payment details and the song itself.",
+  fields: {
+    name: "Your name",
+    email: "Your email",
+    tier: "What you are after",
+    prompt: "The prompt",
+  },
+  placeholder:
+    "Who it is for, the occasion, the room it will be played in, and the thing you cannot quite say out loud.",
+  send: "Send it to his team",
+  sending: "Sending",
+  sentHead: "It is with his team.",
+  sentBody:
+    "They read every one of these themselves and reply from their own address, usually the same day. Watch your inbox, and check the junk folder once.",
+  again: "Write another",
+  undecided: "Not sure yet",
+} as const;
+
 export const commission = {
   from: "USD 1,500",
   full: "USD 2,500",
   slots: "Commissions taken year round",
   turnaround: "Seven days or less, guaranteed",
   revisions: "Two requests for change included",
-  note: "Nothing is stock, nothing is licensed, and nothing is re-sold. The song exists once, for you.",
+  note: "Every piece is written once, for one client, and never re-sold.",
 } as const;
 
 /**
@@ -126,7 +149,7 @@ export const commission = {
  * anything invented for the site, because it is what he actually sells.
  */
 export const service = {
-  lede: "Bespoke music composition and production — for brands, campaigns, tourism, luxury experiences, events, personal milestones and corporate storytelling.",
+  lede: "Bespoke music composition and production for brands, campaigns, tourism, luxury experiences, events, personal milestones and corporate storytelling.",
   against:
-    "Unlike stock music or a generic licensed track, every composition is exclusive. On delivery you receive the full work and everything that comes with it: 100% of the copyright, the master recordings, and all commercial usage rights.",
+    "Every composition belongs to the person who commissioned it. On delivery you receive the full work and everything that comes with it: 100% of the copyright, the master recordings, and all commercial usage rights.",
 } as const;

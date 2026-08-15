@@ -4,6 +4,9 @@ import { record } from "../../content/dennis";
 import { useState } from "react";
 import { useReady } from "../../lib/useReady";
 import { photos } from "../../content/media";
+import { enquiry, steps, tiers } from "../../content/commission";
+import { useEnquiry } from "../../lib/enquiry";
+import { ScrollStage } from "../../lib/ScrollStage";
 
 /**
  * Nocturne's own furniture.
@@ -34,7 +37,7 @@ export function Cast() {
         ))}
       </ul>
       <p className="cast-foot">
-        Engagements, not endorsements. Each of these has had him in the room.
+        All fourteen booked him for a room of their own, and none of them endorse this site.
       </p>
     </div>
   );
@@ -53,7 +56,9 @@ export function BoxOffice() {
             <dt>{item.label}</dt>
             <dd>
               <span className="board-leader" aria-hidden />
-              <span className="board-figure">{item.value}</span>
+              <span className="board-figure">
+                <Figure value={item.value} />
+              </span>
             </dd>
           </div>
         ))}
@@ -134,22 +139,173 @@ export function Interval({ label = "Interval" }: { label?: string }) {
 
 
 /**
- * House lights. One lamp comes up on an empty velvet house while the page loads,
- * and when it is ready the curtain parts — the same gesture the hero makes, so
- * arriving and scrolling are one continuous movement.
+ * The arrival: his name, set, and nothing else.
+ *
+ * A curtain was wrong because the hero already opens one. A lit stage was wrong
+ * because it was a second piece of scenery arguing with the first. What is left
+ * is the thing the whole page is about — the name, on black, with a rule drawn
+ * under it — which is also what the best title pages have always done.
  */
 export function Loader() {
   const ready = useReady(photos.press.src);
 
   return (
     <div className="house" data-ready={ready} aria-hidden={ready}>
-      <div className="house-half house-half--left" />
-      <div className="house-half house-half--right" />
-      <span className="house-lamp" />
       <p className="house-name">
-        <em>the</em> Dennis Lau
+        <em>the</em>
+        <span>Dennis Lau</span>
       </p>
-      <p className="house-mark">03 · Nocturne — Velvet and lamplight</p>
+      <span className="house-rule" aria-hidden />
+      <p className="house-mark">03 · Nocturne · Velvet and lamplight</p>
     </div>
+  );
+}
+
+/**
+ * A figure, slotted.
+ *
+ * A box office board is set, not counted: the number rises into its slot from
+ * behind the rule above it. Counting up from zero is what a plugin does, and it
+ * would be the third concept in a row doing the same thing besides.
+ */
+export function Figure({ value }: { value: string }) {
+  return (
+    <span className="slotfig" data-reveal="slot">
+      <span className="slotfig-rule" aria-hidden />
+      <span className="slotfig-value">{value}</span>
+    </span>
+  );
+}
+
+/**
+ * The commission request, as a card left at the desk.
+ *
+ * Nothing is bought on this site: a client writes a paragraph, Dennis's team
+ * writes back, and the sample, the payment details and the finished song all
+ * travel in that one thread. So the form is an order card, brass-ruled, the way
+ * a box office takes a booking. Nothing is delivered here; see `lib/enquiry.ts`.
+ */
+export function Enquiry() {
+  const { enquiry: form, stage, problems, set, submit, again } = useEnquiry();
+  const sent = stage === "sent";
+
+  return (
+    <div className="card" data-sent={sent} data-reveal>
+      <p className="card-eyebrow">{enquiry.eyebrow}</p>
+      <h3 className="card-head">
+        <em>write</em> THE PROMPT
+      </h3>
+      <p className="card-lede">{enquiry.lede}</p>
+
+      {sent ? (
+        <div className="card-sent" role="status">
+          <p className="card-stamp" aria-hidden>
+            Received
+          </p>
+          <p className="card-sent-head">{enquiry.sentHead}</p>
+          <p className="card-sent-body">{enquiry.sentBody}</p>
+          <button type="button" className="card-again" onClick={again}>
+            {enquiry.again}
+          </button>
+        </div>
+      ) : (
+        <form
+          className="card-body"
+          onSubmit={(event) => {
+            event.preventDefault();
+            void submit();
+          }}
+          noValidate
+        >
+          <label className="card-field">
+            <span className="card-label">{enquiry.fields.name}</span>
+            <input
+              type="text"
+              value={form.name}
+              autoComplete="name"
+              onChange={(event) => set("name", event.target.value)}
+            />
+            {problems.name ? <span className="card-problem">{problems.name}</span> : null}
+          </label>
+
+          <label className="card-field">
+            <span className="card-label">{enquiry.fields.email}</span>
+            <input
+              type="email"
+              value={form.email}
+              autoComplete="email"
+              onChange={(event) => set("email", event.target.value)}
+            />
+            {problems.email ? <span className="card-problem">{problems.email}</span> : null}
+          </label>
+
+          <fieldset className="card-choice">
+            <legend className="card-label">{enquiry.fields.tier}</legend>
+            {[...tiers, { id: "unsure", name: enquiry.undecided, price: "" }].map((tier) => (
+              <label className="card-option" key={tier.id} data-chosen={form.tier === tier.id}>
+                <input
+                  type="radio"
+                  name="tier"
+                  value={tier.id}
+                  checked={form.tier === tier.id}
+                  onChange={() => set("tier", tier.id)}
+                />
+                <span className="card-option-name">{tier.name}</span>
+                <span className="card-option-leader" aria-hidden />
+                {tier.price ? <span className="card-option-price">{tier.price}</span> : null}
+              </label>
+            ))}
+          </fieldset>
+
+          <label className="card-field card-field--wide">
+            <span className="card-label">{enquiry.fields.prompt}</span>
+            <textarea
+              rows={5}
+              value={form.prompt}
+              placeholder={enquiry.placeholder}
+              onChange={(event) => set("prompt", event.target.value)}
+            />
+            {problems.prompt ? <span className="card-problem">{problems.prompt}</span> : null}
+          </label>
+
+          <button type="submit" className="card-send" disabled={stage === "sending"}>
+            {stage === "sending" ? enquiry.sending : enquiry.send}
+          </button>
+        </form>
+      )}
+    </div>
+  );
+}
+
+/**
+ * How a commission goes, set as tonight's running order.
+ *
+ * It was a numbered list. A house does not number its evening, it posts it: the
+ * four lines stand together on a board and the lamp moves down them, so you can
+ * see what has happened and what is still to come at the same time.
+ */
+export function Process() {
+  return (
+    <ScrollStage vh={100 * (steps.length + 1)} cuts={steps.length} className="running">
+      {({ stage }) => (
+        <>
+          <p className="running-head">
+            <em>the</em> ORDER <em>of the</em> EVENING
+          </p>
+
+          <ol className="running-list">
+            {steps.map((step, index) => (
+              <li className="running-step" key={step.index} data-active={index === stage} data-past={index < stage}>
+                <span className="running-index">{step.index}</span>
+                <span className="running-title">{step.title}</span>
+                <span className="running-leader" aria-hidden />
+                <span className="running-marking">{step.marking}</span>
+                <p className="running-body">{step.body}</p>
+              </li>
+            ))}
+          </ol>
+        </>
+      )}
+    </ScrollStage>
   );
 }

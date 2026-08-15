@@ -24,12 +24,12 @@ export const artist = {
   /** His own headline for himself. Nothing invented here beats it. */
   showman: "A musical showman with absolute flair and finesse",
   /** The line his whole brand rests on — and the reason concept 03 is called The Chosen. */
-  chosen: "The Chosen One — born, raised and tuned to acquire excellence",
+  chosen: "The Chosen One: born, raised and tuned to acquire excellence",
   /** Used where a page needs one sentence rather than the full biography. */
   oneLine:
-    "Malaysia's foremost electric violinist — classically trained from the age of three, and the first performer anywhere to take a six-string 24K gold violin onto a stage.",
+    "Malaysia's foremost electric violinist. Classically trained from the age of three, and the first performer anywhere to take a six-string 24K gold violin onto a stage.",
   paragraph:
-    "His mother is a pianist, so the piano came first, at three. Grade 8 by eleven. The violin at eight, the diplomas after that, and then a career that refused to sit in an orchestra pit: three albums, five continents, ten thousand performances, and two sold-out three-thousand-seat concerts of his own. Along the way he asked a luthier in Donegal to build him an instrument nobody had built before, and waited a year for it.",
+    "His mother is a pianist, so the piano came first, at three, and Dennis had his Grade 8 by eleven. The violin followed at eight and the diplomas after that, and then a career that refused to sit in an orchestra pit: three albums, five continents, ten thousand performances, and two sold-out three-thousand-seat concerts of his own. Somewhere in the middle of it he asked a luthier in Donegal to build an instrument nobody had built before, and then waited a year for it.",
 } as const;
 
 export interface Credential {
@@ -66,11 +66,11 @@ export const teachers = {
 
 /** The paper trail, in the order a musician would list it. */
 export const training: readonly string[] = [
-  "Bachelor of Music, UCSI — Newcastle Australian Music Degree Program, 2006",
+  "Bachelor of Music, UCSI. Newcastle Australian Music Degree Program, 2006",
   "Classical piano: ATCL, A.Mus.A, Dip ABRSM, LGSM (hons)",
   "Violin: ATCL at fifteen",
-  "Trinity College London LTCL — Award for Outstanding Performance",
-  "Trinity College London FTCL — Outstanding Performance in Violin",
+  "Trinity College London LTCL, Award for Outstanding Performance",
+  "Trinity College London FTCL, Outstanding Performance in Violin",
 ];
 
 export interface Award {
@@ -152,7 +152,7 @@ export const milestones: readonly Milestone[] = [
     year: "2016",
     title: "The Phoenix Rising",
     detail:
-      "Three thousand seats, sold out, under music director Aubrey Suwito. The first Malaysian instrumentalist to do it — and the night the Phoenix was first played.",
+      "Three thousand seats, sold out, under music director Aubrey Suwito. The first Malaysian instrumentalist to fill a hall that size on his own name, and the night the Phoenix was first played.",
   },
   {
     year: "2019",
@@ -163,7 +163,7 @@ export const milestones: readonly Milestone[] = [
     year: "Since",
     title: "Teach For Malaysia",
     detail:
-      "Working with the non-profit to reach children whose musical talent is limited only by where they were born.",
+      "Working with the non-profit in the schools where a child with real ability is least likely to be heard.",
   },
 ];
 
@@ -174,7 +174,7 @@ export const milestones: readonly Milestone[] = [
  */
 export const calling = {
   lede: "Everyone is chosen to succeed",
-  body: "He went looking for an inspiration and found it in a place he could only prove to himself. Now he works with Teach For Malaysia so that a child's musical talent is not decided by the circumstances they were born into.",
+  body: "Dennis had to prove it somewhere nobody was watching before anyone else would believe it, and he now works with Teach For Malaysia so that where a child is born stops deciding whether their talent is ever heard.",
 } as const;
 
 export interface Violin {
@@ -195,7 +195,7 @@ export const violins: readonly Violin[] = [
     name: "The Phoenix",
     year: "2016",
     material: "Six strings, carbon fibre, 24K gold plate",
-    note: "The first instrument of its kind played on a stage anywhere in the world. Unveiled on 22 October 2016, a year after it was commissioned.",
+    note: "It was the first instrument of its kind played on a stage anywhere in the world, unveiled on 22 October 2016, a year after Dennis commissioned it.",
   },
   {
     id: "dragon",
@@ -219,13 +219,13 @@ export const violins: readonly Violin[] = [
  */
 export const commissionStory = {
   eyebrow: "Donegal, 2016",
-  lede: "He saw a guitar and went to find who made it",
-  body: "The guitar was built for the Mandopop star Wang Leehom by Alistair Hay of Emerald Guitars, in Donegal, Ireland. Dennis flew there in the summer of 2016 and asked for something nobody had made: a six-string electric violin, carved as a bird's wing, plated in 24K gold. It took a year. He unveiled it in front of three thousand people.",
+  lede: "Dennis saw a guitar and flew to Donegal to meet its maker",
+  body: "The guitar had been built for the Mandopop star Wang Leehom by Alistair Hay of Emerald Guitars, in Donegal, Ireland. Dennis flew there in the summer of 2016 and asked for something nobody had made: a six-string electric violin, carved as a bird's wing, plated in 24K gold. It took Hay a year, and Dennis unveiled it in front of three thousand people.",
   quote:
     "Just like a soul mate, a musician's instrument plays a very important role in the development of the player's voice and personality.",
   quoteWho: "Dennis Lau",
   makerQuote:
-    "This project has been one of the most rewarding commissions of my career — being given the opportunity to stretch my creative abilities to a new level.",
+    "This project has been one of the most rewarding commissions of my career, being given the opportunity to stretch my creative abilities to a new level.",
   makerWho: "Alistair Hay, Emerald Guitars",
 } as const;
 

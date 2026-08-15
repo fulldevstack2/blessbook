@@ -152,7 +152,7 @@ export const showreel = {
   poster: film("showreel-poster.webp"),
   seconds: 67,
   title: "Showreel",
-  note: "A minute of what a room sounds like when he is in it.",
+  note: "A minute of him playing live, cut by him.",
   credit: "Dennis Lau showreel, 2021",
 } as const;
 

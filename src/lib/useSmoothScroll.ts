@@ -52,6 +52,13 @@ export function useSmoothScroll(): void {
     };
 
     const push = (amount: number) => {
+      // Nothing accumulates while the page is still arriving, or the wheel you
+      // turned during the loader would fire the moment it lifted.
+      if (document.documentElement.dataset.loading) {
+        target = 0;
+        current = 0;
+        return;
+      }
       target = Math.min(limit(), Math.max(0, target + amount));
       if (!running) {
         running = true;

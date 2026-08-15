@@ -1189,23 +1189,6 @@ canvas:not([hidden]) + .dragon-hero-plate {
 
 /* Below the two-column breakpoint the wash runs out downward instead, so the
    type still lands on paper. */
-@media (max-width: 899px) {
-  .dragon-hero-plate {
-    -webkit-mask-image: linear-gradient(
-      180deg,
-      rgba(0, 0, 0, 1) 0%,
-      rgba(0, 0, 0, 0.9) 30%,
-      rgba(0, 0, 0, 0) 76%
-    );
-    mask-image: linear-gradient(
-      180deg,
-      rgba(0, 0, 0, 1) 0%,
-      rgba(0, 0, 0, 0.9) 30%,
-      rgba(0, 0, 0, 0) 76%
-    );
-    opacity: 0.7;
-  }
-}
 
 @media (prefers-reduced-motion: reduce) {
   .dragon-hero-plate {
@@ -1873,25 +1856,29 @@ canvas:not([hidden]) + .dragon-hero-plate {
   overflow: visible;
 }
 
-/* The stroke draws itself as the section arrives: wet body first, dry tail after. */
-.brush-body,
-.brush-dry {
-  fill: none;
-  stroke: var(--ink);
-  stroke-linecap: round;
-  stroke-dasharray: 1;
-  stroke-dashoffset: calc(1 - clamp(0, calc(var(--s, 0) * 2.6 - 0.5), 1));
+/* The whole mark is uncovered left to right, the way the hand went. */
+.brush-draw {
+  clip-path: inset(0 calc((1 - clamp(0, calc(var(--s, 0) * 2.6 - 0.42), 1)) * 100%) 0 0);
 }
 
 .brush-body {
-  stroke-width: 26;
-  opacity: 0.92;
+  fill: var(--ink);
+  opacity: 0.93;
 }
 
-.brush-dry {
-  stroke-width: 5;
-  opacity: 0.35;
-  stroke-dashoffset: calc(1 - clamp(0, calc(var(--s, 0) * 2.6 - 0.62), 1));
+/* Bristles: thin, uneven, and each one stops a little short of the last. */
+.brush-hair {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: calc(1.6px + var(--i) * 0.8px);
+  stroke-linecap: round;
+  opacity: calc(0.3 - var(--i) * 0.07);
+}
+
+.brush-bleed {
+  fill: var(--ink);
+  opacity: 0.16;
+  filter: blur(3px);
 }
 
 .brush-caption {
@@ -1988,19 +1975,24 @@ canvas:not([hidden]) + .dragon-hero-plate {
   opacity: 0.55;
 }
 
+/* A hanging scroll is an image mounted on a taller sheet, and that is what
+   saves these: the posters are landscape and cropping them to a portrait frame
+   cut the titles off both ends. The picture now sits at its own proportions
+   with mount above and below it, which is how the object actually works. */
 .scroll-frame {
   position: relative;
   aspect-ratio: 3 / 4;
   overflow: hidden;
+  padding-block: 12%;
   background: var(--paper-deep);
 }
 
 .scroll-open,
 .scroll-media {
   position: absolute;
-  inset: 0;
+  inset: 12% 0;
   width: 100%;
-  height: 100%;
+  height: 76%;
   padding: 0;
   border: 0;
 }
@@ -2008,7 +2000,8 @@ canvas:not([hidden]) + .dragon-hero-plate {
 .scroll-open img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  background: var(--ink);
   filter: grayscale(1) contrast(1.1);
   transition: filter 700ms var(--ease-out);
 }
@@ -2050,9 +2043,37 @@ canvas:not([hidden]) + .dragon-hero-plate {
    two-column breakpoint the paper wins: the figure sinks, a sheet of paper sits
    under the words, and the type comes down to a readable size. */
 
+/* Narrow screens.
+
+   The hero used to hold the wash across the whole frame at half opacity behind a
+   paper scrim, and between the two of them the photograph disappeared: a 2.37:1
+   frame cover-cropped to a phone is a keyhole of cloud, and at 0.5 opacity under
+   a scrim it was not there at all. He now takes the top of the frame at full
+   strength and fades into bare paper, and the type sits on that paper below him.
+
+   The scrim is `position: absolute`, which paints it above every child that is
+   not itself positioned. `.dragon-cuts` was given `position: relative` for that
+   reason; the player and the foot were not, so from 62% down the paper covered
+   them completely and the hero looked like it had lost its text. Everything in
+   the hero is positioned now. */
 @media (max-width: 899px) {
   .dragon-hero-plate {
-    opacity: 0.5;
+    /* Contained, not cropped. Cover-fitting a 2.37:1 still into a phone shows
+       about a third of its width, and the third that survives is sky: he stands
+       at the far left of this frame. Shown whole it is a wide band across the
+       top, which is what a hand scroll would do with it anyway.
+
+       No mask is needed. Multiply against paper does the work: the blown-out sky
+       disappears into the ground and only the figure survives as ink, which is
+       the whole reason this concept treats photographs this way. */
+    inset: 9% 0 auto 0;
+    height: 30%;
+    object-fit: contain;
+    object-position: 50% 50%;
+    opacity: 1;
+    filter: grayscale(1) contrast(1.5) brightness(1.04);
+    -webkit-mask-image: none;
+    mask-image: none;
   }
 
   .dragon-hero::before {
@@ -2060,18 +2081,49 @@ canvas:not([hidden]) + .dragon-hero-plate {
     position: absolute;
     inset: 0;
     pointer-events: none;
-    background: linear-gradient(
-      180deg,
-      transparent 0%,
-      color-mix(in oklab, var(--paper) 72%, transparent) 26%,
-      var(--paper) 62%
-    );
+    /* He stands in the upper right on a phone, so the wash keeps the left column
+       light for the name and clears the floor for the player. */
+    /* He stands at the foot of the frame on a phone, on its right, so the wash
+       keeps the whole left column light for the name, the player and the foot
+       and leaves the right side to the ink. */
+    background:
+      linear-gradient(
+        90deg,
+        color-mix(in oklab, var(--paper) 94%, transparent) 0%,
+        color-mix(in oklab, var(--paper) 80%, transparent) 42%,
+        transparent 72%
+      ),
+      linear-gradient(
+        180deg,
+        color-mix(in oklab, var(--paper) 60%, transparent) 0%,
+        transparent 26%
+      );
+  }
+
+  /* One flexible row above everything else, so the type, the player and the
+     foot can never be laid on top of one another however short the screen is. */
+  .dragon-hero {
+    grid-template-rows: minmax(0, 1fr) auto auto auto;
+  }
+
+  .dragon-cuts,
+  .dragon-hero-listen,
+  .dragon-hero-foot {
+    position: relative;
   }
 
   .dragon-cuts {
-    position: relative;
+    grid-row: 2;
     align-self: end;
-    padding-bottom: var(--space-2xl);
+    padding-bottom: var(--space-lg);
+  }
+
+  .dragon-hero-listen {
+    grid-row: 3;
+  }
+
+  .dragon-hero-foot {
+    grid-row: 4;
   }
 
   .dragon-cut h1,
@@ -2115,7 +2167,7 @@ canvas:not([hidden]) + .dragon-hero-plate {
   place-items: center;
   overflow: hidden;
   background: var(--paper);
-  transition: opacity 700ms var(--ease-out) 500ms;
+  transition: opacity 700ms var(--ease-out) 1150ms;
 }
 
 .sheet[data-ready="true"] {
@@ -2123,49 +2175,58 @@ canvas:not([hidden]) + .dragon-hero-plate {
   pointer-events: none;
 }
 
-/* A drop of ink, spreading into the paper while the page loads. */
-.sheet-drop {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: radial-gradient(circle, var(--ink) 40%, color-mix(in oklab, var(--ink) 30%, transparent) 70%, transparent 100%);
-  transform: translate(-50%, -50%) scale(1);
-  animation: sheet-bleed 1600ms var(--ease-out) forwards;
+/* His name, written. Each character is brushed in from the top, the way a hand
+   lays one down, and a small cinnabar seal is pressed beside them at the end. */
+
+.sheet-block {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  gap: clamp(14px, 2.4vw, 28px);
 }
 
-@keyframes sheet-bleed {
+.sheet-name {
+  display: flex;
+  gap: clamp(6px, 1.4vw, 18px);
+  font-family: var(--brush);
+  font-size: clamp(3.4rem, 13vw, 8rem);
+  line-height: 1;
+  color: var(--ink);
+}
+
+.sheet-name span {
+  display: block;
+  clip-path: inset(0 0 100% 0);
+  animation: sheet-write 760ms var(--ease-out) calc(var(--i) * 320ms + 180ms) forwards;
+}
+
+@keyframes sheet-write {
   to {
-    transform: translate(-50%, -50%) scale(26);
-    opacity: 0.16;
+    clip-path: inset(0 0 0 0);
   }
 }
 
-/* And a stroke that wipes it away when the paper is ready to be written on. */
-.sheet-wipe {
-  position: absolute;
-  inset: 0 0 auto 0;
-  height: 100%;
-  background: var(--paper);
-  transform: translateY(-100%);
-  transition: transform 900ms var(--ease-in-out);
-}
-
-.sheet[data-ready="true"] .sheet-wipe {
-  transform: translateY(0);
-}
-
 .sheet-seal {
-  position: relative;
-  z-index: 1;
-  padding: var(--space-md) var(--space-lg);
-  border: 2px solid var(--cinnabar);
+  display: grid;
+  place-items: center;
+  width: clamp(30px, 4vw, 44px);
+  height: clamp(30px, 4vw, 44px);
+  margin-bottom: 0.42em;
+  background: var(--cinnabar);
+  color: var(--paper);
   font-family: var(--brush);
-  font-size: clamp(1.6rem, 5vw, 2.6rem);
+  font-size: clamp(1rem, 2.2vw, 1.5rem);
   line-height: 1;
-  color: var(--cinnabar);
+  opacity: 0;
+  transform: rotate(-3deg) scale(1.5);
+  animation: sheet-press 420ms var(--ease-out) 1320ms forwards;
+}
+
+@keyframes sheet-press {
+  to {
+    opacity: 1;
+    transform: rotate(-3deg) scale(1);
+  }
 }
 
 .sheet-mark {
@@ -2178,13 +2239,586 @@ canvas:not([hidden]) + .dragon-hero-plate {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .sheet-drop {
-    animation: none;
-    transform: translate(-50%, -50%) scale(18);
-    opacity: 0.12;
+  .sheet-name span,
+  .sheet-seal {
+    animation-duration: 1ms;
+    animation-delay: 0ms;
+  }
+}
+
+/* ---------- the sticky player: a slip of paper with a seal on it ---------- */
+
+.dragon .playing {
+  padding: 11px clamp(14px, 2vw, 20px);
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  box-shadow: 6px 10px 0 rgb(0 0 0 / 6%);
+}
+
+/* The stop is the seal: press it and the sound is closed. */
+.dragon .playing-stop {
+  color: var(--cinnabar);
+}
+
+.dragon .playing-stop-mark {
+  width: 13px;
+  height: 13px;
+  background: var(--cinnabar);
+  border-radius: 2px;
+  box-shadow: inset 0 0 0 2px var(--paper);
+}
+
+.dragon .playing-title {
+  font-family: var(--display);
+  font-size: 0.95rem;
+  color: var(--ink);
+}
+
+.dragon .playing-where {
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+/* ---------- the count, brushed ---------- */
+
+.marks {
+  /* Set on the same column the sections use, so the ledger lines up with the
+     text above it rather than running to the trim. */
+  padding: clamp(56px, 10vh, 128px) clamp(var(--space-lg), 7vw, var(--space-5xl));
+  border-top: 1px solid var(--rule);
+}
+
+.marks-head {
+  display: flex;
+  align-items: baseline;
+  gap: clamp(12px, 2vw, 24px);
+  flex-wrap: wrap;
+}
+
+.marks-figure {
+  font-family: var(--display);
+  font-size: clamp(2.6rem, 7vw, 5rem);
+  line-height: 1;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.marks-unit {
+  font-size: clamp(0.95rem, 1.6vw, 1.15rem);
+  color: var(--ink-soft);
+}
+
+/* A hundred and sixty-eight marks, brushed on as the section passes. `--s` is
+   the section's own progress, so the count runs at the speed you read at. */
+.marks-field {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(clamp(26px, 3vw, 40px), 1fr));
+  gap: clamp(6px, 1vw, 14px);
+  max-width: 1100px;
+  margin-top: clamp(28px, 5vh, 56px);
+}
+
+.marks-mark {
+  font-family: var(--brush);
+  font-size: clamp(18px, 2.2vw, 30px);
+  line-height: 1.05;
+  text-align: center;
+  color: var(--ink);
+  /* Each mark waits its turn: struck once the scroll has passed its place. */
+  opacity: clamp(0, calc((var(--s, 0) * 1.35 - var(--i) / var(--of)) * 14), 1);
+}
+
+/* Every twenty-fifth mark is a little heavier, so the block can be read at a
+   glance the way a ledger can. */
+.marks-mark:nth-child(25n) {
+  color: var(--cinnabar);
+}
+
+.marks-key {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: clamp(10px, 2vw, 22px);
+  margin-top: clamp(20px, 3vh, 34px);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.marks-key [lang="zh"] {
+  font-family: var(--brush);
+  font-size: 1.15rem;
+  letter-spacing: 0.06em;
+  text-transform: none;
+  color: var(--cinnabar);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marks-mark {
+    opacity: 1;
+  }
+}
+
+/* ---------- the beats over the scrubbed footage ---------- */
+
+/* The frames run from bright sky to near-black silhouette, and ink type was
+   landing on both.
+
+   A slip of paper with a drop shadow fixed the contrast and cost the concept its
+   manners: it read as a subtitle card stuck on the picture. A hand scroll does
+   not caption its painting, it inscribes it. So the words sit on the image with
+   a wash of paper coming up behind them and one cinnabar hairline down the left,
+   which is a colophon and not a sticky note. */
+.dragon-scrub .scrub-beats {
+  justify-items: start;
+}
+
+/* The wash. Absolutely positioned, so the beats above it have to be positioned
+   too or the paint order buries them. */
+.dragon-scrub .scrub-beats::before {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 68%;
+  pointer-events: none;
+  background: linear-gradient(
+    to top,
+    color-mix(in oklab, var(--paper) 94%, transparent) 0%,
+    color-mix(in oklab, var(--paper) 78%, transparent) 30%,
+    color-mix(in oklab, var(--paper) 34%, transparent) 62%,
+    transparent 100%
+  );
+}
+
+.dragon-scrub .scrub-beat {
+  position: relative;
+  padding-left: clamp(16px, 2.6vw, 30px);
+  border-left: 1px solid color-mix(in oklab, var(--cinnabar) 62%, transparent);
+}
+
+.dragon-scrub .scrub-mark {
+  font-size: clamp(1.6rem, 3vw, 2.3rem);
+  margin-bottom: var(--space-xs);
+}
+
+.dragon-scrub .scrub-line {
+  max-width: 22ch;
+}
+
+/* ---------- figures, brushed ---------- */
+
+.dragon .brushfig {
+  display: inline-flex;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Each glyph is laid down top to bottom, one after another, the way a hand
+   writes a number. No counting: counting is a plugin. */
+.dragon .brushfig > span {
+  display: inline-block;
+  clip-path: inset(0 0 100% 0);
+  transition: clip-path 460ms var(--ease-out) calc(var(--reveal-delay) + var(--i) * 70ms);
+}
+
+.dragon .brushfig[data-revealed="true"] > span {
+  clip-path: inset(0 0 0 0);
+}
+
+/* The wrapper itself must not fade: the reveal is the stroke, not an opacity. */
+.dragon .brushfig[data-reveal] {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dragon .brushfig > span {
+    clip-path: inset(0 0 0 0);
+    transition: none;
+  }
+}
+
+/* ---------- the request, written on a sheet ---------- */
+
+.dragon .sheetform {
+  margin-top: var(--space-4xl);
+  padding: clamp(24px, 4vw, 52px);
+  background: var(--paper-deep);
+  border-top: 2px solid var(--ink);
+  border-bottom: 1px solid var(--rule);
+}
+
+.dragon .sheetform-eyebrow {
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--cinnabar);
+}
+
+.dragon .sheetform-head {
+  margin-top: var(--space-sm);
+  font-family: var(--display);
+  font-size: clamp(1.7rem, 4vw, 2.8rem);
+  line-height: 1.06;
+  color: var(--ink);
+}
+
+.dragon .sheetform-lede {
+  margin-top: var(--space-md);
+  max-width: 54ch;
+  color: var(--ink-soft);
+  line-height: 1.75;
+}
+
+.dragon .sheetform-body {
+  display: grid;
+  gap: clamp(18px, 2.6vw, 30px);
+  margin-top: clamp(26px, 4vw, 44px);
+}
+
+@media (min-width: 760px) {
+  .dragon .sheetform-body {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .sheet-wipe {
-    transition-duration: 1ms;
+  .dragon .sheetform-line--wide,
+  .dragon .sheetform-choice,
+  .dragon .sheetform-send {
+    grid-column: 1 / -1;
+  }
+}
+
+.dragon .sheetform-line {
+  display: grid;
+  gap: 4px;
+}
+
+.dragon .sheetform-label {
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+/* Ruled lines, the way a sheet is ruled. */
+.dragon .sheetform-line input,
+.dragon .sheetform-line textarea {
+  width: 100%;
+  padding: var(--space-sm) 0;
+  border: 0;
+  border-bottom: 1px solid var(--rule);
+  background: none;
+  color: var(--ink);
+  font-family: var(--display);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  transition: border-color 320ms var(--ease-out);
+}
+
+.dragon .sheetform-line textarea {
+  resize: vertical;
+  min-height: 8em;
+  /* Every line ruled, not just the last one, and offset so the text sits on the
+     rule rather than being struck through by it. */
+  background-position: 0 0.44em;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent calc(1.7em - 1px),
+    var(--rule) calc(1.7em - 1px),
+    var(--rule) 1.7em
+  );
+  border-bottom: 0;
+}
+
+.dragon .sheetform-line input:focus,
+.dragon .sheetform-line textarea:focus {
+  outline: none;
+  border-bottom-color: var(--jade);
+}
+
+.dragon .sheetform-problem {
+  font-size: 11px;
+  color: var(--cinnabar);
+}
+
+.dragon .sheetform-choice {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.dragon .sheetform-choice legend {
+  margin-bottom: var(--space-sm);
+}
+
+.dragon .sheetform-chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-sm);
+  padding: var(--space-xs) var(--space-lg);
+  border: 1px solid var(--rule);
+  cursor: pointer;
+  color: var(--ink-soft);
+  transition:
+    border-color 320ms var(--ease-out),
+    color 320ms var(--ease-out);
+}
+
+.dragon .sheetform-chip input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.dragon .sheetform-chip[data-chosen="true"] {
+  border-color: var(--jade);
+  color: var(--ink);
+}
+
+.dragon .sheetform-chip-price {
+  font-family: var(--display);
+  color: var(--jade);
+}
+
+.dragon .sheetform-send {
+  justify-self: start;
+  padding: var(--space-sm) clamp(22px, 4vw, 40px);
+  border: 1px solid var(--cinnabar);
+  background: none;
+  cursor: pointer;
+  font-size: 11px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--cinnabar);
+  transition:
+    background 340ms var(--ease-out),
+    color 340ms var(--ease-out);
+}
+
+.dragon .sheetform-send:hover:not(:disabled) {
+  background: var(--cinnabar);
+  color: var(--paper);
+}
+
+.dragon .sheetform-send:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+/* And the seal, pressed. */
+.dragon .sheetform-sent {
+  display: flex;
+  gap: clamp(18px, 3vw, 32px);
+  margin-top: clamp(26px, 4vw, 40px);
+  padding-top: clamp(20px, 3vw, 30px);
+  border-top: 1px solid var(--rule);
+}
+
+.dragon .sheetform-seal {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: clamp(46px, 6vw, 64px);
+  height: clamp(46px, 6vw, 64px);
+  background: var(--cinnabar);
+  color: var(--paper);
+  font-family: var(--brush);
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  transform: rotate(-4deg);
+}
+
+.dragon .sheetform-sent-head {
+  font-family: var(--display);
+  font-size: clamp(1.3rem, 3vw, 1.9rem);
+  color: var(--ink);
+}
+
+.dragon .sheetform-sent-body {
+  margin-top: var(--space-sm);
+  max-width: 50ch;
+  color: var(--ink-soft);
+  line-height: 1.75;
+}
+
+.dragon .sheetform-again {
+  margin-top: var(--space-lg);
+  padding: 0;
+  border: 0;
+  border-bottom: 1px solid var(--rule);
+  background: none;
+  cursor: pointer;
+  font-size: 10px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+/* ---------- 工序: the order of the work, brushed one character at a time ---------- */
+
+.dragon .order {
+  display: grid;
+  align-content: center;
+  gap: clamp(24px, 5vh, 56px);
+  padding: clamp(var(--space-2xl), 9vh, var(--space-4xl))
+    clamp(var(--space-lg), 7vw, var(--space-5xl));
+  background: var(--paper);
+  overflow: hidden;
+}
+
+/* The numeral at signboard size, laid down top to bottom the way a hand writes
+   one, which is the same stroke as the arrival sheet and the count. */
+.dragon .order-mark {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+.dragon .order-mark span {
+  grid-area: 1 / 1;
+  font-family: var(--brush);
+  font-size: clamp(10rem, 40vw, 30rem);
+  line-height: 0.82;
+  color: color-mix(in oklab, var(--ink) 19%, transparent);
+  clip-path: inset(0 0 100% 0);
+  transition: clip-path 900ms var(--ease-out);
+}
+
+.dragon .order-mark span[data-active="true"] {
+  clip-path: inset(0 0 0 0);
+}
+
+.dragon .order-list {
+  position: relative;
+  display: grid;
+  max-width: 44ch;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dragon .order-step {
+  grid-area: 1 / 1;
+  opacity: 0;
+  filter: blur(6px);
+  transition:
+    opacity 760ms var(--ease-out),
+    filter 900ms var(--ease-out);
+}
+
+.dragon .order-step[data-active="true"] {
+  opacity: 1;
+  filter: none;
+}
+
+.dragon .order-title {
+  font-family: var(--display);
+  font-size: clamp(1.8rem, 4.6vw, 3.4rem);
+  line-height: 1.06;
+  color: var(--ink);
+}
+
+.dragon .order-marking {
+  display: block;
+  margin-top: var(--space-xs);
+  font-size: 10px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--cinnabar);
+}
+
+.dragon .order-body {
+  margin-top: var(--space-lg);
+  color: var(--ink-soft);
+  font-size: 1.02rem;
+  line-height: 1.8;
+}
+
+/* The margin rule, inked in as each stage is passed. */
+.dragon .order-rule {
+  position: absolute;
+  left: clamp(var(--space-md), 3vw, var(--space-2xl));
+  top: 50%;
+  display: grid;
+  gap: var(--space-sm);
+  transform: translateY(-50%);
+}
+
+.dragon .order-rule span {
+  width: 1px;
+  height: 26px;
+  background: var(--rule);
+  transition:
+    background 640ms var(--ease-out),
+    height 640ms var(--ease-out);
+}
+
+.dragon .order-rule span[data-done="true"] {
+  height: 44px;
+  background: var(--cinnabar);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dragon .order-step,
+  .dragon .order-mark span {
+    opacity: 1;
+    filter: none;
+    clip-path: inset(0 0 0 0);
+    transition: none;
+  }
+}
+
+/* Same reasoning as Phoenix: a signboard character behind four lines of body
+   text has nowhere to go on a phone. It leads the step instead. */
+@media (max-width: 899px) {
+  .dragon .order {
+    align-content: center;
+    gap: clamp(14px, 3vh, 28px);
+  }
+
+  .dragon .order-mark {
+    position: static;
+    height: clamp(90px, 21vh, 160px);
+    align-items: end;
+    justify-items: start;
+  }
+
+  .dragon .order-mark span {
+    font-size: clamp(5rem, 30vw, 10rem);
+    color: color-mix(in oklab, var(--ink) 26%, transparent);
+  }
+
+  .dragon .order-title {
+    font-size: clamp(1.7rem, 7.6vw, 2.5rem);
+  }
+
+  .dragon .order-body {
+    margin-top: var(--space-md);
+    font-size: 0.98rem;
+  }
+
+  .dragon .order-rule {
+    position: static;
+    grid-auto-flow: column;
+    justify-content: start;
+    gap: var(--space-sm);
+    transform: none;
+  }
+
+  .dragon .order-rule span {
+    width: 22px;
+    height: 1px;
+  }
+
+  .dragon .order-rule span[data-done="true"] {
+    width: 36px;
+    height: 1px;
   }
 }

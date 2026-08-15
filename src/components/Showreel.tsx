@@ -26,7 +26,7 @@ export function Showreel({ caption }: { caption: string }) {
       if (!element) return;
       const ctx = audioContext();
       if (ctx) resumeAudio(ctx);
-      play(element);
+      play(element, { title: showreel.title, where: showreel.credit });
     });
   }, []);
 

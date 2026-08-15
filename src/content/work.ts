@@ -38,7 +38,7 @@ export function timecode(seconds: number): string {
 export const demos: readonly Demo[] = [
   {
     id: "shark",
-    title: "Shark V3 — Best of the Best",
+    title: "Shark V3 · Best of the Best",
     src: audio("shark-v3.mp3"),
     seconds: 98.7,
     kind: "Game trailer",
@@ -70,15 +70,15 @@ export const demos: readonly Demo[] = [
   },
   {
     id: "wall-zh",
-    title: "The Great Wall — 中文版",
+    title: "The Great Wall · 中文版",
     src: audio("great-wall-zh.mp3"),
     seconds: 183.2,
     kind: "Entrance theme",
-    note: "The same commission again in Mandarin. One prompt, two languages, no loss of intent.",
+    note: "The same commission again in Mandarin, written so the meaning survives the change of language.",
   },
   {
     id: "unmute",
-    title: "Unmute (Chloe) — Demo V4",
+    title: "Unmute (Chloe) · Demo V4",
     src: audio("unmute-chloe.mp3"),
     seconds: 211.0,
     kind: "Pop R&B",
@@ -86,7 +86,7 @@ export const demos: readonly Demo[] = [
   },
   {
     id: "suen",
-    title: "Suen — Demo V4",
+    title: "Suen · Demo V4",
     src: audio("suen-demo.mp3"),
     seconds: 254.9,
     kind: "Mandopop",
@@ -94,7 +94,7 @@ export const demos: readonly Demo[] = [
   },
   {
     id: "vanessa",
-    title: "由我定 — Verse to Chorus",
+    title: "由我定 · Verse to Chorus",
     src: audio("vanessa-you-wo-ding.mp3"),
     seconds: 203.2,
     kind: "Mandopop",
@@ -102,7 +102,7 @@ export const demos: readonly Demo[] = [
   },
   {
     id: "ballad",
-    title: "Malay / Indonesian Ballad — Chorus",
+    title: "Malay / Indonesian Ballad · Chorus",
     src: audio("malay-indon-ballad.mp3"),
     seconds: 71.9,
     kind: "Ballad",
@@ -135,22 +135,22 @@ export const films: readonly Film[] = [
   {
     id: "denza",
     youtube: "FtXeR3TTtbE",
-    title: "DENZA Z9 GT — launch at KLCC",
+    title: "DENZA Z9 GT · launch at KLCC",
     note: "Music written, produced and then performed live for the car's reveal.",
     poster: poster("denza.webp"),
   },
   {
     id: "seafood",
     youtube: "QGlYj8CrJ6E",
-    title: "ONE SEAFOOD — six Michelin-starred chefs",
+    title: "ONE SEAFOOD · six Michelin-starred chefs",
     note: "A score for a single evening's dinner, and the film cut around it.",
     poster: poster("seafood.webp"),
   },
   {
     id: "theo",
     youtube: "Dq52GzlIaAQ",
-    title: "天赐 — Heaven's Gift",
-    note: "A song written for one child, which is the smallest and clearest version of the whole idea.",
+    title: "天赐 · Heaven's Gift",
+    note: "A song written for one child, and played at his birthday.",
     poster: poster("theo.webp"),
   },
 ];
@@ -188,7 +188,7 @@ export interface Word {
  */
 export const words: readonly Word[] = [
   {
-    text: "You are the pride, not only to the university, but to the nation — a shining ambassador to the music industry.",
+    text: "You are the pride, not only to the university, but to the nation, a shining ambassador to the music industry.",
     who: "Dato' Dr Peter Ng",
     when: "Chairman, UCSI Group",
     what: "On his record",

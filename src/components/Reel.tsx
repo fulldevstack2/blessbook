@@ -51,8 +51,8 @@ export function Reel({ caption, index = twoDigit }: ReelProps) {
     // heroes are reading the same signal — and starting here hushes the hero.
     const ctx = audioContext();
     if (ctx) resumeAudio(ctx);
-    play(element);
-  }, []);
+    play(element, { title: track.title, where: track.kind });
+  }, [track]);
 
   const move = useCallback((position: number) => {
     pending.current = true;

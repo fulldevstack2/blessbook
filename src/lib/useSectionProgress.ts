@@ -22,11 +22,17 @@ interface Options {
   readonly ease?: number;
   /** Extra progress beyond the element, in viewport heights, before it reads 1. */
   readonly tail?: number;
+  /**
+   * Somewhere to put the same number for an animation loop to read. CSS gets
+   * `--s` either way; a WebGL scene needs it as a ref, and measuring the same
+   * element twice to get it in two forms would be silly.
+   */
+  readonly into?: RefObject<number>;
 }
 
 export function useSectionProgress<T extends HTMLElement>(
   ref: RefObject<T | null>,
-  { ease = 0.12, tail = 0 }: Options = {},
+  { ease = 0.12, tail = 0, into }: Options = {},
 ): void {
   useEffect(() => {
     const element = ref.current;
@@ -48,6 +54,7 @@ export function useSectionProgress<T extends HTMLElement>(
 
     const write = (value: number) => {
       element.style.setProperty("--s", value.toFixed(4));
+      if (into) into.current = value;
     };
 
     const step = () => {
@@ -99,5 +106,5 @@ export function useSectionProgress<T extends HTMLElement>(
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
     };
-  }, [ref, ease, tail]);
+  }, [ref, ease, tail, into]);
 }

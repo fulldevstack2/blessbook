@@ -43,14 +43,42 @@ const fragmentShader = /* glsl */ `
     return dot(c, vec3(0.2126, 0.7152, 0.0722));
   }
 
-  vec2 cover(vec2 uv) {
+  /* The focus argument is where along the photograph's width the crop is
+     centred.
+
+     It matters on a phone. This still is 2.37 to 1 and he stands at the far
+     left of it; cover-fitting that into a portrait viewport keeps about a fifth
+     of the width, and centred, that fifth is sky. The hero simply had no man in
+     it. Anchoring the crop on him puts him back. */
+  vec2 cover(vec2 uv, float focus) {
     float scale = uAspect / uPhotoAspect;
     if (scale > 1.0) {
       uv.y = (uv.y - 0.5) / scale + 0.5;
     } else {
-      uv.x = (uv.x - 0.5) * scale + 0.5;
+      uv.x = (uv.x - 0.5) * scale + focus;
     }
     return uv;
+  }
+
+  /* Fit him, rather than cropping to him.
+
+     Cover-fitting a 2.37 to 1 photograph into a portrait phone keeps a fifth of
+     its width. Anchoring that fifth on him does not help: a vertical sliver of a
+     man, blown up, is an abstract smudge and not a figure. So on a phone the
+     figure is *scaled* to the frame instead. The scale factors are worked out
+     from the two aspect ratios so nothing is stretched: he lands upright, whole,
+     and about half the height of the screen, with bare paper around him. */
+  vec2 fitFigure(vec2 uv) {
+    // Where he stands in the photograph, and where he should stand on screen.
+    const vec2 inPhoto = vec2(0.17, 0.56);
+    const vec2 onScreen = vec2(0.85, 0.33);
+    const float share = 0.30;
+
+    float ky = 0.9 / share;
+    // Negative, so he is mirrored and looks back into the page rather than out
+    // of it. He stands to the right of the type, so he has to face left.
+    float kx = -ky * uAspect / uPhotoAspect;
+    return inPhoto + (uv - onScreen) * vec2(kx, ky);
   }
 
   float noise(vec2 p) {
@@ -161,19 +189,42 @@ const fragmentShader = /* glsl */ `
        around by the same turbulence that moves the wash, so the figure bleeds
        into the water instead of being a picture laid behind it. He holds the
        left of the frame and runs out before the type, the way a brush does. */
-    vec2 photoUv = cover(vUv + (r - vec2(0.5)) * 0.045 * 0.8);
-    float dark = 1.0 - grey(texture2D(uPhoto, photoUv).rgb);
+    float narrow = step(uAspect, 0.95);
+    vec2 wobble = vUv + (r - vec2(0.5)) * 0.045 * 0.8;
+    vec2 photoUv = narrow > 0.5 ? fitFigure(wobble) : cover(wobble, 0.5);
+    /* Past the edge of the plate there is only paper, never a smeared last row.
+       Softened, so the wash runs out the way a brush does rather than ending on
+       a rectangle. */
+    vec2 plateEdge = min(photoUv, 1.0 - photoUv);
+    float inFrame = smoothstep(0.0, 0.20, plateEdge.x) * smoothstep(0.0, 0.20, plateEdge.y);
+    float dark = (1.0 - grey(texture2D(uPhoto, photoUv).rgb)) * inFrame;
     float bleed = (turbulence - 0.5) * mix(0.3, 0.12, open);
     /* Tonal, not binary. Thresholding turned him into black slabs; ink density
        has to follow the photograph's own values, with the mid-tones staying
        grey so the wash reads as a wash and the paper still breathes. */
     float figure = pow(clamp(dark * 0.98 + bleed * 0.55, 0.0, 1.0), 1.42) * uHasPhoto;
     // Runs out to bare paper on the right, and lifts off the floor.
-    figure *= smoothstep(0.72, 0.3, vUv.x) * smoothstep(0.0, 0.12, vUv.y);
+    /* He runs out before the type. On a wide screen the type is beside him, so
+       the wash ends around two thirds across; on a phone the type is below him,
+       so he fades into the paper on the way down instead. */
+    figure *= mix(smoothstep(0.72, 0.3, vUv.x), 1.0, narrow)
+      * smoothstep(0.0, 0.12, vUv.y)
+      * mix(1.0, smoothstep(0.03, 0.13, vUv.y), narrow);
     // Present from the first frame, and deepest once the wash has opened.
-    figure *= 0.62 + 0.38 * open;
+    figure *= (0.62 + 0.38 * open) * mix(1.0, 1.5, narrow);
 
-    float ink = max(bloom * (1.0 - gather * 0.78) * 0.92, figure);
+    /* On a phone he stands in the lower right, and the wash was settling on top
+       of him there. The bloom is pulled back over that corner so the figure has
+       clean paper to be read against; the wash keeps the rest of the sheet. */
+    float clearForHim = mix(
+      1.0,
+      1.0 - 0.7 * smoothstep(0.3, 0.72, vUv.x) * smoothstep(0.66, 0.22, vUv.y),
+      narrow
+    );
+    /* Diluted on a phone. At that width the wash filled most of the sheet and
+       stopped reading as ink in water, which is pale and open, and started
+       reading as grey smoke. */
+    float ink = max(bloom * (1.0 - gather * 0.78) * 0.92 * clearForHim * mix(1.0, 0.6, narrow), figure);
 
     // Thin ink goes green before it goes black, the way a wash separates.
     vec3 tone = mix(uJade, uInk, smoothstep(0.25, 0.85, ink));

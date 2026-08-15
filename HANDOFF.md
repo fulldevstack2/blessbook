@@ -357,12 +357,28 @@ Three YouTube films. Poster frames are served from this site and **nothing is
 requested from YouTube until someone presses play**, at which point it loads a
 `youtube-nocookie` embed. Same rule as the strings and the reel.
 
-### `components/Stave.tsx`
+### Notation: removed on purpose
 
-A real five-line stave in plain SVG carrying a real nine-note phrase
-(`commissionPhrase`), with a time signature and an optional tempo marking. Used
-where a section needed a horizontal rule anyway, so the notation **replaces**
-the rule rather than sitting on top of it as an ornament.
+There used to be three notation pieces — `components/Stave.tsx`, Phoenix's
+`Score.tsx` and `ScoreRail.tsx`, all fed by `content/score.ts`, which held a
+melodic contour genuinely derived from the recording. **All four files are
+deleted.** The user's reaction was the right one: *"Im sure those are not real
+notes you use as the audio player track. looks cheap and not thought off well."*
+Notation that no reader can check reads as a prop no matter how honest its
+derivation, so the site does not draw music any more.
+
+What replaced them:
+
+- `lib/peaks.ts` — machinery. Fetches a media file, decodes it in an
+  `OfflineAudioContext` (no gesture needed, no autoplay warning) and reduces it
+  to N amplitude buckets, cached per URL. What a player draws is now the sound
+  it is playing.
+- `concepts/phoenix/Groove.tsx` — the take cut as a lathe groove: one gold
+  hairline per bucket, the played part lit, draggable to scrub. Concept-owned.
+- `concepts/phoenix/parts.tsx` → `Marking` — a tempo marking set in words over a
+  struck rule, which is what an engraver actually writes.
+- `concepts/phoenix/parts.tsx` → `Plumb` — a hairline and a gilded bead down the
+  right margin, replacing the five-line stave that used to live there.
 
 ### Other musical texture
 
@@ -370,7 +386,84 @@ the rule rather than sitting on top of it as an ornament.
   `con sordino`, `una corda`, `sempre` (in `content/commission.ts`).
 - Phoenix section eyebrows are movements: "Movement I" … "Coda".
 - Dragon numbers its eight sections with Chinese numerals 一二三四五六七八.
-- Tempo marking "Adagio · quarter note = 58" on all three.
+- Nocturne numbers its sections as acts, with a printed programme's language.
+
+### Two components that no longer exist
+
+- **`components/LoaderScene.tsx`** — hosted a concept's own shader as its loader.
+  All three arrivals are CSS and type now (Phoenix a black room and his name,
+  Dragon 刘凯彦 brushed on paper, Nocturne the name under a drawn rule), so it had
+  no callers. Deleted rather than left to rot.
+- **`components/Tally.tsx`** — see below.
+
+### The bow stroke
+
+`dragon/parts.tsx` → `BrushStroke`. Worth knowing why it is a **filled outline**
+and not a stroked path: a stroke has one width, and one width with round caps is
+a marker pen. A brush touches down thin, takes the pressure through the middle
+and lifts to a dry point, so the mark is an outline whose two edges diverge and
+meet again, with bristle hairs over it, a blurred bleed under it, and two strands
+carrying on past the tip. It is uncovered by clipping left to right, because a
+dash offset has no stroke to work on.
+
+It also draws at all now. It carried `data-scroll`, and **Dragon does not run the
+parallax pass**, so its progress variable was never written and the mark sat at
+zero: a black dot in an empty field. Anything in Dragon that needs `--s` has to
+call `useSectionProgress` itself. The same bug had the 正 count invisible.
+
+### Numbers: no counting
+
+`components/Tally.tsx` is **deleted**. It counted figures up from zero on
+reveal, and the user's read of it was exact: *"it looks cheap and overused
+especially in those wordpress elementor sites."* A count-up says "look, a
+statistic"; it says nothing about the object the page is made of, and running
+the same one in all three concepts was a third thing they shared.
+
+Each concept now owns a `Figure` in its own `parts.tsx`:
+
+- **Phoenix — struck.** Arrives high, hits, squashes for a frame, flares gold at
+  the moment of contact, settles. A die on a plate. (`@keyframes phoenix-strike`.)
+- **Dragon — brushed.** Each glyph clipped in top to bottom in sequence, the same
+  gesture as the name on the arrival sheet and the 正 marks in the count.
+- **Nocturne — slotted.** A brass rule draws in above the figure and the number
+  rises into place from behind it, the way a box-office board is set.
+
+All three are driven by the existing `data-reveal` observer, so there is no new
+machinery and no timers.
+
+### Narrow screens: the three things that actually broke
+
+Worth reading before touching any hero, because all three were invisible on
+desktop and obvious on a phone.
+
+1. **A positioned scrim paints over unpositioned children.** Dragon's hero has
+   `.dragon-hero::before` for the paper wash. `position: absolute` puts it in the
+   positioned-descendants paint step, above every child still in normal flow.
+   `.dragon-cuts` had been given `position: relative` for exactly this reason
+   years of debugging ago; the player and the foot had not, so below 899px the
+   hero simply had no text in it. Everything in that hero is positioned now.
+2. **Cover-fit on a wide still is a keyhole.** The documentary frames are 2.37:1
+   and he stands at the far left. Cover-fitting into a portrait viewport keeps
+   about a fifth of the width, and centred, that fifth is sky. Both the hero
+   shader (`cover(uv, focus)`) and `FilmScrub` (the `focus` prop, 0.2 for Dragon)
+   now anchor the crop on him.
+3. **Type over a picture with no room.** Phoenix's plate moves to the top of the
+   frame on a phone and the type takes the floor, and the gold seam moves to the
+   far side rather than ruling a line through his name. Nocturne's proscenium
+   springs at 0.82 instead of 0.52, or the round head becomes a dome.
+
+### Copy rules the user set, which are absolute
+
+- **No em dashes anywhere on the page.** Not in content, not in JSX, not in
+  `index.html` meta. Use a comma, a full stop, a colon or `·`. Verified with a
+  sweep that strips comments and then greps for `—` and `–`.
+- **No "X, not Y" constructions.** "Engagements, not endorsements" and
+  "a commission, not a purchase" were both named and both rewritten.
+- **No section titles like "Why he keeps going."** That section is "The calling"
+  on all three concepts now.
+- The user's words: *"those are really ai sounding … you are a professional
+  copywriter please fix all ai sounding bits."* Treat rhythmic triads, mirrored
+  couplets and negative anaphora ("nothing is X, nothing is Y") as tells.
 
 ---
 
@@ -387,12 +480,26 @@ That last one matters: the mechanism is shared, the feel is not.
   ivory `oklch(93% 0.012 85)`.
 - **Type:** Italiana (display) + Commissioner (body).
 - **Layout:** stacked editorial, six movements and a coda.
-- **Scene:** line geometry morph in a **vertex shader**. A gilded plume scatters
-  into gold dust and draws back together into a single vibrating string.
+- **Hero scene** (`phoenixScene.ts`): a full-screen fragment shader. Procedural
+  molten gold from a double domain-warped fbm, one seam of gold opening down the
+  middle as you scroll, and the photograph set into it as an **inset plate** with
+  its own gold hairline. The plate is held at `zoom = 1.09` so the slow rise on
+  scroll always has picture to move into; sampling straight off the coordinate
+  walked past the edge and smeared the clamped last row down the bottom of the
+  plate, which the user caught.
+- **The gold bar** (`bandScene.ts`): the "who books him" section. One quad, and
+  the shader solves a cylinder for it — `theta = asin(y)` gives the surface, so
+  foreshortening at the rim is real geometry rather than a squash. The client
+  names are drawn to a `CanvasTexture` and read at that angle, with a two-sided
+  bevel so the cut takes the light on one edge and loses it on the other. Pinned
+  for 280vh; the roll runs one name at a time over the crown.
 - **Choreography:** the long default drift. Photographs wipe up and then parallax
   inside their frames.
 - **Happy accident worth keeping:** the real Phoenix violin is literally a carved
   gold feathered wing, so the drawn plume and the photograph rhyme.
+- Two sections here were rejected before the bar landed: a grid of logo masks
+  ("looks not so nice") and a wall of justified display type ("horrible"). Both
+  were the same mistake — a list, laid out. The bar is an object.
 - Body weight is `360` and line-height `1.74` — light type on a dark ground reads
   thinner than it measures.
 
@@ -406,8 +513,15 @@ That last one matters: the mechanism is shared, the feel is not.
 - **Layout:** hand-scroll marginalia. Chinese numerals and section labels sit out
   in the left margin; text runs in one measured column.
 - **Scene:** full-screen **fragment shader**. Domain-warped fbm ink blooms in
-  water, then gathers into **two violin f-holes**, edge-perturbed by the noise
-  field so it stays brushed rather than vector-sharp.
+  water with his silhouette sampled tonally into the ink field. It used to
+  resolve into two violin f-holes and then a seal box; **both were removed** at
+  the user's request ("what is that box it looks bad"). `float board = 0.0;` is
+  the leftover of the second one.
+- **The count** (`parts.tsx` → `Marks`): 168,000 people drawn as 168 正 marks,
+  brushed on in sequence as the section passes, every twenty-fifth in cinnabar.
+  It replaced a dark, soft photograph of the hall in which you could not see a
+  single person. Dragon does not run the parallax pass, so this section measures
+  its own passage with `useSectionProgress`.
 - **Choreography:** ink settles. Headings, the artist's name, photographs and
   film stills come out of a 7px blur. Kept to those four because a blur filter on
   every revealed element at once is more than the paint budget will carry.
@@ -437,15 +551,31 @@ exclusivity.
   the scroll walks you from the empty hall to the man to the last door.
 - **Palette:** velvet `oklch(19% 0.06 22)`, deep velvet `oklch(12% 0.045 20)`,
   ivory `oklch(94% 0.012 80)`, brass `oklch(76% 0.1 78)`.
-- **Type:** **Instrument Serif** and **Instrument Sans** — the display face keeps
-  its italic for the small connecting words, the way a concert programme sets
-  them: *the* Dennis Lau, *one* SONG *written for* ONE PERSON. That device is the
-  whole tone of the concept and is worth protecting.
-- **Scene:** oxblood velvet with real folds under a brass lamp that follows the
-  pointer, dust in the beam, and — as you scroll — the curtain *parts*, both
-  halves travelling outward with their own folds and a brass thread down each
-  leading edge, to reveal him lit behind it. One shader: cloth, photograph, light
-  and dust, so nothing is layered on anything.
+- **Type:** **Fraunces** and **Instrument Sans**. Instrument Serif was the first
+  choice and the user rejected it — "its like squished horizontally" — so it was
+  replaced with Fraunces at `font-variation-settings: "SOFT" 18, "WONK" 0`, which
+  is wide and warm and does not go spindly at display size. The display face
+  keeps its italic for the small connecting words, the way a concert programme
+  sets them: *the* Dennis Lau, *one* SONG *written for* ONE PERSON. That device
+  is the whole tone of the concept and is worth protecting.
+- **Scene:** oxblood velvet under a brass lamp that follows the pointer, dust in
+  the beam, and, as you scroll, the curtain parts to reveal him lit behind it.
+  One shader: cloth, photograph, light and dust, so nothing is layered on
+  anything.
+  **The cloth is lit, not tinted.** Interpolating a colour along a sine gave
+  smooth red bands, which the user called "so fake and drawn like kids one". It
+  now builds a height field for the pleats, takes a normal from its slope, and
+  lights that: creases go almost black by occlusion, flanks catch the lamp
+  (velvet's sheen sits on the flank, not the crest), and the pile is a separate
+  high-frequency term over the top. A scalloped valance with a bullion fringe
+  hangs across the top and does not travel, which is what says proscenium rather
+  than "two flat halves".
+- **Arrival:** `parts.tsx` → `Loader`. Pure type on black: the name, a rule drawn
+  under it, the concept mark. Two scenes were tried here and both were wrong. A
+  curtain repeated the hero and, worse, could desync — the user scrolled during
+  it and met a half-open curtain. A ghost light on an empty stage was a second
+  piece of scenery arguing with the first ("looks cheap"). `nocturneGhostScene.ts`
+  is deleted. **Do not put a scene back here.**
 - **Structure:** acts, alternating velvet and ivory grounds so the scroll has a
   pulse. Every photograph is seen through the same proscenium arch. A line of
   type travels sideways as you pass it; the wordmark is set enormous on the way
@@ -485,6 +615,64 @@ keeping the sharpest, because concert video is soft and motion-blurred more ofte
 than not. The script is `process_media.py` in the session scratchpad; the method
 matters more than the file.
 
+### Restoration, and the ceiling
+
+The user's standing note is *"that low quality stuff really ruins the high-end
+look"*, and later, of the scroll sequences, *"it looks like old tv footage"*.
+Two facts to save the next agent a day:
+
+1. **1080p is the ceiling.** Every format `yt-dlp -F` offers for the concert film
+   (`wue4V1mUk5A`) tops out at 1920×1080 / 3.7 Mbps. Same for the documentary
+   (`e94jf8q8oas`, 1920×810) and the showreel (`cvbGj5yF_OM`). There is no 4K to
+   find, so quality has to come from reconstruction.
+2. **Reconstruct, do not sharpen.** The first pass sharpened with ffmpeg
+   `unsharp`, which amplifies H.264 block noise and is most of what reads as
+   "old TV". The current pipeline is Real-ESRGAN's `realesr-general-x4v3`, which
+   is trained on exactly this degradation.
+
+The toolchain lives on `/mnt/d/blesspoke-sr` (the system disk has under 6 GB
+free):
+
+- `venv/` — CPU-only PyTorch. **The GPU is unusable here:** WSL exposes no
+  NVIDIA Vulkan ICD, so `realesrgan-ncnn-vulkan` falls through to lavapipe and
+  dies with `LLVM ERROR: Broken function`. CUDA wheels do not fit on the system
+  disk. CPU it is, at ~27 s per 2-megapixel frame on 10 cores.
+- `sr.py` — SRVGGNetCompact written out by hand (40 lines) rather than pulling
+  `basicsr`, which drags in a broken `functional_tensor` import. Tiled at 256 px
+  with 16 px overlap.
+- `locate.py` / `locate_many.py` — **the useful trick.** The timecodes that
+  produced the original frames were lost, so these search for them: rescale a
+  published frame back to master height, slide it across each candidate video
+  frame with `matchTemplate`, keep the best correlation. It recovers the
+  timestamp *and* the horizontal crop. Matches score 0.97–0.9999.
+- `install.py` — publishes each sequence at two sizes and deletes the old JPEGs.
+
+Recovered coordinates, so nobody has to search again:
+
+| Sequence / still | Source | In | Detail |
+|---|---|---|---|
+| phoenix scrub | `wue4V1mUk5A` | 100.95 s | `crop=1518:1080:85:0`, `fps=22`, 77 frames |
+| dragon scrub | `e94jf8q8oas` | 383.50 s | full frame, `fps=23.4`, 80 frames |
+| nocturne scrub | `cvbGj5yF_OM` | 8.60 s | full frame, `fps=16.1`, 87 frames |
+| `live-gold-violin` | `wue4V1mUk5A` | 87.96 s | |
+| `stage-phoenix` | `wue4V1mUk5A` | 51.96 s | |
+| `crowd` | `wue4V1mUk5A` | 75.96 s | |
+| `live-blue` | `wue4V1mUk5A` | 215.96 s | |
+| `silhouette-sky` | `e94jf8q8oas` | 384.0 s | |
+| `portrait-mono` | `e94jf8q8oas` | 480.0 s | |
+| `portrait-mono-2` | `e94jf8q8oas` | 396.0 s | |
+
+**What it cost, in the end.** All 244 frames at 2560 wide come to **19 MB**,
+against 25 MB for the old 1600px JPEGs. WebP on dark concert footage is that
+efficient, so the sequences are higher resolution *and* lighter. The seven
+stills rebuilt the same way land at 3.8 MB for the whole `public/dennis` folder.
+
+**Two sizes per sequence, and why.** `public/scrub/<concept>/hi` is 2560 wide and
+`/sm` is 1280. A canvas only needs its backing store: a 1440 viewport at 2x wants
+about 2880 across, a phone wants about 800. One 2560 set for everything would
+hand a phone eighty decoded frames it has no memory for, so `FilmScrub` picks by
+`innerWidth × dpr`.
+
 `public/clients/` — **fourteen brand logos reduced to alpha-only silhouettes**
 (`patek-philippe`, `porsche`, `mercedes`, `audi`, `honda`, `dunhill`, `chivas`,
 `grand-hyatt`, `huawei`, `intel`, `nestle`, `maybank`, `maxis`, `sime-darby`),
@@ -496,11 +684,13 @@ transparent PNGs, dark-on-white JPEGs and white-on-coloured-field marks at once.
 BMW and Samsung are **deliberately absent** — light marks inside a coloured field,
 and they reduce to blobs.
 
-`public/film/` — `showreel.mp4` (his own 2021 showreel, 10 MB, 1280×720, 67 s,
-self-hosted and click-to-play), `showreel-loop.mp4` (532 KB, silent 14 s cut for
-a hero background if one is ever wanted) and `showreel-poster.webp`. Self-hosted
-rather than embedded: the films section can afford YouTube's player and cookie
-banner, the showreel cannot.
+`public/film/` — `showreel.mp4` (his own showreel, 17 MB, **1920×1080**, 67 s,
+self-hosted and click-to-play), `showreel-loop.mp4` (1.4 MB, silent 14 s cut from
+6.0 s) and `showreel-poster.webp` (from 8.0 s). Self-hosted rather than embedded:
+the films section can afford YouTube's player and cookie banner, the showreel
+cannot. It was 1280×720 until the same reel was found on his channel at 1080p
+(`cvbGj5yF_OM`); the audio track is carried over from the old file because
+YouTube 403s the audio-only formats for it.
 
 `public/audio/the-journey-live.mp3` — **40 seconds of him playing live**, the
 sound every hero is drawn by. Cut from the full 5:33 of *The Journey* at The
@@ -606,11 +796,31 @@ concepts complete end to end; the chooser page.
 **Landed in the award-research pass (15 Aug 2026):**
 
 - **`FilmScrub`** — his own footage scrubbed by the scroll, one sequence per
-  concept, drawn to a canvas from a numbered JPEG sequence in `public/scrub`.
+  concept, drawn to a canvas from a numbered WebP sequence in `public/scrub`.
   Finding uncut runs in dark concert footage defeated both frame-differencing and
   ffmpeg's own scene detection; the shots were verified by eye, and one of them
-  turned out to be a *dissolve*, which is why the Phoenix sequence starts at
-  98.75s and not at the "clean" 96.0s both detectors reported.
+  turned out to be a *dissolve*, which is why the Phoenix sequence starts around
+  100s and not at the "clean" 96.0s both detectors reported.
+
+  **Two things in here are load-bearing; do not simplify them away.**
+
+  1. *The tier.* It reads `<sequence>/hi` (2560) or `/sm` (1280), chosen once on
+     mount from `innerWidth × dpr`. Fixed for the life of the section, because
+     swapping mid-scroll would throw away every decoded frame for a difference
+     nobody can see.
+  2. *The decode window.* Every frame is fetched once and held as an **encoded
+     blob** (about 70 KB each; the whole Phoenix sequence is 5 MB). Only the
+     thirty frames nearest the playhead are decoded, and the furthest is
+     `close()`d when the window is full. Eighty-seven frames at 2560 is 1.6 GB of
+     bitmap if they are all kept alive. Measured in Chrome by summing renderer
+     RSS while scrubbing the section twice end to end: 1538 MB on the old
+     all-resident 1600px set, 1845 MB on the windowed 2560 set — same order, two
+     and a half times the pixels. If you ever go back to holding every frame,
+     measure it again first.
+
+  `drawnExact` exists because a substitute neighbour is drawn while the real
+  frame decodes; without it the substitute would never be replaced, since
+  `drawn` records the index that was *asked for* either way.
 - **`useSmoothScroll`** — weighted scrolling site-wide, done as real
   `window.scrollTo` on an animation frame rather than by transforming a wrapper,
   because a transformed wrapper breaks `position: sticky` and every pinned scene
@@ -661,19 +871,24 @@ concepts complete end to end; the chooser page.
 
 ### 9b. Remaining "wow" ideas, in the order I would do them
 
-The heroes and the reel are now the two spectacle moments, and every section
-below the fold moves. What is still on the table from the original list:
+Each concept now has an arrival, a WebGL hero and at least one pinned scroll
+moment below the fold. Phoenix has a second WebGL moment (the gold bar). What is
+still on the table:
 
 - **A real page transition** between chooser and concept, and between concepts.
   This is the most conspicuous remaining gap — the routes currently hard-cut.
-- **Cursor-aware detail on desktop**: the Phoenix gold seam catching a highlight,
-  Chosen's grid illuminating locally. Nothing exists for this yet.
-- **A third WebGL moment mid-page** — Phoenix gold dust reforming behind the
-  deed, Dragon ink bleeding into the margin, Chosen an exploded axonometric
-  beside the spec rows. Note the reel already supplies a second moment, so weigh
-  whether a third earns its place or just adds noise.
-- **Audio-reactive elements beyond the reel** — the plucked strings could drive
-  a waveform of their own.
+- **A second WebGL moment for Dragon and Nocturne.** The user asked for more
+  three.js across all three. Phoenix got the bar. For Dragon the obvious one is
+  the brush stroke: it is currently an SVG path drawn on scroll, and a real
+  bristle-and-bleed shader would read as craft rather than vector. For Nocturne,
+  relighting the instrument plate with a raking specular is the candidate,
+  **but weigh it carefully** — that act already carries the scrubbed film, and
+  the user has twice rejected added scenery in this concept for looking cheap.
+- **Cursor-aware detail on desktop** beyond the Nocturne lamp.
+- **A fourth concept.** The user's standing offer: *"feel free to create more
+  designs please. the more the better but only when you have something real and
+  new to bring to table in the form of a full new design."* The bar is high and
+  the condition is explicit; do not add one for the sake of a fourth tile.
 
 Keep the "atas" register. World-class does not mean busy — it means every
 transition is considered, nothing is default, and the restraint reads as
@@ -685,8 +900,8 @@ confidence. Do not turn it into a parallax demo.
   concept now scrims behind it in its own ground colour.
 - The Dragon `一` numeral renders as a lone horizontal stroke, which is correct
   Chinese but can look like a stray mark in the margin.
-- The Stave phrase is decorative-but-real; it could encode an actual motif from
-  one of Dennis's songs.
+- ~~The Stave phrase is decorative-but-real.~~ **Gone.** See "Notation: removed
+  on purpose" in §5.
 - Test on a real phone. Only headless Chromium at 390/1440 px has been checked.
   CJK now renders locally (Noto Sans SC is installed in
   `~/.local/share/fonts`), so the Chinese has been seen — but a real device is
@@ -695,6 +910,10 @@ confidence. Do not turn it into a parallax demo.
   already manually chunked, but consider lazy-loading scenes per route.
 - The chooser now opens with him and carries his record, but it still has no
   photography beyond the press portrait and says nothing about the showreel.
+- **Nothing has been pushed since `18f4daf`.** The working tree carries the
+  restoration, the copy pass, the gold bar, the three loaders and the sticky
+  player. The live site is still the old build; the user has not asked for a
+  push.
 - The Dragon `一` numeral note below still applies, and Dragon is the only concept
   whose hero photograph is a *treatment* (multiplied ink) rather than a
   photograph — if the user wants him recognisable there, it needs a second image.

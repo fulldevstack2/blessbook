@@ -3,19 +3,18 @@ import { ConceptChrome, ConceptSwitch } from "../../components/ConceptChrome";
 import { Grain } from "../../components/Grain";
 import { FilmScrub } from "../../components/FilmScrub";
 import { Listen } from "../../components/Listen";
+import { NowPlaying } from "../../components/NowPlaying";
 import { Reel } from "../../components/Reel";
 import { Showreel } from "../../components/Showreel";
 import { StringRow } from "../../components/StringRow";
-import { Tally } from "../../components/Tally";
 import { Volume } from "../../components/Volume";
 import { Words } from "../../components/Words";
-import { BrushStroke, ClientScroll, FilmScrolls, Loader, Stamps, Unroll, Wash } from "./parts";
+import { BrushStroke, ClientScroll, Enquiry, Figure, FilmScrolls, Loader, Marks, Process, Stamps, Unroll } from "./parts";
 import {
   commission,
   promise,
   rights,
   service,
-  steps,
   tiers,
 } from "../../content/commission";
 import {
@@ -65,19 +64,13 @@ const cuts = [
     brush: "一把琴",
     latin: "The instrument",
     line: "A six-string violin, carved as a wing, plated in gold",
-    sub: "Drawn by him, built for him in Donegal, and waited a year for.",
+    sub: "Dennis drew it, Alistair Hay built it in Donegal, and it took a year.",
   },
   {
     brush: "一万场演出",
     latin: "The record",
     line: "Ten thousand nights, five continents",
-    sub: "Three albums, and two sold-out concerts of three thousand seats each.",
-  },
-  {
-    brush: "为你写一首歌",
-    latin: "And then this",
-    line: "One song, written for one person",
-    sub: "The quietest thing he does. No audience but you.",
+    sub: "Three albums, and two sold-out concerts of three thousand seats.",
   },
 ];
 
@@ -103,6 +96,7 @@ export function DragonPage() {
         Skip to content
       </a>
       <Loader />
+      <NowPlaying />
       <ConceptChrome concept={concept} />
       <Grain />
 
@@ -204,7 +198,7 @@ export function DragonPage() {
                     <dd>{teachers.violin}</dd>
                   </div>
                 </dl>
-                <StringRow caption="The four strings everything is written on — pluck one" />
+                <StringRow caption="Pluck one of the four strings he writes on" />
               </div>
 
               <figure className="dragon-photo" data-reveal="wipe">
@@ -234,7 +228,7 @@ export function DragonPage() {
               ))}
             </ul>
 
-            <Words as="h3" className="dragon-sub-head" text={"And where he played before any of this"} />
+            <Words as="h3" className="dragon-sub-head" text={"Where he played before"} />
             <ul className="dragon-list">
               {halls.map((hall, index) => (
                 <li key={hall} data-reveal>
@@ -254,7 +248,7 @@ export function DragonPage() {
                 <div className="dragon-term" key={item.label} data-reveal>
                   <dt>{item.label}</dt>
                   <dd>
-                    <Tally value={item.value} />
+                    <Figure value={item.value} />
                   </dd>
                 </div>
               ))}
@@ -340,26 +334,27 @@ export function DragonPage() {
 
         <FilmScrub
           sequence="dragon"
+          focus={0.2}
           frames={80}
           vh={340}
           className="dragon-scrub"
           label="Dennis Lau in silhouette against a bright, clouded sky, drawing the bow across the violin."
           beats={[
             { mark: "一弓", line: "One bow stroke, and the whole phrase follows." },
-            { mark: "Scroll", line: "You are drawing it." },
+            { mark: "凤凰纪事", line: "From Eugene Low's film, shot away from any stage." },
           ]}
         />
 
         <section className="dragon-section dragon-section--reel">
           <Margin index={4} label="Hear him" />
           <div>
-            <Words as="h2" className="dragon-h2" text={"A minute in a room with him"} />
-            <Showreel caption="His own reel, in his own cut." />
+            <Words as="h2" className="dragon-h2" text={"Sixty seconds of him playing"} />
+            <Showreel caption="His own reel, cut by him." />
 
-            <Words as="h3" className="dragon-sub-head" text={"And what he played, drawn once"} />
-            <BrushStroke caption="One bow stroke — the phrase he opens The Journey with." />
+            <Words as="h3" className="dragon-sub-head" text={"The opening stroke"} />
+            <BrushStroke caption="The bow stroke he opens The Journey with" />
 
-            <Words as="h2" className="dragon-h2" text={"And this is what he writes when someone asks"} style={{ marginTop: "var(--space-5xl)" }} />
+            <Words as="h2" className="dragon-h2" text={"Written to order"} style={{ marginTop: "var(--space-5xl)" }} />
             <p className="dragon-lede" data-reveal>
               A game trailer, a car launch, a boy's third birthday, a Mandopop
               single. The same hand behind every one of them.
@@ -371,7 +366,7 @@ export function DragonPage() {
         <section className="dragon-section">
           <Margin index={5} label="In the room" />
           <div>
-            <FilmScrolls caption="Three nights the music was written for" />
+            <FilmScrolls caption="Three films he scored" />
           </div>
         </section>
 
@@ -393,10 +388,10 @@ export function DragonPage() {
           </div>
         </section>
 
-        <Wash photo={photos.crowd} line="A hundred and sixty-eight thousand people, so far." />
+        <Marks />
 
         <section className="dragon-section dragon-section--invert">
-          <Margin index={7} label="Why he keeps going" />
+          <Margin index={7} label="The calling" />
           <div>
             <Words as="h2" className="dragon-h2" text={calling.lede} />
             <p className="dragon-lede" data-reveal>
@@ -422,21 +417,7 @@ export function DragonPage() {
             <p className="dragon-lede" data-reveal>
               {service.lede}
             </p>
-
-            <ol className="dragon-steps" style={{ marginTop: "var(--space-2xl)" }}>
-              {steps.map((step, index) => (
-                <li className="dragon-step" key={step.index} data-reveal>
-                  <div className="dragon-step-head">
-                    <span className="dragon-step-index" aria-hidden>
-                      {numerals[index]}
-                    </span>
-                    <h3 className="dragon-step-title">{step.title}</h3>
-                    <span className="dragon-step-marking">{step.marking}</span>
-                  </div>
-                  <p className="dragon-step-body">{step.body}</p>
-                </li>
-              ))}
-            </ol>
+            <Process />
 
             <Words as="h3" className="dragon-sub-head" text={promise.ownership} />
             <p className="dragon-lede" data-reveal>
@@ -455,7 +436,7 @@ export function DragonPage() {
               {tiers.map((tier) => (
                 <li className="dragon-tier" key={tier.id} data-reveal>
                   <p className="dragon-tier-price">
-                    <Tally value={tier.price} />
+                    <Figure value={tier.price} />
                   </p>
                   <h3 className="dragon-tier-name">{tier.name}</h3>
                   <p className="dragon-tier-length">{tier.length}</p>
@@ -483,10 +464,7 @@ export function DragonPage() {
                 <dd>{commission.slots}</dd>
               </div>
             </dl>
-
-            <a className="dragon-cta" href="#main">
-              Write the prompt
-            </a>
+            <Enquiry />
             <p className="dragon-note">{commission.note}</p>
 
             <ul className="dragon-socials">

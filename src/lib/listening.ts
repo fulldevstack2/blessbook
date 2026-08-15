@@ -24,6 +24,37 @@ interface Tap {
 const taps = new WeakMap<HTMLMediaElement, Tap>();
 /** Iterable, unlike the WeakMap: needed to hush everything else on play. */
 const attached = new Set<HTMLMediaElement>();
+
+/** What each element is, so a player can say what it is playing. */
+export interface Sounding {
+  readonly element: HTMLMediaElement;
+  readonly title: string;
+  readonly where?: string | undefined;
+}
+
+const labels = new WeakMap<HTMLMediaElement, { title: string; where?: string }>();
+const watchers = new Set<() => void>();
+
+function announce() {
+  for (const watcher of watchers) watcher();
+}
+
+/** Whatever is sounding right now, with enough about it to name it. */
+export function sounding_(): Sounding | null {
+  for (const element of attached) {
+    if (!element.paused && !element.ended) {
+      const label = labels.get(element);
+      return { element, title: label?.title ?? "Now playing", where: label?.where };
+    }
+  }
+  return null;
+}
+
+/** Told whenever anything starts or stops. */
+export function watch(callback: () => void): () => void {
+  watchers.add(callback);
+  return () => watchers.delete(callback);
+}
 /** The last element to start playing — what "now" means for the visuals. */
 let front: Tap | null = null;
 
@@ -72,16 +103,22 @@ export function setVolume(next: number): void {
  * showreel is the sort of detail that makes a site feel unfinished, and there is
  * only one player on this site anyway.
  */
-export function play(element: HTMLMediaElement): void {
+export function play(
+  element: HTMLMediaElement,
+  label?: { title: string; where?: string },
+): void {
   for (const other of attached) {
     if (other !== element && !other.paused) other.pause();
   }
+  if (label) labels.set(element, label);
   listen(element);
   void element.play().catch(() => undefined);
+  announce();
 }
 
 export function pauseAll(): void {
   for (const element of attached) if (!element.paused) element.pause();
+  announce();
 }
 
 /** Cached so twenty consumers in one frame cost one analyser read. */
@@ -95,7 +132,13 @@ let smoothed = 0;
  * second call only marks the element as the one in front.
  */
 export function listen(element: HTMLMediaElement): void {
-  attached.add(element);
+  if (!attached.has(element)) {
+    attached.add(element);
+    // One set of listeners per element, so anything watching hears every change.
+    element.addEventListener("play", announce);
+    element.addEventListener("pause", announce);
+    element.addEventListener("ended", announce);
+  }
   element.volume = level_;
 
   const existing = taps.get(element);

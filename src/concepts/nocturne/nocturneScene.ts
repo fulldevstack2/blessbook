@@ -107,32 +107,92 @@ const fragmentShader = /* glsl */ `
     float into = abs(dx) - travel;
     float cloth = smoothstep(-0.004, 0.012, into);
 
-    // Folds travel with the cloth rather than staying pinned to the screen.
-    float foldX = (abs(dx) - travel) * 30.0 + noise(vec2(uv.y * 3.0, sign(dx) * 7.0)) * 1.8;
-    // Deeper troughs than a plain sine: velvet reads by its shadow, not its sheen.
-    float fold = pow(0.5 + 0.5 * sin(foldX), 1.5);
-    fold += 0.16 * pow(0.5 + 0.5 * sin(foldX * 2.7 + 1.1), 2.0);
-    // Velvet is never quite still, but it does not shake to the beat: this is a
-    // slow drift on its own clock, not an amplitude response.
-    fold += sin(uv.y * 5.0 + uTime * 0.35) * 0.02;
-    float weave = noise(uv * vec2(420.0, 160.0)) * 0.06;
+    /* The drape is lit, not tinted.
 
-    vec3 velvet = mix(uVelvet * 0.72, uVelvetLit, pow(clamp(fold, 0.0, 1.0), 1.35));
-    velvet *= 0.42 + 0.9 * (glow + wash);
-    velvet += velvet * weave;
-    // Nap: velvet goes darker toward the floor, which is what makes it velvet.
-    velvet *= 0.72 + 0.34 * smoothstep(0.0, 0.75, uv.y);
+       Interpolating a colour along a sine gave smooth red bands — an airbrush,
+       not cloth. What follows is a height field for the pleats, a normal taken
+       from its slope, and a light: creases go almost black by occlusion, the
+       flanks catch the lamp, and velvet's pile is a separate high-frequency
+       term over the top. That is the whole difference between fabric and a
+       gradient. */
+    float side = sign(dx);
+    // Pleats are hung from a track: tighter at the top, opening toward the hem.
+    float pitch = 26.0 * mix(0.82, 1.16, uv.y);
+    // No two are the same width, and they wander as they fall.
+    float wander = (noise(vec2(uv.y * 2.2, side * 3.0)) - 0.5) * 0.12
+      + (noise(vec2(uv.y * 5.6, side * 9.0)) - 0.5) * 0.04;
+    // A slow breath on its own clock — not a response to the music.
+    float phase = (into + wander) * pitch + sin(uv.y * 4.0 + uTime * 0.28) * 0.05;
+
+    float height = cos(phase);              // +1 on a crest, -1 in a crease
+    float slope = -sin(phase);              // which way the surface is facing
+
+    vec3 normal = normalize(vec3(slope * 0.9, 0.16, 1.0));
+    vec3 toLight = normalize(vec3((lamp.x - uv.x) * uAspect, lamp.y - uv.y, 0.6));
+    float lambert = clamp(dot(normal, toLight), 0.0, 1.0);
+    // Velvet scatters back along the pile rather than reflecting a hot spot, so
+    // the sheen sits on the flanks of a fold, not on its crest.
+    float sheen = pow(clamp(abs(slope), 0.0, 1.0), 2.6);
+    float occlusion = 0.34 + 0.66 * smoothstep(-1.0, 0.6, height);
+
+    // The pile itself: fine vertical streaks, plus a coarser mottle.
+    float pile = noise(vec2(uv.x * 760.0 + into * 120.0, uv.y * 22.0)) * 0.16
+      + noise(uv * vec2(58.0, 17.0)) * 0.09;
+
+    vec3 velvet = mix(uVelvet * 0.22, uVelvet, occlusion);
+    velvet = mix(velvet, uVelvetLit, lambert * 0.5 * occlusion);
+    velvet += uVelvetLit * sheen * 0.2 * occlusion;
+    velvet *= 0.9 + pile;
+    velvet *= 0.4 + 0.92 * (glow + wash);
+    // Shadow under the track, and the hem falling away into the floor.
+    velvet *= 1.0 - 0.34 * smoothstep(0.8, 1.0, uv.y);
+    velvet *= 0.66 + 0.34 * smoothstep(0.0, 0.46, uv.y);
 
     // A brass thread catching the light down the leading edge.
-    float edge = exp(-pow(into / 0.014, 2.0)) * step(0.001, travel);
-    velvet += uBrass * edge * 0.6;
+    float edge = exp(-pow(into / 0.012, 2.0)) * step(0.001, travel);
+    velvet += uBrass * edge * 0.45;
 
     vec3 colour = mix(stage, velvet, cloth);
+
+    /* The valance across the top, which does not travel. A stage curtain that
+       is only two flat halves reads as a graphic; the pelmet and its fringe are
+       what say proscenium. */
+    float scallop = 0.888 - 0.009 * cos(uv.x * uAspect * 26.0);
+    float valance = smoothstep(scallop - 0.004, scallop + 0.004, uv.y);
+    if (valance > 0.001) {
+      float vPhase = uv.x * uAspect * 46.0 + noise(vec2(uv.x * 8.0, 2.0)) * 1.4;
+      float vHeight = cos(vPhase);
+      float vSlope = -sin(vPhase);
+      vec3 vNormal = normalize(vec3(vSlope * 0.8, 0.2, 1.0));
+      float vLight = clamp(dot(vNormal, toLight), 0.0, 1.0);
+      float vOcc = 0.3 + 0.7 * smoothstep(-1.0, 0.6, vHeight);
+
+      vec3 pelmet = mix(uVelvet * 0.18, uVelvet * 0.86, vOcc);
+      pelmet = mix(pelmet, uVelvetLit * 0.85, vLight * 0.42 * vOcc);
+      pelmet *= 0.9 + noise(vec2(uv.x * 700.0, uv.y * 30.0)) * 0.14;
+      pelmet *= 0.42 + 0.85 * (glow + wash);
+      colour = mix(colour, pelmet, valance);
+    } else {
+      float under = exp(-pow((scallop - uv.y) / 0.05, 2.0));
+      colour *= 1.0 - under * 0.4;
+    }
+
+    if (valance > 0.001) {
+
+      // Bullion fringe along its edge, and the shadow it throws on the cloth
+      // below — which is the thing that makes it read as a separate layer
+      // rather than a line drawn across the picture.
+      float fringe = exp(-pow((uv.y - scallop) / 0.0035, 2.0));
+      colour += uBrass * fringe * 0.14 * (0.5 + 0.9 * (glow + wash));
+    }
 
     /* ---- the proscenium: everything is seen through an arch ---- */
     vec2 a = vec2((uv.x - 0.5) * uAspect, uv.y);
     float halfWidth = 0.5 * uAspect * 0.94;
-    float springLine = 0.52;
+    /* The arch springs high on a phone. Kept at the wide value, a frame taller
+       than it is wide turns the proscenium's round head into a dome and the
+       whole hero reads as a keyhole. */
+    float springLine = mix(0.52, 0.82, step(uAspect, 0.95));
     float inside;
     if (uv.y <= springLine) {
       inside = 1.0 - smoothstep(halfWidth - 0.012, halfWidth, abs(a.x));
@@ -174,7 +234,7 @@ export function createNocturneScene({ canvas, reducedMotion }: SceneContext): Sc
       uTime: { value: 0 },
       uLevel: { value: 0 },
       uLamp: { value: new THREE.Vector2(0.5, 0.72) },
-      uVelvet: { value: new THREE.Color("#3a1119") },
+          uVelvet: { value: new THREE.Color("#3a1119") },
       uVelvetLit: { value: new THREE.Color("#7c2531") },
       uBrass: { value: new THREE.Color("#d3a459") },
       uIvory: { value: new THREE.Color("#f3ecdd") },
@@ -208,6 +268,8 @@ export function createNocturneScene({ canvas, reducedMotion }: SceneContext): Sc
 
   return {
     render(progress, elapsed, level) {
+      // In house mode the curtain stays shut and the scroll input dims the room
+      // instead: the loader is the lights going down, not a second curtain.
       material.uniforms.uProgress.value = progress;
       material.uniforms.uTime.value = reducedMotion ? (level > 0.01 ? elapsed : 0) : elapsed;
       material.uniforms.uLevel.value = level;
@@ -230,3 +292,6 @@ export function createNocturneScene({ canvas, reducedMotion }: SceneContext): Sc
     },
   };
 }
+
+/** The hero: a velvet house whose curtain parts as you scroll. */
+

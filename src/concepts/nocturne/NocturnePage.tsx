@@ -4,13 +4,13 @@ import { Cursor } from "../../components/Cursor";
 import { FilmScrub } from "../../components/FilmScrub";
 import { Grain } from "../../components/Grain";
 import { Listen } from "../../components/Listen";
+import { NowPlaying } from "../../components/NowPlaying";
 import { Reel } from "../../components/Reel";
 import { Showreel } from "../../components/Showreel";
-import { Tally } from "../../components/Tally";
 import { Volume } from "../../components/Volume";
 import { Words } from "../../components/Words";
-import { BoxOffice, Cast, Interval, Loader, Programme } from "./parts";
-import { commission, promise, rights, service, steps, tiers } from "../../content/commission";
+import { BoxOffice, Cast, Enquiry, Figure, Interval, Loader, Process, Programme } from "./parts";
+import { commission, promise, rights, service, tiers } from "../../content/commission";
 import {
   artist,
   awards,
@@ -25,7 +25,6 @@ import {
   violins,
 } from "../../content/dennis";
 import { photos } from "../../content/media";
-import { score } from "../../content/score";
 import { socials, words } from "../../content/work";
 import { SceneCanvas } from "../../lib/SceneCanvas";
 import { ScrollStage } from "../../lib/ScrollStage";
@@ -86,9 +85,7 @@ function Readout() {
       <span className="nocturne-readout-sep" aria-hidden>
         /
       </span>
-      <span>
-        {score.key} · ♩ {score.bpm}
-      </span>
+      <span>Six strings · 24K</span>
       <span className="nocturne-readout-sep" aria-hidden>
         /
       </span>
@@ -138,6 +135,7 @@ export function NocturnePage() {
         Skip to content
       </a>
       <Loader />
+      <NowPlaying />
       <ConceptChrome concept={concept} />
       <Grain />
       <Cursor />
@@ -197,7 +195,7 @@ export function NocturnePage() {
             <em>a</em> HOUSE BUILT <em>on</em> ONE PLAYER
           </p>
           <h2 className="nocturne-statement" data-reveal>
-            <em>one</em> SONG, <em>written for</em> ONE PERSON, <em>and</em> NEVER PLAYED AGAIN.
+            <em>born, raised and</em> TUNED <em>to acquire</em> EXCELLENCE.
           </h2>
           <p className="nocturne-lede nocturne-lede--centre" data-reveal>
             {artist.paragraph}
@@ -207,14 +205,14 @@ export function NocturnePage() {
         {/* A line that travels as you pass it, the way a marquee outside a hall does. */}
         <div className="nocturne-travel" data-scroll aria-hidden>
           <p className="nocturne-travel-line">
-            {artist.showman} — {artist.roles} — {artist.city} —
+            {artist.showman} · {artist.roles} · {artist.city} ·
           </p>
         </div>
 
         {/* ---------------- the man ---------------- */}
         <section className="nocturne-act">
           <p className="nocturne-eyebrow" data-reveal>
-            ACT I <em>—</em> THE MAN
+            ACT I <em>·</em> THE MAN
           </p>
 
           <div className="nocturne-spread">
@@ -269,7 +267,7 @@ export function NocturnePage() {
         {/* ---------------- the record ---------------- */}
         <section className="nocturne-act nocturne-act--ivory">
           <p className="nocturne-eyebrow" data-reveal>
-            ACT II <em>—</em> THE RECORD
+            ACT II <em>·</em> THE RECORD
           </p>
 
           <BoxOffice />
@@ -306,7 +304,7 @@ export function NocturnePage() {
           className="nocturne-scrub"
           label="The Phoenix violin turning on its own reflection, its carved wing catching the light from silver into gold."
           beats={[
-            { mark: "ACT III — THE INSTRUMENT", line: "Drawn by him. Built for him." },
+            { mark: "ACT III · THE INSTRUMENT", line: "Dennis drew it and Alistair Hay built it." },
             { mark: "Donegal, a year", line: "Six strings, carbon fibre, 24K gold." },
           ]}
         />
@@ -365,10 +363,10 @@ export function NocturnePage() {
 
           <div className="nocturne-centred">
             <p className="nocturne-eyebrow" data-reveal>
-              ACT IV <em>—</em> HEAR HIM
+              ACT IV <em>·</em> HEAR HIM
             </p>
             <h2 className="nocturne-statement nocturne-statement--small" data-reveal>
-              <em>a</em> MINUTE <em>in a room with</em> HIM
+              SIXTY SECONDS <em>of him</em> PLAYING
             </h2>
           </div>
 
@@ -377,7 +375,7 @@ export function NocturnePage() {
               <span>Programme</span>
               <span>Film</span>
             </p>
-            <Showreel caption="His own reel, in his own cut." />
+            <Showreel caption="His own reel, cut by him." />
           </div>
 
           <h3 className="nocturne-sub-head" data-reveal>
@@ -391,7 +389,7 @@ export function NocturnePage() {
         {/* ---------------- the rooms ---------------- */}
         <section className="nocturne-act">
           <p className="nocturne-eyebrow" data-reveal>
-            ACT V <em>—</em> TONIGHT&rsquo;S PROGRAMME
+            ACT V <em>·</em> TONIGHT&rsquo;S PROGRAMME
           </p>
           <Programme />
         </section>
@@ -399,7 +397,7 @@ export function NocturnePage() {
         {/* ---------------- who books him ---------------- */}
         <section className="nocturne-act nocturne-act--ivory">
           <p className="nocturne-eyebrow" data-reveal>
-            ACT VI <em>—</em> WHO BOOKS HIM
+            ACT VI <em>·</em> WHO BOOKS HIM
           </p>
           <Cast />
 
@@ -418,7 +416,7 @@ export function NocturnePage() {
         {/* ---------------- the calling ---------------- */}
         <section className="nocturne-act nocturne-act--calling">
           <p className="nocturne-eyebrow" data-reveal>
-            ACT VII <em>—</em> WHY HE KEEPS GOING
+            ACT VII <em>·</em> THE CALLING
           </p>
           <h2 className="nocturne-statement" data-reveal>
             <em>everyone</em> IS CHOSEN <em>to</em> SUCCEED.
@@ -448,23 +446,13 @@ export function NocturnePage() {
         {/* ---------------- the last door ---------------- */}
         <section className="nocturne-act nocturne-act--coda">
           <p className="nocturne-eyebrow" data-reveal>
-            CODA <em>—</em> THE LAST DOOR
+            CODA <em>·</em> THE LAST DOOR
           </p>
           <Words as="h2" className="nocturne-h2" text={promise.headline} />
           <p className="nocturne-lede" data-reveal>
             {service.lede}
           </p>
-
-          <ol className="nocturne-steps">
-            {steps.map((step) => (
-              <li key={step.index} data-reveal>
-                <span className="nocturne-step-index">{step.index}</span>
-                <span className="nocturne-step-title">{step.title}</span>
-                <span className="nocturne-step-marking">{step.marking}</span>
-                <p className="nocturne-step-body">{step.body}</p>
-              </li>
-            ))}
-          </ol>
+          <Process />
 
           <dl className="nocturne-spec nocturne-spec--rights">
             {rights.map((right) => (
@@ -479,7 +467,7 @@ export function NocturnePage() {
             {tiers.map((tier) => (
               <li key={tier.id} data-reveal>
                 <p className="nocturne-tier-price">
-                  <Tally value={tier.price} />
+                  <Figure value={tier.price} />
                 </p>
                 <h3 className="nocturne-tier-name">{tier.name}</h3>
                 <p className="nocturne-tier-length">{tier.length}</p>
@@ -507,10 +495,7 @@ export function NocturnePage() {
               <dd>{commission.slots}</dd>
             </div>
           </dl>
-
-          <a className="nocturne-cta" href="#main">
-            Write the prompt
-          </a>
+          <Enquiry />
           <p className="nocturne-note">{commission.note}</p>
 
           <ul className="nocturne-socials">

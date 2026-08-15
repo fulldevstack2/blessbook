@@ -43,6 +43,6 @@ export function clientMask(client: Client): string {
 }
 
 export const clientWall = {
-  eyebrow: "Titans of industry",
-  lede: "He has performed for the people who could book anyone",
+  eyebrow: "Selected clients",
+  lede: "Fourteen companies have booked him",
 } as const;

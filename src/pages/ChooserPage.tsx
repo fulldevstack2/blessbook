@@ -65,8 +65,8 @@ export function ChooserPage() {
 
       <p className="chooser-note">
         This is {artist.name}'s site. He has spent eighteen years on stage, in five
-        continents, in front of a hundred and sixty-eight thousand people — and the
-        quietest thing he does is write one song for one person, which is what
+        continents, in front of a hundred and sixty-eight thousand people. The
+        quietest thing he does is write one song for one person, and that is what
         Blesspoke is. Below are three complete design directions for that site, each
         named after one of the three instruments Alistair Hay built to his drawings.
         Open any of them: the whole page is built, scroll included. Pick the one that
@@ -116,7 +116,7 @@ export function ChooserPage() {
 
               <span>
                 <span className="chooser-panel-name">{concept.name}</span>
-                <span className="chooser-panel-tag"> — {concept.tagline}</span>
+                <span className="chooser-panel-tag"> · {concept.tagline}</span>
               </span>
 
               <span className="chooser-specimen">{promise.headline}</span>
