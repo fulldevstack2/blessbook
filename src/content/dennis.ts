@@ -192,6 +192,15 @@ export interface Violin {
 /**
  * The three instruments built to his drawings by Alistair Hay of Emerald
  * Guitars, in Donegal, Ireland. Each concept on this site is named for one.
+ *
+ * The Dragon's entry used to read "Carved body, lacquer and inlay", which is
+ * neither its material nor its finish, and its note described how Dennis found
+ * Hay in the first place rather than anything about the instrument. Corrected
+ * against the maker's own account: emeraldguitars.com/dennis-lau-and-the-
+ * phoenix-violin calls it Suilleach, "a mythical dragon captured in flight",
+ * "gilded in pure Palladium", and its unveiling in Kuala Lumpur is dated
+ * November 2017. The Chosen's particulars are from Robb Report Malaysia's
+ * report of the unveiling, 27 May 2019.
  */
 export const violins: readonly Violin[] = [
   {
@@ -205,15 +214,15 @@ export const violins: readonly Violin[] = [
     id: "dragon",
     name: "The Dragon",
     year: "2017",
-    material: "Carved body, lacquer and inlay",
-    note: "Commissioned after a dragon-shaped guitar sent him looking for its maker.",
+    material: "A dragon caught in flight, gilded in pure palladium",
+    note: "Alistair Hay named it Suilleach. It came out of the same Donegal workshop as the Phoenix, a year after it, and was unveiled in Kuala Lumpur.",
   },
   {
     id: "chosen",
     name: "The Chosen",
     year: "2019",
-    material: "Carbon fibre, single-piece teardrop",
-    note: "The lightest of the three, built for the 2019 concert it is named after.",
+    material: "Carbon fibre, body and neck cut in one piece",
+    note: "The lightest of the three and the one built to travel, slim enough to carry in a whisky case. Dennis unveiled it for the 2019 concert it is named after.",
   },
 ];
 
@@ -224,7 +233,7 @@ export const violins: readonly Violin[] = [
 export const commissionStory = {
   eyebrow: "Donegal, 2016",
   lede: "Dennis saw a guitar and flew to Donegal to meet its maker",
-  body: "The guitar had been built for the Mandopop star Wang Leehom by Alistair Hay of Emerald Guitars, in Donegal, Ireland. Dennis flew there in the summer of 2016 and asked for something nobody had made: a six-string electric violin, carved as a bird's wing, plated in 24K gold. It took Hay a year, and Dennis unveiled it in front of three thousand people.",
+  body: "The guitar was a dragon, built for the Mandopop star Wang Leehom by Alistair Hay of Emerald Guitars, in Donegal, Ireland. Dennis flew there in the summer of 2016 and asked for something nobody had made: a six-string electric violin, carved as a bird's wing, plated in 24K gold. It took Hay a year, and Dennis unveiled it in front of three thousand people.",
   quote:
     "Just like a soul mate, a musician's instrument plays a very important role in the development of the player's voice and personality.",
   quoteWho: "Dennis Lau",

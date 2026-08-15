@@ -757,6 +757,28 @@ transcoding to ~128 kbps VBR roughly halves it — but treat that as the user's
 call, not a default.
 
 `public/icon.svg` — four bars, the open strings at the heights of a signal.
+### Photography of the other two instruments
+
+There is none on this site, and the reason is licensing rather than absence.
+Alistair Hay built all three, and Emerald Guitars publish their own studio
+photography of the second one:
+
+- **The Dragon is called Suilleach.** Nine studio frames at
+  `emeraldguitars.com/wp-content/uploads/2024/03/dragon-violin-suilleach-by-emerald-guitars_mg_*.jpg`
+  (`1949 1950 1957 1977 1993 1997 2003 2041 2042`). `2041` is the whole
+  instrument in its case, `1957` the head. **All nine are 800px wide and that is
+  the ceiling** — checked against their WordPress media API, there is no
+  `-scaled` original and nothing larger anywhere in press. Too small for a hero
+  on this site.
+- **The Chosen** was photographed at its unveiling by Robb Report Malaysia:
+  `robbreport.com.my/wp-content/uploads/2019/05/FEAT_Art-Dennis-Lau-Emerald-Violin-{LEAD-1,001-1,002-1,003-1}.jpg`.
+  `LEAD-1` is 1795×1025 and is the usable one. Their ExactDN CDN returns 403 to
+  a hotlink; the origin serves the file with a referer.
+
+Neither set is his own press library or CC0, which is the standing rule, so
+neither is checked in. **Emerald Guitars is the ask** — they made all three,
+they hold the originals at full resolution, and the good photographs are theirs.
+
 ### The mark, the card, and the metadata
 
 Everything below is generated, and **the generators are checked in under
@@ -1018,6 +1040,9 @@ came from screenshots he sent back, in his order.
   the site: it looks like it works.
 - **The two client reviews in `work.ts`** are attributed and should be confirmed
   as cleared for publication.
+- **Photography of the Dragon and the Chosen**, at a resolution this site can
+  use. See §7: what is published is 800px and 1795px respectively, and neither
+  is ours to publish. Emerald Guitars is the ask.
 - **Deliberately not used, and keep it that way unless the user says otherwise:**
   his collaborator names. It reads as a roster and the user was emphatic. Demos
   commissioned *by performers* describe the client rather than naming them;
