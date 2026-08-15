@@ -34,6 +34,7 @@ import { useScrollReveal } from "../../lib/useScrollReveal";
 import { conceptById } from "../registry";
 import { createNocturneScene } from "./nocturneScene";
 import "./nocturne.css";
+import { House } from "./House";
 
 const concept = conceptById("nocturne");
 
@@ -202,12 +203,13 @@ export function NocturnePage() {
           </p>
         </section>
 
-        {/* A line that travels as you pass it, the way a marquee outside a hall does. */}
-        <div className="nocturne-travel" data-scroll aria-hidden>
-          <p className="nocturne-travel-line">
-            {artist.showman} · {artist.roles} · {artist.city} ·
-          </p>
-        </div>
+        {/* His own line for himself, billed. It used to slide past sideways, which
+            is a marquee, and a marquee is the cheapest thing on the street. */}
+        <aside className="nocturne-billing" data-scroll>
+          <span className="nocturne-billing-rule" aria-hidden />
+          <p className="nocturne-billing-line">{artist.showman}</p>
+          <span className="nocturne-billing-rule" aria-hidden />
+        </aside>
 
         {/* ---------------- the man ---------------- */}
         <section className="nocturne-act">
@@ -400,10 +402,15 @@ export function NocturnePage() {
           <Programme />
         </section>
 
+        {/* The hall itself, filling. Everything from the showreel down had been a
+            list on a page, and this is the one fact in the record big enough to
+            be drawn rather than written. */}
+        <House />
+
         {/* ---------------- who books him ---------------- */}
         <section className="nocturne-act nocturne-act--ivory">
           <p className="nocturne-eyebrow" data-reveal>
-            ACT VI <em>·</em> WHO BOOKS HIM
+            ACT VII <em>·</em> WHO BOOKS HIM
           </p>
           <Cast />
         </section>
@@ -425,7 +432,7 @@ export function NocturnePage() {
         {/* ---------------- the calling ---------------- */}
         <section className="nocturne-act nocturne-act--calling">
           <p className="nocturne-eyebrow" data-reveal>
-            ACT VII <em>·</em> THE CALLING
+            ACT VIII <em>·</em> THE CALLING
           </p>
           <h2 className="nocturne-statement" data-reveal>
             <em>everyone</em> IS CHOSEN <em>to</em> SUCCEED.
@@ -507,6 +514,21 @@ export function NocturnePage() {
           <Enquiry />
           <p className="nocturne-note">{commission.note}</p>
 
+        </section>
+
+        {/* The way out: the plate and the addresses, one block. A footer of
+            handles and then a card floating under it was two endings, and
+            neither of them closed anything. */}
+        <footer className="nocturne-close" data-scroll>
+          <div className="nocturne-plateout-face">
+            <p className="nocturne-plateout-name">{artist.name}</p>
+            <p className="nocturne-plateout-cn" lang="zh">
+              {artist.chineseName}
+            </p>
+            <span className="nocturne-plateout-rule" aria-hidden />
+            <p className="nocturne-plateout-where">{artist.city} · on stage since 2006</p>
+          </div>
+
           <ul className="nocturne-socials">
             {socials.map((social) => (
               <li key={social.label}>
@@ -517,12 +539,7 @@ export function NocturnePage() {
               </li>
             ))}
           </ul>
-        </section>
-
-        {/* The wordmark, set as large as the page allows, on the way out. */}
-        <div className="nocturne-outmark" data-scroll aria-hidden>
-          <span>{artist.name}</span>
-        </div>
+        </footer>
 
         <ConceptSwitch concept={concept} />
       </main>

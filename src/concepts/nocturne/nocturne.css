@@ -456,39 +456,158 @@
 
 /* ---------- the travelling line, and the wordmark on the way out ---------- */
 
-.nocturne-travel {
-  overflow: hidden;
-  padding-block: var(--space-xl);
-  border-block: 1px solid var(--rule);
+/* ---------- the billing, and the plate on the way out ---------- */
+
+/* One line, his own, set between two rules. The rules draw out from the centre
+   as the band is passed, which is the only motion it needs. */
+.nocturne-billing {
+  display: grid;
+  justify-items: center;
+  gap: clamp(18px, 3vh, 40px);
+  padding: clamp(var(--space-2xl), 11vh, var(--space-5xl))
+    clamp(var(--space-lg), 6vw, var(--space-4xl));
   background: var(--velvet);
-}
-
-.nocturne-travel-line {
-  white-space: nowrap;
-  font-family: var(--display);
-  font-size: clamp(2rem, 5.4vw, 4.6rem);
-  line-height: 1.1;
-  color: color-mix(in oklab, var(--ivory) 80%, transparent);
-  /* Travels as the band crosses the viewport: it is the reader who moves it. */
-  transform: translateX(calc((0.5 - var(--s, 0.5)) * 60vw));
-  will-change: transform;
-}
-
-.nocturne-outmark {
-  overflow: hidden;
-  padding-block: clamp(var(--space-2xl), 6vh, var(--space-4xl));
+  border-block: 1px solid var(--rule);
   text-align: center;
 }
 
-.nocturne-outmark span {
+.nocturne-billing-rule {
   display: block;
+  width: min(600px, 76%);
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--brass-deep) 20%,
+    var(--brass) 50%,
+    var(--brass-deep) 80%,
+    transparent
+  );
+  transform: scaleX(clamp(0.28, var(--s, 0) * 2.6, 1));
+  transform-origin: center;
+}
+
+.nocturne-billing-line {
+  margin: 0;
+  max-width: 24ch;
   font-family: var(--display);
-  font-size: clamp(3rem, 15vw, 14rem);
-  line-height: 0.86;
-  letter-spacing: -0.02em;
-  color: color-mix(in oklab, var(--ivory) 88%, transparent);
-  transform: scaleY(calc(1 + var(--s, 0) * 0.12));
-  transform-origin: bottom center;
+  font-weight: 300;
+  font-size: clamp(1.6rem, 4.4vw, 3.4rem);
+  line-height: 1.16;
+  color: var(--ivory);
+}
+
+/* The way out: the plate, and the addresses under it, as one block. */
+.nocturne-close {
+  display: grid;
+  justify-items: center;
+  gap: clamp(var(--space-xl), 6vh, var(--space-3xl));
+  padding: clamp(var(--space-2xl), 12vh, var(--space-5xl))
+    clamp(var(--space-lg), 6vw, var(--space-4xl))
+    clamp(var(--space-2xl), 8vh, var(--space-4xl));
+  background: var(--velvet-deep);
+}
+
+.nocturne-plateout-face {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: clamp(10px, 1.6vh, 18px);
+  padding: clamp(28px, 6vh, 68px) clamp(32px, 9vw, 118px);
+  text-align: center;
+  /* Brushed, then lit. The fine horizontal grain is what separates a piece of
+     metal from a rectangle with a gradient in it. */
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      color-mix(in oklab, var(--brass) 6%, transparent) 0 1px,
+      transparent 1px 3px
+    ),
+    linear-gradient(
+      158deg,
+      color-mix(in oklab, var(--brass) 20%, var(--velvet-deep)) 0%,
+      color-mix(in oklab, var(--brass-deep) 13%, var(--velvet-deep)) 48%,
+      color-mix(in oklab, var(--brass) 13%, var(--velvet-deep)) 100%
+    );
+  border: 1px solid color-mix(in oklab, var(--brass) 42%, transparent);
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklab, var(--brass) 52%, transparent),
+    inset 0 -1px 0 color-mix(in oklab, #000000 62%, transparent),
+    0 34px 64px -34px #000000;
+}
+
+/* The engraver's second rule, set in from the edge. */
+.nocturne-plateout-face::before {
+  content: "";
+  position: absolute;
+  inset: clamp(7px, 1.1vw, 12px);
+  border: 1px solid color-mix(in oklab, var(--brass) 24%, transparent);
+  pointer-events: none;
+}
+
+/* Cut into the plate rather than printed on it. The glyph is filled with the
+   brass itself and a highlight travels across as the page moves, which is the
+   part that says metal; `drop-shadow` follows the glyph's alpha, so it still
+   works with the fill clipped to the text. */
+.nocturne-plateout-name {
+  --sheen: calc(var(--s, 0.5) * 130% - 15%);
+
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 300;
+  font-size: clamp(2.4rem, 8vw, 5.6rem);
+  line-height: 1.02;
+  letter-spacing: -0.012em;
+  background: linear-gradient(
+    100deg,
+    color-mix(in oklab, var(--brass-deep) 82%, #000000) 0%,
+    var(--brass) calc(var(--sheen) - 9%),
+    #fff4dc var(--sheen),
+    var(--brass) calc(var(--sheen) + 9%),
+    color-mix(in oklab, var(--brass-deep) 82%, #000000) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter:
+    drop-shadow(0 1px 0 color-mix(in oklab, var(--brass) 40%, transparent))
+    drop-shadow(0 -1px 1px color-mix(in oklab, #000000 70%, transparent));
+}
+
+.nocturne-plateout-cn {
+  margin: 0;
+  font-size: 12px;
+  letter-spacing: 0.5em;
+  text-indent: 0.5em;
+  color: color-mix(in oklab, var(--brass) 82%, transparent);
+}
+
+.nocturne-plateout-rule {
+  display: block;
+  width: clamp(80px, 24%, 180px);
+  height: 1px;
+  margin-top: var(--space-xs);
+  background: color-mix(in oklab, var(--brass) 46%, transparent);
+}
+
+.nocturne-plateout-where {
+  margin: 0;
+  font-size: 10px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--brass) 62%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nocturne-billing-rule {
+    transform: none;
+  }
+}
+
+@media (max-width: 620px) {
+  .nocturne-plateout-face {
+    padding-inline: var(--space-lg);
+  }
 }
 
 /* ---------- specification rows, lists, figures ---------- */
@@ -928,11 +1047,16 @@
 
 .nocturne-socials {
   list-style: none;
-  margin: var(--space-5xl) 0 0;
+  /* The closing block sets its own spacing now. This margin was left over from
+     when the addresses sat at the end of the commission section, and under the
+     plate it opened a hole the height of a screen. */
+  margin: 0;
   padding: 0;
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-2xl);
+  justify-content: center;
+  gap: var(--space-lg) clamp(var(--space-lg), 4vw, var(--space-2xl));
+  text-align: center;
 }
 
 .nocturne-socials a {
@@ -2573,4 +2697,189 @@
 .house[data-typeset="true"] .house-mark,
 .house[data-typeset="true"] .house-rule {
   visibility: visible;
+}
+
+/* ---------- the house, filling ---------- */
+
+/* Three thousand seats in plan, lit from the front row outwards as the page
+   goes down. The number had been sitting in a list of six other numbers, which
+   is where the run of pages after the showreel lost its pulse. */
+.nocturne .house-plan {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: clamp(12px, 2vh, 28px);
+  padding: clamp(28px, 5vh, 64px) clamp(var(--space-lg), 5vw, var(--space-4xl));
+  background: var(--velvet-deep);
+}
+
+.nocturne .house-plan-head {
+  display: grid;
+  gap: var(--space-sm);
+  justify-items: center;
+  text-align: center;
+}
+
+.nocturne .house-plan-frame {
+  position: relative;
+  min-height: 0;
+}
+
+/* Wide enough and the plan takes the whole frame, with the type set into the
+   two empty corners the fan leaves above it. Stacking heading, plan and
+   caption in three rows spent a third of the height on words and left the hall
+   the size of a postage stamp, which is the opposite of the point. */
+@media (min-width: 900px) {
+  /* No `position` here. The stage pin is `position: sticky`, which already
+     makes it a containing block for anything absolute inside it, and setting
+     `relative` on top of it replaces the sticky and the section stops pinning
+     entirely. This is the second time that rule has been learned on this site. */
+  .nocturne .house-plan {
+    display: block;
+  }
+
+  /* The bottom inset leaves a clear band for the caption. Set over the plan it
+     landed on the side stalls and neither could be read. */
+  .nocturne .house-plan-frame {
+    position: absolute;
+    inset: clamp(20px, 3vh, 40px) clamp(var(--space-lg), 4vw, var(--space-3xl))
+      clamp(86px, 12vh, 132px);
+  }
+
+  .nocturne .house-plan-head {
+    position: absolute;
+    top: clamp(36px, 7vh, 92px);
+    left: clamp(var(--space-lg), 5vw, var(--space-4xl));
+    justify-items: start;
+    text-align: left;
+    max-width: 30ch;
+  }
+
+  .nocturne .house-plan-foot {
+    position: absolute;
+    left: 50%;
+    bottom: clamp(20px, 3vh, 38px);
+    width: min(72ch, 88%);
+    transform: translateX(-50%);
+    justify-items: center;
+    text-align: center;
+  }
+}
+
+.nocturne .house-plan-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Unlit seats are still there, faintly: an empty house is not an absent one. */
+.nocturne .house-plan-seats path {
+  fill: none;
+  stroke: var(--brass);
+  stroke-width: 5.4;
+  stroke-linecap: round;
+  /* The fill finishes at four fifths, so the last row is not still lighting as
+     the section leaves. */
+  opacity: clamp(0.13, 0.13 + (var(--p, 0) * 1.25 - var(--at, 0)) * 26, 1);
+}
+
+/* The pool of light the lit seats sit in. Same paths, wider and dim. */
+.nocturne .house-plan-glow path {
+  fill: none;
+  stroke: var(--brass);
+  stroke-width: 20;
+  stroke-linecap: round;
+  opacity: clamp(0, (var(--p, 0) * 1.25 - var(--at, 0)) * 10, 0.1);
+}
+
+.nocturne .house-plan-stage {
+  fill: color-mix(in oklab, var(--brass) 16%, transparent);
+  stroke: var(--brass-deep);
+  stroke-width: 1.6;
+}
+
+.nocturne .house-plan-stage-label {
+  fill: var(--brass);
+  font-family: var(--text);
+  font-size: 26px;
+  letter-spacing: 9px;
+}
+
+.nocturne .house-plan-foot {
+  display: grid;
+  gap: var(--space-sm);
+  justify-items: center;
+  text-align: center;
+}
+
+.nocturne .house-plan-legend {
+  margin: 0;
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--ivory) 48%, transparent);
+}
+
+/* Arrives once the house is full, which is the moment it means anything. */
+.nocturne .house-plan-sold {
+  margin: 0;
+  max-width: 62ch;
+  color: var(--ivory-soft);
+  opacity: clamp(0, (var(--p, 0) - 0.72) * 8, 1);
+  transform: translateY(calc((1 - clamp(0, (var(--p, 0) - 0.72) * 8, 1)) * 10px));
+}
+
+/* Below the overlay breakpoint the three parts stack, and the frame takes the
+   plan's own shape rather than a share of the height: `1fr` gave it a tall box
+   to be letterboxed inside, so the hall sat small with dead velvet above and
+   below it. `aspect-ratio` means the box *is* the drawing. */
+@media (max-width: 899px) {
+  .nocturne .house-plan {
+    grid-template-rows: auto auto auto;
+    align-content: center;
+    gap: clamp(18px, 3.5vh, 40px);
+  }
+
+  .nocturne .house-plan-frame {
+    width: 100%;
+    aspect-ratio: var(--house-ratio, 1.5);
+  }
+
+  .nocturne .house-plan-svg {
+    position: static;
+  }
+
+  .nocturne .house-plan-head {
+    gap: var(--space-xs);
+  }
+}
+
+@media (max-width: 760px) {
+  .nocturne .house-plan {
+    padding-inline: var(--space-md);
+  }
+
+  .nocturne .house-plan-seats path {
+    stroke-width: 7;
+  }
+
+  .nocturne .house-plan-glow path {
+    stroke-width: 24;
+  }
+
+  .nocturne .house-plan-stage-label {
+    font-size: 34px;
+    letter-spacing: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nocturne .house-plan-seats path {
+    opacity: 1;
+  }
+
+  .nocturne .house-plan-sold {
+    opacity: 1;
+    transform: none;
+  }
 }
