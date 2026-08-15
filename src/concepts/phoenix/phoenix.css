@@ -3066,13 +3066,20 @@ canvas[hidden] + .phoenix-hero-plate {
    Italiana lands it appears in Times New Roman and then swaps under the reader,
    which happens in the first half second, before the site has said anything
    else at all. */
+/* His name waits for Italiana before it paints, and then it has to be able to
+   leave again. Both of those are opacity rules on the same two elements at the
+   same specificity, and the font gate was written last, so it outranked the
+   exit: the room opened, the hero came up behind it, and "Dennis Lau" stayed
+   sitting on top of the photograph. Dragon and Nocturne fade their whole loader
+   away and never hit this; Phoenix parts its two halves and leaves the frame in
+   place, so the type has to fade on its own. Scoping the gate to "still
+   loading" hands the exit rule back its turn. */
 .veil-name,
 .veil-mark {
   opacity: 0;
-  transition: opacity 420ms var(--ease-out);
 }
 
-.veil[data-typeset="true"] .veil-name,
-.veil[data-typeset="true"] .veil-mark {
+.veil[data-typeset="true"]:not([data-ready="true"]) .veil-name,
+.veil[data-typeset="true"]:not([data-ready="true"]) .veil-mark {
   opacity: 1;
 }
