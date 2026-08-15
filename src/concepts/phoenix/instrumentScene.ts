@@ -134,7 +134,10 @@ export function createInstrumentScene({ canvas, reducedMotion }: SceneContext): 
       renderer.setSize(width, height, false);
       camera.aspect = width / Math.max(1, height);
       // Narrow frames need the object further away or it is cropped by the sides.
-      camera.position.z = camera.aspect < 1 ? 3.5 : 2.35;
+      /* Closer than it used to be. The mesh is normalised on its longest axis,
+         and with the display stand cut away that axis is the wingspan, so the
+         object is now wide and shallow and was sitting in a lot of black. */
+      camera.position.z = camera.aspect < 1 ? 3.0 : 1.95;
       camera.updateProjectionMatrix();
     },
     dispose() {

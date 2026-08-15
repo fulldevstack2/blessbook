@@ -118,7 +118,10 @@ export function createInstrumentScene({ canvas, reducedMotion }: SceneContext): 
       renderer.setPixelRatio(dpr);
       renderer.setSize(width, height, false);
       camera.aspect = width / Math.max(1, height);
-      camera.position.z = camera.aspect < 1 ? 3.6 : 2.5;
+      /* Closer than it used to be. The mesh is normalised on its longest axis,
+         and with the display stand cut away that axis is the wingspan, so the
+         object is now wide and shallow and was sitting in a lot of black. */
+      camera.position.z = camera.aspect < 1 ? 3.1 : 2.1;
       camera.updateProjectionMatrix();
     },
     dispose() {
