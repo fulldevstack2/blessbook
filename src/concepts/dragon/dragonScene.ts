@@ -216,9 +216,13 @@ const fragmentShader = /* glsl */ `
     /* On a phone he stands in the lower right, and the wash was settling on top
        of him there. The bloom is pulled back over that corner so the figure has
        clean paper to be read against; the wash keeps the rest of the sheet. */
+    /* The corner he stands in is kept clear of the wash, and kept clearer the
+       further the wash opens: by the last cut the bloom is at its widest and was
+       settling straight on top of him. It follows the whole of him now, not just
+       his feet. */
     float clearForHim = mix(
       1.0,
-      1.0 - 0.7 * smoothstep(0.3, 0.72, vUv.x) * smoothstep(0.66, 0.22, vUv.y),
+      1.0 - (0.74 + 0.22 * open) * smoothstep(0.20, 0.56, vUv.x) * smoothstep(0.82, 0.24, vUv.y),
       narrow
     );
     /* Diluted on a phone. At that width the wash filled most of the sheet and

@@ -289,6 +289,8 @@ export function PhoenixPage() {
           </ul>
         </section>
 
+        <Instrument />
+
         {/* ---------------- the record ---------------- */}
         <section className="phoenix-section">
           <p className="phoenix-eyebrow" data-reveal>
@@ -396,8 +398,6 @@ export function PhoenixPage() {
 
         {/* ---------------- who books him ---------------- */}
         <Band />
-
-        <Instrument />
 
         <section className="phoenix-section phoenix-section--invert">
 
