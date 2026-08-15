@@ -757,10 +757,45 @@ transcoding to ~128 kbps VBR roughly halves it — but treat that as the user's
 call, not a default.
 
 `public/icon.svg` — four bars, the open strings at the heights of a signal.
-`public/og.jpg` — 1200×630, typeset in the real Italiana by rendering an HTML
-page in Playwright and screenshotting it, rather than mocked up in an image
-editor. The generator is not checked in; regenerate the same way if the copy
-changes.
+### The mark, the card, and the metadata
+
+Everything below is generated, and **the generators are checked in under
+`tools/`**. Regenerate rather than hand-editing the output.
+
+- `tools/icon.py` → `public/icon.svg`, `public/icon-touch.svg`. Three feathers
+  off one shoulder: the Phoenix, his six-string violin, is carved as a bird's
+  wing, so the wing is the mark. Three and not five — five is the better drawing
+  at 128px and unreadable at 16, where each feather gets two pixels and the gaps
+  between them get one. Filled leaves rather than strokes, because an SVG stroke
+  cannot taper and an untapered fan reads as a comb.
+- `tools/raster.mjs` → `favicon-16.png`, `favicon-32.png`,
+  `apple-touch-icon.png` (180), `icon-512.png`. The touch icon bleeds to its own
+  edges because the OS rounds that one itself; the tab icon carries its own
+  rounding.
+- `tools/og.mjs` → `public/og.jpg`, 1200×630, rendered at 2× and downsampled.
+  Typeset in the real Italiana by rendering a page in Playwright rather than
+  mocked up in an image editor. Two things it has to do that are not obvious:
+  the page is **written to disk and opened as a `file://` URL**, because
+  `setContent` leaves the document on an `about:blank` origin which may not
+  fetch `file://` resources and the photograph silently never loads; and the
+  photograph is composited with `mix-blend-mode: lighten` rather than pasted,
+  because it is on pure black and the ground is warm lacquer, so a plain drop-in
+  leaves a visible seam down its left edge.
+
+`index.html` carries a JSON-LD `@graph` of three nodes: `Person` (Dennis),
+`WebSite` (Blesspoke) and `Service` (the commission, with both tiers as
+`Offer`s). **The Person's own `url` points at `dennislau.thechosen.io`, not at
+this site**, on purpose — this page is the service he provides, and saying
+otherwise would claim to be his homepage. `sameAs` is what ties the entity
+together for a search engine.
+
+`public/sitemap.xml` lists **only the homepage**. The three concept routes are
+client-side and GitHub Pages answers them from `404.html`, so they return HTTP
+404 with the app as their body; listing them would report soft 404s.
+`public/robots.txt` is served from `/blesspoke/`, where a crawler reading the
+origin root will never see it. It is there so a move to a custom domain needs no
+new work. `site.webmanifest` uses **relative** icon paths so it survives a
+change of base path; the sitemap cannot, and carries the origin literally.
 
 ### The instrument, and how the stand came off it
 

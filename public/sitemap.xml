@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Only the homepage. The three concept routes are client-side, and GitHub
+     Pages answers them from 404.html, so they return HTTP 404 with the app as
+     their body. Listing them here would report four soft 404s. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://fulldevstack2.github.io/blesspoke/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>

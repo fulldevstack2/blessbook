@@ -1,0 +1,6 @@
+# Served from /blesspoke/, so a crawler reading the origin root will not see
+# this file. It is here so that moving to a custom domain needs no new work.
+User-agent: *
+Allow: /
+
+Sitemap: https://fulldevstack2.github.io/blesspoke/sitemap.xml

@@ -1,11 +1,25 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Blesspoke">
-  <!-- Four bars for the four open strings, at the heights of a signal — the two
-       things this site is made of. Gold on lacquer, the Phoenix palette. -->
-  <rect width="32" height="32" fill="#241a10" />
-  <g fill="#e0ac4b">
-    <rect x="6" y="13" width="2.5" height="6" rx="1.25" />
-    <rect x="12" y="8" width="2.5" height="16" rx="1.25" />
-    <rect x="18" y="4" width="2.5" height="24" rx="1.25" />
-    <rect x="24" y="11" width="2.5" height="10" rx="1.25" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Dennis Lau">
+  <!-- Three feathers off one shoulder: the Phoenix, his six-string violin, is
+       carved as a bird's wing, so the wing is the mark.
+
+       Three and not five. Five is a better drawing at 128px and unreadable at
+       16, where every feather gets two pixels and the gaps between them get
+       one; three broad ones survive the browser tab, which is the only size
+       this file is ever seen at. Filled leaves rather than strokes, because an
+       SVG stroke cannot taper and an untapered fan reads as a comb. Each is
+       separated by a hairline of the lacquer behind it so the overlaps still
+       read when it is four pixels wide. -->
+  <defs>
+    <linearGradient id="dl-gold" x1="0.1" y1="0" x2="0.9" y2="1">
+      <stop offset="0%" stop-color="#f9e2ac"/>
+      <stop offset="40%" stop-color="#e3b155"/>
+      <stop offset="100%" stop-color="#9c6a1b"/>
+    </linearGradient>
+  </defs>
+  <rect width="32" height="32" rx="7" fill="#17110a"/>
+  <g fill="url(#dl-gold)" stroke="#17110a" stroke-width="1.05" stroke-linejoin="round">
+    <path d="M5.50 8.00C11.64 11.59 20.60 12.66 27.50 12.60C21.73 7.24 13.09 4.64 5.50 8.00Z"/>
+    <path d="M5.10 11.20C9.79 16.36 17.90 19.50 24.50 20.80C20.36 14.53 12.94 9.99 5.10 11.20Z"/>
+    <path d="M5.50 14.60C7.49 19.47 12.56 23.41 17.10 25.60C15.62 20.19 11.41 15.33 5.50 14.60Z"/>
   </g>
 </svg>
