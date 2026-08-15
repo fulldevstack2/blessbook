@@ -171,14 +171,24 @@
   filter: none;
 }
 
+/* The hero has its own voice.
+
+   Italiana carries the rest of the concept and is the right face for it, but at
+   display size over a lit photograph its hairlines disappear, which is exactly
+   what a masthead cannot do. Bodoni Moda has the same high contrast and real
+   weight behind it, and its optical-size axis keeps the big setting from going
+   spindly. It is used here and nowhere else, which is what a masthead is. */
 .phoenix-cut h1,
 .phoenix-cut p.phoenix-line {
-  font-family: var(--display);
+  font-family: "Bodoni Moda", var(--display);
+  font-optical-sizing: auto;
+  font-weight: 600;
   font-size: clamp(2.6rem, 8.4vw, 7.6rem);
   line-height: 0.94;
-  letter-spacing: 0.005em;
+  letter-spacing: -0.015em;
   color: var(--ivory);
   margin: 0;
+  text-shadow: 0 2px 26px rgb(0 0 0 / 55%);
 }
 
 .phoenix-cut .phoenix-sub {
@@ -3030,5 +3040,24 @@ canvas[hidden] + .phoenix-hero-plate {
 
   .phoenix .turned-note {
     display: none;
+  }
+}
+
+/* The small type sits on the photograph too, and at ten pixels it needs more
+   help than the scrim alone gives it. */
+@media (max-width: 899px) {
+  .phoenix-mark {
+    color: var(--gold);
+    text-shadow: 0 1px 12px rgb(0 0 0 / 75%);
+  }
+
+  .phoenix-hero-cn {
+    color: var(--gold);
+    text-shadow: 0 1px 12px rgb(0 0 0 / 70%);
+  }
+
+  .phoenix-cut .phoenix-sub {
+    color: var(--ivory);
+    text-shadow: 0 1px 14px rgb(0 0 0 / 70%);
   }
 }

@@ -43,7 +43,7 @@ export const concepts: readonly Concept[] = [
       "The opulent reading. Near-black lacquer, one seam of 24K gold, and display type thin enough to feel expensive rather than loud. Scroll turns a gilded instrument through a dark room.",
     theme: "dark",
     fonts:
-      "https://fonts.googleapis.com/css2?family=Italiana&family=Commissioner:wght@200..800&display=swap",
+      "https://fonts.googleapis.com/css2?family=Italiana&family=Bodoni+Moda:opsz,wght@6..96,500..900&family=Commissioner:wght@200..800&display=swap",
     display: "Italiana",
     body: "Commissioner",
     swatches: [

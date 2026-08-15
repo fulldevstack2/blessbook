@@ -57,13 +57,13 @@ const cuts = [
   },
   {
     mark: "The instrument",
-    line: "The first six-string 24K gold violin ever played on a stage",
-    sub: "Alistair Hay carved it as a bird's wing in Donegal, and it took him a year.",
+    line: "The first six-string 24K gold violin played on any stage",
+    sub: "Carved as a bird's wing in Donegal, and a year in the making.",
   },
   {
     mark: "The record",
-    line: "Ten thousand performances in front of a hundred and sixty-eight thousand people",
-    sub: "Across five continents, with three albums and two sold-out nights of three thousand seats.",
+    line: "Ten thousand performances",
+    sub: "In front of a hundred and sixty-eight thousand people, across five continents.",
   },
 ];
 
