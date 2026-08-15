@@ -2559,3 +2559,18 @@
     text-align: left;
   }
 }
+
+/* Held until Fraunces is in, for the reason given in the Phoenix stylesheet.
+   The name is the whole of this arrival, so it cannot be allowed to arrive
+   twice. The keyframes still run; this only decides when they are visible. */
+.house-name,
+.house-mark,
+.house-rule {
+  visibility: hidden;
+}
+
+.house[data-typeset="true"] .house-name,
+.house[data-typeset="true"] .house-mark,
+.house[data-typeset="true"] .house-rule {
+  visibility: visible;
+}

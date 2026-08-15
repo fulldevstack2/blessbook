@@ -5,6 +5,7 @@ import { createBandScene } from "./bandScene";
 import { createInstrumentScene } from "./instrumentScene";
 import { clients, clientWall } from "../../content/clients";
 import { useReady } from "../../lib/useReady";
+import { useTypeset } from "../../lib/useTypeset";
 import { photos } from "../../content/media";
 import { artist, record, territories, violins } from "../../content/dennis";
 import { enquiry, steps, tiers } from "../../content/commission";
@@ -216,9 +217,10 @@ export function Plate({ photo, line, tall = false }: { photo: Photo; line?: stri
  */
 export function Loader() {
   const ready = useReady(photos.press.src);
+  const typeset = useTypeset(["400 64px Italiana"]);
 
   return (
-    <div className="veil" data-ready={ready} aria-hidden={ready}>
+    <div className="veil" data-ready={ready} data-typeset={typeset} aria-hidden={ready}>
       <div className="veil-half veil-half--left" />
       <div className="veil-half veil-half--right" />
       <p className="veil-name">

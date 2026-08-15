@@ -4,6 +4,7 @@ import { territories } from "../../content/dennis";
 import { films } from "../../content/work";
 import { pauseAll } from "../../lib/listening";
 import { useReady } from "../../lib/useReady";
+import { useTypeset } from "../../lib/useTypeset";
 import { useSectionProgress } from "../../lib/useSectionProgress";
 import { photos } from "../../content/media";
 import { enquiry, steps, tiers } from "../../content/commission";
@@ -240,9 +241,10 @@ export function FilmScrolls({ caption }: { caption: string }) {
  */
 export function Loader() {
   const ready = useReady(photos.silhouette.src);
+  const typeset = useTypeset(["400 96px \"Ma Shan Zheng\"", "400 40px Faustina"]);
 
   return (
-    <div className="sheet" data-ready={ready} aria-hidden={ready}>
+    <div className="sheet" data-ready={ready} data-typeset={typeset} aria-hidden={ready}>
       {/* Paper, and his name written on it. The ink and the silhouette are what
           the hero is; putting them here spent the page's first surprise before
           the reader had scrolled a pixel. */}

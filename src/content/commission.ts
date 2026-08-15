@@ -17,7 +17,7 @@ export const steps: readonly Step[] = [
   {
     index: "I",
     title: "Write the prompt",
-    body: "One paragraph is enough: a name, an occasion, a room, the thing you cannot say out loud. Leave an address with it and the whole thing lands in his team's inbox.",
+    body: "One paragraph is enough: who it is for, the occasion, where it will be played, and what you want the music to say. Leave an address with it and the whole thing lands in his team's inbox.",
     marking: "rubato",
   },
   {
@@ -125,7 +125,7 @@ export const enquiry = {
     prompt: "The prompt",
   },
   placeholder:
-    "Who it is for, the occasion, the room it will be played in, and the thing you cannot quite say out loud.",
+    "Who it is for, the occasion, where it will be played, and what you want the music to say.",
   send: "Send it to his team",
   sending: "Sending",
   sentHead: "It is with his team.",

@@ -2912,3 +2912,17 @@ canvas:not([hidden]) + .dragon-hero-plate {
   font-size: 1rem;
   color: var(--ink);
 }
+
+/* Nothing is written on the sheet until the brush is in. See the note in the
+   Phoenix stylesheet: a name that arrives in Times New Roman and then swaps is
+   the first thing a reader sees, and the last impression to shift. */
+.sheet-block,
+.sheet-mark {
+  opacity: 0;
+  transition: opacity 420ms var(--ease-out);
+}
+
+.sheet[data-typeset="true"] .sheet-block,
+.sheet[data-typeset="true"] .sheet-mark {
+  opacity: 1;
+}

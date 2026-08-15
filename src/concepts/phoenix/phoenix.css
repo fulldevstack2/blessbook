@@ -3061,3 +3061,18 @@ canvas[hidden] + .phoenix-hero-plate {
     text-shadow: 0 1px 14px rgb(0 0 0 / 70%);
   }
 }
+
+/* The name is not shown until it can be shown in the right face. Painted before
+   Italiana lands it appears in Times New Roman and then swaps under the reader,
+   which happens in the first half second, before the site has said anything
+   else at all. */
+.veil-name,
+.veil-mark {
+  opacity: 0;
+  transition: opacity 420ms var(--ease-out);
+}
+
+.veil[data-typeset="true"] .veil-name,
+.veil[data-typeset="true"] .veil-mark {
+  opacity: 1;
+}

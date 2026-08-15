@@ -3,6 +3,7 @@ import { films } from "../../content/work";
 import { record } from "../../content/dennis";
 import { useState } from "react";
 import { useReady } from "../../lib/useReady";
+import { useTypeset } from "../../lib/useTypeset";
 import { photos } from "../../content/media";
 import { enquiry, steps, tiers } from "../../content/commission";
 import { useEnquiry } from "../../lib/enquiry";
@@ -151,9 +152,10 @@ export function Interval({ label = "Interval" }: { label?: string }) {
  */
 export function Loader() {
   const ready = useReady(photos.press.src);
+  const typeset = useTypeset(["300 88px Fraunces"]);
 
   return (
-    <div className="house" data-ready={ready} aria-hidden={ready}>
+    <div className="house" data-ready={ready} data-typeset={typeset} aria-hidden={ready}>
       <p className="house-name">
         <em>the</em>
         <span>Dennis Lau</span>
