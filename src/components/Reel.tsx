@@ -262,8 +262,8 @@ export function Reel({ caption, index = twoDigit }: ReelProps) {
       </ol>
 
       <p className="reel-foot">
-        Every one of these was commissioned, written and produced by Dennis. They
-        are here because the range is the argument.
+        Every one of these was commissioned, written and produced by Dennis, and
+        no two of them were asked for by the same kind of client.
       </p>
 
       <audio

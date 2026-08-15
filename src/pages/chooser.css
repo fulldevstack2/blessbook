@@ -23,8 +23,8 @@
 }
 
 .chooser-head {
-  padding: clamp(var(--space-2xl), 9vw, var(--space-5xl))
-    clamp(var(--space-lg), 6vw, var(--space-4xl)) var(--space-3xl);
+  padding: clamp(var(--space-2xl), 8vw, var(--space-4xl))
+    clamp(var(--space-lg), 6vw, var(--space-4xl)) 0;
   display: grid;
   gap: var(--space-2xl);
 }
@@ -78,8 +78,37 @@
   color: var(--paper-faint);
 }
 
+/* The sentence that says what the page is. It sits directly under the title
+   because that is the first question anyone opening this has. */
+.chooser-lede {
+  margin-top: var(--space-lg);
+  max-width: 40ch;
+  font-size: clamp(1.05rem, 1.5vw, 1.25rem);
+  color: var(--paper-soft);
+}
+
+/* Each block of the sheet says what it is before it starts. Reading this page
+   as its actual audience, an unlabelled row of colour panels and an unlabelled
+   biography are both just things that appeared. */
+/* One rule for the space above every band, so the gaps down the page are even.
+   The blocks either side carry none of their own. */
+.chooser-band {
+  margin: clamp(var(--space-2xl), 5vw, var(--space-4xl)) 0 var(--space-lg);
+  padding-inline: clamp(var(--space-lg), 6vw, var(--space-4xl));
+}
+
+.chooser-band-note {
+  max-width: 62ch;
+  color: var(--paper-soft);
+  font-size: 0.95rem;
+}
+
+/* The head carries no bottom padding of its own, so this owns the gap. Without
+   it the lede and this paragraph butt together and read as one block set in two
+   sizes by mistake. */
 .chooser-note {
-  padding: 0 clamp(var(--space-lg), 6vw, var(--space-4xl)) var(--space-2xl);
+  margin-top: clamp(var(--space-xl), 3.5vw, var(--space-3xl));
+  padding-inline: clamp(var(--space-lg), 6vw, var(--space-4xl));
   max-width: 68ch;
   color: var(--paper-soft);
 }
@@ -89,8 +118,7 @@
 .chooser-grid {
   list-style: none;
   margin: 0;
-  padding: 0 clamp(var(--space-lg), 6vw, var(--space-4xl))
-    clamp(var(--space-3xl), 8vw, var(--space-5xl));
+  padding-inline: clamp(var(--space-lg), 6vw, var(--space-4xl));
   display: grid;
   gap: var(--space-xl);
 }
@@ -167,12 +195,6 @@
   opacity: 0.82;
 }
 
-.chooser-panel-object {
-  font-size: 0.85rem;
-  font-style: italic;
-  opacity: 0.62;
-}
-
 .chooser-swatches {
   display: flex;
   gap: var(--space-2xs);
@@ -200,9 +222,9 @@
   display: grid;
   gap: var(--space-lg);
   align-items: center;
-  margin: 0 clamp(var(--space-lg), 6vw, var(--space-4xl)) var(--space-3xl);
-  padding: var(--space-lg) 0;
-  border-block: 1px solid var(--rule);
+  margin: 0 clamp(var(--space-lg), 6vw, var(--space-4xl));
+  padding: var(--space-lg) 0 var(--space-3xl);
+  border-top: 1px solid var(--rule);
 }
 
 @media (min-width: 780px) {
@@ -221,8 +243,18 @@
 }
 
 .chooser-artist-name {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-sm);
   font-size: 1.35rem;
   font-weight: 300;
+}
+
+.chooser-artist-cn {
+  font-size: 0.75rem;
+  letter-spacing: 0.28em;
+  color: var(--paper-faint);
 }
 
 .chooser-artist-roles {
@@ -262,35 +294,13 @@
 }
 
 .chooser-foot {
-  padding: var(--space-2xl) clamp(var(--space-lg), 6vw, var(--space-4xl))
-    var(--space-4xl);
+  padding: var(--space-xl) clamp(var(--space-lg), 6vw, var(--space-4xl))
+    var(--space-3xl);
   border-top: 1px solid var(--rule);
   font-family: var(--mono);
   font-size: 10px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--paper-faint);
-}
-
-/* The masthead is his name now, not the product's. */
-.chooser-wordmark-cn {
-  display: block;
-  margin-top: var(--space-sm);
-  font-family: var(--mono);
-  font-size: 0.2em;
-  letter-spacing: 0.32em;
-  color: var(--paper-soft);
-}
-
-.chooser-showman {
-  margin-top: var(--space-lg);
-  max-width: 34ch;
-  color: var(--paper-soft);
-}
-
-.chooser-kicker--grid {
-  margin: var(--space-4xl) 0 var(--space-lg);
-  padding-inline: clamp(var(--space-lg), 6vw, var(--space-4xl));
   color: var(--paper-faint);
 }
 

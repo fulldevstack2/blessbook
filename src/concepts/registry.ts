@@ -40,7 +40,7 @@ export const concepts: readonly Concept[] = [
     tagline: "Gilded",
     object: "A gold-leaf lacquer screen, and a velvet-lined flight case.",
     premise:
-      "The opulent reading. Near-black lacquer, one seam of 24K gold, and display type thin enough to feel expensive rather than loud. Scroll turns a gilded instrument through a dark room.",
+      "The most opulent of the three, and the closest to the gold Phoenix violin itself. Near-black lacquer, one seam of 24K gold, and fine display type. Everything on the page is lit the way an object is lit in a dark room.",
     theme: "dark",
     fonts:
       "https://fonts.googleapis.com/css2?family=Italiana&family=Bodoni+Moda:opsz,wght@6..96,500..900&family=Commissioner:wght@200..800&display=swap",
@@ -61,7 +61,7 @@ export const concepts: readonly Concept[] = [
     tagline: "Ink and jade",
     object: "An ink-wash scroll, and a jade seal pressed in cinnabar.",
     premise:
-      "The heritage reading, and the only one in daylight. Warm rice paper, brush-weight serif, a jade rule and a single cinnabar chop. Scroll pulls ink through water until it settles into a form.",
+      "The only one of the three in daylight, and the one that leans on the Chinese side of the name. Warm rice paper, a brush-weight serif, jade rules and a cinnabar seal. It reads as a hand scroll, and it unrolls sideways as you go.",
     theme: "light",
     fonts:
       "https://fonts.googleapis.com/css2?family=Faustina:ital,wght@0,300..800;1,300..800&family=Hanken+Grotesk:wght@300..800&family=Ma+Shan+Zheng&display=swap",
@@ -83,7 +83,7 @@ export const concepts: readonly Concept[] = [
     tagline: "Velvet and lamplight",
     object: "A velvet house before the doors open, and one lamp still lit.",
     premise:
-      "The concert-hall reading, at night. Oxblood velvet, warm ivory, brass lamplight, and a proscenium arch that every picture is seen through. Scroll walks you from the empty house to the one instrument under the lamp, and the commission is the last door.",
+      "The most theatrical of the three: a concert hall at night, an hour before the doors open. Oxblood velvet, brass lamplight, and every photograph seen through the proscenium arch. It ends at one instrument under a single lamp.",
     theme: "dark",
     fonts:
       "https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..600&family=Instrument+Sans:ital,wght@0,400..600;1,400..500&display=swap",

@@ -168,13 +168,17 @@ export const milestones: readonly Milestone[] = [
 ];
 
 /**
- * His higher calling, in his own framing. This is what the word "chosen" means
- * on this site — selected, not manufactured — and it is the reason concept 03
- * carries the name.
+ * His higher calling, in his own framing. "Chosen" on this site means selected
+ * rather than manufactured, and it is why concept 03 carries the name.
+ *
+ * The earlier draft of the body had him proving himself "somewhere nobody was
+ * watching", which says nothing, and then a clause about where a child is born
+ * deciding whether their talent is heard, which is three ideas in one breath.
+ * The version here uses a fact the page has already given the reader.
  */
 export const calling = {
   lede: "Everyone is chosen to succeed",
-  body: "Dennis had to prove it somewhere nobody was watching before anyone else would believe it, and he now works with Teach For Malaysia so that where a child is born stops deciding whether their talent is ever heard.",
+  body: "His own teacher was his mother, at the piano at home, from the age of three. Plenty of children with the same ability are never taught by anyone at all, and that is the gap Teach For Malaysia works in.",
 } as const;
 
 export interface Violin {

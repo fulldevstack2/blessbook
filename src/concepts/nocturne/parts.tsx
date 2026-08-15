@@ -41,7 +41,7 @@ export function Cast() {
         ))}
       </ul>
       <p className="cast-foot">
-        All fourteen booked him for a room of their own, and none of them endorse this site.
+        Each of the fourteen booked him for a room of their own. They appear here as credit for work done, nothing more.
       </p>
     </div>
   );

@@ -45,7 +45,7 @@ const cuts = [
   { mark: "The house", line: "Dennis Lau", tail: "刘凯彦", sub: artist.showman },
   {
     mark: "The curtain",
-    line: "Ten thousand nights",
+    line: "Ten thousand performances",
     sub: "Five continents, three albums, and two sold-out halls of three thousand seats.",
   },
   {
@@ -352,6 +352,12 @@ export function NocturnePage() {
           </ul>
         </section>
 
+        {/* The object itself, turning. It belongs to ACT III and nowhere else:
+            it had been sitting inside ACT VI, between the client wall and the
+            compliments those same clients paid, which read as a slide that had
+            wandered in from another deck. */}
+        <Instrument />
+
         {/* ---------------- hear him ---------------- */}
         <section className="nocturne-act nocturne-act--ivory nocturne-act--reel">
           {/* The house's own lattice, drifting behind the bill: engraved rules and
@@ -379,7 +385,7 @@ export function NocturnePage() {
           </div>
 
           <h3 className="nocturne-sub-head" data-reveal>
-            <em>and</em> WHAT HE WRITES <em>when someone asks</em>
+            <em>the</em> PIECES HE WAS ASKED FOR
           </h3>
           <Reel caption="Press a title to hear it" index={(position) => `No. ${position + 1}`} />
         </section>
@@ -401,8 +407,6 @@ export function NocturnePage() {
           </p>
           <Cast />
         </section>
-
-        <Instrument />
 
         <section className="nocturne-act">
 

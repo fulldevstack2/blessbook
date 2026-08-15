@@ -380,8 +380,8 @@ export function PhoenixPage() {
 
           <Words as="h2" className="phoenix-h2" text={"Written to order"} style={{ marginTop: "var(--space-5xl)" }} />
           <p className="phoenix-lede" data-reveal style={{ maxWidth: "48ch" }}>
-            A game trailer, a car launch, a boy's third birthday, a Mandopop
-            single. The same hand behind every one of them.
+            A game trailer, a car launch, a boy's third birthday and a Mandopop
+            single all came from the same hand.
           </p>
           <Reel caption="Press a title to hear it" />
         </section>
@@ -418,7 +418,7 @@ export function PhoenixPage() {
         {/* ---------------- the calling ---------------- */}
         <section className="phoenix-section phoenix-section--calling">
           <p className="phoenix-eyebrow" data-reveal>
-            Movement VI · The calling
+            Movement V · The calling
           </p>
           <Words as="h2" className="phoenix-h2 phoenix-calling-lede" text={calling.lede} />
           <p className="phoenix-lede" data-reveal style={{ maxWidth: "52ch" }}>

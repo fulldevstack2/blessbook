@@ -7,6 +7,19 @@ import { concepts, type Concept } from "../concepts/registry";
 import { useFonts } from "../lib/useFonts";
 import "./chooser.css";
 
+/**
+ * The front door, and the only page on this site that is not part of the work.
+ *
+ * The people who open it are Dennis and his team, and the first draft made that
+ * a puzzle: it wore his own masthead, quoted his own biography back at him, and
+ * only mentioned three designs in the fifth sentence of a paragraph. Reading it
+ * as its actual audience, the questions are obvious. What am I looking at. What
+ * is the same between these and what is different. What do I do next. So the
+ * page answers those three in that order, and his record appears once, low, with
+ * a reason to be there: it is the material every design is set from, and he is
+ * the only person who can tell us whether it is right.
+ */
+
 const CHOOSER_FONTS =
   "https://fonts.googleapis.com/css2?family=Commissioner:wght@200..800&family=Martian+Mono:wght@300..600&display=swap";
 
@@ -25,6 +38,13 @@ function panelStyle(concept: Concept): CSSProperties {
   } as CSSProperties;
 }
 
+/** What to do with this page, in the order you would do it. */
+const HOW = [
+  "Open all three. Each one is a finished page from top to bottom, scroll and sound included.",
+  "The writing, the music and the photographs are identical in all three. Only the design changes.",
+  "Come back with the direction you want and anything you would change inside it.",
+];
+
 export function ChooserPage() {
   useFonts(CHOOSER_FONTS);
   // The specimens need each concept's display face, so load all three sheets here.
@@ -36,74 +56,39 @@ export function ChooserPage() {
     <div className="chooser">
       <header className="chooser-head">
         <div>
-          <p className="chooser-kicker">
-            {artist.roles} · {artist.city}
+          <p className="chooser-kicker">Design proposal · Three directions</p>
+          <h1 className="chooser-wordmark">Blesspoke</h1>
+          <p className="chooser-lede">
+            Three complete designs for the site where a client commissions a song from{" "}
+            {artist.name}.
           </p>
-          <h1 className="chooser-wordmark">
-            {artist.name}
-            <span className="chooser-wordmark-cn" lang="zh">
-              {artist.chineseName}
-            </span>
-          </h1>
-          <p className="chooser-showman">{artist.showman}</p>
         </div>
-        <ul className="chooser-promise">
-          <li>
-            <span>01</span>
-            First anywhere to play a six-string 24K gold violin
-          </li>
-          <li>
-            <span>02</span>
-            Two sold-out concerts of three thousand seats
-          </li>
-          <li>
-            <span>03</span>
-            Patek Philippe, Porsche, Dunhill, Grand Hyatt
-          </li>
-        </ul>
+        <ol className="chooser-promise">
+          {HOW.map((line, index) => (
+            <li key={line}>
+              <span>{String(index + 1).padStart(2, "0")}</span>
+              {line}
+            </li>
+          ))}
+        </ol>
       </header>
 
       <p className="chooser-note">
-        This is {artist.name}'s site. He has spent eighteen years on stage, in five
-        continents, in front of a hundred and sixty-eight thousand people. The
-        quietest thing he does is write one song for one person, and that is what
-        Blesspoke is. Below are three complete design directions for that site, each
-        named after one of the three instruments Alistair Hay built to his drawings.
-        Open any of them: the whole page is built, scroll included. Pick the one that
-        feels right.
+        The site sells one thing. A client writes a paragraph about who the song is for and
+        what it should say, {artist.name}'s team replies from their own address, a private
+        sample comes back inside seven days, and the finished song transfers to the client in
+        full. Everything above that on the page is the case for handing him the job, and the
+        three designs below each make that case a different way.
       </p>
 
-      <section className="chooser-artist">
-        <img
-          className="chooser-artist-photo"
-          src={photos.press.src}
-          width={photos.press.width}
-          height={photos.press.height}
-          alt={photos.press.alt}
-        />
-        {/* The masthead above already carries his name and roles, so this card
-            only has to add what it can: the training, and the record. */}
-        <div>
-          <p className="chooser-artist-name">Trained from three, on stage since 2006</p>
-          <p className="chooser-artist-roles">
-            Piano at 3 · Violin at 8 · Grade 8 at 11 · Trinity College London, twice
-            cited for outstanding performance
-          </p>
-          <p className="chooser-artist-line">{artist.oneLine}</p>
-        </div>
-        <dl className="chooser-tallies">
-          {record.slice(0, 4).map((item) => (
-            <div className="chooser-tally" key={item.label}>
-              <dt>{item.label}</dt>
-              <dd>{item.value}</dd>
-            </div>
-          ))}
-        </dl>
-      </section>
-
-      <p className="chooser-kicker chooser-kicker--grid">
-        Three designs · one product · {promise.headline.toLowerCase()}
-      </p>
+      <div className="chooser-band">
+        <p className="chooser-kicker">The three directions</p>
+        <p className="chooser-band-note">
+          Each one is named after an instrument built to {artist.name}'s own drawings. Open a
+          design and it takes the whole window; the link in the top left corner brings you
+          back here.
+        </p>
+      </div>
 
       <ul className="chooser-grid">
         {concepts.map((concept) => (
@@ -111,7 +96,7 @@ export function ChooserPage() {
             <Link className="chooser-panel" to={concept.path} style={panelStyle(concept)}>
               <span className="chooser-panel-top">
                 <span>Design {concept.ordinal}</span>
-                <span>{concept.theme}</span>
+                <span>{concept.theme === "dark" ? "Dark" : "Daylight"}</span>
               </span>
 
               <span>
@@ -132,16 +117,53 @@ export function ChooserPage() {
               </span>
 
               <span className="chooser-panel-premise">{concept.premise}</span>
-              <span className="chooser-panel-object">{concept.object}</span>
               <span className="chooser-panel-cta">Open design {concept.ordinal} &rarr;</span>
             </Link>
           </li>
         ))}
       </ul>
 
+      <div className="chooser-band">
+        <p className="chooser-kicker">The record all three are built from</p>
+        <p className="chooser-band-note">
+          Taken from {artist.name}'s own site and his published biography. Anything wrong here
+          is wrong in all three designs, so it is worth a read.
+        </p>
+      </div>
+
+      <section className="chooser-artist">
+        <img
+          className="chooser-artist-photo"
+          src={photos.press.src}
+          width={photos.press.width}
+          height={photos.press.height}
+          alt={photos.press.alt}
+        />
+        <div>
+          <p className="chooser-artist-name">
+            {artist.name}
+            <span className="chooser-artist-cn" lang="zh">
+              {artist.chineseName}
+            </span>
+          </p>
+          <p className="chooser-artist-roles">
+            {artist.roles} · {artist.city}
+          </p>
+          <p className="chooser-artist-line">{artist.oneLine}</p>
+        </div>
+        <dl className="chooser-tallies">
+          {record.slice(0, 4).map((item) => (
+            <div className="chooser-tally" key={item.label}>
+              <dt>{item.label}</dt>
+              <dd>{item.value}</dd>
+            </div>
+          ))}
+        </dl>
+      </section>
+
       <footer className="chooser-foot">
         <p>
-          {commission.from} · {commission.slots} · {commission.turnaround}
+          Commissions from {commission.from} · {commission.turnaround} · {promise.ownership}
         </p>
       </footer>
     </div>
