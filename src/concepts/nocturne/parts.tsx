@@ -11,6 +11,7 @@ import { violins } from "../../content/dennis";
 import { SceneCanvas } from "../../lib/SceneCanvas";
 import { createInstrumentScene } from "./instrumentScene";
 import { ScrollStage } from "../../lib/ScrollStage";
+import { conceptById } from "../registry";
 
 /**
  * Nocturne's own furniture.
@@ -161,7 +162,9 @@ export function Loader() {
         <span>Dennis Lau</span>
       </p>
       <span className="house-rule" aria-hidden />
-      <p className="house-mark">03 · Nocturne · Velvet and lamplight</p>
+      <p className="house-mark">
+        {conceptById("nocturne").ordinal} · Nocturne · Velvet and lamplight
+      </p>
     </div>
   );
 }

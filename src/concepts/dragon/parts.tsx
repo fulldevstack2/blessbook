@@ -12,6 +12,7 @@ import { violins } from "../../content/dennis";
 import { SceneCanvas } from "../../lib/SceneCanvas";
 import { createInstrumentScene } from "./instrumentScene";
 import { ScrollStage } from "../../lib/ScrollStage";
+import { conceptById } from "../registry";
 
 /**
  * Dragon's own furniture.
@@ -235,7 +236,9 @@ export function Loader() {
           樂
         </span>
       </div>
-      <p className="sheet-mark">二 · Dragon · Ink and jade</p>
+      <p className="sheet-mark">
+        {["一", "二", "三"][Number(conceptById("dragon").ordinal) - 1]} · Dragon · Ink and jade
+      </p>
     </div>
   );
 }

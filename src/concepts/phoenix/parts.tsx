@@ -11,6 +11,7 @@ import { artist, record, territories, violins } from "../../content/dennis";
 import { enquiry, steps, tiers } from "../../content/commission";
 import { useEnquiry } from "../../lib/enquiry";
 import type { Photo } from "../../content/media";
+import { conceptById } from "../registry";
 
 /**
  * Phoenix's own furniture.
@@ -229,7 +230,7 @@ export function Loader() {
           刘凯彦
         </span>
       </p>
-      <p className="veil-mark">01 · Phoenix · Gilded</p>
+      <p className="veil-mark">{conceptById("phoenix").ordinal} · Phoenix · Gilded</p>
     </div>
   );
 }

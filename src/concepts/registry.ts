@@ -31,53 +31,14 @@ function violin(id: Violin["id"]): Violin {
   return found;
 }
 
+/* Nocturne first. It opens on a whole room rather than on a detail, so it is
+   the strongest of the three to meet on the sheet, and the ordinals follow the
+   order they are shown in: a panel labelled 03 sitting first would be its own
+   small confusion. */
 export const concepts: readonly Concept[] = [
   {
-    id: "phoenix",
-    ordinal: "01",
-    path: "/phoenix",
-    name: "Phoenix",
-    tagline: "Gilded",
-    object: "A gold-leaf lacquer screen, and a velvet-lined flight case.",
-    premise:
-      "The most opulent of the three, and the closest to the gold Phoenix violin itself. Near-black lacquer, one seam of 24K gold, and fine display type. Everything on the page is lit the way an object is lit in a dark room.",
-    theme: "dark",
-    fonts:
-      "https://fonts.googleapis.com/css2?family=Italiana&family=Bodoni+Moda:opsz,wght@6..96,500..900&family=Commissioner:wght@200..800&display=swap",
-    display: "Italiana",
-    body: "Commissioner",
-    swatches: [
-      { name: "Lacquer", value: "oklch(16% 0.018 40)" },
-      { name: "24K", value: "oklch(78% 0.13 85)" },
-      { name: "Ivory", value: "oklch(93% 0.014 85)" },
-    ],
-    instrument: violin("phoenix"),
-  },
-  {
-    id: "dragon",
-    ordinal: "02",
-    path: "/dragon",
-    name: "Dragon",
-    tagline: "Ink and jade",
-    object: "An ink-wash scroll, and a jade seal pressed in cinnabar.",
-    premise:
-      "The only one of the three in daylight, and the one that leans on the Chinese side of the name. Warm rice paper, a brush-weight serif, jade rules and a cinnabar seal. It reads as a hand scroll, and it unrolls sideways as you go.",
-    theme: "light",
-    fonts:
-      "https://fonts.googleapis.com/css2?family=Faustina:ital,wght@0,300..800;1,300..800&family=Hanken+Grotesk:wght@300..800&family=Ma+Shan+Zheng&display=swap",
-    display: "Faustina",
-    body: "Hanken Grotesk",
-    swatches: [
-      { name: "Paper", value: "oklch(95% 0.012 85)" },
-      { name: "Ink", value: "oklch(24% 0.012 250)" },
-      { name: "Jade", value: "oklch(58% 0.078 165)" },
-      { name: "Cinnabar", value: "oklch(52% 0.19 32)" },
-    ],
-    instrument: violin("dragon"),
-  },
-  {
     id: "nocturne",
-    ordinal: "03",
+    ordinal: "01",
     path: "/nocturne",
     name: "Nocturne",
     tagline: "Velvet and lamplight",
@@ -98,6 +59,49 @@ export const concepts: readonly Concept[] = [
     /* Named for the hour rather than for an instrument — the other two carry the
        violins. The third violin, The Chosen, is still in the record below. */
     instrument: violin("chosen"),
+  },
+  {
+    id: "phoenix",
+    ordinal: "02",
+    path: "/phoenix",
+    name: "Phoenix",
+    tagline: "Gilded",
+    object: "A gold-leaf lacquer screen, and a velvet-lined flight case.",
+    premise:
+      "The most opulent of the three, and the closest to the gold Phoenix violin itself. Near-black lacquer, one seam of 24K gold, and fine display type. Everything on the page is lit the way an object is lit in a dark room.",
+    theme: "dark",
+    fonts:
+      "https://fonts.googleapis.com/css2?family=Italiana&family=Bodoni+Moda:opsz,wght@6..96,500..900&family=Commissioner:wght@200..800&display=swap",
+    display: "Italiana",
+    body: "Commissioner",
+    swatches: [
+      { name: "Lacquer", value: "oklch(16% 0.018 40)" },
+      { name: "24K", value: "oklch(78% 0.13 85)" },
+      { name: "Ivory", value: "oklch(93% 0.014 85)" },
+    ],
+    instrument: violin("phoenix"),
+  },
+  {
+    id: "dragon",
+    ordinal: "03",
+    path: "/dragon",
+    name: "Dragon",
+    tagline: "Ink and jade",
+    object: "An ink-wash scroll, and a jade seal pressed in cinnabar.",
+    premise:
+      "The only one of the three in daylight, and the one that leans on the Chinese side of the name. Warm rice paper, a brush-weight serif, jade rules and a cinnabar seal. It reads as a hand scroll, and it unrolls sideways as you go.",
+    theme: "light",
+    fonts:
+      "https://fonts.googleapis.com/css2?family=Faustina:ital,wght@0,300..800;1,300..800&family=Hanken+Grotesk:wght@300..800&family=Ma+Shan+Zheng&display=swap",
+    display: "Faustina",
+    body: "Hanken Grotesk",
+    swatches: [
+      { name: "Paper", value: "oklch(95% 0.012 85)" },
+      { name: "Ink", value: "oklch(24% 0.012 250)" },
+      { name: "Jade", value: "oklch(58% 0.078 165)" },
+      { name: "Cinnabar", value: "oklch(52% 0.19 32)" },
+    ],
+    instrument: violin("dragon"),
   },
 ];
 
