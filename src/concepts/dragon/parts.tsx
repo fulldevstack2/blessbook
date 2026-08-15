@@ -8,6 +8,9 @@ import { useSectionProgress } from "../../lib/useSectionProgress";
 import { photos } from "../../content/media";
 import { enquiry, steps, tiers } from "../../content/commission";
 import { useEnquiry } from "../../lib/enquiry";
+import { violins } from "../../content/dennis";
+import { SceneCanvas } from "../../lib/SceneCanvas";
+import { createInstrumentScene } from "./instrumentScene";
 import { ScrollStage } from "../../lib/ScrollStage";
 
 /**
@@ -446,6 +449,60 @@ export function Process() {
             {steps.map((step, index) => (
               <span key={step.index} data-done={index <= stage} />
             ))}
+          </div>
+        </>
+      )}
+    </ScrollStage>
+  );
+}
+
+/* The model on the page is the Phoenix, whatever this concept is named
+   after, so its particulars are the Phoenix's. */
+const shown = violins.find((v) => v.id === "phoenix")!;
+
+/**
+ * The instrument, drawn.
+ *
+ * Phoenix turns it in gold. This concept has no metal in it, so the same
+ * geometry arrives as ink: contour where the form turns away, a stepped wash
+ * across the faces, bare paper where the light lands. Shading in
+ * `instrumentScene.ts`; the sheet it is mounted on is here.
+ */
+export function Instrument() {
+  return (
+    <ScrollStage vh={320} cuts={1} className="drawn">
+      {({ progress }) => (
+        <>
+          <SceneCanvas
+            factory={createInstrumentScene}
+            progress={progress}
+            className="drawn-stage"
+            label={`The ${shown.name} violin turning slowly, drawn in ink: a six-string electric violin carved as a bird's wing.`}
+          />
+
+          <div className="drawn-margin">
+            <span className="drawn-mark" lang="zh" aria-hidden>
+              器
+            </span>
+            <span className="drawn-label">The object itself</span>
+          </div>
+
+          <div className="drawn-plate">
+            <h2 className="drawn-name">{shown.name}</h2>
+            <dl className="drawn-spec">
+              <div>
+                <dt>Built</dt>
+                <dd>{shown.year}</dd>
+              </div>
+              <div>
+                <dt>Material</dt>
+                <dd>{shown.material}</dd>
+              </div>
+              <div>
+                <dt>Maker</dt>
+                <dd>Alistair Hay, Emerald Guitars</dd>
+              </div>
+            </dl>
           </div>
         </>
       )}

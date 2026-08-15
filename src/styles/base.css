@@ -133,6 +133,15 @@ p {
   height: 100%;
 }
 
+/* Nothing may spill out of the box it was given. A long unbroken word, a name
+   set at display size in a narrow column, a URL: all of them overflow silently
+   and get clipped by whatever ancestor happens to hide overflow, which is how a
+   client's name loses its last letter on a phone. The marquees opt out of this
+   by being `white-space: nowrap`, which this cannot override. */
+body {
+  overflow-wrap: break-word;
+}
+
 /* Section choreography. Anything marked data-reveal enters once, when it is
    scrolled to; useScrollReveal sets --reveal-i so siblings stagger against each
    other. The value names the flavour, and concepts refine these under their own

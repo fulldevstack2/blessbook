@@ -6,6 +6,9 @@ import { useReady } from "../../lib/useReady";
 import { photos } from "../../content/media";
 import { enquiry, steps, tiers } from "../../content/commission";
 import { useEnquiry } from "../../lib/enquiry";
+import { violins } from "../../content/dennis";
+import { SceneCanvas } from "../../lib/SceneCanvas";
+import { createInstrumentScene } from "./instrumentScene";
 import { ScrollStage } from "../../lib/ScrollStage";
 
 /**
@@ -304,6 +307,58 @@ export function Process() {
               </li>
             ))}
           </ol>
+        </>
+      )}
+    </ScrollStage>
+  );
+}
+
+/* The model on the page is the Phoenix, whatever this concept is named
+   after, so its particulars are the Phoenix's. */
+const shown = violins.find((v) => v.id === "phoenix")!;
+
+/**
+ * The instrument, on its stand under the lamp.
+ *
+ * Set as a plate on the evening's programme: the object in the arch, one brass
+ * lamp on it, and its particulars listed beneath with the leaders this concept
+ * rules everything with. Lighting in `instrumentScene.ts`.
+ */
+export function Instrument() {
+  return (
+    <ScrollStage vh={320} cuts={1} className="stand">
+      {({ progress }) => (
+        <>
+          <SceneCanvas
+            factory={createInstrumentScene}
+            progress={progress}
+            className="stand-stage"
+            label={`The ${shown.name} violin turning under a brass lamp: a six-string electric violin carved as a bird's wing and plated in 24K gold.`}
+          />
+
+          <div className="stand-card">
+            <p className="stand-eyebrow">
+              <em>the</em> INSTRUMENT
+            </p>
+            <h2 className="stand-name">{shown.name}</h2>
+            <dl className="stand-spec">
+              <div>
+                <dt>Built</dt>
+                <span className="stand-leader" aria-hidden />
+                <dd>{shown.year}</dd>
+              </div>
+              <div>
+                <dt>Material</dt>
+                <span className="stand-leader" aria-hidden />
+                <dd>{shown.material}</dd>
+              </div>
+              <div>
+                <dt>Maker</dt>
+                <span className="stand-leader" aria-hidden />
+                <dd>Alistair Hay, Emerald Guitars</dd>
+              </div>
+            </dl>
+          </div>
         </>
       )}
     </ScrollStage>

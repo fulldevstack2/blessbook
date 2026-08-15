@@ -4,6 +4,3 @@ test-results
 .DS_Store
 *.local
 
-# The raw model export is 34 MB and nothing references it yet. The cleaned,
-# decimated version is what ships once it is wired into a section.
-public/model/*.glb

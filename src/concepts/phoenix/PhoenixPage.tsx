@@ -11,7 +11,7 @@ import { Showreel } from "../../components/Showreel";
 import { StringRow } from "../../components/StringRow";
 import { Volume } from "../../components/Volume";
 import { Words } from "../../components/Words";
-import { Band, Enquiry, Figure, Gauges, Index, Loader, Marking, Plate, Plumb, Process, Struck } from "./parts";
+import { Band, Enquiry, Figure, Gauges, Index, Instrument, Loader, Marking, Plate, Plumb, Process, Struck } from "./parts";
 import {
   commission,
   promise,
@@ -396,6 +396,8 @@ export function PhoenixPage() {
 
         {/* ---------------- who books him ---------------- */}
         <Band />
+
+        <Instrument />
 
         <section className="phoenix-section phoenix-section--invert">
 

@@ -2,10 +2,11 @@ import { useEffect, useRef, type CSSProperties } from "react";
 import { ScrollStage } from "../../lib/ScrollStage";
 import { SceneCanvas } from "../../lib/SceneCanvas";
 import { createBandScene } from "./bandScene";
+import { createInstrumentScene } from "./instrumentScene";
 import { clients, clientWall } from "../../content/clients";
 import { useReady } from "../../lib/useReady";
 import { photos } from "../../content/media";
-import { artist, record, territories } from "../../content/dennis";
+import { artist, record, territories, violins } from "../../content/dennis";
 import { enquiry, steps, tiers } from "../../content/commission";
 import { useEnquiry } from "../../lib/enquiry";
 import type { Photo } from "../../content/media";
@@ -384,6 +385,55 @@ export function Process() {
             {steps.map((step, index) => (
               <span key={step.index} data-done={index <= stage} />
             ))}
+          </div>
+        </>
+      )}
+    </ScrollStage>
+  );
+}
+
+/**
+ * The instrument, turned.
+ *
+ * Six movements describe this object before you ever see it as one, and a
+ * photograph of a thing is not the thing. It is pinned here and the scroll turns
+ * it: in at an angle, most of the way round while the facts beside it are read,
+ * and settled. The gold is in `instrumentScene.ts`.
+ */
+/* The model on the page is the Phoenix. Sourced from the violins list so all
+   three concepts read the same particulars off the same record. */
+const shown = violins.find((v) => v.id === "phoenix")!;
+
+export function Instrument() {
+  return (
+    <ScrollStage vh={320} cuts={1} className="turned">
+      {({ progress }) => (
+        <>
+          <SceneCanvas
+            factory={createInstrumentScene}
+            progress={progress}
+            className="turned-stage"
+            label={`The ${shown.name} violin turning slowly: a six-string electric violin carved as a bird's wing and plated in 24K gold.`}
+          />
+
+          <div className="turned-plate">
+            <p className="turned-eyebrow">The object itself</p>
+            <h2 className="turned-name">{shown.name}</h2>
+            <dl className="turned-spec">
+              <div>
+                <dt>Built</dt>
+                <dd>{shown.year}</dd>
+              </div>
+              <div>
+                <dt>Material</dt>
+                <dd>{shown.material}</dd>
+              </div>
+              <div>
+                <dt>Maker</dt>
+                <dd>Alistair Hay, Emerald Guitars</dd>
+              </div>
+            </dl>
+            <p className="turned-note">{shown.note}</p>
           </div>
         </>
       )}

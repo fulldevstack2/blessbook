@@ -9,7 +9,7 @@ import { Reel } from "../../components/Reel";
 import { Showreel } from "../../components/Showreel";
 import { Volume } from "../../components/Volume";
 import { Words } from "../../components/Words";
-import { BoxOffice, Cast, Enquiry, Figure, Interval, Loader, Process, Programme } from "./parts";
+import { BoxOffice, Cast, Enquiry, Figure, Instrument, Interval, Loader, Process, Programme } from "./parts";
 import { commission, promise, rights, service, tiers } from "../../content/commission";
 import {
   artist,
@@ -400,6 +400,11 @@ export function NocturnePage() {
             ACT VI <em>·</em> WHO BOOKS HIM
           </p>
           <Cast />
+        </section>
+
+        <Instrument />
+
+        <section className="nocturne-act">
 
           <ul className="nocturne-words">
             {words.map((word) => (

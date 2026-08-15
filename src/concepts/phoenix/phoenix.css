@@ -2933,3 +2933,102 @@ canvas[hidden] + .phoenix-hero-plate {
     width: 34px;
   }
 }
+
+/* ---------- the instrument, turned ---------- */
+
+.phoenix .turned {
+  background: var(--lacquer);
+  overflow: hidden;
+}
+
+.phoenix .turned-stage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* The facts stand beside it on a plate of their own, out of the light. */
+.phoenix .turned-plate {
+  position: absolute;
+  left: clamp(var(--space-lg), 6vw, var(--space-5xl));
+  top: 50%;
+  transform: translateY(-50%);
+  width: min(30ch, 42vw);
+  display: grid;
+  gap: var(--space-md);
+  /* It clears out of the way as the object comes round to face you. */
+  opacity: clamp(0, calc(1.5 - var(--p, 0) * 2.4), 1);
+}
+
+.phoenix .turned-eyebrow {
+  font-size: 10px;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.phoenix .turned-name {
+  font-family: var(--display);
+  font-size: clamp(2.2rem, 5vw, 4.2rem);
+  line-height: 1;
+  color: var(--ivory);
+}
+
+.phoenix .turned-spec {
+  display: grid;
+  gap: var(--space-sm);
+  margin-top: var(--space-sm);
+}
+
+.phoenix .turned-spec div {
+  display: grid;
+  grid-template-columns: 8ch minmax(0, 1fr);
+  gap: var(--space-md);
+  align-items: baseline;
+  padding-bottom: var(--space-xs);
+  border-bottom: 1px solid var(--rule);
+}
+
+.phoenix .turned-spec dt {
+  font-size: 9px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--ivory-faint);
+}
+
+.phoenix .turned-spec dd {
+  margin: 0;
+  font-family: var(--display);
+  font-size: 1.05rem;
+  color: var(--ivory);
+}
+
+.phoenix .turned-note {
+  max-width: 34ch;
+  font-size: 0.92rem;
+  line-height: 1.7;
+  color: var(--ivory-soft);
+}
+
+/* On a phone the object takes the frame and the plate sits under it. */
+@media (max-width: 899px) {
+  .phoenix .turned-plate {
+    position: absolute;
+    left: clamp(var(--space-lg), 6vw, var(--space-3xl));
+    right: clamp(var(--space-lg), 6vw, var(--space-3xl));
+    top: auto;
+    bottom: clamp(var(--space-2xl), 8vh, var(--space-4xl));
+    transform: none;
+    width: auto;
+    gap: var(--space-sm);
+  }
+
+  .phoenix .turned-name {
+    font-size: clamp(1.9rem, 9vw, 2.8rem);
+  }
+
+  .phoenix .turned-note {
+    display: none;
+  }
+}

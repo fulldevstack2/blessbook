@@ -9,7 +9,7 @@ import { Showreel } from "../../components/Showreel";
 import { StringRow } from "../../components/StringRow";
 import { Volume } from "../../components/Volume";
 import { Words } from "../../components/Words";
-import { BrushStroke, ClientScroll, Enquiry, Figure, FilmScrolls, Loader, Marks, Process, Stamps, Unroll } from "./parts";
+import { BrushStroke, ClientScroll, Enquiry, Figure, FilmScrolls, Instrument, Loader, Marks, Process, Stamps, Unroll } from "./parts";
 import {
   commission,
   promise,
@@ -387,6 +387,8 @@ export function DragonPage() {
             </ul>
           </div>
         </section>
+
+        <Instrument />
 
         <Marks />
 

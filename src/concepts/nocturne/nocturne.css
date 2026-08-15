@@ -2461,3 +2461,101 @@
     opacity: 1;
   }
 }
+
+/* ---------- the instrument, on its stand under the lamp ---------- */
+
+.nocturne .stand {
+  background: #0d0507;
+  overflow: hidden;
+}
+
+.nocturne .stand-stage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Its particulars, set the way the programme sets everything else. */
+.nocturne .stand-card {
+  position: absolute;
+  left: clamp(var(--space-lg), 6vw, var(--space-5xl));
+  bottom: clamp(var(--space-xl), 9vh, var(--space-4xl));
+  width: min(42ch, 76vw);
+  display: grid;
+  gap: var(--space-sm);
+}
+
+.nocturne .stand-eyebrow {
+  font-family: var(--display);
+  font-size: 10px;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--ivory) 60%, transparent);
+}
+
+.nocturne .stand-eyebrow em {
+  font-style: italic;
+  text-transform: none;
+  letter-spacing: 0.02em;
+  color: var(--brass);
+}
+
+.nocturne .stand-name {
+  font-family: var(--display);
+  font-weight: 300;
+  font-size: clamp(2rem, 5vw, 3.8rem);
+  line-height: 1.02;
+  color: var(--ivory);
+}
+
+.nocturne .stand-spec {
+  display: grid;
+  gap: var(--space-xs);
+  margin-top: var(--space-xs);
+}
+
+.nocturne .stand-spec div {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-md);
+}
+
+.nocturne .stand-spec dt {
+  font-size: 9px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--ivory) 50%, transparent);
+}
+
+.nocturne .stand-leader {
+  flex: 1;
+  height: 1px;
+  background: repeating-linear-gradient(
+    90deg,
+    color-mix(in oklab, var(--brass) 38%, transparent) 0 2px,
+    transparent 2px 7px
+  );
+}
+
+.nocturne .stand-spec dd {
+  margin: 0;
+  font-family: var(--display);
+  font-size: 0.98rem;
+  color: color-mix(in oklab, var(--ivory) 88%, transparent);
+  text-align: right;
+}
+
+@media (max-width: 899px) {
+  .nocturne .stand-spec div {
+    flex-wrap: wrap;
+  }
+
+  .nocturne .stand-leader {
+    display: none;
+  }
+
+  .nocturne .stand-spec dd {
+    text-align: left;
+  }
+}
