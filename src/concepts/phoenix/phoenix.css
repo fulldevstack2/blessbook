@@ -150,7 +150,14 @@
   max-width: 20ch;
 }
 
+/* All four cuts share one grid cell, so the three you cannot see are still lying
+   over the one you can — and over whatever else the stack reaches. That is how
+   the player lost its pause: "Playing" is a shorter word than "Hear him play",
+   so once it started the button shrank back under an invisible headline and the
+   second press landed on that instead. Nothing in a cut is interactive, so no
+   cut takes the pointer. */
 .phoenix-cut {
+  pointer-events: none;
   grid-area: 1 / 1;
   opacity: 0;
   transform: translateY(26px);
@@ -2516,12 +2523,14 @@ canvas[hidden] + .phoenix-hero-plate {
     grid-row: 4;
   }
 
+  /* Bigger than it was. The picture now runs the whole frame, and a masthead
+     set small against a full-bleed portrait reads as a caption on it. */
   .phoenix-cut h1 {
-    font-size: clamp(2rem, 11vw, 3.2rem);
+    font-size: clamp(2.4rem, 13.4vw, 4rem);
   }
 
   .phoenix-cut p.phoenix-line {
-    font-size: clamp(1.4rem, 7vw, 2.1rem);
+    font-size: clamp(1.5rem, 8.2vw, 2.6rem);
   }
 
   .phoenix-cut .phoenix-sub {
@@ -2530,15 +2539,31 @@ canvas[hidden] + .phoenix-hero-plate {
     line-height: 1.52;
   }
 
+  /* The longest cut runs to three lines and eats the flexible row above it, so
+     the player needs a gap of its own or it sits on the last line of the sub. */
   .phoenix-hero-listen {
     display: grid;
     gap: var(--space-sm);
+    margin-top: var(--space-md);
   }
 
   /* The roles are set again a screen further down; in the hero they are the
      line that pushes the block into the photograph. */
   .phoenix-hero-roles {
     display: none;
+  }
+
+  /* Credit, rule and cue on one line. At 11px with a 240px rule between them
+     they wrapped, and a two-line footer under a poster reads as an accident. */
+  .phoenix-hero-foot {
+    flex-wrap: nowrap;
+    gap: var(--space-sm);
+    font-size: 9px;
+    letter-spacing: 0.16em;
+  }
+
+  .phoenix-progress {
+    flex: 1 1 24px;
   }
 }
 

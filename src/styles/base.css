@@ -439,7 +439,17 @@ body {
 /* The listen control: forty seconds of Dennis playing live, sitting in every
    hero. Mechanics only — the concept paints it, and while it plays the hero's
    scene is drawn by the signal instead of by a clock. */
+/* The whole block is the control, not the mark on the front of it. A ten-pixel
+   triangle and a two-word label is a target you have to aim at, and the label
+   gets shorter the moment it starts — "Playing" against "Hear him play" — so
+   the second press is a smaller target than the first. The button keeps the
+   semantics and the keyboard; its ::after stretches the hit area over the
+   title, the sub-line and the rail, none of which do anything on their own.
+   `width: fit-content` is what keeps that stretched area off everything else:
+   the block is a grid item and would otherwise be as wide as its column. */
 .listen {
+  position: relative;
+  width: fit-content;
   display: grid;
   gap: var(--space-sm);
   justify-items: start;
@@ -451,6 +461,13 @@ body {
   gap: var(--space-xs);
   padding: 0;
   text-align: left;
+}
+
+.listen-button::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  cursor: pointer;
 }
 
 /* Same triangle and bar-pair the reel draws, for the same reason: no icon assets. */

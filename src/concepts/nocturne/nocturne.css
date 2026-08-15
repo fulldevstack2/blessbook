@@ -163,7 +163,11 @@
     0 0 46px color-mix(in oklab, var(--velvet-deep) 66%, transparent);
 }
 
+/* The cuts share one grid cell, so the ones you cannot see still lie over the
+   one you can, and over whatever the stack reaches past. See the longer note in
+   phoenix.css: this is what took the pause off the player. */
 .nocturne-cut {
+  pointer-events: none;
   grid-area: 1 / 1;
   opacity: 0;
   transform: translateY(18px);

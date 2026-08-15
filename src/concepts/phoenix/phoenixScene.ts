@@ -128,16 +128,24 @@ const fragmentShader = /* glsl */ `
        On a narrow screen the panel cannot sit beside the type, so it moves above
        it and the type takes the floor. Same picture, different plate. */
     float narrow = step(uAspect, 0.95);
-    // On a phone the plate takes the top half and stops well clear of the type.
-    float top = mix(0.08, 0.44, narrow);
-    float bottom = mix(0.94, 0.965, narrow);
-    float right = mix(0.955, 0.955, narrow);
+    /* On a phone it is not a plate at all. It ran edge to edge across the top
+       half and stopped on a ruled line with a floor of dead black underneath,
+       which is the one composition a poster never has — and it wasted the half
+       of a phone screen that a portrait most wants. So on a narrow frame the
+       picture runs the full width and nearly the full height, and its lower edge
+       is dissolved into the metal instead of ruled against it. */
+    float top = mix(0.08, 0.28, narrow);
+    float bottom = mix(0.94, 1.0, narrow);
+    float right = mix(0.955, 1.0, narrow);
     float panelHeight = bottom - top;
-    float panelWidth = mix(panelHeight / uAspect * 0.92, 0.91, narrow);
+    float panelWidth = mix(panelHeight / uAspect * 0.92, 1.0, narrow);
     float left = right - panelWidth;
 
     vec2 panel = (uv - vec2(left, top)) / vec2(panelWidth, panelHeight);
     float inPanel = step(0.0, panel.x) * step(panel.x, 1.0) * step(0.0, panel.y) * step(panel.y, 1.0) * uPanelOn;
+    /* Wide: a ruled plate, in or out. Narrow: the bottom third of the picture
+       goes down into the metal, so the type has ground rather than an edge. */
+    float hold = inPanel * mix(1.0, smoothstep(0.0, 0.36, panel.y), narrow);
 
     if (inPanel > 0.5 && uHasPhoto > 0.5) {
       /* Cover-fit inside the panel, with a slow rise as the page scrolls.
@@ -173,15 +181,18 @@ const fragmentShader = /* glsl */ `
       // The seam's light falls on him too.
       framed += uGoldLit * seam * 0.25;
 
-      colour = framed;
+      colour = mix(colour, framed, hold);
     }
 
-    // A gold hairline around the panel, and a soft drop beneath it.
+    /* A gold hairline around the panel, and a soft drop beneath it. Only where
+       there is an edge to rule: on a phone the picture has no bottom, and a
+       hairline drawn across the dissolve would put back the line the dissolve
+       exists to remove. */
     float edgeX = min(abs(uv.x - left), abs(uv.x - right));
     float edgeY = min(abs(uv.y - top), abs(uv.y - bottom));
     float onVertical = step(top, uv.y) * step(uv.y, bottom) * exp(-pow(edgeX / 0.0016, 2.0));
     float onHorizontal = step(left, uv.x) * step(uv.x, right) * exp(-pow(edgeY / 0.0016, 2.0));
-    colour += uGold * max(onVertical, onHorizontal) * 0.55 * uPanelOn;
+    colour += uGold * max(onVertical, onHorizontal) * 0.55 * uPanelOn * (1.0 - narrow);
 
     /* ---- a shaft of light, raking the plate ----
 
