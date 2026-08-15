@@ -25,7 +25,9 @@ export interface Concept {
   readonly instrument: Violin;
 }
 
-function violin(id: Violin["id"]): Violin {
+/** One instrument off the record. Also how each concept's turned section names
+    whichever of the three the scroll has reached. */
+export function violin(id: Violin["id"]): Violin {
   const found = violins.find((v) => v.id === id);
   if (!found) throw new Error(`no violin registered for ${id}`);
   return found;

@@ -2967,8 +2967,11 @@ canvas[hidden] + .phoenix-hero-plate {
   width: min(30ch, 42vw);
   display: grid;
   gap: var(--space-md);
-  /* It clears out of the way as the object comes round to face you. */
-  opacity: clamp(0, calc(1.5 - var(--p, 0) * 2.4), 1);
+  /* It clears out of the way as the object comes round to face you, then comes
+     back for the next one. Off `--cut` and not `--p`: the section turns all
+     three instruments now, and a plate that reads the whole track would leave
+     after the Phoenix and take the other two sets of particulars with it. */
+  opacity: clamp(0, min(var(--cut, 0) * 8, 1.5 - var(--cut, 0) * 2.4), 1);
 }
 
 .phoenix .turned-eyebrow {

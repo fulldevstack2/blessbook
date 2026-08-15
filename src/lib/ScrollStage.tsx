@@ -18,9 +18,10 @@ interface ScrollStageProps {
 
 /**
  * A tall scroll track with a pinned, viewport-height frame. Scroll position is
- * published two ways: as a `--p` custom property for CSS, and as a ref for the
- * animation loop. Only the discrete cut index goes through React state, so
- * scrolling does not re-render the tree on every frame.
+ * published three ways: as a `--p` custom property for CSS, as `--cut` for the
+ * same thing measured within the current cut, and as a ref for the animation
+ * loop. Only the discrete cut index goes through React state, so scrolling does
+ * not re-render the tree on every frame.
  */
 export function ScrollStage({ vh, cuts, className, children }: ScrollStageProps) {
   const trackRef = useRef<HTMLDivElement>(null);
@@ -46,6 +47,13 @@ export function ScrollStage({ vh, cuts, className, children }: ScrollStageProps)
       pin.style.setProperty("--p", p.toFixed(4));
 
       const next = Math.min(cuts - 1, Math.floor(p * cuts));
+      /* Progress through the current cut, for the parts that should move once
+         per cut rather than once across the whole track: a caption on a section
+         that shows three objects has something new to say about each of them,
+         and reading `--p` would have it leave after the first. */
+      const within = Math.min(1, Math.max(0, p * cuts - next));
+      pin.style.setProperty("--cut", within.toFixed(4));
+
       setStage((current) => (current === next ? current : next));
     };
 

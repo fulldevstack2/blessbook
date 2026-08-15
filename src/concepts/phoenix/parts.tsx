@@ -7,11 +7,12 @@ import { clients, clientWall } from "../../content/clients";
 import { useReady } from "../../lib/useReady";
 import { useTypeset } from "../../lib/useTypeset";
 import { photos } from "../../content/media";
-import { artist, record, territories, violins } from "../../content/dennis";
+import { artist, record, territories } from "../../content/dennis";
 import { enquiry, steps, tiers } from "../../content/commission";
 import { useEnquiry } from "../../lib/enquiry";
 import type { Photo } from "../../content/media";
-import { conceptById } from "../registry";
+import { conceptById, violin } from "../registry";
+import { TURNED } from "../../lib/loadModel";
 
 /**
  * Phoenix's own furniture.
@@ -396,50 +397,56 @@ export function Process() {
 }
 
 /**
- * The instrument, turned.
+ * The instruments, turned.
  *
- * Six movements describe this object before you ever see it as one, and a
- * photograph of a thing is not the thing. It is pinned here and the scroll turns
- * it: in at an angle, most of the way round while the facts beside it are read,
- * and settled. The gold is in `instrumentScene.ts`.
+ * Six movements describe these objects before you ever see one, and a photograph
+ * of a thing is not the thing. All three are pinned here and the scroll turns
+ * them in the order they were built: each comes in at an angle, goes most of the
+ * way round while the facts beside it are read, and hands over. The gold is in
+ * `instrumentScene.ts`.
+ *
+ * `cuts` is the length of the sequence, so the cut index `ScrollStage` publishes
+ * through React state is the index the scene is drawing — the plate names the
+ * instrument on screen rather than a fixed one, and there is no second opinion
+ * about which that is. The particulars come off the same record the rest of the
+ * site reads.
  */
-/* The model on the page is the Phoenix. Sourced from the violins list so all
-   three concepts read the same particulars off the same record. */
-const shown = violins.find((v) => v.id === "phoenix")!;
-
 export function Instrument() {
   return (
-    <ScrollStage vh={320} cuts={1} className="turned">
-      {({ progress }) => (
-        <>
-          <SceneCanvas
-            factory={createInstrumentScene}
-            progress={progress}
-            className="turned-stage"
-            label={`The ${shown.name} violin turning slowly: a six-string electric violin carved as a bird's wing and plated in 24K gold.`}
-          />
+    <ScrollStage vh={480} cuts={TURNED.length} className="turned">
+      {({ stage, progress }) => {
+        const shown = violin(TURNED[stage]);
+        return (
+          <>
+            <SceneCanvas
+              factory={createInstrumentScene}
+              progress={progress}
+              className="turned-stage"
+              label={`${shown.name}, one of Dennis Lau's three violins, turning slowly in gold. ${shown.material}.`}
+            />
 
-          <div className="turned-plate">
-            <p className="turned-eyebrow">The object itself</p>
-            <h2 className="turned-name">{shown.name}</h2>
-            <dl className="turned-spec">
-              <div>
-                <dt>Built</dt>
-                <dd>{shown.year}</dd>
-              </div>
-              <div>
-                <dt>Material</dt>
-                <dd>{shown.material}</dd>
-              </div>
-              <div>
-                <dt>Maker</dt>
-                <dd>Alistair Hay, Emerald Guitars</dd>
-              </div>
-            </dl>
-            <p className="turned-note">{shown.note}</p>
-          </div>
-        </>
-      )}
+            <div className="turned-plate">
+              <p className="turned-eyebrow">The object itself</p>
+              <h2 className="turned-name">{shown.name}</h2>
+              <dl className="turned-spec">
+                <div>
+                  <dt>Built</dt>
+                  <dd>{shown.year}</dd>
+                </div>
+                <div>
+                  <dt>Material</dt>
+                  <dd>{shown.material}</dd>
+                </div>
+                <div>
+                  <dt>Maker</dt>
+                  <dd>Alistair Hay, Emerald Guitars</dd>
+                </div>
+              </dl>
+              <p className="turned-note">{shown.note}</p>
+            </div>
+          </>
+        );
+      }}
     </ScrollStage>
   );
 }

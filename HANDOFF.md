@@ -223,8 +223,12 @@ src/
     peaks.ts                  Decodes a media file to N amplitude buckets,
                               offline, cached per URL. The real waveform.
     plucker.ts                Karplus-Strong plucked-string synth
-    loadModel.ts              The instrument .glb, fetched once, centred,
-                              normalised, shared by all three concepts
+    loadModel.ts              The three instrument .glb files, fetched once
+                              each, centred, normalised, shared by all three
+                              concepts. Also TURNED (the order the turned
+                              section shows them in) and cue() (which one the
+                              scroll is on), because the scene and the plate
+                              beside it both have to agree about that
     enquiry.ts                Commission request state. SENDS NOTHING YET.
     useFonts.ts               Per-concept Google Fonts injection
     useTypeset.ts             Waits for named faces before the loader paints
@@ -255,8 +259,9 @@ src/
   pages/
     ChooserPage.tsx  chooser.css
 
-public/model/phoenix.glb      The instrument, 150k faces, 2.7 MB
-source-models/                The 35 MB Meshy export. Gitignored, never built.
+public/model/*.glb            phoenix, dragon, chosen — 150k faces, ~2.7 MB each
+source-models/                The 35-85 MB Meshy exports. Gitignored, never built.
+src/content/waveform.ts       Generated. 900 peaks off the live recording.
 ```
 
 Two modules are generated and must not be hand-edited: `dragon/land.ts` (world
@@ -760,8 +765,11 @@ call, not a default.
 ### Photography of the other two instruments
 
 There is none on this site, and the reason is licensing rather than absence.
-Alistair Hay built all three, and Emerald Guitars publish their own studio
-photography of the second one:
+**All three do appear in 3D** — the turned section in every concept now shows
+the Phoenix, the Dragon and the Chosen in the order they were built, cut from
+the user's own Meshy scans by `tools/model-cut.py`. What is missing is
+photography, which is a different problem. Alistair Hay built all three, and
+Emerald Guitars publish their own studio photography of the second one:
 
 - **The Dragon is called Suilleach.** Nine studio frames at
   `emeraldguitars.com/wp-content/uploads/2024/03/dragon-violin-suilleach-by-emerald-guitars_mg_*.jpg`
@@ -794,6 +802,17 @@ Everything below is generated, and **the generators are checked in under
   `apple-touch-icon.png` (180), `icon-512.png`. The touch icon bleeds to its own
   edges because the OS rounds that one itself; the tab icon carries its own
   rounding.
+- `tools/model-cut.py <id>` → `public/model/<id>.glb`. Decimates the Meshy scan
+  in `source-models/<id>-original.glb` to 150k faces and drops the confetti that
+  quadric decimation leaves behind — a few hundred stray components under 40
+  faces, which read as dirt in the air around the instrument. `<id>` is the
+  violin's id in `content/dennis.ts`, which is also its `ModelId`: one vocabulary
+  for the object, the record and the mesh. Needs `trimesh` and
+  `fast-simplification` on the same interpreter.
+- `tools/waveform.mjs` → `src/content/waveform.ts`. ffmpeg-decodes
+  `public/audio/the-journey-live.mp3` and writes one peak per bucket, 900 of
+  them, normalised. Nocturne builds a room out of these and walks down it, so
+  they have to be the real ones. Rerun if `livePhrase` is ever replaced.
 - `tools/og.mjs` → `public/og.jpg`, 1200×630, rendered at 2× and downsampled.
   Typeset in the real Italiana by rendering a page in Playwright rather than
   mocked up in an image editor. Two things it has to do that are not obvious:
@@ -1003,8 +1022,12 @@ came from screenshots he sent back, in his order.
   at 2560px is **19 MB**, against 25 MB for the old 1600px JPEGs: higher
   resolution *and* lighter. `FilmScrub` holds a bounded decode window (30
   resident, 10 either side) so memory does not scale with sequence length.
-- **The instrument, in 3D.** `loadModel.ts` fetches one `.glb`; each concept
-  gives it its own material. The stand had to come off the scan first: see §7.
+- **All three instruments, in 3D.** `loadModel.ts` fetches three `.glb` files;
+  each concept gives them its own material and turns them in the order they were
+  built, and the plate beside the canvas names whichever one is on screen — the
+  section passes `cuts={TURNED.length}` so `ScrollStage`'s cut index and the
+  scene's own arithmetic cannot disagree. The stand had to come off the Phoenix
+  scan first: see §7.
 - **A commission form** (`lib/enquiry.ts`). It validates, it reports, and it
   **sends nothing**. `deliver()` waits 900 ms and resolves. Replace its body with
   a POST to whatever endpoint mails Dennis's team.

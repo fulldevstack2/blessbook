@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { instrument } from "../../lib/loadModel";
+import { cue, instrument, TURNED } from "../../lib/loadModel";
 import type { SceneContext, SceneHandle } from "../../lib/SceneCanvas";
 
 /**
@@ -34,6 +34,7 @@ const fragmentShader = /* glsl */ `
   uniform vec3 uJade;
   uniform vec3 uPaper;
   uniform float uTime;
+  uniform float uFade;
 
   varying vec3 vNormal;
   varying vec3 vView;
@@ -67,7 +68,8 @@ const fragmentShader = /* glsl */ `
 
     // Thin ink goes green before it goes black, the way a wash separates.
     vec3 colour = mix(uPaper, mix(uJade, uInk, smoothstep(0.2, 0.8, ink)), ink);
-    gl_FragColor = vec4(colour, 1.0);
+    // Back to bare paper as one instrument hands over to the next.
+    gl_FragColor = vec4(mix(uPaper, colour, uFade), 1.0);
   }
 `;
 
@@ -88,28 +90,44 @@ export function createInstrumentScene({ canvas, reducedMotion }: SceneContext): 
       uJade: { value: new THREE.Color("#5d7d6c") },
       uPaper: { value: new THREE.Color("#ffffff") },
       uTime: { value: 0 },
+      uFade: { value: 1 },
     },
   });
 
   const pivot = new THREE.Group();
   scene.add(pivot);
 
-  let mesh: THREE.Mesh | null = null;
+  /* All three instruments live in the scene and one is visible at a time. The
+     order they are turned in, and the arithmetic that decides which, are in
+     `loadModel.ts` — the plate beside this canvas has to name whichever one is
+     on screen, so both sides read the scroll off the same function. */
+  const meshes: (THREE.Mesh | null)[] = TURNED.map(() => null);
   let stopped = false;
 
-  void instrument().then((geometry) => {
-    if (!geometry || stopped) return;
-    mesh = new THREE.Mesh(geometry, material);
-    pivot.add(mesh);
+  TURNED.forEach((id, index) => {
+    void instrument(id).then((geometry) => {
+      if (!geometry || stopped) return;
+      const built = new THREE.Mesh(geometry, material);
+      built.visible = index === 0;
+      meshes[index] = built;
+      pivot.add(built);
+    });
   });
 
   return {
     render(progress, elapsed) {
-      // Turned the other way from Phoenix's, because a hand scroll reads right
-      // to left and the object should come round with it.
-      pivot.rotation.y = 1.05 - progress * 2.4;
-      pivot.rotation.z = 0.14 - Math.sin(progress * Math.PI) * 0.12;
-      pivot.rotation.x = -0.06 + progress * 0.2;
+      /* Turned the other way from Phoenix's, because a hand scroll reads right
+         to left and the object should come round with it. Each one is drawn,
+         wiped back to bare paper, and the next is drawn in its place. */
+      const { index, local, fade } = cue(progress);
+      meshes.forEach((entry, at) => {
+        if (entry) entry.visible = at === index;
+      });
+      material.uniforms.uFade.value = fade;
+
+      pivot.rotation.y = 1.05 - local * 2.4;
+      pivot.rotation.z = 0.14 - Math.sin(local * Math.PI) * 0.12;
+      pivot.rotation.x = -0.06 + local * 0.2;
       if (!reducedMotion) pivot.rotation.y += Math.sin(elapsed * 0.19) * 0.025;
       material.uniforms.uTime.value = elapsed;
       renderer.render(scene, camera);
@@ -126,7 +144,9 @@ export function createInstrumentScene({ canvas, reducedMotion }: SceneContext): 
     },
     dispose() {
       stopped = true;
-      if (mesh) pivot.remove(mesh);
+      meshes.forEach((entry) => {
+        if (entry) pivot.remove(entry);
+      });
       material.dispose();
       renderer.dispose();
     },

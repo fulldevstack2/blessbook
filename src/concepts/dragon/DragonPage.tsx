@@ -51,8 +51,16 @@ const numerals = ["一", "二", "三", "四", "五", "六", "七", "八", "九"]
 
 /**
  * The hero, in the register of a hand scroll: a brush phrase in the margin, the
- * Latin beneath it, and the claim itself in Faustina. Every cut is about Dennis
- * — the commission is the last of the four, not the first.
+ * Latin beneath it, and the claim itself in Faustina.
+ *
+ * Three cuts and all three are Dennis — who he is, where he came from, what he
+ * has done. The middle one used to be the Phoenix: six strings, carved as a
+ * wing, plated in gold. It was the best sentence on the page and it was in the
+ * wrong place, because a hero that opens on a man and then cuts to his equipment
+ * has changed the subject by its second breath. The instrument is an object he
+ * owns, and the page has a whole section for it further down. What was missing
+ * here was the thing that makes the record mean anything: he did not arrive
+ * fully formed, he was taught from three.
  */
 const cuts = [
   {
@@ -62,10 +70,10 @@ const cuts = [
     sub: artist.showman,
   },
   {
-    brush: "一把琴",
-    latin: "The instrument",
-    line: "A six-string violin, carved as a wing, plated in gold",
-    sub: "Dennis drew it, Alistair Hay built it in Donegal, and it took a year.",
+    brush: "三岁学琴",
+    latin: "The training",
+    line: "Piano at three, violin at eight, a diploma at fifteen",
+    sub: "His mother, a pianist, taught him the first of them. The rest followed from there.",
   },
   {
     brush: "一万场演出",

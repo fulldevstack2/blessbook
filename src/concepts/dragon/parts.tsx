@@ -8,11 +8,11 @@ import { useSectionProgress } from "../../lib/useSectionProgress";
 import { photos } from "../../content/media";
 import { enquiry, steps, tiers } from "../../content/commission";
 import { useEnquiry } from "../../lib/enquiry";
-import { violins } from "../../content/dennis";
 import { SceneCanvas } from "../../lib/SceneCanvas";
 import { createInstrumentScene } from "./instrumentScene";
 import { ScrollStage } from "../../lib/ScrollStage";
-import { conceptById } from "../registry";
+import { TURNED } from "../../lib/loadModel";
+import { conceptById, violin } from "../registry";
 
 /**
  * Dragon's own furniture.
@@ -455,56 +455,60 @@ export function Process() {
   );
 }
 
-/* The model on the page is the Phoenix, whatever this concept is named
-   after, so its particulars are the Phoenix's. */
-const shown = violins.find((v) => v.id === "phoenix")!;
-
 /**
- * The instrument, drawn.
+ * The instruments, drawn.
  *
- * Phoenix turns it in gold. This concept has no metal in it, so the same
+ * Phoenix turns them in gold. This concept has no metal in it, so the same
  * geometry arrives as ink: contour where the form turns away, a stepped wash
- * across the faces, bare paper where the light lands. Shading in
- * `instrumentScene.ts`; the sheet it is mounted on is here.
+ * across the faces, bare paper where the light lands. All three come through in
+ * the order they were built, each wiped back to bare paper before the next is
+ * drawn in its place. Shading in `instrumentScene.ts`; the sheet they are
+ * mounted on is here.
+ *
+ * `cuts` is the length of the sequence, so the cut index `ScrollStage` publishes
+ * is the one the scene is drawing, and the plate names what is on the sheet.
  */
 export function Instrument() {
   return (
-    <ScrollStage vh={320} cuts={1} className="drawn">
-      {({ progress }) => (
-        <>
-          <SceneCanvas
-            factory={createInstrumentScene}
-            progress={progress}
-            className="drawn-stage"
-            label={`The ${shown.name} violin turning slowly, drawn in ink: a six-string electric violin carved as a bird's wing.`}
-          />
+    <ScrollStage vh={480} cuts={TURNED.length} className="drawn">
+      {({ stage, progress }) => {
+        const shown = violin(TURNED[stage]);
+        return (
+          <>
+            <SceneCanvas
+              factory={createInstrumentScene}
+              progress={progress}
+              className="drawn-stage"
+              label={`${shown.name}, one of Dennis Lau's three violins, turning slowly and drawn in ink. ${shown.material}.`}
+            />
 
-          <div className="drawn-margin">
-            <span className="drawn-mark" lang="zh" aria-hidden>
-              器
-            </span>
-            <span className="drawn-label">The object itself</span>
-          </div>
+            <div className="drawn-margin">
+              <span className="drawn-mark" lang="zh" aria-hidden>
+                器
+              </span>
+              <span className="drawn-label">The object itself</span>
+            </div>
 
-          <div className="drawn-plate">
-            <h2 className="drawn-name">{shown.name}</h2>
-            <dl className="drawn-spec">
-              <div>
-                <dt>Built</dt>
-                <dd>{shown.year}</dd>
-              </div>
-              <div>
-                <dt>Material</dt>
-                <dd>{shown.material}</dd>
-              </div>
-              <div>
-                <dt>Maker</dt>
-                <dd>Alistair Hay, Emerald Guitars</dd>
-              </div>
-            </dl>
-          </div>
-        </>
-      )}
+            <div className="drawn-plate">
+              <h2 className="drawn-name">{shown.name}</h2>
+              <dl className="drawn-spec">
+                <div>
+                  <dt>Built</dt>
+                  <dd>{shown.year}</dd>
+                </div>
+                <div>
+                  <dt>Material</dt>
+                  <dd>{shown.material}</dd>
+                </div>
+                <div>
+                  <dt>Maker</dt>
+                  <dd>Alistair Hay, Emerald Guitars</dd>
+                </div>
+              </dl>
+            </div>
+          </>
+        );
+      }}
     </ScrollStage>
   );
 }

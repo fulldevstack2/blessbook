@@ -1,17 +1,17 @@
 import { clients } from "../../content/clients";
 import { films } from "../../content/work";
 import { record } from "../../content/dennis";
-import { useState, type CSSProperties } from "react";
+import { useState } from "react";
 import { useReady } from "../../lib/useReady";
 import { useTypeset } from "../../lib/useTypeset";
 import { photos } from "../../content/media";
-import { enquiry, steps, tiers } from "../../content/commission";
+import { commission, enquiry, steps, tiers } from "../../content/commission";
 import { useEnquiry } from "../../lib/enquiry";
-import { violins } from "../../content/dennis";
 import { SceneCanvas } from "../../lib/SceneCanvas";
 import { createInstrumentScene } from "./instrumentScene";
 import { ScrollStage } from "../../lib/ScrollStage";
-import { conceptById } from "../registry";
+import { TURNED } from "../../lib/loadModel";
+import { conceptById, violin } from "../registry";
 
 /**
  * Nocturne's own furniture.
@@ -286,151 +286,120 @@ export function Enquiry() {
 }
 
 /**
- * How a commission goes, set as tonight's running order.
+ * How a commission goes, set as tonight's programme.
  *
- * It was a numbered list. A house does not number its evening, it posts it: the
- * four lines stand together on a board and the lamp moves down them, so you can
- * see what has happened and what is still to come at the same time.
- */
-/**
- * The four steps, lit one at a time by a lamp that travels the bar.
+ * This was a lighting rig: a bar down the left margin, four fittings on it, and
+ * a drawn lantern that slid between them throwing a beam across whichever step
+ * you had reached. Every part of that was working as built and the whole was
+ * still cheap, for a reason worth writing down. Spotlighting one row at a time
+ * makes the reader wait for information they came to get — how a commission
+ * actually goes is four short paragraphs, and four short paragraphs should be
+ * readable in one look. And a hall does not point a lamp at its own programme.
+ * It hands you one.
  *
- * All three concepts run this section off the same pinned stage, and all three
- * were the same list with one row picked out: Phoenix strikes a numeral beside
- * it, Dragon brushes a mark, and this one had neither, which made it the plain
- * one. A house does not highlight a row. It has one lamp, it points it at the
- * thing being done, and everything else stays in the dark, so that is what this
- * does: a lighting bar down the left, four fittings on it at the four steps, and
- * a lantern that slides between them throwing a beam across the page.
- *
- * The lamp travels continuously off `--p` and each step lights by its *distance*
- * from the lamp rather than off the discrete cut index, so the beam and the type
- * it lands on can never disagree. `abs()` would say that more plainly and is too
- * new to rely on, so the distance is `max(a - b, b - a)`.
+ * So this is the programme: a card of cream stock lying on the velvet, ruled in
+ * brass the way a printer rules a title page, with the four steps set as
+ * movements — numeral in the margin, the marking out at the right, leaders
+ * carrying the eye across. Nothing moves except the card arriving. Restraint is
+ * the whole effect: the expensive thing in a concert hall is never the lighting,
+ * it is the paper.
  */
 export function Process() {
-  const last = steps.length - 1;
-  /* The bar and the list are the same grid row, and the list gives every step an
-     equal share of it, so a step's centre sits at (i + 0.5) / n of the height.
-     The fittings are placed on that, and the lamp travels between the first and
-     the last of them. Passed down rather than computed in CSS so the arithmetic
-     never has to know how many steps there are. */
-  const rail = {
-    "--first": 0.5 / steps.length,
-    "--span": last / steps.length,
-  } as CSSProperties;
-
   return (
-    <ScrollStage vh={100 * (steps.length + 1)} cuts={steps.length} className="running">
-      {({ stage }) => (
-        /* The lamp is placed on the cut index, not on raw scroll. Driven
-           continuously it spent most of its time hanging between two fittings
-           with nothing properly lit; a lighting cue lands on its fitting and
-           stays there, and the glide between them is a transition. */
-        <div className="running-inner" style={{ "--travel": stage / last } as CSSProperties}>
-          <p className="running-head">
-            <em>the</em> ORDER <em>of the</em> EVENING
+    <div className="bill" data-scroll>
+      <div className="bill-frame">
+        <div className="bill-head">
+          <p className="bill-house">
+            Blesspoke <span aria-hidden>·</span> Kuala Lumpur
           </p>
-
-          <div className="running-bar" style={rail} aria-hidden>
-            {/* Rail and fittings move as one piece, which is what lets a narrow
-                screen hold the lamp still and slide the bar past it instead. */}
-            <span className="running-track">
-              <span className="running-rail" />
-              {steps.map((step, index) => (
-                <span
-                  className="running-fitting"
-                  key={step.index}
-                  data-lit={index === stage}
-                  style={{ "--pos": (index + 0.5) / steps.length } as CSSProperties}
-                >
-                  {step.index}
-                </span>
-              ))}
-            </span>
-
-            <span className="running-lamp">
-              <svg viewBox="0 0 52 46" className="running-lantern">
-                <g fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round">
-                  <path d="M15 1.5V9" />
-                  <path d="M8.5 16.5 32 9.5v27L8.5 29.5Z" fill="#2a1a12" />
-                  <path d="M32 9.5 45 3.5M32 36.5 45 42.5" />
-                </g>
-                <ellipse className="running-lens" cx="32" cy="23" rx="2.6" ry="13.4" />
-              </svg>
-              <span className="running-beam" />
-            </span>
-          </div>
-
-          <ol className="running-list">
-            {steps.map((step, index) => (
-              <li
-                className="running-step"
-                key={step.index}
-                data-active={index === stage}
-                style={{ "--at": index / last } as CSSProperties}
-              >
-                <span className="running-title">{step.title}</span>
-                <span className="running-leader" aria-hidden />
-                <span className="running-marking">{step.marking}</span>
-                <p className="running-body">{step.body}</p>
-              </li>
-            ))}
-          </ol>
+          <h3 className="bill-title">
+            <em>the</em> ORDER <em>of the</em> EVENING
+          </h3>
+          <p className="bill-ornament" aria-hidden>
+            <span className="bill-ornament-rule" />
+            <span className="bill-lozenge" />
+            <span className="bill-ornament-rule" />
+          </p>
         </div>
-      )}
-    </ScrollStage>
+
+        <ol className="bill-list">
+          {steps.map((step) => (
+            <li className="bill-movement" key={step.index} data-reveal>
+              <span className="bill-numeral" aria-hidden>
+                {step.index}
+              </span>
+              <h4 className="bill-name">{step.title}</h4>
+              <span className="bill-leader" aria-hidden />
+              <span className="bill-marking">{step.marking}</span>
+              <p className="bill-body">{step.body}</p>
+            </li>
+          ))}
+        </ol>
+
+        {/* Spelled, not set as a digit: a lone numeral in a line of letterspaced
+            small caps is the one thing on this card that would look typed. */}
+        <p className="bill-foot">
+          {["", "One", "Two", "Three", "Four", "Five", "Six"][steps.length] ?? steps.length}{" "}
+          movements <span aria-hidden>·</span> {commission.turnaround}
+        </p>
+      </div>
+    </div>
   );
 }
 
-/* The model on the page is the Phoenix, whatever this concept is named
-   after, so its particulars are the Phoenix's. */
-const shown = violins.find((v) => v.id === "phoenix")!;
-
 /**
- * The instrument, on its stand under the lamp.
+ * The instruments, each on its stand under the lamp.
  *
  * Set as a plate on the evening's programme: the object in the arch, one brass
  * lamp on it, and its particulars listed beneath with the leaders this concept
- * rules everything with. Lighting in `instrumentScene.ts`.
+ * rules everything with. All three come through, in the order they were built —
+ * the lamp goes out between them, which is how a stand is changed in a house
+ * that has not opened yet. Lighting in `instrumentScene.ts`.
+ *
+ * `cuts` is the length of the sequence, so the cut index `ScrollStage` publishes
+ * is the one the scene is drawing, and the card names whichever instrument is
+ * under the lamp.
  */
 export function Instrument() {
   return (
-    <ScrollStage vh={320} cuts={1} className="stand">
-      {({ progress }) => (
-        <>
-          <SceneCanvas
-            factory={createInstrumentScene}
-            progress={progress}
-            className="stand-stage"
-            label={`The ${shown.name} violin turning under a brass lamp: a six-string electric violin carved as a bird's wing and plated in 24K gold.`}
-          />
+    <ScrollStage vh={480} cuts={TURNED.length} className="stand">
+      {({ stage, progress }) => {
+        const shown = violin(TURNED[stage]);
+        return (
+          <>
+            <SceneCanvas
+              factory={createInstrumentScene}
+              progress={progress}
+              className="stand-stage"
+              label={`${shown.name}, one of Dennis Lau's three violins, turning under a brass lamp. ${shown.material}.`}
+            />
 
-          <div className="stand-card">
-            <p className="stand-eyebrow">
-              <em>the</em> INSTRUMENT
-            </p>
-            <h2 className="stand-name">{shown.name}</h2>
-            <dl className="stand-spec">
-              <div>
-                <dt>Built</dt>
-                <span className="stand-leader" aria-hidden />
-                <dd>{shown.year}</dd>
-              </div>
-              <div>
-                <dt>Material</dt>
-                <span className="stand-leader" aria-hidden />
-                <dd>{shown.material}</dd>
-              </div>
-              <div>
-                <dt>Maker</dt>
-                <span className="stand-leader" aria-hidden />
-                <dd>Alistair Hay, Emerald Guitars</dd>
-              </div>
-            </dl>
-          </div>
-        </>
-      )}
+            <div className="stand-card">
+              <p className="stand-eyebrow">
+                <em>the</em> INSTRUMENT
+              </p>
+              <h2 className="stand-name">{shown.name}</h2>
+              <dl className="stand-spec">
+                <div>
+                  <dt>Built</dt>
+                  <span className="stand-leader" aria-hidden />
+                  <dd>{shown.year}</dd>
+                </div>
+                <div>
+                  <dt>Material</dt>
+                  <span className="stand-leader" aria-hidden />
+                  <dd>{shown.material}</dd>
+                </div>
+                <div>
+                  <dt>Maker</dt>
+                  <span className="stand-leader" aria-hidden />
+                  <dd>Alistair Hay, Emerald Guitars</dd>
+                </div>
+              </dl>
+            </div>
+          </>
+        );
+      }}
     </ScrollStage>
   );
 }

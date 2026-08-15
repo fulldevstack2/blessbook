@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { instrument } from "../../lib/loadModel";
+import { cue, instrument, TURNED } from "../../lib/loadModel";
 import type { SceneContext, SceneHandle } from "../../lib/SceneCanvas";
 
 /**
@@ -35,6 +35,7 @@ const fragmentShader = /* glsl */ `
   uniform vec3 uIvory;
   uniform vec3 uVelvet;
   uniform float uAspect;
+  uniform float uFade;
 
   varying vec3 vNormal;
   varying vec3 vView;
@@ -71,7 +72,8 @@ const fragmentShader = /* glsl */ `
     }
     colour *= inside;
 
-    gl_FragColor = vec4(colour, 1.0);
+    // The lamp goes out across the handover, then comes back up on the next one.
+    gl_FragColor = vec4(colour * uFade, 1.0);
   }
 `;
 
@@ -91,26 +93,43 @@ export function createInstrumentScene({ canvas, reducedMotion }: SceneContext): 
       uIvory: { value: new THREE.Color("#fff3dd") },
       uVelvet: { value: new THREE.Color("#3a1119") },
       uAspect: { value: 1 },
+      uFade: { value: 1 },
     },
   });
 
   const pivot = new THREE.Group();
   scene.add(pivot);
 
-  let mesh: THREE.Mesh | null = null;
+  /* All three instruments live in the scene and one is visible at a time. The
+     order they are turned in, and the arithmetic that decides which, are in
+     `loadModel.ts` — the card beside this canvas has to name whichever one is
+     on screen, so both sides read the scroll off the same function. */
+  const meshes: (THREE.Mesh | null)[] = TURNED.map(() => null);
   let stopped = false;
 
-  void instrument().then((geometry) => {
-    if (!geometry || stopped) return;
-    mesh = new THREE.Mesh(geometry, material);
-    pivot.add(mesh);
+  TURNED.forEach((id, index) => {
+    void instrument(id).then((geometry) => {
+      if (!geometry || stopped) return;
+      const built = new THREE.Mesh(geometry, material);
+      built.visible = index === 0;
+      meshes[index] = built;
+      pivot.add(built);
+    });
   });
 
   return {
     render(progress, elapsed) {
-      // A slow quarter turn, the way a thing on a stand is walked around.
-      pivot.rotation.y = -0.5 + progress * 1.9;
-      pivot.rotation.x = 0.2 - progress * 0.3;
+      /* A slow quarter turn each, the way a thing on a stand is walked around.
+         The lamp goes out between them and comes back up on the next one, which
+         is how a stand is changed in a house that has not opened yet. */
+      const { index, local, fade } = cue(progress);
+      meshes.forEach((entry, at) => {
+        if (entry) entry.visible = at === index;
+      });
+      material.uniforms.uFade.value = fade;
+
+      pivot.rotation.y = -0.5 + local * 1.9;
+      pivot.rotation.x = 0.2 - local * 0.3;
       pivot.rotation.z = 0.1;
       if (!reducedMotion) pivot.rotation.y += Math.sin(elapsed * 0.17) * 0.02;
       renderer.render(scene, camera);
@@ -129,7 +148,9 @@ export function createInstrumentScene({ canvas, reducedMotion }: SceneContext): 
     },
     dispose() {
       stopped = true;
-      if (mesh) pivot.remove(mesh);
+      meshes.forEach((entry) => {
+        if (entry) pivot.remove(entry);
+      });
       material.dispose();
       renderer.dispose();
     },

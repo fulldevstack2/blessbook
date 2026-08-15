@@ -32,6 +32,31 @@ export const artist = {
     "His mother is a pianist, so the piano came first, at three, and Dennis had his Grade 8 by eleven. The violin followed at eight and the diplomas after that, and then a career that refused to sit in an orchestra pit: three albums, five continents, ten thousand performances, and two sold-out three-thousand-seat concerts of his own. Somewhere in the middle of it he asked a luthier in Donegal to build an instrument nobody had built before, and then waited a year for it.",
 } as const;
 
+/**
+ * The one night that carries two claims nobody else can make.
+ *
+ * Both facts are already in this file — the Phoenix's note and the 2016
+ * milestone — and they are pulled out here because of what happens to a first
+ * when it is mentioned in passing: it reads as a detail. The Nocturne page stops
+ * on the night before its acts begin, and this is what it stops on. Sourced
+ * exactly as they are below, including the date, which is the same date for both
+ * because the instrument was unveiled at the concert.
+ */
+export const firstNight = {
+  billing: "The Phoenix Rising",
+  date: "22 October 2016",
+  firsts: [
+    {
+      claim: "The first instrument of its kind played on a stage anywhere in the world",
+      note: "Six strings, carbon fibre and 24K gold. Dennis drew it, Alistair Hay built it in Donegal, and it took a year to make.",
+    },
+    {
+      claim: "The first Malaysian instrumentalist to fill a hall that size on his own name",
+      note: "Three thousand seats, sold out, under music director Aubrey Suwito.",
+    },
+  ],
+} as const;
+
 export interface Credential {
   readonly label: string;
   readonly value: string;

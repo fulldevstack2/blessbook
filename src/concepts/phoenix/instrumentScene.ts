@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { instrument } from "../../lib/loadModel";
+import { cue, instrument, TURNED } from "../../lib/loadModel";
 import type { SceneContext, SceneHandle } from "../../lib/SceneCanvas";
 
 /**
@@ -38,6 +38,7 @@ const fragmentShader = /* glsl */ `
   uniform vec3 uIvory;
   uniform vec3 uLacquer;
   uniform float uSweep;
+  uniform float uFade;
 
   varying vec3 vNormal;
   varying vec3 vView;
@@ -79,7 +80,8 @@ const fragmentShader = /* glsl */ `
     colour += uIvory * band * 0.14;
 
     colour = mix(uLacquer, colour, 0.94);
-    gl_FragColor = vec4(colour, 1.0);
+    // Down to the lacquer as one instrument hands over to the next.
+    gl_FragColor = vec4(mix(uLacquer, colour, uFade), 1.0);
   }
 `;
 
@@ -100,33 +102,48 @@ export function createInstrumentScene({ canvas, reducedMotion }: SceneContext): 
       uIvory: { value: new THREE.Color("#fff6e2") },
       uLacquer: { value: new THREE.Color("#140f0a") },
       uSweep: { value: 0 },
+      uFade: { value: 1 },
     },
   });
 
   const pivot = new THREE.Group();
   scene.add(pivot);
 
-  let mesh: THREE.Mesh | null = null;
+  /* All three instruments live in the scene and one is visible at a time. The
+     order they are turned in, and the arithmetic that decides which, are in
+     `loadModel.ts` — the plate beside this canvas has to name whichever one is
+     on screen, so both sides read the scroll off the same function. */
+  const meshes: (THREE.Mesh | null)[] = TURNED.map(() => null);
   let stopped = false;
 
-  void instrument().then((geometry) => {
-    if (!geometry || stopped) return;
-    mesh = new THREE.Mesh(geometry, material);
-    pivot.add(mesh);
+  TURNED.forEach((id, index) => {
+    void instrument(id).then((geometry) => {
+      if (!geometry || stopped) return;
+      const built = new THREE.Mesh(geometry, material);
+      built.visible = index === 0;
+      meshes[index] = built;
+      pivot.add(built);
+    });
   });
 
   return {
     render(progress, elapsed) {
-      /* It comes in at an angle, turns most of the way round while it is read,
-         and settles. Never a full spin: a spinning object is a product viewer,
-         and this is a portrait. */
-      const turn = -0.85 + progress * 2.5;
-      pivot.rotation.y = turn;
-      pivot.rotation.z = -0.16 + Math.sin(progress * Math.PI) * 0.1;
-      pivot.rotation.x = 0.12 - progress * 0.24;
+      /* Each instrument gets a whole turn of its own: in at an angle, most of
+         the way round while the facts beside it are read, and settled. Never a
+         full spin — a spinning object is a product viewer, and this is a
+         portrait. The handover happens with the frame down at the lacquer. */
+      const { index, local, fade } = cue(progress);
+      meshes.forEach((entry, at) => {
+        if (entry) entry.visible = at === index;
+      });
+      material.uniforms.uFade.value = fade;
+
+      pivot.rotation.y = -0.85 + local * 2.5;
+      pivot.rotation.z = -0.16 + Math.sin(local * Math.PI) * 0.1;
+      pivot.rotation.x = 0.12 - local * 0.24;
       if (!reducedMotion) pivot.rotation.y += Math.sin(elapsed * 0.22) * 0.03;
 
-      material.uniforms.uSweep.value = progress;
+      material.uniforms.uSweep.value = local;
       renderer.render(scene, camera);
     },
     resize(width, height, dpr) {
@@ -142,7 +159,9 @@ export function createInstrumentScene({ canvas, reducedMotion }: SceneContext): 
     },
     dispose() {
       stopped = true;
-      if (mesh) pivot.remove(mesh);
+      meshes.forEach((entry) => {
+        if (entry) pivot.remove(entry);
+      });
       material.dispose();
       renderer.dispose();
     },

@@ -17,6 +17,7 @@ import {
   calling,
   commissionStory,
   credentials,
+  firstNight,
   halls,
   milestones,
   teachers,
@@ -24,7 +25,7 @@ import {
   training,
   violins,
 } from "../../content/dennis";
-import { photos } from "../../content/media";
+import { livePhrase, photos } from "../../content/media";
 import { socials, words } from "../../content/work";
 import { SceneCanvas } from "../../lib/SceneCanvas";
 import { ScrollStage } from "../../lib/ScrollStage";
@@ -33,6 +34,7 @@ import { useParallax } from "../../lib/useParallax";
 import { useScrollReveal } from "../../lib/useScrollReveal";
 import { conceptById } from "../registry";
 import { createNocturneScene } from "./nocturneScene";
+import { createSoundScene } from "./soundScene";
 import "./nocturne.css";
 import { House } from "./House";
 
@@ -55,9 +57,9 @@ const cuts = [
     sub: "Six strings, carbon fibre and 24K gold, drawn by him and built in Donegal.",
   },
   {
-    mark: "And then, quietly",
-    line: "One song, for one person",
-    sub: "The last door in the house, and the only one with your name on it.",
+    mark: "The studio",
+    line: "He writes it, plays it and produces it",
+    sub: "Three albums of his own, and Best Producer at the VIMA awards for the first of them.",
   },
 ];
 
@@ -190,26 +192,87 @@ export function NocturnePage() {
       </ScrollStage>
 
       <main id="main" className="nocturne-body" ref={main}>
-        {/* ---------------- the house lights ---------------- */}
-        <section className="nocturne-act nocturne-act--ivory nocturne-act--creed">
+        {/* ---------------- the night ----------------
+
+            What stood here was a slogan over a summary. The eyebrow said "a
+            house built on one player", which is a metaphor asking to be solved
+            rather than a fact; the statement was half of his own tagline with
+            the half that explains it cut off; and the paragraph under them told
+            the reader the piano, the violin, the albums, the continents, the
+            sold-out halls and the commission — every act on this page, before
+            any of them had begun. Under it, his own billing line, set alone
+            between two rules, which the hero had already shown two screens
+            earlier.
+
+            One night replaces all of it. The 22nd of October 2016 is the only
+            date in his record that carries two firsts at once, both of them
+            checkable, neither of them adjectives, and stating them plainly is
+            worth more than any claim the site could make on his behalf. The
+            acts then go on to earn them. */}
+        <ScrollStage vh={320} cuts={1} className="sound">
+          {({ progress }) => (
+            <>
+              <SceneCanvas
+                factory={createSoundScene}
+                progress={progress}
+                className="sound-stage"
+                label="Two ranks of golden organ pipes receding into darkness over a mirrored floor, their heights the loudness of Dennis Lau's playing at every moment of a forty-second phrase recorded live in 2016."
+              />
+              {/* The room goes dark towards its own wall, which is where the
+                  type lives. A panel behind the words would be a panel; this is
+                  just the far end of the hall. */}
+              <span className="sound-scrim" aria-hidden />
+
+              <div className="sound-plate">
+                <p className="nocturne-eyebrow">
+                  {firstNight.billing} <em>·</em> {firstNight.date}
+                </p>
+                <h2 className="nocturne-statement nocturne-statement--small">
+                  FORTY SECONDS <em>of</em> THAT NIGHT
+                </h2>
+                <p className="sound-note">
+                  You are walking down the sound of it. Every pipe is one moment of{" "}
+                  <em>{livePhrase.title}</em>, measured off the recording made that night on
+                  the Phoenix: where he leans on the bow the rank stands tall, and where he
+                  lifts it, it drops away. Press play and the brass answers.
+                </p>
+                <div className="sound-listen">
+                  <Listen label="Hear that night" />
+                  <Volume />
+                </div>
+              </div>
+            </>
+          )}
+        </ScrollStage>
+
+        {/* And then, on a lit page, what the night was: the two claims stated
+            plainly and nothing else on the sheet. The dark section is the
+            experience of it and this is the record of it, which is also how the
+            page keeps its pulse — the run from the hero down to Act I was
+            otherwise three dark screens in a row. */}
+        <section className="nocturne-act nocturne-act--ivory nocturne-act--night">
           <p className="nocturne-eyebrow" data-reveal>
-            <em>a</em> HOUSE BUILT <em>on</em> ONE PLAYER
+            <em>the</em> STANDING
           </p>
           <h2 className="nocturne-statement" data-reveal>
-            <em>born, raised and</em> TUNED <em>to acquire</em> EXCELLENCE.
+            ONE NIGHT, <em>two</em> FIRSTS
           </h2>
-          <p className="nocturne-lede nocturne-lede--centre" data-reveal>
-            {artist.paragraph}
-          </p>
-        </section>
 
-        {/* His own line for himself, billed. It used to slide past sideways, which
-            is a marquee, and a marquee is the cheapest thing on the street. */}
-        <aside className="nocturne-billing" data-scroll>
-          <span className="nocturne-billing-rule" aria-hidden />
-          <p className="nocturne-billing-line">{artist.showman}</p>
-          <span className="nocturne-billing-rule" aria-hidden />
-        </aside>
+          {/* `data-scroll` here rather than on each row: `--s` draws the brass
+              rules, and the pair should draw together. */}
+          <ol className="nocturne-firsts" data-scroll>
+            {firstNight.firsts.map((first, index) => (
+              <li key={first.claim} data-reveal>
+                <span className="nocturne-firsts-numeral" aria-hidden>
+                  {index === 0 ? "I" : "II"}
+                </span>
+                <span className="nocturne-firsts-rule" aria-hidden />
+                <p className="nocturne-firsts-claim">{first.claim}</p>
+                <p className="nocturne-firsts-note">{first.note}</p>
+              </li>
+            ))}
+          </ol>
+        </section>
 
         {/* ---------------- the man ---------------- */}
         <section className="nocturne-act">
