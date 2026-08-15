@@ -9,7 +9,8 @@ import { Showreel } from "../../components/Showreel";
 import { StringRow } from "../../components/StringRow";
 import { Volume } from "../../components/Volume";
 import { Words } from "../../components/Words";
-import { BrushStroke, ClientScroll, Enquiry, Figure, FilmScrolls, Instrument, Loader, Marks, Process, Stamps, Unroll } from "./parts";
+import { Territories } from "./Territories";
+import { BrushStroke, ClientScroll, Enquiry, Figure, FilmScrolls, Instrument, Loader, Marks, Process, Unroll } from "./parts";
 import {
   commission,
   promise,
@@ -69,7 +70,7 @@ const cuts = [
   {
     brush: "一万场演出",
     latin: "The record",
-    line: "Ten thousand nights, five continents",
+    line: "Ten thousand performances, five continents",
     sub: "Three albums, and two sold-out concerts of three thousand seats.",
   },
 ];
@@ -218,7 +219,7 @@ export function DragonPage() {
         <section className="dragon-section">
           <Margin index={1} label="Training" />
           <div>
-            <Words as="h2" className="dragon-h2" text={"Twenty years of paper before the first commission"} />
+            <Words as="h2" className="dragon-h2" text={"Eighteen years of training, then eighteen years on stage"} />
             <ul className="dragon-list">
               {training.map((line, index) => (
                 <li key={line} data-reveal>
@@ -275,9 +276,12 @@ export function DragonPage() {
               ))}
             </ul>
 
-            <Stamps />
           </div>
         </section>
+
+        {/* Full bleed, outside the measured column: a chart of everywhere he has
+            played needs the width of the page, not the width of the text. */}
+        <Territories />
 
         {/* The record, unrolled: pinned, and pulled sideways as you scroll. */}
         <Unroll className="dragon-record-scroll" vh={340}>
@@ -332,6 +336,10 @@ export function DragonPage() {
           </div>
         </section>
 
+        {/* The object itself, kept with the story of how it was made rather than
+            stranded eight sections later next to the client list. */}
+        <Instrument />
+
         <FilmScrub
           sequence="dragon"
           focus={0.2}
@@ -356,8 +364,8 @@ export function DragonPage() {
 
             <Words as="h2" className="dragon-h2" text={"Written to order"} style={{ marginTop: "var(--space-5xl)" }} />
             <p className="dragon-lede" data-reveal>
-              A game trailer, a car launch, a boy's third birthday, a Mandopop
-              single. The same hand behind every one of them.
+              A game trailer, a car launch, a boy's third birthday and a Mandopop
+              single all came from the same hand.
             </p>
             <Reel caption="Press a title to hear it" />
           </div>
@@ -387,8 +395,6 @@ export function DragonPage() {
             </ul>
           </div>
         </section>
-
-        <Instrument />
 
         <Marks />
 

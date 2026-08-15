@@ -1539,33 +1539,79 @@ canvas:not([hidden]) + .dragon-hero-plate {
   color: var(--jade);
 }
 
+/* A chronology, not a row of cards.
+
+   These two sections share a mechanism and had come to share a look as well:
+   both were vertical stacks under a top rule, which made the second one read as
+   the first one repeated. The record is a line of time now, drawn the length of
+   the scroll with the years hung off it and a tick where each one falls. */
+/* The rule is drawn by the items themselves.
+
+   Putting it on the track at a percentage of the height meant every item found
+   its own place on it, because each one is a different length: the years came
+   out at three different heights, which is the opposite of a chronology. Each
+   year now carries its own rule and every item starts at the same distance from
+   the top, so the segments join into one line across the whole scroll and the
+   years stand on it. Uniform because it cannot be otherwise. */
+.dragon-unroll .unroll-track {
+  gap: 0;
+}
+
 .dragon-unroll-item {
+  /* Held as variables so the rule can be drawn at exactly the year's baseline
+     without either of them going out of step with the other. */
+  --year-top: clamp(48px, 14vh, 140px);
+  --year-size: clamp(2.4rem, 5vw, 4rem);
+
   display: grid;
-  align-content: center;
-  gap: var(--space-sm);
-  width: clamp(280px, 30vw, 420px);
-  padding-top: var(--space-lg);
-  border-top: 1px solid var(--rule);
+  grid-template-rows: auto auto 1fr;
+  align-content: start;
+  gap: 0;
+  width: clamp(300px, 32vw, 460px);
+  padding-top: var(--year-top);
+  padding-right: clamp(28px, 4vw, 72px);
+
+  /* The line runs the full width of the item, gutter included, so with no gap
+     between items the segments meet and read as one rule the length of the
+     scroll. A border on the year stopped at the text column and left the line
+     broken between every entry. */
+  background-image: linear-gradient(
+    to right,
+    color-mix(in oklab, var(--ink) 30%, transparent),
+    color-mix(in oklab, var(--ink) 30%, transparent)
+  );
+  background-repeat: no-repeat;
+  background-size: 100% 1px;
+  background-position: 0 calc(var(--year-top) + var(--year-size) + var(--space-md));
 }
 
 .dragon-unroll-year {
-  font-size: 10px;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  color: var(--jade);
+  padding-bottom: var(--space-md);
+  font-family: var(--display);
+  font-size: var(--year-size);
+  line-height: 1;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
 }
 
 .dragon-unroll-title {
-  font-family: var(--display);
-  font-weight: 400;
-  font-size: clamp(1.6rem, 3.2vw, 2.6rem);
-  line-height: 1.1;
-  color: var(--ink);
+  margin-top: var(--space-lg);
+  font-family: var(--text);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  line-height: 1.5;
+  color: var(--jade);
 }
 
 .dragon-unroll-detail {
+  margin-top: var(--space-sm);
+  max-width: 34ch;
   color: var(--ink-soft);
   font-size: 0.96rem;
+  line-height: 1.7;
 }
 
 .dragon .rail {
@@ -1772,82 +1818,292 @@ canvas:not([hidden]) + .dragon-hero-plate {
   color: var(--jade);
 }
 
+/* Collectors' seals, stamped along the length.
+
+   A hand scroll accumulates the chops of everyone who has owned or admired it,
+   pressed wherever there was room, at whatever height the hand fell. That is
+   what a list of people who have booked him is, and it is nothing like the line
+   of time the record is drawn on, which is the point: the two sections travel
+   the same way and should not look the same doing it. */
 .dragon-client {
   display: grid;
-  align-content: center;
-  gap: var(--space-xs);
-  padding-top: var(--space-lg);
-  border-top: 1px solid var(--rule);
-  min-width: min(16ch, 64vw);
+  grid-template-columns: auto auto;
+  align-items: center;
+  align-content: start;
+  gap: var(--space-md);
+  padding-top: calc(clamp(40px, 12vh, 120px) + var(--drop, 0) * clamp(20px, 6vh, 64px));
+  /* Every entry owns a gutter to its right. Without one, a stagger that drops
+     the next name half a line is enough for its seal to land on top of this
+     one's last word. */
+  padding-right: clamp(28px, 3.5vw, 64px);
+}
+
+/* The chop itself. */
+.dragon-client-seal {
+  display: grid;
+  place-items: center;
+  width: clamp(34px, 4vw, 46px);
+  height: clamp(34px, 4vw, 46px);
+  background: var(--cinnabar);
+  color: var(--paper);
+  font-family: var(--brush);
+  font-size: clamp(0.9rem, 1.6vw, 1.25rem);
+  line-height: 1;
+  /* Pressed by hand, so never quite square to the page. */
+  transform: rotate(calc(-4deg + var(--drop, 0) * 3deg));
+  box-shadow: 2px 3px 0 color-mix(in oklab, var(--cinnabar) 22%, transparent);
+}
+
+/* The name reads across, not down. Vertical setting is right for Chinese and
+   punishing for a Latin name: "Sime Darby" turned on its side is a puzzle, and
+   a client list is the last place to ask anyone to work. */
+.dragon-client-written {
+  display: grid;
+  gap: 2px;
 }
 
 .dragon-client-name {
+  /* A name on a scroll is written in one stroke of the arm, so it never breaks.
+     Wrapping was what put "Patek Philippe" underneath "Porsche": the column
+     narrowed to fit, the second line dropped, and the next seal was already
+     there. Nothing here is width-constrained, so nothing needs to wrap. */
+  white-space: nowrap;
   font-family: var(--display);
-  font-size: clamp(1.5rem, 3vw, 2.4rem);
-  line-height: 1.1;
+  font-size: clamp(1.4rem, 2.6vw, 2.1rem);
+  line-height: 1.05;
+  letter-spacing: 0.02em;
   color: var(--ink);
 }
 
 .dragon-client-field {
+  align-self: start;
   font-size: 9px;
   letter-spacing: 0.28em;
   text-transform: uppercase;
   color: var(--ink-faint);
 }
 
-/* A chop closing each name, the way a scroll signs off. */
-.dragon-client-seal {
-  width: 16px;
-  height: 16px;
-  background: var(--cinnabar);
-  opacity: 0.9;
+
+/* ---------- twelve territories, as a chart ---------- */
+
+/* Twelve place names are geography, and geography wants a map. The land is a
+   field of pressed dots, the tour is one ink line, and a chop comes down on
+   each territory as the line reaches it. Everything here is driven by --p, so
+   the scroll *is* the journey. */
+/* No `align-content` here on purpose. Centring the rows makes the grid size
+   itself to its content and then position that block, which leaves the `1fr`
+   row measuring the *map's* height rather than the space left over. The frame
+   then ran past the bottom of the pinned viewport and clipped Australia in
+   half. The default stretch is what makes `minmax(0, 1fr)` mean what it says. */
+.dragon-map {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: clamp(14px, 2.6vh, 34px);
+  padding: clamp(32px, 6vh, 76px) clamp(var(--space-md), 4vw, var(--space-3xl));
 }
 
-/* ---------- territories, stamped ---------- */
-
-.stamps {
-  margin-top: var(--space-4xl);
+.dragon-map-head {
+  display: grid;
+  gap: var(--space-sm);
+  max-width: 58ch;
 }
 
-.stamps-label {
+/* Side by side once there is room. Stacked, the head ate two hundred pixels of
+   height, and height is the dimension the map is short of: the drawing is
+   nearly twice as wide as it is tall, so every line saved above it widens the
+   whole chart. */
+@media (min-width: 900px) {
+  .dragon-map-head {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    align-items: end;
+    column-gap: clamp(28px, 5vw, 88px);
+    max-width: none;
+  }
+
+  .dragon-map-eyebrow {
+    grid-column: 1 / -1;
+  }
+
+  .dragon-map-note {
+    padding-bottom: 0.4em;
+  }
+}
+
+.dragon-map-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  margin: 0;
   font-size: 10px;
   letter-spacing: 0.3em;
   text-transform: uppercase;
   color: var(--jade);
 }
 
-.stamps-label span {
+.dragon-map-eyebrow span {
   font-family: var(--brush);
   font-size: 1.5rem;
   letter-spacing: 0;
+  line-height: 1;
   color: var(--cinnabar);
-  vertical-align: -0.2em;
-  margin-right: var(--space-xs);
 }
 
-.stamps-list {
-  list-style: none;
-  margin: var(--space-xl) 0 0;
-  padding: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-lg);
+.dragon-map-lede {
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(1.7rem, 3.4vw, 3rem);
+  line-height: 1.08;
+  letter-spacing: -0.01em;
 }
 
-/* Each chop set at its own angle, because a hand never stamps twice the same. */
-.stamp {
-  display: grid;
-  place-items: center;
-  padding: var(--space-sm) var(--space-md);
-  border: 2px solid var(--cinnabar);
-  color: var(--cinnabar);
-  transform: rotate(var(--tilt, 0deg));
+.dragon-map-note {
+  margin: 0;
+  max-width: 52ch;
+  color: var(--ink-soft);
 }
 
-.stamp-name {
-  font-size: 10px;
-  letter-spacing: 0.24em;
+.dragon-map-frame {
+  position: relative;
+  min-height: 0;
+  align-self: stretch;
+}
+
+/* The whole map, fitted into whatever box is left. preserveAspectRatio does the
+   letterboxing, so the type inside scales with the drawing and never reflows. */
+.dragon-map-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  /* Ink sinks into the paper the way every other mark on this concept does. */
+  mix-blend-mode: multiply;
+}
+
+/* Chart paper under the ink: thirty-degree meridians and parallels. Without
+   them the oceans are a large amount of nothing, and the drawing reads as a
+   scatter of dots rather than as a chart of somewhere. */
+.dragon-map-grid line {
+  stroke: var(--jade);
+  stroke-width: 1;
+  stroke-opacity: 0.16;
+}
+
+.dragon-map-land {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-opacity: 0.3;
+}
+
+/* Drawn over the first four fifths of the scroll, so the last seal is not still
+   landing as the section leaves the screen. */
+.dragon-map-line {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-opacity: 0.5;
+  stroke-dasharray: 1;
+  stroke-dashoffset: clamp(0, 1 - var(--p, 0) * 1.25, 1);
+}
+
+.dragon-map-stop {
+  opacity: clamp(0, (var(--p, 0) - var(--at, 0)) * 16, 1);
+}
+
+.dragon-map-leader {
+  stroke: var(--ink);
+  stroke-width: 1.3;
+  stroke-opacity: 0.4;
+}
+
+/* It comes down onto the paper rather than fading up out of it. */
+.dragon-map-seal {
+  fill: var(--cinnabar);
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: rotate(var(--tilt, 0deg)) scale(clamp(1, 1.7 - (var(--p, 0) - var(--at, 0)) * 11, 1.7));
+}
+
+.dragon-map-name {
+  fill: var(--ink);
+  font-family: var(--text);
+  font-size: 28px;
+  font-weight: 500;
+  letter-spacing: 2.6px;
   text-transform: uppercase;
+}
+
+/* On a phone the map is wider than the frame, so it pans rather than shrinks:
+   you travel from London to Melbourne instead of squinting at both at once.
+   That is also how a hand scroll is read, which is the whole conceit. */
+@media (max-width: 760px) {
+  .dragon-map-frame {
+    --map-h: min(52svh, 440px);
+    /* Its own width, from the height and the viewBox ratio the component
+       hands down. `width: auto` will not do this: an inline SVG carrying a
+       viewBox and no width attribute has a ratio but no intrinsic size, so
+       Chromium falls back to the containing block and the map came out square
+       and squashed rather than long and panning. */
+    --map-w: calc(var(--map-h) * var(--map-ratio, 1.71));
+    height: var(--map-h);
+    align-self: center;
+    overflow: hidden;
+  }
+
+  .dragon-map-svg {
+    inset: auto;
+    top: 0;
+    height: var(--map-h);
+    width: var(--map-w);
+    /* The global `img, svg { max-width: 100% }` guard is right everywhere else
+       and wrong here: this drawing is *meant* to be wider than its frame, which
+       is the only reason it has anything to pan across. */
+    max-width: none;
+    /* 100% here is the frame, so this walks the map from its west edge to its
+       east one. It holds at each end for a tenth of the scroll: without that,
+       London slides out of frame in the same breath its seal comes down, and
+       Melbourne arrives on the last pixel of the track. */
+    left: calc(clamp(0, (var(--p, 0) - 0.1) * 1.25, 1) * (100% - var(--map-w)));
+  }
+
+  .dragon-map-name {
+    font-size: 42px;
+    letter-spacing: 3px;
+  }
+
+  /* Chart paper under the ink: thirty-degree meridians and parallels. Without
+   them the oceans are a large amount of nothing, and the drawing reads as a
+   scatter of dots rather than as a chart of somewhere. */
+.dragon-map-grid line {
+  stroke: var(--jade);
+  stroke-width: 1;
+  stroke-opacity: 0.16;
+}
+
+.dragon-map-land {
+    stroke-width: 4.4;
+  }
+
+  .dragon-map-line {
+    stroke-width: 3.4;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dragon-map-line {
+    stroke-dashoffset: 0;
+  }
+
+  .dragon-map-stop {
+    opacity: 1;
+  }
+
+  .dragon-map-seal {
+    transform: rotate(var(--tilt, 0deg));
+  }
 }
 
 /* ---------- one bow stroke ---------- */
@@ -2147,14 +2403,6 @@ canvas:not([hidden]) + .dragon-hero-plate {
   }
 
   /* Stamps and seals crowd at this width. */
-  .stamps-list {
-    gap: var(--space-sm);
-  }
-
-  .stamp {
-    padding: var(--space-2xs) var(--space-sm);
-  }
-
   .dragon-client-name {
     font-size: clamp(1.2rem, 7vw, 1.8rem);
   }

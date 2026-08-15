@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { clients } from "../../content/clients";
-import { territories } from "../../content/dennis";
 import { films } from "../../content/work";
 import { pauseAll } from "../../lib/listening";
 import { useReady } from "../../lib/useReady";
@@ -80,46 +79,22 @@ export function ClientScroll() {
         </span>
         <span className="dragon-clients-label">Clients</span>
       </div>
-      {clients.map((client) => (
-        <div className="dragon-client" key={client.slug}>
-          <span className="dragon-client-name">{client.name}</span>
-          <span className="dragon-client-field">{client.field}</span>
-          <span className="dragon-client-seal" aria-hidden />
+      {clients.map((client, index) => (
+        <div
+          className="dragon-client"
+          key={client.slug}
+          style={{ "--drop": index % 3 } as CSSProperties}
+        >
+          <span className="dragon-client-seal" lang="zh" aria-hidden>
+            印
+          </span>
+          <span className="dragon-client-written">
+            <span className="dragon-client-name">{client.name}</span>
+            <span className="dragon-client-field">{client.field}</span>
+          </span>
         </div>
       ))}
     </Unroll>
-  );
-}
-
-/**
- * Where he has played, as chops stamped into the paper — the way a travelling
- * scroll collects the seals of everywhere it has been. Each is set at its own
- * angle because a hand never stamps twice the same.
- */
-export function Stamps() {
-  return (
-    <div className="stamps">
-      <p className="stamps-label">
-        <span lang="zh">印</span> Twelve territories, stamped
-      </p>
-      <ul className="stamps-list">
-        {territories.map((territory, index) => (
-          <li
-            className="stamp"
-            key={territory.name}
-            data-reveal
-            style={
-              {
-                "--tilt": `${(((index * 37) % 9) - 4) * 0.9}deg`,
-                "--reveal-i": index % 6,
-              } as CSSProperties
-            }
-          >
-            <span className="stamp-name">{territory.name}</span>
-          </li>
-        ))}
-      </ul>
-    </div>
   );
 }
 

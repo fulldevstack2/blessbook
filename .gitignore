@@ -4,3 +4,7 @@ test-results
 .DS_Store
 *.local
 
+
+# Source art: the 35MB Meshy export the shipped model is cut from. Kept beside
+# the project for the next re-cut, never built and never pushed.
+source-models
