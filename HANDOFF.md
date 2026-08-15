@@ -202,41 +202,68 @@ designs cannot drift apart factually.
 ```
 src/
   main.tsx                    BrowserRouter with basename from BASE_URL
-  App.tsx                     Routes + ScrollToTop
+  App.tsx                     Routes + ScrollToTop + useSmoothScroll
   styles/base.css             Reset, spacing scale, easings, .stage-* mechanics,
                               [data-reveal] choreography, .reel-* and .film-*
                               mechanics, .skip-link, reduced-motion policy
   content/
     dennis.ts                 Facts: artist, violins, credentials, tallies,
-                              training, milestones
+                              training, milestones, territories (with lat/lon),
+                              awards, halls, calling
     commission.ts             promise, steps, rights, tiers, proof, commission,
-                              service
+                              enquiry copy
     media.ts                  Photo records with src/dimensions/alt/credit
     work.ts                   Ten demos, three films, socials, client words
+    clients.ts                Fourteen brand clients + alpha logo masks
   lib/
-    ScrollStage.tsx           Pinned scroll track -> progress
+    ScrollStage.tsx           Pinned scroll track -> --p + a progress ref
     SceneCanvas.tsx           WebGL host: frame loop, resize, dispose
     audioContext.ts           One shared AudioContext for the whole site
+    listening.ts              Single-player policy: play() pauses everything else
+    peaks.ts                  Decodes a media file to N amplitude buckets,
+                              offline, cached per URL. The real waveform.
     plucker.ts                Karplus-Strong plucked-string synth
+    loadModel.ts              The instrument .glb, fetched once, centred,
+                              normalised, shared by all three concepts
+    enquiry.ts                Commission request state. SENDS NOTHING YET.
     useFonts.ts               Per-concept Google Fonts injection
+    useTypeset.ts             Waits for named faces before the loader paints
+    useReady.ts               Loader gate: a hold floor and a scroll lock
     useScrollReveal.ts        [data-reveal] entrances, one observer per page
-    useParallax.ts            [data-parallax] drift inside a clipped frame
+    useParallax.ts            [data-parallax] drift, and --s for a section
+    useSectionProgress.ts     --s for concepts that do not run the parallax pass
+    useSmoothScroll.ts        Weighted scrolling via rAF + real window.scrollTo
     prefersReducedMotion.ts
   components/
     ConceptChrome.tsx         Fixed top bar + bottom concept switcher
-    Stave.tsx                 Real 5-line stave, drawn in SVG
-    StringRow.tsx             Four clickable violin strings
+    FilmScrub.tsx             Scroll-scrubbed WebP frame sequences, two tiers,
+                              bounded decode window
+    Showreel.tsx              Click-to-load local showreel
     Reel.tsx                  The ten commissions, playable, with a live scope
-    Films.tsx                 Click-to-load YouTube posters
-    Tally.tsx                 A figure that counts up when scrolled to
+    NowPlaying.tsx  Volume.tsx  Listen.tsx   The sticky player
+    StringRow.tsx             Four clickable violin strings
+    Words.tsx                 Per-word reveal for display headings
+    Cursor.tsx  Grain.tsx
   concepts/
-    registry.ts               Concept metadata: names, fonts, swatches, instrument
-    phoenix/  PhoenixPage.tsx  phoenix.css  phoenixScene.ts
-    dragon/   DragonPage.tsx   dragon.css   dragonScene.ts
-    chosen/   ChosenPage.tsx   chosen.css   chosenScene.ts
+    registry.ts               Concept metadata: order, ordinals, fonts, swatches
+    phoenix/  PhoenixPage.tsx  phoenix.css  phoenixScene.ts  bandScene.ts
+              instrumentScene.ts  parts.tsx  Films.tsx  Groove.tsx
+    dragon/   DragonPage.tsx   dragon.css   dragonScene.ts  instrumentScene.ts
+              parts.tsx  Territories.tsx  land.ts (generated)
+    nocturne/ NocturnePage.tsx nocturne.css nocturneScene.ts instrumentScene.ts
+              parts.tsx  House.tsx  house.ts (generated)
   pages/
     ChooserPage.tsx  chooser.css
+
+public/model/phoenix.glb      The instrument, 150k faces, 2.7 MB
+source-models/                The 35 MB Meshy export. Gitignored, never built.
 ```
+
+Two modules are generated and must not be hand-edited: `dragon/land.ts` (world
+landmass dots, from Natural Earth) and `nocturne/house.ts` (three thousand
+seats). Both are one SVG path per group, using the fact that a zero-length
+subpath with a round linecap paints a dot. Their generators are in the working
+notes on `/mnt/d/blesspoke-sr`.
 
 ### `ScrollStage` — the scroll engine
 
@@ -473,7 +500,23 @@ All three share content and structure-of-argument, and differ in palette,
 typography, **layout structure**, WebGL technique, **and reveal choreography**.
 That last one matters: the mechanism is shared, the feel is not.
 
-### 01 Phoenix — "Gilded" (dark)
+**Order and ordinals changed on 15 Aug 2026.** Nocturne is 01 and shown first,
+Phoenix 02, Dragon 03. Each loader reads its number from `registry.ts` rather
+than carrying its own copy, Dragon converting to its own numerals; the numbers
+had already drifted apart once. The sections below are in that order's
+numbering but appear in this document in their original order.
+
+**One fact, three ways, is the rule.** Every concept has to make the same
+argument out of its own materials, and nothing with a visible shape is shared:
+
+| | Phoenix | Dragon | Nocturne |
+|---|---|---|---|
+| Clients | engraved gold bar (WebGL) | cinnabar seals on a hand scroll | a programme's cast list |
+| Territories | a gilded numbered index | a dotted world chart with an ink route | run in as a line |
+| The big number | struck figures | 168 正 marks brushed in | 3,000 seats lighting in plan |
+| The instrument | gold in a procedural room | stepped ink washes on paper | brass under one lamp |
+
+### 02 Phoenix — "Gilded" (dark)
 
 - **Object:** a gold-leaf lacquer screen, a velvet-lined flight case.
 - **Palette:** lacquer `oklch(14% 0.014 48)`, 24K gold `oklch(78% 0.13 85)`,
@@ -503,7 +546,7 @@ That last one matters: the mechanism is shared, the feel is not.
 - Body weight is `360` and line-height `1.74` — light type on a dark ground reads
   thinner than it measures.
 
-### 02 Dragon — "Ink and jade" (light) — the only daylight concept
+### 03 Dragon — "Ink and jade" (light) — the only daylight concept
 
 - **Object:** an ink-wash hand scroll, a jade seal pressed in cinnabar.
 - **Palette:** rice paper `oklch(95% 0.012 85)`, ink `oklch(25% 0.014 250)`,
@@ -530,7 +573,7 @@ That last one matters: the mechanism is shared, the feel is not.
 - Paper grain is an inline `feTurbulence` SVG data URI at 5% opacity.
 - Photography uses `mix-blend-mode: multiply` so studio backgrounds drop out.
 
-### 03 Nocturne — "Velvet and lamplight" (dark)
+### 01 Nocturne — "Velvet and lamplight" (dark)
 
 **Replaced Silk and Pearl on 15 Aug 2026**, which the user found "too bland and
 boring". Before rebuilding, ten current Awwwards winners were opened in Playwright
@@ -719,6 +762,47 @@ page in Playwright and screenshotting it, rather than mocked up in an image
 editor. The generator is not checked in; regenerate the same way if the copy
 changes.
 
+### The instrument, and how the stand came off it
+
+The user supplied a Meshy scan of the Phoenix violin: `source-models/
+phoenix-original.glb`, 35 MB, 1,977,950 faces, **one watertight component**. The
+object is mounted on a carbon-fibre display stand, and the stand is fused to the
+instrument in the scan.
+
+Two approaches failed and are worth recording so nobody spends the afternoon
+again:
+
+- **A plane cut gutted the right wing.** The stand rises the full height of the
+  object, so any horizontal slice that reaches the stand also reaches the lower
+  wing. The fit reported a half-thickness of 0.349 in a model 1.34 deep, which
+  should have been the tell that it was not fitting a sheet.
+- **Crease-bounded region growing filled the whole mesh.** The scan is smooth
+  everywhere; even a 12° threshold flooded 88.8% of the faces from a seed in the
+  middle of the stand. There is no sharp edge at the junction to stop at.
+
+What worked: **slice the scan in XZ and look.** The stand and the instrument
+never share a footprint at any height, so the cut is a prism and not a plane.
+Fitting the stand's four sides over the 132,000 faces below y = -0.40 gives four
+planes with a maximum deviation of **0.0024** — it is a true truncated pyramid —
+and the intersection of those four half-spaces handles the taper by itself,
+because the planes converge to an apex and above the apex the region is empty.
+
+Two corrections on top of that. The stand steps outward near the top by about
+0.015 on one face, which left a flat blade hanging under the body; and the
+pyramid's apex sits above the scroll, so the cone was clipping the tuning pegs
+off into loose components. **Taking the convex hull of the seed faces plus that
+blade solves both at once** and comes out as one connected piece with no strays.
+
+1,977,950 faces in, 149,961 out, 2.7 MB, silhouette matching the photograph.
+`loadModel.ts` centres and normalises on the longest axis — which, with the stand
+gone, is the wingspan, so all three cameras were brought in.
+
+The scripts are in the working notes on `/mnt/d/blesspoke-sr` (`planes.py`,
+`hull.py`, `finish.py`, `views.py`, `zoom.py`, `slices.py`). `views.py` and
+`zoom.py` are worth keeping: they rasterise a mesh's vertices to a z-buffered
+orthographic sheet in numpy, with a labelled grid, which is how every one of
+these diagnoses was actually made. There is no GPU renderer in this environment.
+
 Notes:
 
 - Credits are rendered on the page, not buried in code. `content/media.ts`
@@ -851,40 +935,69 @@ concepts complete end to end; the chooser page.
 
 ---
 
+
+**Landed 15 Aug 2026, after the user reviewed the live build.** Everything below
+came from screenshots he sent back, in his order.
+
+- **The frames were restored, not upscaled.** Real-ESRGAN
+  (`realesr-general-x4v3`) on CPU torch, from the masters rather than from the
+  published stills — the lost timecodes were recovered by template-matching the
+  published frames back into the source at 0.97–0.9999 correlation. 244 frames
+  at 2560px is **19 MB**, against 25 MB for the old 1600px JPEGs: higher
+  resolution *and* lighter. `FilmScrub` holds a bounded decode window (30
+  resident, 10 either side) so memory does not scale with sequence length.
+- **The instrument, in 3D.** `loadModel.ts` fetches one `.glb`; each concept
+  gives it its own material. The stand had to come off the scan first: see §7.
+- **A commission form** (`lib/enquiry.ts`). It validates, it reports, and it
+  **sends nothing**. `deliver()` waits 900 ms and resolves. Replace its body with
+  a POST to whatever endpoint mails Dennis's team.
+- **A font gate before every loader** (`useTypeset.ts`). His name never paints in
+  Times New Roman and swaps.
+- **Dragon's territories became a chart.** 1,773 land dots rasterised from
+  Natural Earth's 110m coastlines, a jade graticule, and one ink line drawing
+  London to Melbourne as you scroll, pressing a cinnabar chop on each territory.
+  On a phone the map pans rather than shrinks.
+- **Nocturne got the house.** Three thousand seats in plan, lighting from the
+  front row outwards. See §6.
+- **The chooser was rewritten for its actual audience.** It had been wearing
+  Dennis's masthead and quoting his biography back at him. It now answers, in
+  order: what this is, what the site sells, what is the same across the three
+  and what differs, and what to do next.
+- **A copy proofread across all three.** Phoenix had gone Movement IV then VI.
+  Nocturne had the 3D violin inside ACT VI, between the client wall and the
+  compliments those same clients paid. "Ten thousand nights" was ten thousand
+  performances. "Twenty years of paper before the first commission" was neither.
+- **Deployed.** `fulldevstack2.github.io/blesspoke`, on push to `main` via
+  `.github/workflows/deploy-pages.yml`.
+
 ## 9. What is NOT done — your work queue
 
-### 9a. Content decisions that need the user, not an agent
+### 9a. Waiting on the user, not on an agent
 
-- **Unpublish canto** (`fulldevstack2/canto`), which the user is handling.
-- **Decide whether `archive/cursor-build` can be deleted**, which depends on
-  whether the Lumo admin portal work in it is still wanted.
-- **The two client reviews in `work.ts`** came from canto and are attributed to
-  "Brand film lead" and "Mei & Arun". Confirm they are real and cleared for
-  publication before this goes anywhere public.
+- **The textured Meshy export.** The shipped `.glb` has geometry and no
+  materials, so every concept infers its finish from normals alone. With a
+  textured export the fingerboard, the strings and the carbon can read darker
+  than the gold instead of the whole object being one metal.
+- **An endpoint for the commission form.** Until one exists, `enquiry.ts`
+  swallows every request. This is the single most important unfinished thing on
+  the site: it looks like it works.
+- **The two client reviews in `work.ts`** are attributed and should be confirmed
+  as cleared for publication.
 - **Deliberately not used, and keep it that way unless the user says otherwise:**
-  his collaborator names (David Tao, Lee Hom, Siti Nurhaliza, Namewee and
-  others). It reads as a roster and the user was emphatic. For the same reason,
-  demos commissioned *by performers* describe the client rather than naming them
-  ("the champion of The Voice Asia"), while brand clients are named outright,
-  because that is credit rather than a roster. The reasoning is in a comment at
-  the top of `work.ts`.
+  his collaborator names. It reads as a roster and the user was emphatic. Demos
+  commissioned *by performers* describe the client rather than naming them;
+  brand clients are named outright, because that is credit rather than a roster.
 
-### 9b. Remaining "wow" ideas, in the order I would do them
-
-Each concept now has an arrival, a WebGL hero and at least one pinned scroll
-moment below the fold. Phoenix has a second WebGL moment (the gold bar). What is
-still on the table:
+### 9b. Still on the table
 
 - **A real page transition** between chooser and concept, and between concepts.
-  This is the most conspicuous remaining gap — the routes currently hard-cut.
-- **A second WebGL moment for Dragon and Nocturne.** The user asked for more
-  three.js across all three. Phoenix got the bar. For Dragon the obvious one is
-  the brush stroke: it is currently an SVG path drawn on scroll, and a real
-  bristle-and-bleed shader would read as craft rather than vector. For Nocturne,
-  relighting the instrument plate with a raking specular is the candidate,
-  **but weigh it carefully** — that act already carries the scrubbed film, and
-  the user has twice rejected added scenery in this concept for looking cheap.
-- **Cursor-aware detail on desktop** beyond the Nocturne lamp.
+  The routes still hard-cut, and it is the most conspicuous remaining gap.
+- **A second WebGL moment for Dragon.** The brush stroke is an SVG path drawn on
+  scroll; a real bristle-and-bleed shader would read as craft rather than vector.
+  Nocturne now has three canvases and does not need a fourth.
+- **Nocturne's remaining flat pages.** The house broke the run of lists, but the
+  reel, the compliments and the tallies are all still set as lists on a page. Any
+  one of them could carry a treatment of its own.
 - **A fourth concept.** The user's standing offer: *"feel free to create more
   designs please. the more the better but only when you have something real and
   new to bring to table in the form of a full new design."* The bar is high and
@@ -896,32 +1009,21 @@ confidence. Do not turn it into a parallax demo.
 
 ### 9c. Smaller open items
 
-- ~~The fixed `ConceptChrome` bar overlaps large display type.~~ **Fixed** — each
-  concept now scrims behind it in its own ground colour.
 - The Dragon `一` numeral renders as a lone horizontal stroke, which is correct
   Chinese but can look like a stray mark in the margin.
-- ~~The Stave phrase is decorative-but-real.~~ **Gone.** See "Notation: removed
-  on purpose" in §5.
-- Test on a real phone. Only headless Chromium at 390/1440 px has been checked.
-  CJK now renders locally (Noto Sans SC is installed in
-  `~/.local/share/fonts`), so the Chinese has been seen — but a real device is
+- **Test on a real phone.** Only headless Chromium at 390 / 820 / 1440 px has
+  been checked, at DPR 1–2. CJK renders locally (Noto Sans SC is in
+  `~/.local/share/fonts`), so the Chinese has been *seen* — a real device is
   still a different thing.
-- Lighthouse/performance pass. Three.js is a 464 KB chunk (116 KB gzipped) —
-  already manually chunked, but consider lazy-loading scenes per route.
-- The chooser now opens with him and carries his record, but it still has no
-  photography beyond the press portrait and says nothing about the showreel.
-- **Nothing has been pushed since `18f4daf`.** The working tree carries the
-  restoration, the copy pass, the gold bar, the three loaders and the sticky
-  player. The live site is still the old build; the user has not asked for a
-  push.
-- The Dragon `一` numeral note below still applies, and Dragon is the only concept
-  whose hero photograph is a *treatment* (multiplied ink) rather than a
-  photograph — if the user wants him recognisable there, it needs a second image.
+- Lighthouse/performance pass. Three.js is a 464 KB chunk (116 KB gzipped),
+  already manually chunked; consider lazy-loading scenes per route.
+- Dragon is the only concept whose hero photograph is a *treatment* (multiplied
+  ink) rather than a photograph. If the user wants him recognisable there, it
+  needs a second image.
 
 ### 9d. Parked — not part of Blesspoke
 
-The user's earlier message also recapped an **Admin Portal for Lumo** (Dashboard,
-Users List, Transactions, Network/Affiliates/Franchise trees). That is a
+An **Admin Portal for Lumo** was recapped in an early message. That is a
 **different project** and was a recap, not a Blesspoke requirement. Do not build
 it here. Lumo has its own repo and its own standing rules.
 
