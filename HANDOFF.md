@@ -824,6 +824,15 @@ Everything below is generated, and **the generators are checked in under
   `public/audio/the-journey-live.mp3` and writes one peak per bucket, 900 of
   them, normalised. Nocturne builds a room out of these and walks down it, so
   they have to be the real ones. Rerun if `livePhrase` is ever replaced.
+- `tools/fit-check.mjs` — not a generator; a test. Walks every `.stage-pin` on
+  every concept at seventeen viewport sizes and fails if any text-bearing leaf
+  falls outside its frame. **Run it after touching anything in a pinned
+  section.** A pinned frame is exactly one viewport tall and it clips, so
+  content that does not fit is not scrolled to — it is silently deleted, with no
+  scrollbar and no warning, on window shapes nobody happens to be using. Three
+  heroes were losing their footer on a 620px-tall laptop and one on a 640px
+  phone before this existed. `node tools/fit-check.mjs [origin]`, needs
+  `playwright-core` and a Chromium (`CHROME=` to point at one).
 - `tools/og.mjs` → `public/og.jpg`, 1200×630, rendered at 2× and downsampled.
   Typeset in the real Italiana by rendering a page in Playwright rather than
   mocked up in an image editor. Two things it has to do that are not obvious:

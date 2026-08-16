@@ -74,10 +74,28 @@ p {
   --space-4xl: 96px;
   --space-5xl: clamp(96px, 14vw, 200px);
 
+  /* Breathing room inside a pinned frame.
+
+     It comes off the frame's own height rather than the page's width, and that
+     distinction is the whole point: a pinned frame is exactly one viewport tall
+     and it clips, so anything that does not fit is not scrolled to, it is
+     deleted. A short window — a laptop at 620px, a small phone at 640 — was
+     silently cutting the last line off three heroes. */
+  --pin-pad: clamp(var(--space-lg), 8vh, var(--space-4xl));
+
   /* Exponential easings only — no bounce, no elastic. */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* Below this the frame has no air to give and the content still has to fit, so
+   the padding stops being generous. One rule for every pinned section on the
+   site rather than a special case per concept. */
+@media (max-height: 640px) {
+  :root {
+    --pin-pad: clamp(var(--space-sm), 5.5vh, var(--space-2xl));
+  }
 }
 
 :focus-visible {

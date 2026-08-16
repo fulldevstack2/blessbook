@@ -140,8 +140,7 @@
   height: 100%;
   display: grid;
   grid-template-rows: 1fr auto;
-  padding: clamp(var(--space-2xl), 9vh, var(--space-4xl))
-    clamp(var(--space-lg), 6vw, var(--space-5xl));
+  padding: var(--pin-pad) clamp(var(--space-lg), 6vw, var(--space-5xl));
 }
 
 .phoenix-cuts {
@@ -190,7 +189,8 @@
   font-family: "Bodoni Moda", var(--display);
   font-optical-sizing: auto;
   font-weight: 600;
-  font-size: clamp(2.6rem, 8.4vw, 7.6rem);
+  /* Bounded by the frame's height too — see --pin-pad. */
+  font-size: clamp(2.6rem, min(8.4vw, 14vh), 7.6rem);
   line-height: 0.94;
   letter-spacing: -0.015em;
   color: var(--ivory);
@@ -3113,4 +3113,24 @@ canvas[hidden] + .phoenix-hero-plate {
 .veil[data-typeset="true"]:not([data-ready="true"]) .veil-name,
 .veil[data-typeset="true"]:not([data-ready="true"]) .veil-mark {
   opacity: 1;
+}
+
+/* ---------- short frames ----------
+   See the note in dragon.css: a pinned frame clips, so the furniture gives up
+   its room before the message does. */
+@media (max-height: 720px) {
+  .phoenix-cut .phoenix-sub {
+    margin-top: var(--space-sm);
+  }
+
+  .phoenix-mark {
+    margin-bottom: var(--space-sm);
+  }
+
+  .phoenix-hero-foot {
+    flex-wrap: nowrap;
+    gap: var(--space-sm);
+    font-size: 9px;
+    letter-spacing: 0.14em;
+  }
 }

@@ -141,8 +141,7 @@
   height: 100%;
   display: grid;
   grid-template-rows: 1fr auto;
-  padding: clamp(var(--space-2xl), 10vh, var(--space-4xl))
-    clamp(var(--space-lg), 7vw, var(--space-5xl));
+  padding: var(--pin-pad) clamp(var(--space-lg), 7vw, var(--space-5xl));
 }
 
 .dragon-cuts {
@@ -174,7 +173,9 @@
   margin: 0;
   font-family: var(--display);
   font-weight: 400;
-  font-size: clamp(2.4rem, 7.6vw, 6.4rem);
+  /* Bounded by the frame's height too — see --pin-pad. On a wide but short
+     window 7.6vw is nearly a hundred pixels of type in a 620px frame. */
+  font-size: clamp(2.4rem, min(7.6vw, 12vh), 6.4rem);
   line-height: 1.02;
   letter-spacing: -0.015em;
   color: var(--ink);
@@ -3294,4 +3295,37 @@ canvas:not([hidden]) + .dragon-hero-plate {
 .sheet[data-typeset="true"] .sheet-block,
 .sheet[data-typeset="true"] .sheet-mark {
   opacity: 1;
+}
+
+/* ---------- short frames ----------
+
+   A pinned frame clips, so on a short window the last row of a hero is not
+   scrolled to — it is deleted. The type is already bounded by the frame's
+   height (see the mastheads) and the padding comes off it too (--pin-pad); what
+   is left is the furniture, and the furniture gives up its room first: the
+   player sits closer to the type, and the credit line stays on one line instead
+   of wrapping into two. */
+@media (max-height: 720px) {
+  .dragon-hero-listen {
+    margin-bottom: 0;
+  }
+
+  .dragon-cut .dragon-sub {
+    margin-top: var(--space-sm);
+  }
+
+  .dragon-mark {
+    margin-bottom: var(--space-xs);
+  }
+
+  .dragon-mark-latin {
+    margin-bottom: var(--space-sm);
+  }
+
+  .dragon-hero-foot {
+    flex-wrap: nowrap;
+    gap: var(--space-sm);
+    font-size: 9px;
+    letter-spacing: 0.14em;
+  }
 }
