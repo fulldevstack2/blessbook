@@ -45,8 +45,12 @@ let clipped = 0;
 for (const path of PAGES) {
   for (const [width, height] of SIZES) {
     const page = await browser.newPage({ viewport: { width, height }, deviceScaleFactor: 1 });
-    await page.goto(`${ORIGIN}/${path}`, { waitUntil: "networkidle" });
-    await page.waitForTimeout(600);
+    /* "load", not "networkidle": these pages hold audio elements and a font
+       stylesheet open, so networkidle never settles against a real origin. */
+    await page.goto(`${ORIGIN}/${path}`, { waitUntil: "load", timeout: 60000 });
+    await page.waitForFunction(() => document.fonts.status === "loaded", null, { timeout: 20000 })
+      .catch(() => undefined);
+    await page.waitForTimeout(700);
 
     const found = await page.evaluate(() => {
       const out = [];
