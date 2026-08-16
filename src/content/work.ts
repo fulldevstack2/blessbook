@@ -165,10 +165,13 @@ export const socials: readonly Social[] = [
   { label: "Site", handle: "dennislau.thechosen.io", href: "https://dennislau.thechosen.io" },
   { label: "Instagram", handle: "@dennisviolin", href: "https://instagram.com/dennisviolin" },
   { label: "YouTube", handle: "DennisLauTV", href: "https://www.youtube.com/@DennisLauTV" },
+  /* His own page, not his management's. It pointed at
+     MosaicMusicEntertainment, which is the company that books him — a real
+     account, and the wrong one to put under his name. */
   {
     label: "Facebook",
-    handle: "MosaicMusicEntertainment",
-    href: "https://facebook.com/MosaicMusicEntertainment",
+    handle: "dennislauviolin",
+    href: "https://facebook.com/dennislauviolin",
   },
   { label: "X", handle: "@dennislauviolin", href: "https://x.com/dennislauviolin" },
 ];

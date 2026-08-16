@@ -1660,7 +1660,15 @@
 }
 
 .nocturne .volume {
-  color: color-mix(in oklab, var(--ivory) 58%, transparent);
+  color: var(--brass);
+}
+
+/* Ivory on ivory is nothing at all, and that is where the fader went: the reel
+   — the pieces he was asked for — is a lit page, and the control was being
+   painted in the colour of the dark ones. It takes the ink of whatever page it
+   is standing on. */
+.nocturne .nocturne-act--ivory .volume {
+  color: color-mix(in oklab, var(--ink) 66%, transparent);
 }
 
 /* An uncropped plate: the instrument is a landscape object and an arch cuts its

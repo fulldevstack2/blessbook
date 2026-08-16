@@ -16,7 +16,11 @@ export function Volume({ label = "Volume" }: { label?: string }) {
   const [level, setLevel] = useState(volume);
 
   return (
-    <div className="volume" style={{ "--level": level.toFixed(2) } as CSSProperties}>
+    <div
+      className="volume"
+      data-muted={level === 0}
+      style={{ "--level": level.toFixed(2) } as CSSProperties}
+    >
       <button
         type="button"
         className="volume-mark"

@@ -73,7 +73,7 @@ const fragmentShader = /* glsl */ `
      right of it. On a wide screen the type moves right and so does he. */
   vec2 fitFigure(vec2 uv, float narrow) {
     float share = mix(0.78, 0.55, narrow);
-    vec2 onScreen = mix(vec2(0.245, 0.47), vec2(0.72, 0.47), narrow);
+    vec2 onScreen = mix(vec2(0.245, 0.47), vec2(0.735, 0.47), narrow);
 
     float ky = HIM_HEIGHT / share;
     float kx = ky * uAspect / uPhotoAspect;

@@ -1035,36 +1035,95 @@ body {
   opacity: 0.22;
 }
 
+/* The fader.
+
+   It was a bare dot floating in space, on every page and in every concept, and
+   the cause is worth writing down because it looks like working CSS. The track
+   was styled by one rule that listed `::-webkit-slider-runnable-track` and
+   `::-moz-range-track` together — and a selector list containing a pseudo the
+   engine does not know is invalid *entirely*, in both engines. So neither ever
+   drew a track. On Nocturne's velvet that left a nine-pixel dot with nothing
+   around it, which is why the control could not be found at all.
+
+   Vendor pseudo-elements therefore get one rule each below, never a list, and
+   the track is now filled to the level. Everything left of the handle is how
+   loud it is, which is the one convention every fader already shares — and it
+   means the setting is legible without moving anything. */
 .volume-input {
   appearance: none;
-  width: clamp(56px, 8vw, 96px);
-  height: 12px;
+  width: clamp(74px, 9vw, 110px);
+  /* Tall enough to be a touch target; the track is centred inside it. */
+  height: 18px;
   margin: 0;
   background: none;
   cursor: pointer;
 }
 
-.volume-input::-webkit-slider-runnable-track,
-.volume-input::-moz-range-track {
-  height: 1px;
-  background: color-mix(in oklch, currentColor 30%, transparent);
+.volume-input:focus-visible {
+  outline: 1px solid currentColor;
+  outline-offset: 3px;
+}
+
+.volume-input::-webkit-slider-runnable-track {
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(
+    to right,
+    currentColor 0 calc(var(--level, 0.8) * 100%),
+    color-mix(in oklch, currentColor 20%, transparent) calc(var(--level, 0.8) * 100%) 100%
+  );
 }
 
 .volume-input::-webkit-slider-thumb {
   appearance: none;
-  width: 9px;
-  height: 9px;
+  width: 11px;
+  height: 11px;
   margin-top: -4px;
   border-radius: 50%;
+  background: currentColor;
+  transition: transform 160ms var(--ease-out);
+}
+
+.volume-input:hover::-webkit-slider-thumb,
+.volume-input:focus-visible::-webkit-slider-thumb {
+  transform: scale(1.2);
+}
+
+/* Firefox fills its own track, so it needs no gradient — just the two halves. */
+.volume-input::-moz-range-track {
+  height: 3px;
+  border-radius: 999px;
+  background: color-mix(in oklch, currentColor 20%, transparent);
+}
+
+.volume-input::-moz-range-progress {
+  height: 3px;
+  border-radius: 999px;
   background: currentColor;
 }
 
 .volume-input::-moz-range-thumb {
-  width: 9px;
-  height: 9px;
+  width: 11px;
+  height: 11px;
   border: 0;
   border-radius: 50%;
   background: currentColor;
+  transition: transform 160ms var(--ease-out);
+}
+
+.volume-input:hover::-moz-range-thumb,
+.volume-input:focus-visible::-moz-range-thumb {
+  transform: scale(1.2);
+}
+
+/* Muted reads as muted: the bars drop and the track loses its fill anyway,
+   because the level is zero and the fill is the level. */
+.volume[data-muted="true"] .volume-input::-webkit-slider-thumb {
+  background: color-mix(in oklch, currentColor 45%, transparent);
+}
+
+.volume[data-muted="true"] .volume-input::-moz-range-thumb {
+  background: color-mix(in oklch, currentColor 45%, transparent);
 }
 
 /* The loader's scene fills its screen and sits under the type. */

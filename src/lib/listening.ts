@@ -61,14 +61,29 @@ let front: Tap | null = null;
 /** One fader for the whole site, so a volume control has something to hold. */
 let master: GainNode | null = null;
 const VOLUME_KEY = "blesspoke:volume";
+/* Declared before the call below, not after it: `readStoredVolume` is hoisted
+   but a const is not, and reading it from that call at module scope throws. */
+const DEFAULT_VOLUME = 0.8;
 let level_ = readStoredVolume();
 
+/**
+ * The remembered setting, or 0.8 for anyone who has not set one.
+ *
+ * The absent case has to be checked before the number is parsed, and it is the
+ * whole point of this function: `getItem` returns null when the key has never
+ * been written, `Number(null)` is 0 rather than NaN, and 0 passes every test for
+ * a valid volume. So a first-time visitor was handed a master gain of zero —
+ * they pressed play, the audio ran, the scenes moved to the signal, and nothing
+ * came out of the speakers. The fallback below could never fire.
+ */
 function readStoredVolume(): number {
   try {
-    const stored = Number(window.localStorage.getItem(VOLUME_KEY));
-    return Number.isFinite(stored) && stored >= 0 && stored <= 1 ? stored : 0.8;
+    const raw = window.localStorage.getItem(VOLUME_KEY);
+    if (raw === null) return DEFAULT_VOLUME;
+    const stored = Number(raw);
+    return Number.isFinite(stored) && stored >= 0 && stored <= 1 ? stored : DEFAULT_VOLUME;
   } catch {
-    return 0.8;
+    return DEFAULT_VOLUME;
   }
 }
 

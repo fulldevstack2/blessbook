@@ -203,6 +203,31 @@
   color: var(--ink);
 }
 
+/* On a narrow screen the type column and the figure share the sheet, and the
+   ends of the long words land on him — the d of thousand, the s of
+   performances. The answer is not to bleach him back with more paper veil,
+   which is what cost him his legs the first time, and not to set the measure so
+   narrow that a headline breaks into six lines. It is the oldest fix in
+   printing: give the letters their own ground. A paper-coloured halo is
+   invisible over paper and is exactly a sheet of it behind each letterform
+   where it crosses the ink. */
+@media (max-width: 899px) {
+  .dragon-cut h1,
+  .dragon-cut .dragon-line,
+  .dragon-cut .dragon-sub,
+  .dragon-mark-latin,
+  .dragon-hero-roles,
+  .dragon-hero-foot,
+  .dragon .listen-button,
+  .dragon .listen-title,
+  .dragon .listen-where {
+    text-shadow:
+      0 0 6px var(--paper),
+      0 0 14px var(--paper),
+      0 0 26px var(--paper);
+  }
+}
+
 .dragon-mark-latin {
   display: block;
   margin-bottom: var(--space-lg);
@@ -1757,9 +1782,11 @@ canvas:not([hidden]) + .dragon-hero-plate {
   --atlas-surface: var(--ink);
 }
 
+/* Ink, not the faintest ink. See the note in phoenix.css: the filled half of
+   this track is information now, and it has to be readable on paper. */
 .dragon .volume {
   margin-top: var(--space-md);
-  color: var(--ink-faint);
+  color: color-mix(in oklab, var(--ink) 74%, transparent);
 }
 
 /* ════════════════════════════════════════════════════════════════════════════
@@ -1779,6 +1806,7 @@ canvas:not([hidden]) + .dragon-hero-plate {
 
 .unroll {
   --unroll-head: clamp(116px, 32vw, 280px);
+  --unroll-band: 0px;
 }
 
 .unroll-frame {
@@ -1786,6 +1814,7 @@ canvas:not([hidden]) + .dragon-hero-plate {
   display: flex;
   align-items: center;
   height: 100%;
+  padding-top: var(--unroll-band);
   overflow: hidden;
 }
 
@@ -1858,6 +1887,42 @@ canvas:not([hidden]) + .dragon-hero-plate {
 /* The names start clear of the mount and pass behind it on the way out. */
 .dragon-clients .unroll-track {
   padding-inline-start: calc(var(--unroll-head) + clamp(var(--space-lg), 4vw, var(--space-3xl)));
+}
+
+/* A phone cannot give the mount a column. The frame is about 335px, the widest
+   client name is about 215, and the mount wants 125 — so the last name finishes
+   its travel sitting underneath it, which is where Sime Darby Consumer ended up.
+   The mount moves to the top instead, the names get the whole width, and the
+   frame is padded so they still centre in what is left. */
+@media (max-width: 620px) {
+  .unroll {
+    --unroll-head: 100%;
+    --unroll-band: clamp(88px, 15vh, 132px);
+  }
+
+  .unroll-head {
+    bottom: auto;
+    height: var(--unroll-band);
+    align-content: start;
+    padding-block: var(--space-md) 0;
+    background: linear-gradient(
+      180deg,
+      var(--paper) 0%,
+      var(--paper) 74%,
+      transparent 100%
+    );
+  }
+
+  .dragon-clients-head {
+    grid-auto-flow: column;
+    align-items: baseline;
+    justify-content: start;
+    gap: var(--space-md);
+  }
+
+  .dragon-clients .unroll-track {
+    padding-inline-start: clamp(var(--space-lg), 6vw, var(--space-5xl));
+  }
 }
 
 .dragon-clients-mark {

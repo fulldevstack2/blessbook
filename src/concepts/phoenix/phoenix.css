@@ -1777,9 +1777,12 @@ canvas[hidden] + .phoenix-hero-plate {
   color: var(--ivory-faint);
 }
 
+/* The fader takes the concept's metal rather than its faintest ivory. A control
+   has to be found before it can be used, and the filled half of the track is
+   now carrying information — how loud it is — which a faint grey cannot. */
 .phoenix .volume {
   margin-top: var(--space-md);
-  color: var(--ivory-faint);
+  color: var(--gold);
 }
 
 /* ════════════════════════════════════════════════════════════════════════════
