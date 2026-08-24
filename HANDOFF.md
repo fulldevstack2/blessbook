@@ -798,6 +798,23 @@ Neither set is his own press library or CC0, which is the standing rule, so
 neither is checked in. **Emerald Guitars is the ask** — they made all three,
 they hold the originals at full resolution, and the good photographs are theirs.
 
+### Two links Dennis sent that are still missing
+
+His catalogue list arrived over WhatsApp and two of the lines carried the URL of
+the line above them — a copy-paste slip, confirmed by resolving every id against
+the platform before writing any of them down. Both are **absent from
+`catalogue` rather than guessed**, so the list is short by two:
+
+- **Makan Cintaku** (Nongshim Noodle Malaysia micro-series theme song). The link
+  he sent for it is `ecuaYtAmwxs`, which resolves to *The Light Home*. The
+  acoustic version with Khai Bahar and Wany Hasrita has its own good link and is
+  in the list; the original is not.
+- **ESOK** (for Teach For Malaysia, Dennis Lau & various artists). The link he
+  sent is `VVHZ1DOIj18`, which resolves to *ABADI KITA* — the Aisyah Aziz song,
+  which is in the list under its real title.
+
+Ask him for those two and add them; the shape is one more entry each.
+
 ### The mark, the card, and the metadata
 
 Everything below is generated, and **the generators are checked in under

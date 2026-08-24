@@ -3329,3 +3329,90 @@ canvas:not([hidden]) + .dragon-hero-plate {
     letter-spacing: 0.14em;
   }
 }
+
+/* ---------- the colophon ----------
+
+   A hand scroll ends with one: the record of everything the hand has done,
+   written smaller than the work itself, out in the margin where the seals go. */
+.dragon .colophon {
+  margin-top: clamp(var(--space-2xl), 8vh, var(--space-4xl));
+  display: grid;
+  gap: var(--space-lg);
+}
+
+.dragon .colophon-head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-md);
+  padding-bottom: var(--space-sm);
+  border-bottom: 1px solid var(--rule);
+}
+
+.dragon .colophon-mark {
+  font-family: var(--brush);
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  line-height: 1;
+  color: var(--cinnabar);
+}
+
+.dragon .colophon-label {
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--jade);
+}
+
+.dragon .colophon-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  /* Two columns where there is room: a colophon is a column of small writing,
+     not a full-measure paragraph, and at this size one column runs too long. */
+  columns: 2;
+  column-gap: clamp(var(--space-xl), 5vw, var(--space-4xl));
+}
+
+.dragon .colophon-list li {
+  break-inside: avoid;
+  margin-bottom: var(--space-md);
+}
+
+.dragon .colophon-list a {
+  display: grid;
+  gap: 2px;
+  padding-bottom: var(--space-sm);
+  border-bottom: 1px solid var(--rule);
+  text-decoration: none;
+}
+
+.dragon .colophon-title {
+  font-family: var(--display);
+  font-size: 1.05rem;
+  line-height: 1.2;
+  color: var(--ink);
+  transition: color 320ms var(--ease-out);
+}
+
+.dragon .colophon-list a:hover .colophon-title,
+.dragon .colophon-list a:focus-visible .colophon-title {
+  color: var(--cinnabar);
+}
+
+.dragon .colophon-note {
+  font-size: 0.86rem;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+
+.dragon .colophon-on {
+  font-size: 9px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--jade);
+}
+
+@media (max-width: 760px) {
+  .dragon .colophon-list {
+    columns: 1;
+  }
+}

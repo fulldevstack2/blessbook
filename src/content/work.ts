@@ -4,9 +4,13 @@
  * songs should let you hear commissioned songs.
  *
  * Clients are named where the client is a brand or a business, because that is
- * credit rather than a roster. Where the client is a performer they are
- * described, not named — "no other artist" is a standing constraint, and a wall
- * of singers' names would read as exactly the roster this site refuses to have.
+ * credit rather than a roster.
+ *
+ * Performers used to be described rather than named here, on the grounds that a
+ * wall of singers' names reads as a talent roster. Dennis's own labels name
+ * them — Sara Yeong, Chloe Yu, Wen Suen, Vanessa Reynauld — and that is his call
+ * to make: they are his credits and the specificity is the point. The labels
+ * below are his, near enough verbatim; do not generalise them back.
  */
 
 export interface Demo {
@@ -38,83 +42,83 @@ export function timecode(seconds: number): string {
 export const demos: readonly Demo[] = [
   {
     id: "shark",
-    title: "Shark V3 · Best of the Best",
+    title: "SHARK",
     src: audio("shark-v3.mp3"),
     seconds: 98.7,
     kind: "Game trailer",
-    note: "Cinematic trailer score for a suspense game by Ammo Box Studios.",
+    note: "Virtual game trailer, for a suspense title by Ammo Box Studios.",
   },
   {
     id: "corsa",
-    title: "One Corsa V1",
+    title: "ONE CORSA",
     src: audio("one-corsa.mp3"),
     seconds: 83.5,
-    kind: "Brand",
-    note: "Brand music for ONE CORSA, one of Malaysia's largest super and luxury car importers.",
+    kind: "Commercial",
+    note: "Commercial song for a premium and super car importer.",
   },
   {
     id: "born",
-    title: "Born for a Reason",
+    title: "BORN FOR A REASON",
     src: audio("born-for-a-reason.mp3"),
     seconds: 272.3,
-    kind: "Milestone",
-    note: "A song written for a boy's third birthday, to run under a slideshow of his first three years.",
+    kind: "Birthday",
+    note: "A father's dedication to his three-year-old son's birthday.",
   },
   {
     id: "wall",
-    title: "The Great Wall V3",
+    title: "THE GREAT WALL",
     src: audio("great-wall-v3.mp3"),
     seconds: 172.6,
     kind: "Entrance theme",
-    note: "An epic opening theme, commissioned as one woman's entrance music.",
+    note: "Grand entrance theme for the marketing guru Sara Yeong.",
   },
   {
     id: "wall-zh",
-    title: "The Great Wall · 中文版",
+    title: "THE GREAT WALL · \u4e2d\u6587\u7248",
     src: audio("great-wall-zh.mp3"),
     seconds: 183.2,
     kind: "Entrance theme",
-    note: "The same commission again in Mandarin, written so the meaning survives the change of language.",
+    note: "The Chinese version of Sara Yeong's grand entrance theme.",
   },
   {
     id: "unmute",
-    title: "Unmute (Chloe) · Demo V4",
+    title: "UNMUTE",
     src: audio("unmute-chloe.mp3"),
     seconds: 211.0,
-    kind: "Pop R&B",
-    note: "A Taiwanese pop R&B demo. Melody and structure by Dennis, produced up from a bare vocal idea.",
+    kind: "Artiste demo",
+    note: "Chloe Yu's artiste demo.",
   },
   {
     id: "suen",
-    title: "Suen · Demo V4",
+    title: "TIME WILL SING | \u65f6\u95f4\u4f1a\u5531\u6b4c",
     src: audio("suen-demo.mp3"),
     seconds: 254.9,
-    kind: "Mandopop",
-    note: "Written for the champion of The Voice Asia.",
+    kind: "Artiste demo",
+    note: "Artiste demo for Wen Suen, champion of The Voice Asia.",
   },
   {
     id: "vanessa",
-    title: "由我定 · Verse to Chorus",
+    title: "\u7531\u6211\u5b9a",
     src: audio("vanessa-you-wo-ding.mp3"),
     seconds: 203.2,
-    kind: "Mandopop",
-    note: "A single written for the first runner-up of Sing! China, Malaysia edition.",
+    kind: "Artiste demo",
+    note: "Artiste demo for Vanessa Reynauld, first runner-up of Sing! China Malaysia.",
   },
   {
     id: "ballad",
-    title: "Malay / Indonesian Ballad · Chorus",
+    title: "Malay / Indonesian Love Ballad",
     src: audio("malay-indon-ballad.mp3"),
     seconds: 71.9,
-    kind: "Ballad",
-    note: "Music and lyrics both by Dennis. Written in a register that plays across two countries.",
+    kind: "Chorus demo",
+    note: "Music and lyrics both by Dennis, in a register that plays across two countries.",
   },
   {
     id: "tiktok",
-    title: "Free Shipping, Fun Shopping",
+    title: "FREE SHIPPING, FUN SHOPPING",
     src: audio("free-shipping-fun-shopping.mp3"),
     seconds: 148.0,
-    kind: "Campaign",
-    note: "A TikTok Shop campaign demo, built on dangdut rhythm for a Malay audience.",
+    kind: "Campaign theme",
+    note: "TikTok Shop marketing campaign theme song.",
   },
 ];
 
@@ -152,6 +156,130 @@ export const films: readonly Film[] = [
     title: "天赐 · Heaven's Gift",
     note: "A song written for one child, and played at his birthday.",
     poster: poster("theo.webp"),
+  },
+];
+
+/**
+ * Everything else with his name on it.
+ *
+ * The three films above are the examples; this is the catalogue behind them, and
+ * it is here because the argument the whole site makes — that he has done this
+ * many times, for very different people — is only as strong as the list is long.
+ * The labels are Dennis's own.
+ *
+ * Every id and link in here was resolved against the platform before it was
+ * written down, and two of the links he sent were duplicates of the line above
+ * them: the original Makan Cintaku for Nongshim, and ESOK for Teach For
+ * Malaysia. Both are missing rather than guessed. See the note in HANDOFF.md.
+ */
+export interface Work {
+  readonly id: string;
+  /** Where it lives. Changes the wording of the link and nothing else. */
+  readonly on: "YouTube" | "Spotify" | "Instagram";
+  readonly href: string;
+  readonly title: string;
+  /** Who it was for, and what for. */
+  readonly note: string;
+}
+
+export const catalogue: readonly Work[] = [
+  {
+    id: "glory",
+    on: "YouTube",
+    href: "https://youtu.be/8vBQ-BdAbjA",
+    title: "GLORY",
+    note: "With Datuk Syafinaz Selamat.",
+  },
+  {
+    id: "wanna-be-free-live",
+    on: "YouTube",
+    href: "https://youtu.be/CJbWBhn0y2k",
+    title: "I Wanna Be Free",
+    note: "With Jeryl Lee \u674e\u4f69\u73b2, live at The Chosen.",
+  },
+  {
+    id: "wanna-be-free",
+    on: "YouTube",
+    href: "https://youtu.be/gPVI1KYpr1o",
+    title: "I Wanna Be Free",
+    note: "Jeryl Lee \u674e\u4f69\u73b2, for #VoiceBeyondHorizon.",
+  },
+  {
+    id: "abadi-kita",
+    on: "YouTube",
+    href: "https://youtu.be/VVHZ1DOIj18",
+    title: "ABADI KITA",
+    note: "Written for Aisyah Aziz, the Singaporean artiste.",
+  },
+  {
+    id: "nugget",
+    on: "YouTube",
+    href: "https://youtu.be/Piki1mKblAc",
+    title: "Nugget",
+    note: "First single for Sharnaaz Ahmad, the Malaysian A-list actor.",
+  },
+  {
+    id: "nugget-acoustic",
+    on: "YouTube",
+    href: "https://youtu.be/zrS48blMetg",
+    title: "Nugget \u00b7 acoustic",
+    note: "One take, with Sharnaaz Ahmad.",
+  },
+  {
+    id: "makan-cintaku-acoustic",
+    on: "YouTube",
+    href: "https://youtu.be/N0UUpt0RFTc",
+    title: "Makan Cintaku \u00b7 acoustic",
+    note: "With Khai Bahar and Wany Hasrita.",
+  },
+  {
+    id: "jadi-tak-keruan",
+    on: "YouTube",
+    href: "https://youtu.be/HFtwimMVMz4",
+    title: "JADI TAK KERUAN",
+    note: "First single for Fara Dolhadi.",
+  },
+  {
+    id: "light-home",
+    on: "YouTube",
+    href: "https://youtu.be/ecuaYtAmwxs",
+    title: "The Light Home \uff5c \u56de\u5bb6\u7684\u5149",
+    note: "Chinese New Year theme song, 2026.",
+  },
+  {
+    id: "beauty-in-the-pot",
+    on: "YouTube",
+    href: "https://youtu.be/jKVLyHmMBaY",
+    title: "\u6211\u60f3\u5bf9\u4f60\u8bf4",
+    note: "Theme song for the Beauty in the Pot hotpot chain.",
+  },
+  {
+    id: "safe-harbour",
+    on: "YouTube",
+    href: "https://youtu.be/mFGa7RPHnW0",
+    title: "\u907f\u98ce\u6e2f",
+    note: "For Daniel Tan: a groom's dedication to his bride.",
+  },
+  {
+    id: "one-corsa-film",
+    on: "Instagram",
+    href: "https://www.instagram.com/p/DcVHIZ0TSAl/",
+    title: "ONE CORSA",
+    note: "The commercial the song was written for.",
+  },
+  {
+    id: "phoenix-album",
+    on: "Spotify",
+    href: "https://open.spotify.com/album/22hh21F0ImbOAnuIPiXjO1",
+    title: "The Phoenix Rising Concert",
+    note: "The 2016 concert, recorded live.",
+  },
+  {
+    id: "chosen-album",
+    on: "Spotify",
+    href: "https://open.spotify.com/album/2Pp6yeK5T7teXzoFHbMzM4",
+    title: "The Chosen Concert",
+    note: "The 2019 concert, recorded live.",
   },
 ];
 

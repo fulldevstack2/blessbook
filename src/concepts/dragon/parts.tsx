@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { clients } from "../../content/clients";
-import { films } from "../../content/work";
+import { catalogue, films } from "../../content/work";
 import { pauseAll } from "../../lib/listening";
 import { useReady } from "../../lib/useReady";
 import { useTypeset } from "../../lib/useTypeset";
@@ -219,6 +219,29 @@ export function FilmScrolls({ caption }: { caption: string }) {
             </figcaption>
           </figure>
         ))}
+      </div>
+
+      {/* The rest of it, written down the sheet as titles rather than mounted as
+          sixteen more scrolls. A hand scroll ends in a colophon: the list of
+          everything the hand has done, in the margin, in a smaller brush. */}
+      <div className="colophon">
+        <div className="colophon-head">
+          <span className="colophon-mark" lang="zh" aria-hidden>
+            录
+          </span>
+          <span className="colophon-label">Also written and produced</span>
+        </div>
+        <ul className="colophon-list">
+          {catalogue.map((work) => (
+            <li key={work.id}>
+              <a href={work.href} rel="noreferrer noopener" target="_blank">
+                <span className="colophon-title">{work.title}</span>
+                <span className="colophon-note">{work.note}</span>
+                <span className="colophon-on">{work.on}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   );

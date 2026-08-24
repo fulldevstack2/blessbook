@@ -3134,3 +3134,109 @@ canvas[hidden] + .phoenix-hero-plate {
     letter-spacing: 0.14em;
   }
 }
+
+/* ---------- the index: everything the three films are examples of ----------
+
+   Set as an engraved index rather than more posters. The leader carries the eye
+   from the title to what it was for, which is the one thing a reader of a
+   credits list actually wants, and the platform sits out at the right where a
+   catalogue number would. */
+.phoenix .credits {
+  /* `.films` is a three-column grid from 900px up, and this is not a film — it
+     is the list under all of them, so it takes the full measure. Without this it
+     lands as a fourth cell and sets seventeen credits in a 355px column. */
+  grid-column: 1 / -1;
+  margin-top: clamp(var(--space-2xl), 8vh, var(--space-4xl));
+  border-top: 1px solid var(--rule);
+  padding-top: var(--space-xl);
+}
+
+.phoenix .credits-head {
+  font-size: 10px;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.phoenix .credits-list {
+  margin: var(--space-lg) 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+}
+
+.phoenix .credits-row a {
+  display: grid;
+  grid-template-columns: minmax(0, auto) minmax(1.5rem, 1fr) minmax(0, auto) auto;
+  align-items: baseline;
+  column-gap: var(--space-md);
+  row-gap: var(--space-2xs);
+  padding-block: var(--space-sm);
+  border-bottom: 1px solid var(--rule);
+  text-decoration: none;
+  transition: color 320ms var(--ease-out);
+}
+
+.phoenix .credits-row a:hover,
+.phoenix .credits-row a:focus-visible {
+  color: var(--gold);
+}
+
+.phoenix .credits-title {
+  font-family: var(--display);
+  font-size: clamp(1rem, 1.7vw, 1.32rem);
+  color: var(--ivory);
+}
+
+.phoenix .credits-row a:hover .credits-title {
+  color: var(--gold);
+}
+
+.phoenix .credits-leader {
+  height: 1px;
+  transform: translateY(-0.32em);
+  background: repeating-linear-gradient(
+    90deg,
+    color-mix(in oklab, var(--ivory) 26%, transparent) 0 2px,
+    transparent 2px 7px
+  );
+}
+
+.phoenix .credits-note {
+  font-size: 0.9rem;
+  color: var(--ivory-faint);
+}
+
+.phoenix .credits-on {
+  font-size: 9px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--gold-deep, var(--gold));
+  /* Letter-spacing adds a space after the final letter, which pushes this
+     column past the measure. Pulled back so the right edge lines up. */
+  margin-right: -0.26em;
+}
+
+/* Narrow: the leader has nothing to lead across, so the note goes underneath. */
+@media (max-width: 760px) {
+  .phoenix .credits-row a {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .phoenix .credits-title {
+    grid-column: 1;
+  }
+
+  .phoenix .credits-leader {
+    display: none;
+  }
+
+  .phoenix .credits-on {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .phoenix .credits-note {
+    grid-column: 1 / -1;
+  }
+}

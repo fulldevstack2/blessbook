@@ -3162,3 +3162,114 @@
     margin-top: var(--space-sm);
   }
 }
+
+/* ---------- the rest of the bill ----------
+
+   A programme prints its feature in full and lists the rest. Same leaders as
+   the cast page and the box office board, because on this page a leader is how
+   any two facts are joined. */
+.nocturne .alsobill {
+  /* `.programme` is two columns from 1000px up; this list is under both of
+     them, not beside one. */
+  grid-column: 1 / -1;
+  margin-top: clamp(var(--space-2xl), 7vh, var(--space-4xl));
+  border-top: 1px solid var(--rule);
+  padding-top: var(--space-xl);
+}
+
+.nocturne .alsobill-head {
+  margin: 0;
+  font-size: 10px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--ivory) 62%, transparent);
+}
+
+.nocturne .alsobill-head em {
+  font-family: var(--display);
+  font-size: 15px;
+  font-style: italic;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: var(--brass);
+}
+
+.nocturne .alsobill-list {
+  margin: var(--space-lg) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.nocturne .alsobill-list a {
+  display: grid;
+  grid-template-columns: minmax(0, auto) minmax(1.5rem, 1fr) minmax(0, auto) auto;
+  align-items: baseline;
+  column-gap: var(--space-md);
+  row-gap: var(--space-2xs);
+  padding-block: var(--space-sm);
+  border-bottom: 1px solid var(--rule);
+  text-decoration: none;
+  transition: color 320ms var(--ease-out);
+}
+
+.nocturne .alsobill-list a:hover .alsobill-title,
+.nocturne .alsobill-list a:focus-visible .alsobill-title {
+  color: var(--brass);
+}
+
+.nocturne .alsobill-title {
+  font-family: var(--display);
+  font-weight: 400;
+  font-variation-settings: "SOFT" 16, "WONK" 0, "opsz" 48;
+  font-size: clamp(1rem, 1.7vw, 1.3rem);
+  color: var(--ivory);
+  transition: color 320ms var(--ease-out);
+}
+
+.nocturne .alsobill-leader {
+  height: 1px;
+  transform: translateY(-0.32em);
+  background: repeating-linear-gradient(
+    90deg,
+    color-mix(in oklab, var(--ivory) 26%, transparent) 0 2px,
+    transparent 2px 7px
+  );
+}
+
+.nocturne .alsobill-note {
+  font-size: 0.9rem;
+  color: color-mix(in oklab, var(--ivory) 58%, transparent);
+}
+
+.nocturne .alsobill-on {
+  font-size: 9px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--brass-deep);
+  /* Letter-spacing adds a space after the final letter, which pushes this
+     column past the measure. Pulled back so the right edge lines up. */
+  margin-right: -0.26em;
+}
+
+@media (max-width: 760px) {
+  .nocturne .alsobill-list a {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .nocturne .alsobill-title {
+    grid-column: 1;
+  }
+
+  .nocturne .alsobill-leader {
+    display: none;
+  }
+
+  .nocturne .alsobill-on {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .nocturne .alsobill-note {
+    grid-column: 1 / -1;
+  }
+}
