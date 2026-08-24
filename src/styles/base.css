@@ -137,6 +137,13 @@ p {
   width: 100%;
 }
 
+/* Anchor jumps land under the fixed chrome otherwise — the button in the corner
+   goes to #commission, and the top of that section was arriving beneath the bar. */
+#commission,
+#brief {
+  scroll-margin-top: clamp(64px, 9vh, 96px);
+}
+
 .stage-pin {
   position: sticky;
   top: 0;
@@ -1596,13 +1603,30 @@ body {
   }
 }
 
-/* The dialling code and the number sit on one line, the code as wide as its
-   longest entry and the number taking the rest. */
+/* The code and the number on one line, the code capped and the number taking
+   the rest.
+
+   The cap is the whole point. A native select's intrinsic width is the width of
+   its longest option, and the longest here is a group heading — so on a phone
+   the select took the entire row and the number field was laid out at *zero
+   pixels wide*. Nobody could type their number at all. Below the breakpoint they
+   stack instead, because two full-width rows beat two cramped ones. */
 .brief-dial {
   display: grid;
-  grid-template-columns: minmax(0, auto) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 15ch) minmax(0, 1fr);
   align-items: end;
   gap: var(--space-sm);
+}
+
+.brief-dial > * {
+  min-width: 0;
+}
+
+@media (max-width: 620px) {
+  .brief-dial {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-md);
+  }
 }
 
 .brief-select {
@@ -1613,8 +1637,15 @@ body {
   cursor: pointer;
 }
 
-.brief-select--dial {
+/* Both spellings: the drawn control is `.choose--dial`, the native fallback
+   inside it keeps `.brief-select`. */
+.brief-select--dial,
+.choose--dial {
   max-width: 22ch;
+}
+
+.brief-dial .brief-select {
+  max-width: 100%;
 }
 
 .brief-input--date {
@@ -1627,4 +1658,146 @@ body {
 
 .brief-soon {
   margin: 0;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   The drawn listbox and the drawn month: structure only.
+
+   Both replace a control whose *open* state is operating-system chrome and
+   cannot be styled — a native `<select>`'s list and a native date input's
+   calendar. Both step aside on touch, where the platform's own is a sheet drawn
+   over the page and better than anything here; see `lib/pointer.ts`.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.choose,
+.when {
+  position: relative;
+  min-width: 0;
+}
+
+.choose-face,
+.when-face {
+  width: 100%;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.choose-caret,
+.when-caret {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  pointer-events: none;
+  transform: translateY(-70%) rotate(45deg);
+  transition: transform 260ms var(--ease-out);
+}
+
+.choose[data-open="true"] .choose-caret,
+.when[data-open="true"] .when-caret {
+  transform: translateY(-20%) rotate(225deg);
+}
+
+/* The pane. Above everything in the form, and never taller than the room it
+   has — a list of two hundred and forty-three has to scroll inside itself. */
+.choose-list,
+.when-pane {
+  position: absolute;
+  left: 0;
+  top: calc(100% + 6px);
+  z-index: 40;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Upward when there is no room below. The last question in a part sits near the
+   foot of the viewport, which is precisely where a pane that only ever drops
+   goes off the bottom of the screen. */
+.choose[data-way="up"] .choose-list,
+.when[data-way="up"] .when-pane {
+  top: auto;
+  bottom: calc(100% + 6px);
+}
+
+.choose-list {
+  min-width: 100%;
+  max-height: min(40vh, 340px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.choose-group {
+  display: block;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.choose-option {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-sm);
+  width: 100%;
+  padding: 6px var(--space-md);
+  text-align: left;
+}
+
+.choose-extra {
+  flex: none;
+  font-variant-numeric: tabular-nums;
+}
+
+.choose-none {
+  padding: var(--space-sm) var(--space-md);
+}
+
+/* ---- the month ---- */
+
+.when-pane {
+  width: max-content;
+  padding: var(--space-md);
+}
+
+.when-head {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-sm);
+}
+
+.when-month {
+  text-align: center;
+}
+
+.when-step {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+}
+
+.when-days,
+.when-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 34px);
+}
+
+.when-days > span {
+  display: grid;
+  place-items: center;
+  height: 22px;
+}
+
+.when-day {
+  height: 32px;
+  font-variant-numeric: tabular-nums;
+}
+
+.when-day:disabled {
+  cursor: not-allowed;
 }

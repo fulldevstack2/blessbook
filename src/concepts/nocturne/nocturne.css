@@ -3432,3 +3432,142 @@
 .nocturne .brief-select {
   color-scheme: dark;
 }
+
+/* ---------- the drawn listbox and the drawn month ----------
+
+   The closed control was already this concept's; now the open one is too. Both
+   panes are plates: a ruled edge, the ground raised a shade off the page, and
+   the accent doing the pointing. */
+.nocturne .choose-face,
+.nocturne .when-face {
+  padding: var(--space-xs) var(--space-xl) var(--space-xs) 0;
+  background: none;
+  border: 0;
+  border-bottom: 1px solid var(--rule);
+  color: var(--ivory);
+  transition: border-color 320ms var(--ease-out);
+}
+
+.nocturne .choose-face:focus,
+.nocturne .when-face:focus-visible,
+.nocturne .choose[data-open="true"] .choose-face,
+.nocturne .when[data-open="true"] .when-face {
+  outline: none;
+  border-bottom-color: var(--brass);
+}
+
+.nocturne .choose-face::placeholder {
+  color: color-mix(in oklab, var(--ivory) 30%, transparent);
+}
+
+.nocturne .when-value[data-empty="true"] {
+  color: color-mix(in oklab, var(--ivory) 34%, transparent);
+}
+
+/* The caret is two borders of a square, turned — the same mark the selects had,
+   drawn rather than set as a background image so it can rotate when open. */
+.nocturne .choose-caret,
+.nocturne .when-caret {
+  border-right: 1px solid var(--brass);
+  border-bottom: 1px solid var(--brass);
+}
+
+.nocturne .choose-list,
+.nocturne .when-pane {
+  background: #1b0e11;
+  border: 1px solid color-mix(in oklab, var(--brass) 40%, transparent);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.42);
+}
+
+/* A heading, not a white bar with black text in it. It stays put while the list
+   moves under it, which is the one thing the native list never did. */
+.nocturne .choose-group {
+  padding: var(--space-xs) var(--space-md) 4px;
+  background: #1b0e11;
+  border-bottom: 1px solid var(--rule);
+  font-size: 9px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--brass);
+}
+
+.nocturne .choose-option {
+  font-size: 0.92rem;
+  color: var(--ivory);
+  transition:
+    background 140ms var(--ease-out),
+    color 140ms var(--ease-out);
+}
+
+/* Highlighted by the concept, not by the system's blue. */
+.nocturne .choose-option[data-active="true"] {
+  background: #26141a;
+  color: var(--brass);
+}
+
+.nocturne .choose-option[aria-selected="true"] .choose-label {
+  color: var(--brass);
+}
+
+.nocturne .choose-extra {
+  min-width: 4.5ch;
+  font-size: 0.8rem;
+  color: color-mix(in oklab, var(--ivory) 54%, transparent);
+}
+
+.nocturne .choose-option[data-active="true"] .choose-extra {
+  color: var(--brass);
+}
+
+.nocturne .choose-none {
+  font-size: 0.88rem;
+  color: color-mix(in oklab, var(--ivory) 54%, transparent);
+}
+
+.nocturne .when-month {
+  font-family: var(--display);
+  font-size: 1rem;
+  color: var(--ivory);
+}
+
+.nocturne .when-step {
+  border: 1px solid var(--rule);
+  font-size: 15px;
+  line-height: 1;
+  color: var(--brass);
+  transition: border-color 220ms var(--ease-out);
+}
+
+.nocturne .when-step:hover {
+  border-color: var(--brass);
+}
+
+.nocturne .when-days > span {
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--ivory) 54%, transparent);
+}
+
+.nocturne .when-day {
+  font-size: 0.86rem;
+  color: var(--ivory);
+  transition:
+    background 140ms var(--ease-out),
+    color 140ms var(--ease-out);
+}
+
+.nocturne .when-day:hover:not(:disabled) {
+  background: #26141a;
+  color: var(--brass);
+}
+
+.nocturne .when-day[data-on="true"] {
+  background: var(--brass);
+  color: var(--velvet-deep);
+}
+
+/* Before the floor: still readable, plainly not takeable. */
+.nocturne .when-day:disabled {
+  color: color-mix(in oklab, var(--ivory) 24%, transparent);
+}

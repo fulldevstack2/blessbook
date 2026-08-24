@@ -1,5 +1,7 @@
 import { brief, enquiry, type BriefField } from "../content/commission";
 import { NEAR_COUNT, countries } from "../content/countries";
+import { Choose, type Choice } from "./Choose";
+import { When } from "./When";
 import { useEffect, useRef } from "react";
 import { OTHER, REVIEW, dialKey, list, otherKey, outstandingIn, useBrief } from "../lib/enquiry";
 
@@ -16,6 +18,24 @@ import { OTHER, REVIEW, dialKey, list, otherKey, outstandingIn, useBrief } from 
  * a div pretending, so it is all keyboard-operable, screen-reader-labelled and
  * autofillable without any of that being written here.
  */
+
+const NEAR = "Where the work comes from";
+const REST = "Everywhere else";
+
+/** The countries as choices: the code list shows the code, the country list does not. */
+const CODE_CHOICES: readonly Choice[] = countries.map((country, index) => ({
+  value: country.iso,
+  label: country.name,
+  extra: country.dial,
+  group: index < NEAR_COUNT ? NEAR : REST,
+}));
+
+const COUNTRY_CHOICES: readonly Choice[] = countries.map((country, index) => ({
+  value: country.iso,
+  label: country.name,
+  extra: country.dial,
+  group: index < NEAR_COUNT ? NEAR : REST,
+}));
 
 /** Today, so nothing can be needed in the past. */
 function today(): string {
@@ -76,37 +96,21 @@ function Control({
       : "";
     return (
       <div className="brief-dial">
-        <select
-          className="brief-select brief-select--dial"
+        <Choose
+          id={`${field.id}-code`}
+          className="choose--dial"
+          label="Dialling code"
+          placeholder="Code"
           value={dial}
-          aria-label="Dialling code"
-          onChange={(event) => {
-            const chosen = countries.find((country) => country.iso === event.target.value);
+          choices={CODE_CHOICES}
+          onChoose={(iso) => {
+            const chosen = countries.find((country) => country.iso === iso);
             setAll({
-              [dialKey(field.id)]: event.target.value,
-              ...(chosen ? { country: chosen.iso } : {}),
+              [dialKey(field.id)]: iso,
+              ...(chosen ? { country: iso } : {}),
             });
           }}
-        >
-          <option value="">Code</option>
-          {/* Grouped, not just ordered. An `optgroup` is the one bit of
-              structure a native list actually honours, and 243 flat entries is a
-              list you give up on. */}
-          <optgroup label="Where the work comes from">
-            {countries.slice(0, NEAR_COUNT).map((country) => (
-              <option key={country.iso} value={country.iso}>
-                {country.dial} · {country.name}
-              </option>
-            ))}
-          </optgroup>
-          <optgroup label="Everywhere else">
-            {countries.slice(NEAR_COUNT).map((country) => (
-              <option key={country.iso} value={country.iso}>
-                {country.dial} · {country.name}
-              </option>
-            ))}
-          </optgroup>
-        </select>
+        />
         <input
           className="brief-input"
           id={field.id}
@@ -123,36 +127,20 @@ function Control({
 
   if (field.kind === "country") {
     return (
-      <select
-        className="brief-select"
+      <Choose
         id={field.id}
+        label={field.label}
+        placeholder="Choose"
         value={value}
-        autoComplete="country"
-        onChange={(event) => {
-          const chosen = countries.find((country) => country.iso === event.target.value);
+        choices={COUNTRY_CHOICES}
+        onChoose={(iso) => {
           setAll({
-            [field.id]: event.target.value,
+            [field.id]: iso,
             // Only fills the code if one has not been chosen already.
-            ...(chosen && !answers[dialKey("whatsapp")] ? { [dialKey("whatsapp")]: chosen.iso } : {}),
+            ...(iso && !answers[dialKey("whatsapp")] ? { [dialKey("whatsapp")]: iso } : {}),
           });
         }}
-      >
-        <option value="">Choose</option>
-        <optgroup label="Where the work comes from">
-          {countries.slice(0, NEAR_COUNT).map((country) => (
-            <option key={country.iso} value={country.iso}>
-              {country.name}
-            </option>
-          ))}
-        </optgroup>
-        <optgroup label="Everywhere else">
-          {countries.slice(NEAR_COUNT).map((country) => (
-            <option key={country.iso} value={country.iso}>
-              {country.name}
-            </option>
-          ))}
-        </optgroup>
-      </select>
+      />
     );
   }
 
@@ -164,14 +152,12 @@ function Control({
     const soon = field.id === "due" && value !== "" && within(value, 7);
     return (
       <>
-        <input
-          className="brief-input brief-input--date"
+        <When
           id={field.id}
-          type="date"
-          // Nothing can be needed in the past.
-          min={today()}
+          label={field.label}
           value={value}
-          onChange={(event) => set(field.id, event.target.value)}
+          min={today()}
+          onPick={(picked) => set(field.id, picked)}
         />
         {soon ? (
           <p className="brief-soon" aria-live="polite">

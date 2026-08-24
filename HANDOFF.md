@@ -1085,6 +1085,21 @@ came from screenshots he sent back, in his order.
   section passes `cuts={TURNED.length}` so `ScrollStage`'s cut index and the
   scene's own arithmetic cannot disagree. The stand had to come off the Phoenix
   scan first: see §7.
+- **Two drawn controls**, `components/Choose.tsx` and `components/When.tsx`. They
+  replace a `<select>` and an `<input type="date">` whose *open* state is
+  operating-system chrome and cannot be styled at all — white group bars, a
+  system-blue highlight, the browser's own calendar — landing in the middle of a
+  page built to the hairline. `Choose` is the editable-combobox pattern, so
+  typing filters 243 entries on the name *and* the dialling code, which the
+  native list cannot do; `When` draws the month.
+
+  **Both step aside on touch** (`lib/pointer.ts`). That is deliberate and worth
+  not undoing: on a phone the native control is not a dropdown at all, it is a
+  full-height sheet the OS draws over the page with its own wheel and search, and
+  a div would be a downgrade dressed as an improvement. Both panes also open
+  upward when there is no room below, because the last question in a part sits at
+  the foot of the viewport.
+
 - **Dennis's creative brief** — twenty questions in five parts, his wording, in
   `content/commission.ts` as data. `lib/enquiry.ts` is generic over that schema
   and `components/Brief.tsx` renders it; each concept only supplies a skin, so a
