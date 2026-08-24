@@ -3487,25 +3487,56 @@ canvas:not([hidden]) + .dragon-hero-plate {
   margin-left: 0;
 }
 
-/* ---------- the way back to the brief ---------- */
+
+/* ---------- the way in to the commission: a seal, pressed ----------
+
+   Every name on this page is closed with a seal, so the way in carries one too:
+   委, to entrust — which is what a commission is. Cinnabar on paper, with a jade
+   hairline under the words. Not his name, so the red is his to use here. */
 .dragon .tocommission {
-  background: color-mix(in oklab, var(--paper) 88%, transparent);
-  backdrop-filter: blur(8px);
-  border: 1px solid var(--cinnabar);
-  font-size: 10px;
-  letter-spacing: 0.26em;
-  text-transform: uppercase;
-  color: var(--cinnabar);
-  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.4);
-  transition:
-    opacity 460ms var(--ease-out),
-    transform 560ms var(--ease-out),
-    visibility 460ms,
-    background 320ms var(--ease-out),
-    color 320ms var(--ease-out);
+  padding: var(--space-sm) var(--space-lg) var(--space-sm) var(--space-sm);
+  background: color-mix(in oklab, var(--paper) 94%, transparent);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--rule);
+  box-shadow: 0 10px 30px rgba(40, 30, 20, 0.16);
+  color: var(--ink);
 }
 
-.dragon .tocommission:hover {
+.dragon .tocommission-rule {
+  align-self: center;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
   background: var(--cinnabar);
   color: var(--paper);
+  font-family: var(--brush);
+  font-size: 17px;
+  line-height: 1;
+  /* A chop is pressed by hand and never quite square to the page. */
+  transform: rotate(-2.5deg);
+  transition: transform 420ms var(--ease-out);
+}
+
+.dragon .tocommission-rule::before {
+  content: "委";
+}
+
+.dragon .tocommission:hover .tocommission-rule {
+  transform: rotate(2deg) scale(1.06);
+}
+
+.dragon .tocommission-word {
+  font-family: var(--display);
+  font-size: 1.02rem;
+  color: var(--ink);
+  border-bottom: 1px solid color-mix(in oklab, var(--jade) 52%, transparent);
+  padding-bottom: 1px;
+}
+
+.dragon .tocommission-price {
+  font-size: 9px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--jade);
 }

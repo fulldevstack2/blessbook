@@ -430,7 +430,10 @@ export function PhoenixPage() {
         </section>
 
         {/* ---------------- and only now, the commission ---------------- */}
-        <section className="phoenix-section">
+        {/* The button in the corner lands here rather than on the form. Someone
+            sent straight to twenty questions has not been told the price yet,
+            and the price is the thing they came to find out. */}
+        <section className="phoenix-section" id="commission">
           <p className="phoenix-eyebrow" data-reveal>
             Coda · Commission one
           </p>

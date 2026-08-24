@@ -3323,25 +3323,53 @@
   margin-left: 0;
 }
 
-/* ---------- the way back to the brief ---------- */
+
+/* ---------- the way in to the commission: a tab off the programme ----------
+
+   Ruled top and bottom and open at the sides, the way a tab torn from a
+   programme is — a band, not a box. The lozenge is the same ornament the bill
+   card uses under its title, which is how this page joins any two things. */
 .nocturne .tocommission {
-  background: color-mix(in oklab, var(--velvet-deep) 88%, transparent);
-  backdrop-filter: blur(8px);
-  border: 1px solid var(--brass);
-  font-size: 10px;
-  letter-spacing: 0.26em;
-  text-transform: uppercase;
+  padding: var(--space-sm) var(--space-lg);
+  background: color-mix(in oklab, var(--velvet) 92%, transparent);
+  backdrop-filter: blur(10px);
+  border-block: 1px solid var(--brass);
   color: var(--brass);
-  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.4);
   transition:
     opacity 460ms var(--ease-out),
     transform 560ms var(--ease-out),
     visibility 460ms,
-    background 320ms var(--ease-out),
-    color 320ms var(--ease-out);
+    background 320ms var(--ease-out);
 }
 
 .nocturne .tocommission:hover {
+  background: color-mix(in oklab, var(--velvet-lit) 92%, transparent);
+}
+
+.nocturne .tocommission-rule {
+  align-self: center;
+  width: 7px;
+  height: 7px;
   background: var(--brass);
-  color: var(--velvet-deep);
+  transform: rotate(45deg);
+  transition: transform 420ms var(--ease-out);
+}
+
+.nocturne .tocommission:hover .tocommission-rule {
+  transform: rotate(135deg);
+}
+
+.nocturne .tocommission-word {
+  font-family: var(--display);
+  font-weight: 400;
+  font-variation-settings: "SOFT" 16, "WONK" 0, "opsz" 48;
+  font-size: 1.04rem;
+  color: var(--ivory);
+}
+
+.nocturne .tocommission-price {
+  font-size: 9px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--brass);
 }

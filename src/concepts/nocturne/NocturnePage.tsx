@@ -525,7 +525,9 @@ export function NocturnePage() {
         </figure>
 
         {/* ---------------- the last door ---------------- */}
-        <section className="nocturne-act nocturne-act--coda">
+        {/* The button in the corner lands here, not on the form: the price is above
+            the questions and it is what they came to find out. */}
+        <section className="nocturne-act nocturne-act--coda" id="commission">
           <p className="nocturne-eyebrow" data-reveal>
             CODA <em>·</em> THE LAST DOOR
           </p>

@@ -428,7 +428,9 @@ export function DragonPage() {
           </div>
         </section>
 
-        <section className="dragon-section">
+        {/* The button in the corner lands here, not on the form: the price is
+            above the questions and it is what they came to find out. */}
+        <section className="dragon-section" id="commission">
           <Margin index={8} label="Commission" />
           <div>
             <Words as="h2" className="dragon-h2" text={promise.headline} />

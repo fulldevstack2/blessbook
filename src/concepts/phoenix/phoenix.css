@@ -3346,25 +3346,64 @@ canvas[hidden] + .phoenix-hero-plate {
   margin-left: 0;
 }
 
-/* ---------- the way back to the brief ---------- */
+
+/* ---------- the way in to the commission: a struck seam ----------
+
+   This concept's whole signature is one hairline of gold, so that is what the
+   button is: the seam, struck vertically, with the words set off it. No border
+   and no arrow — an engraved plate has neither, and a bordered pill was the one
+   thing on this page that could have come off any site. */
 .phoenix .tocommission {
-  background: color-mix(in oklab, #0b0705 88%, transparent);
-  backdrop-filter: blur(8px);
-  border: 1px solid var(--gold);
-  font-size: 10px;
+  /* The seam sits inside the plate, not flush to its edge — against the edge it
+     reads as a rendering artefact rather than as the mark it is. */
+  padding: var(--space-sm) var(--space-lg) var(--space-sm) var(--space-md);
+  background: linear-gradient(
+    90deg,
+    color-mix(in oklab, #0b0705 94%, transparent) 0%,
+    color-mix(in oklab, #0b0705 88%, transparent) 70%,
+    transparent 100%
+  );
+  backdrop-filter: blur(10px);
+  color: var(--gold);
+}
+
+/* The seam. Lit at the middle, falling away at both ends, exactly as the one in
+   the hero does. */
+.phoenix .tocommission-rule {
+  width: 1px;
+  min-height: 38px;
+  margin-right: var(--space-md);
+  background: linear-gradient(
+    180deg,
+    transparent,
+    var(--gold) 30%,
+    var(--gold) 70%,
+    transparent
+  );
+  box-shadow: 0 0 8px color-mix(in oklab, var(--gold) 46%, transparent);
+  transition: box-shadow 380ms var(--ease-out);
+}
+
+.phoenix .tocommission:hover .tocommission-rule,
+.phoenix .tocommission:focus-visible .tocommission-rule {
+  box-shadow: 0 0 16px color-mix(in oklab, var(--gold) 80%, transparent);
+}
+
+.phoenix .tocommission-word {
+  font-family: var(--display);
+  font-size: 1.02rem;
+  letter-spacing: 0.02em;
+  color: var(--ivory);
+  transition: color 320ms var(--ease-out);
+}
+
+.phoenix .tocommission:hover .tocommission-word {
+  color: var(--gold);
+}
+
+.phoenix .tocommission-price {
+  font-size: 9px;
   letter-spacing: 0.26em;
   text-transform: uppercase;
   color: var(--gold);
-  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.4);
-  transition:
-    opacity 460ms var(--ease-out),
-    transform 560ms var(--ease-out),
-    visibility 460ms,
-    background 320ms var(--ease-out),
-    color 320ms var(--ease-out);
-}
-
-.phoenix .tocommission:hover {
-  background: var(--gold);
-  color: var(--lacquer, #140f0a);
 }
