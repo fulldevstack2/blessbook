@@ -3214,7 +3214,6 @@ canvas[hidden] + .phoenix-hero-plate {
   color: var(--lacquer, #140f0a);
 }
 
-.phoenix .brief-count,
 .phoenix .brief-sent-body {
   font-size: 0.88rem;
   line-height: 1.7;
@@ -3233,4 +3232,107 @@ canvas[hidden] + .phoenix-hero-plate {
   letter-spacing: 0.28em;
   text-transform: uppercase;
   color: var(--gold);
+}
+
+/* ---------- the brief's stepper and review ---------- */
+.phoenix .brief-step {
+  border: 1px solid var(--rule);
+  font-size: 9px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--ivory-faint);
+  transition:
+    border-color 260ms var(--ease-out),
+    color 260ms var(--ease-out);
+}
+
+.phoenix .brief-step-letter {
+  font-family: var(--display);
+  font-size: 13px;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--gold);
+}
+
+.phoenix .brief-step[data-at="true"] {
+  border-color: var(--gold);
+  color: var(--ivory);
+}
+
+.phoenix .brief-step[data-done="true"]:not([data-at="true"]) {
+  color: var(--ivory);
+}
+
+/* The count of what a part still owes, so nothing has to be hunted for. */
+.phoenix .brief-step-owed {
+  font-variant-numeric: tabular-nums;
+  color: var(--gold);
+}
+
+.phoenix .brief-progress {
+  background: var(--rule);
+}
+
+.phoenix .brief-progress-fill {
+  background: var(--gold);
+}
+
+.phoenix .brief-progress-word {
+  font-size: 0.82rem;
+  color: var(--ivory-faint);
+}
+
+.phoenix .brief-next {
+  padding: var(--space-sm) var(--space-xl);
+  border: 1px solid var(--gold);
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--gold);
+  transition:
+    background 320ms var(--ease-out),
+    color 320ms var(--ease-out);
+}
+
+.phoenix .brief-next:hover {
+  background: var(--gold);
+  color: var(--lacquer, #140f0a);
+}
+
+.phoenix .brief-back,
+.phoenix .brief-recap-edit {
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ivory-faint);
+  transition: color 260ms var(--ease-out);
+}
+
+.phoenix .brief-back:hover,
+.phoenix .brief-recap-edit:hover {
+  color: var(--gold);
+}
+
+.phoenix .brief-recap-head {
+  padding-bottom: var(--space-2xs);
+  border-bottom: 1px solid var(--rule);
+  font-size: 10px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.phoenix .brief-recap-list dt {
+  font-size: 0.84rem;
+  color: var(--ivory-faint);
+}
+
+.phoenix .brief-recap-list dd {
+  font-size: 0.92rem;
+  color: var(--ivory);
+}
+
+/* Nothing said yet reads as an absence, not as an answer. */
+.phoenix .brief-recap-list > div[data-said="false"] dd {
+  color: var(--ivory-faint);
 }

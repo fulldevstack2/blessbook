@@ -111,18 +111,67 @@ async function deliver(answers: Answers): Promise<void> {
   }
 }
 
+/* ---------- keeping what has been typed ----------
+
+   Twenty questions is long enough that losing them matters. A reload, a
+   back button, a tab restored a day later — any of those used to empty the
+   whole thing, and nobody fills in a twenty-question form twice. It is held
+   locally and never sent anywhere; `clear` runs when the brief goes, so a
+   finished brief does not sit in the browser afterwards. */
+const KEEP_KEY = "blesspoke:brief";
+
+function remembered(): Answers {
+  try {
+    const raw = window.localStorage.getItem(KEEP_KEY);
+    if (!raw) return {};
+    const parsed: unknown = JSON.parse(raw);
+    if (!parsed || typeof parsed !== "object") return {};
+    return parsed as Answers;
+  } catch {
+    return {};
+  }
+}
+
+function keep(answers: Answers): void {
+  try {
+    window.localStorage.setItem(KEEP_KEY, JSON.stringify(answers));
+  } catch {
+    /* private mode: the brief simply does not survive a reload */
+  }
+}
+
+function forget(): void {
+  try {
+    window.localStorage.removeItem(KEEP_KEY);
+  } catch {
+    /* nothing to do */
+  }
+}
+
+/** The five parts, and then the page that shows what is about to be sent. */
+export const REVIEW = brief.length;
+
+/** What is still owed inside one part, so the stepper can say where to go. */
+export function outstandingIn(answers: Answers, index: number): number {
+  const section = brief[index];
+  if (!section) return 0;
+  return section.fields.filter((field) => field.required && !answered(answers, field)).length;
+}
+
 export function useBrief() {
-  const [answers, setAnswers] = useState<Answers>({});
+  const [answers, setAnswers] = useState<Answers>(remembered);
   const [stage, setStage] = useState<BriefStage>("idle");
   const [problems, setProblems] = useState<Record<string, string>>({});
-  const [shown, setShown] = useState(false);
+  const [shown, setShown] = useState<Set<string>>(new Set());
+  const [step, setStep] = useState(0);
 
-  /* Once the reader has been shown the problems, keep them honest as they type;
-     before that, never — a form that goes red while a sentence is half typed is
-     arguing with someone who is still answering it. */
+  /* A part is "shown" once it has been checked, and only its own fields go red.
+     Checking the whole form on the first press of Next would mark fourteen
+     things wrong when the reader has only been asked four. */
   const revise = (next: Answers) => {
     setAnswers(next);
-    if (shown) setProblems(check(next));
+    keep(next);
+    if (shown.size > 0) setProblems(check(next));
   };
 
   const set = (id: string, value: string) => revise({ ...answers, [id]: value });
@@ -139,33 +188,66 @@ export function useBrief() {
     });
   };
 
+  /** Only the problems in parts the reader has actually been through. */
+  const visible = useMemo(() => {
+    const out: Record<string, string> = {};
+    for (const section of brief) {
+      if (!shown.has(section.id)) continue;
+      for (const field of section.fields) {
+        if (problems[field.id]) out[field.id] = problems[field.id] as string;
+      }
+    }
+    return out;
+  }, [problems, shown]);
+
+  const go = (next: number) => setStep(Math.max(0, Math.min(REVIEW, next)));
+
+  /** Checks the part in front of the reader, and holds if it is not answered. */
+  const forward = () => {
+    const section = brief[step];
+    if (!section) {
+      go(step + 1);
+      return true;
+    }
+    const found = check(answers);
+    setProblems(found);
+    setShown((current) => new Set(current).add(section.id));
+    const missing = section.fields.find((field) => found[field.id]);
+    if (missing) {
+      document
+        .querySelector(`[data-field="${missing.id}"]`)
+        ?.scrollIntoView({ behavior: "smooth", block: "center" });
+      return false;
+    }
+    go(step + 1);
+    return true;
+  };
+
   const submit = async () => {
     const found = check(answers);
     setProblems(found);
-    setShown(true);
+    setShown(new Set(brief.map((section) => section.id)));
     if (Object.keys(found).length > 0) {
-      // Take them to the first thing that needs them rather than making them hunt.
-      const first = FIELDS.find((field) => found[field.id]);
-      if (first) {
-        document
-          .querySelector(`[data-field="${first.id}"]`)
-          ?.scrollIntoView({ behavior: "smooth", block: "center" });
-      }
+      // Take them to the part that needs them rather than making them hunt.
+      const at = brief.findIndex((section) => section.fields.some((f) => found[f.id]));
+      if (at >= 0) go(at);
       return;
     }
     setStage("sending");
     await deliver(answers);
+    forget();
     setStage("sent");
   };
 
   const again = () => {
+    forget();
     setAnswers({});
     setProblems({});
-    setShown(false);
+    setShown(new Set());
+    setStep(0);
     setStage("idle");
   };
 
-  /** How much is still owed, for a form long enough to want a count. */
   const outstanding = useMemo(
     () => FIELDS.filter((field) => field.required && !answered(answers, field)).length,
     [answers],
@@ -174,9 +256,13 @@ export function useBrief() {
   return {
     answers,
     stage,
-    problems: shown ? problems : {},
+    problems: visible,
     outstanding,
     required: FIELDS.filter((field) => field.required).length,
+    step,
+    go,
+    forward,
+    back: () => go(step - 1),
     set,
     toggle,
     submit,

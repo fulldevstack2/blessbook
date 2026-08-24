@@ -1329,19 +1329,118 @@ body {
   color: inherit;
 }
 
-.brief-foot {
-  display: grid;
-  justify-items: start;
-  gap: var(--space-md);
-}
 
-.brief-count {
-  margin: 0;
-  max-width: 56ch;
-}
 
 .brief--sent {
   display: grid;
   justify-items: start;
   gap: var(--space-md);
+}
+
+/* ---------- the stepper, the nav and the review ----------
+
+   Twenty questions on one page is a wall: nobody reads a wall, they measure it
+   and leave. Five parts of four is the same form and a different experience —
+   you can see the end of the part you are in. Structure only, as above. */
+.brief-steps {
+  display: grid;
+  gap: var(--space-sm);
+}
+
+.brief-steps-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.brief-step {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-xs);
+  padding: var(--space-2xs) var(--space-sm);
+}
+
+/* Six named parts is six rows on a phone, which is a table of contents where a
+   stepper should be. The letters carry it, and the one you are in says its
+   name. */
+@media (max-width: 700px) {
+  .brief-step-name {
+    display: none;
+  }
+
+  .brief-step[data-at="true"] .brief-step-name {
+    display: inline;
+  }
+}
+
+.brief-progress {
+  display: block;
+  height: 1px;
+  overflow: hidden;
+}
+
+.brief-progress-fill {
+  display: block;
+  height: 100%;
+  transform-origin: left center;
+  transition: transform 520ms var(--ease-out);
+}
+
+.brief-progress-word {
+  margin: 0;
+  max-width: 56ch;
+}
+
+/* Back on the left, forward on the right, and never the same weight: one of
+   them is what the reader came to do. */
+.brief-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  margin-top: var(--space-lg);
+}
+
+.brief-review {
+  display: grid;
+  gap: var(--space-xl);
+}
+
+.brief-recap {
+  display: grid;
+  gap: var(--space-xs);
+}
+
+.brief-recap-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-md);
+  margin: 0;
+}
+
+.brief-recap-list {
+  margin: 0;
+  display: grid;
+  gap: var(--space-2xs);
+}
+
+.brief-recap-list > div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+  gap: var(--space-md);
+}
+
+.brief-recap-list dd {
+  margin: 0;
+}
+
+@media (max-width: 620px) {
+  .brief-recap-list > div {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
 }

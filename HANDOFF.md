@@ -1079,6 +1079,18 @@ came from screenshots he sent back, in his order.
   length carries its tier and the old "what you are after" chooser is gone. And
   the controls are real radios and checkboxes with `appearance: none`, not spans
   pretending, which is why none of the concepts had to think about keyboards.
+
+  **It is stepped, one part at a time.** Twenty questions on one page measured
+  4,400px; nobody reads a wall, they measure it and leave. The stepper shows all
+  five parts with what each still owes, and every part is reachable at any time —
+  the form tells the reader to fill in what they can, so trapping them in part C
+  would contradict its own promise. `Next` checks only the part in front of them,
+  which is why fourteen fields do not go red when four have been asked. `Send`
+  checks everything and jumps to the part that needs them.
+
+  **Answers survive a reload**, in `localStorage` under `blesspoke:brief`, and
+  are cleared the moment the brief is sent — nobody fills in twenty questions
+  twice, and a finished brief should not sit in the browser afterwards.
 - **A font gate before every loader** (`useTypeset.ts`). His name never paints in
   Times New Roman and swaps.
 - **Dragon's territories became a chart.** 1,773 land dots rasterised from

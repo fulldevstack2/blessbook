@@ -3367,7 +3367,6 @@ canvas:not([hidden]) + .dragon-hero-plate {
   color: var(--paper);
 }
 
-.dragon .brief-count,
 .dragon .brief-sent-body {
   font-size: 0.88rem;
   line-height: 1.7;
@@ -3391,4 +3390,107 @@ canvas:not([hidden]) + .dragon-hero-plate {
   letter-spacing: 0.26em;
   text-transform: uppercase;
   color: var(--cinnabar);
+}
+
+/* ---------- the brief's stepper and review ---------- */
+.dragon .brief-step {
+  border: 1px solid var(--rule);
+  font-size: 9px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  transition:
+    border-color 260ms var(--ease-out),
+    color 260ms var(--ease-out);
+}
+
+.dragon .brief-step-letter {
+  font-family: var(--display);
+  font-size: 13px;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--cinnabar);
+}
+
+.dragon .brief-step[data-at="true"] {
+  border-color: var(--cinnabar);
+  color: var(--ink);
+}
+
+.dragon .brief-step[data-done="true"]:not([data-at="true"]) {
+  color: var(--ink);
+}
+
+/* The count of what a part still owes, so nothing has to be hunted for. */
+.dragon .brief-step-owed {
+  font-variant-numeric: tabular-nums;
+  color: var(--cinnabar);
+}
+
+.dragon .brief-progress {
+  background: var(--rule);
+}
+
+.dragon .brief-progress-fill {
+  background: var(--cinnabar);
+}
+
+.dragon .brief-progress-word {
+  font-size: 0.82rem;
+  color: var(--ink-faint);
+}
+
+.dragon .brief-next {
+  padding: var(--space-sm) var(--space-xl);
+  border: 1px solid var(--cinnabar);
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--cinnabar);
+  transition:
+    background 320ms var(--ease-out),
+    color 320ms var(--ease-out);
+}
+
+.dragon .brief-next:hover {
+  background: var(--cinnabar);
+  color: var(--paper);
+}
+
+.dragon .brief-back,
+.dragon .brief-recap-edit {
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  transition: color 260ms var(--ease-out);
+}
+
+.dragon .brief-back:hover,
+.dragon .brief-recap-edit:hover {
+  color: var(--cinnabar);
+}
+
+.dragon .brief-recap-head {
+  padding-bottom: var(--space-2xs);
+  border-bottom: 1px solid var(--rule);
+  font-size: 10px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--cinnabar);
+}
+
+.dragon .brief-recap-list dt {
+  font-size: 0.84rem;
+  color: var(--ink-faint);
+}
+
+.dragon .brief-recap-list dd {
+  font-size: 0.92rem;
+  color: var(--ink);
+}
+
+/* Nothing said yet reads as an absence, not as an answer. */
+.dragon .brief-recap-list > div[data-said="false"] dd {
+  color: var(--ink-faint);
 }

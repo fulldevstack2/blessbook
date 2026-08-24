@@ -3218,7 +3218,6 @@
   color: var(--velvet-deep);
 }
 
-.nocturne .brief-count,
 .nocturne .brief-sent-body {
   font-size: 0.88rem;
   line-height: 1.7;
@@ -3243,4 +3242,107 @@
   letter-spacing: 0.28em;
   text-transform: uppercase;
   color: var(--brass);
+}
+
+/* ---------- the brief's stepper and review ---------- */
+.nocturne .brief-step {
+  border: 1px solid var(--rule);
+  font-size: 9px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--ivory) 56%, transparent);
+  transition:
+    border-color 260ms var(--ease-out),
+    color 260ms var(--ease-out);
+}
+
+.nocturne .brief-step-letter {
+  font-family: var(--display);
+  font-size: 13px;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--brass);
+}
+
+.nocturne .brief-step[data-at="true"] {
+  border-color: var(--brass);
+  color: var(--ivory);
+}
+
+.nocturne .brief-step[data-done="true"]:not([data-at="true"]) {
+  color: var(--ivory);
+}
+
+/* The count of what a part still owes, so nothing has to be hunted for. */
+.nocturne .brief-step-owed {
+  font-variant-numeric: tabular-nums;
+  color: var(--brass);
+}
+
+.nocturne .brief-progress {
+  background: var(--rule);
+}
+
+.nocturne .brief-progress-fill {
+  background: var(--brass);
+}
+
+.nocturne .brief-progress-word {
+  font-size: 0.82rem;
+  color: color-mix(in oklab, var(--ivory) 56%, transparent);
+}
+
+.nocturne .brief-next {
+  padding: var(--space-sm) var(--space-xl);
+  border: 1px solid var(--brass);
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--brass);
+  transition:
+    background 320ms var(--ease-out),
+    color 320ms var(--ease-out);
+}
+
+.nocturne .brief-next:hover {
+  background: var(--brass);
+  color: var(--velvet-deep);
+}
+
+.nocturne .brief-back,
+.nocturne .brief-recap-edit {
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--ivory) 56%, transparent);
+  transition: color 260ms var(--ease-out);
+}
+
+.nocturne .brief-back:hover,
+.nocturne .brief-recap-edit:hover {
+  color: var(--brass);
+}
+
+.nocturne .brief-recap-head {
+  padding-bottom: var(--space-2xs);
+  border-bottom: 1px solid var(--rule);
+  font-size: 10px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--brass);
+}
+
+.nocturne .brief-recap-list dt {
+  font-size: 0.84rem;
+  color: color-mix(in oklab, var(--ivory) 56%, transparent);
+}
+
+.nocturne .brief-recap-list dd {
+  font-size: 0.92rem;
+  color: var(--ivory);
+}
+
+/* Nothing said yet reads as an absence, not as an answer. */
+.nocturne .brief-recap-list > div[data-said="false"] dd {
+  color: color-mix(in oklab, var(--ivory) 56%, transparent);
 }
