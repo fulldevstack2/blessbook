@@ -1,6 +1,7 @@
 import { useRef } from "react";
 import { ConceptChrome, ConceptSwitch } from "../../components/ConceptChrome";
 import { Grain } from "../../components/Grain";
+import { Commission } from "../../components/Commission";
 import { Films } from "./Films";
 import { FilmScrub } from "../../components/FilmScrub";
 import { Listen } from "../../components/Listen";
@@ -106,6 +107,7 @@ export function PhoenixPage() {
       <ConceptChrome concept={concept} />
       <Plumb />
       <Grain />
+      <Commission />
 
       <ScrollStage vh={420} cuts={cuts.length} className="phoenix-stage">
         {({ stage, progress }) => (

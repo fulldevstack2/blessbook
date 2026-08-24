@@ -1,11 +1,12 @@
 import { clients } from "../../content/clients";
-import { catalogue, films } from "../../content/work";
+import { films } from "../../content/work";
 import { record } from "../../content/dennis";
 import { useState } from "react";
 import { useReady } from "../../lib/useReady";
 import { useTypeset } from "../../lib/useTypeset";
 import { photos } from "../../content/media";
 import { Brief } from "../../components/Brief";
+import { Works } from "../../components/Works";
 import { commission, enquiry, steps } from "../../content/commission";
 import { SceneCanvas } from "../../lib/SceneCanvas";
 import { createInstrumentScene } from "./instrumentScene";
@@ -128,26 +129,7 @@ export function Programme() {
         ))}
       </ol>
 
-      {/* The rest of the evening's music, listed the way a programme lists the
-          works it is not printing in full. Sixteen more posters would be
-          sixteen more megabytes; a bill is a list. */}
-      <div className="alsobill">
-        <p className="alsobill-head">
-          <em>also</em> WRITTEN <em>and</em> PRODUCED
-        </p>
-        <ul className="alsobill-list">
-          {catalogue.map((work) => (
-            <li key={work.id}>
-              <a href={work.href} rel="noreferrer noopener" target="_blank">
-                <span className="alsobill-title">{work.title}</span>
-                <span className="alsobill-leader" aria-hidden />
-                <span className="alsobill-note">{work.note}</span>
-                <span className="alsobill-on">{work.on}</span>
-              </a>
-            </li>
-          ))}
-        </ul>
-      </div>
+      <Works head="Also written and produced" />
     </div>
   );
 }
@@ -219,7 +201,7 @@ export function Figure({ value }: { value: string }) {
  */
 export function Enquiry() {
   return (
-    <div className="card" data-reveal>
+    <div className="card" id="brief" data-reveal>
       <p className="card-eyebrow">{enquiry.eyebrow}</p>
       <h3 className="card-head"><em>the</em> CREATIVE BRIEF</h3>
       <p className="card-lede">{enquiry.lede}</p>

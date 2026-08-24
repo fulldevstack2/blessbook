@@ -3144,93 +3144,6 @@ canvas:not([hidden]) + .dragon-hero-plate {
   }
 }
 
-/* ---------- the colophon ----------
-
-   A hand scroll ends with one: the record of everything the hand has done,
-   written smaller than the work itself, out in the margin where the seals go. */
-.dragon .colophon {
-  margin-top: clamp(var(--space-2xl), 8vh, var(--space-4xl));
-  display: grid;
-  gap: var(--space-lg);
-}
-
-.dragon .colophon-head {
-  display: flex;
-  align-items: baseline;
-  gap: var(--space-md);
-  padding-bottom: var(--space-sm);
-  border-bottom: 1px solid var(--rule);
-}
-
-.dragon .colophon-mark {
-  font-family: var(--brush);
-  font-size: clamp(1.8rem, 4vw, 2.8rem);
-  line-height: 1;
-  color: var(--cinnabar);
-}
-
-.dragon .colophon-label {
-  font-size: 10px;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  color: var(--jade);
-}
-
-.dragon .colophon-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  /* Two columns where there is room: a colophon is a column of small writing,
-     not a full-measure paragraph, and at this size one column runs too long. */
-  columns: 2;
-  column-gap: clamp(var(--space-xl), 5vw, var(--space-4xl));
-}
-
-.dragon .colophon-list li {
-  break-inside: avoid;
-  margin-bottom: var(--space-md);
-}
-
-.dragon .colophon-list a {
-  display: grid;
-  gap: 2px;
-  padding-bottom: var(--space-sm);
-  border-bottom: 1px solid var(--rule);
-  text-decoration: none;
-}
-
-.dragon .colophon-title {
-  font-family: var(--display);
-  font-size: 1.05rem;
-  line-height: 1.2;
-  color: var(--ink);
-  transition: color 320ms var(--ease-out);
-}
-
-.dragon .colophon-list a:hover .colophon-title,
-.dragon .colophon-list a:focus-visible .colophon-title {
-  color: var(--cinnabar);
-}
-
-.dragon .colophon-note {
-  font-size: 0.86rem;
-  line-height: 1.55;
-  color: var(--ink-soft);
-}
-
-.dragon .colophon-on {
-  font-size: 9px;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: var(--jade);
-}
-
-@media (max-width: 760px) {
-  .dragon .colophon-list {
-    columns: 1;
-  }
-}
-
 /* ---------- the brief, written on the sheet ----------
 
    Ruled lines to write on, jade for the labels, cinnabar for the marks.
@@ -3493,4 +3406,106 @@ canvas:not([hidden]) + .dragon-hero-plate {
 /* Nothing said yet reads as an absence, not as an answer. */
 .dragon .brief-recap-list > div[data-said="false"] dd {
   color: var(--ink-faint);
+}
+
+/* ---------- the catalogue, playable ---------- */
+.dragon .gallery-head {
+  font-size: 10px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--cinnabar);
+}
+
+.dragon .gallery-frame {
+  background: var(--paper-deep);
+  border: 1px solid var(--rule);
+  transition: border-color 400ms var(--ease-out);
+}
+
+.dragon .gallery-item:hover .gallery-frame {
+  border-color: var(--cinnabar);
+}
+
+/* The frame lifts a little under the pointer, which is the only motion a grid
+   of seventeen needs — anything more and it fidgets. */
+.dragon .gallery-open img {
+  transform: scale(1);
+  transition:
+    transform 900ms var(--ease-out),
+    opacity 400ms var(--ease-out);
+  opacity: 0.86;
+}
+
+.dragon .gallery-item:hover .gallery-open img {
+  transform: scale(1.035);
+  opacity: 1;
+}
+
+/* One triangle, drawn in CSS: the site ships no icon assets. */
+.dragon .gallery-mark {
+  position: absolute;
+  left: var(--space-sm);
+  bottom: var(--space-sm);
+  width: 13px;
+  height: 15px;
+  background: var(--cinnabar);
+  clip-path: polygon(0 0, 100% 50%, 0 100%);
+  transition: transform 400ms var(--ease-out);
+}
+
+.dragon .gallery-item:hover .gallery-mark {
+  transform: scale(1.16);
+}
+
+.dragon .gallery-plate {
+  font-family: var(--display);
+  font-size: clamp(1rem, 2vw, 1.4rem);
+  line-height: 1.2;
+  color: var(--ink);
+}
+
+.dragon .gallery-title {
+  font-family: var(--display);
+  font-size: clamp(0.98rem, 1.5vw, 1.14rem);
+  line-height: 1.2;
+  color: var(--ink);
+}
+
+.dragon .gallery-note {
+  font-size: 0.84rem;
+  line-height: 1.6;
+  color: var(--ink-faint);
+}
+
+.dragon .gallery-on {
+  font-size: 9px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--cinnabar);
+  /* Letter-spacing adds a space after the final letter; pulled back so the
+     label sits flush with the card's left edge. */
+  margin-left: 0;
+}
+
+/* ---------- the way back to the brief ---------- */
+.dragon .tocommission {
+  background: color-mix(in oklab, var(--paper) 88%, transparent);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--cinnabar);
+  font-size: 10px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--cinnabar);
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.4);
+  transition:
+    opacity 460ms var(--ease-out),
+    transform 560ms var(--ease-out),
+    visibility 460ms,
+    background 320ms var(--ease-out),
+    color 320ms var(--ease-out);
+}
+
+.dragon .tocommission:hover {
+  background: var(--cinnabar);
+  color: var(--paper);
 }

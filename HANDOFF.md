@@ -841,6 +841,17 @@ Everything below is generated, and **the generators are checked in under
   `public/audio/the-journey-live.mp3` and writes one peak per bucket, 900 of
   them, normalised. Nocturne builds a room out of these and walks down it, so
   they have to be the real ones. Rerun if `livePhrase` is ever replaced.
+- `tools/posters.py` → `public/films/*.webp`. One poster frame per catalogue
+  entry, fetched once from YouTube (`maxresdefault`, falling back to
+  `hqdefault`) or from Spotify's oEmbed art, and served from here. **That is the
+  point**: nothing is requested from YouTube, Spotify or Instagram until a reader
+  presses a card, so a grid of seventeen hotlinked thumbnails would have told
+  three platforms who visited the page before anyone asked for anything. Spotify
+  art is square and gets contained over a blurred, darkened copy of itself, so
+  the grid keeps one aspect ratio without cropping anyone's sleeve. Instagram
+  hands out nothing usable, so that card is typographic — deliberate, not a gap.
+  Reads the ids straight out of `content/work.ts`; rerun after adding to
+  `catalogue`, `--force` to refetch.
 - `tools/fit-check.mjs` — not a generator; a test. Walks every `.stage-pin` on
   every concept at seventeen viewport sizes and fails if any text-bearing leaf
   falls outside its frame. **Run it after touching anything in a pinned

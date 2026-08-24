@@ -1,6 +1,7 @@
 import { useRef } from "react";
 import { ConceptChrome, ConceptSwitch } from "../../components/ConceptChrome";
 import { Grain } from "../../components/Grain";
+import { Commission } from "../../components/Commission";
 import { FilmScrub } from "../../components/FilmScrub";
 import { Listen } from "../../components/Listen";
 import { NowPlaying } from "../../components/NowPlaying";
@@ -108,6 +109,7 @@ export function DragonPage() {
       <NowPlaying />
       <ConceptChrome concept={concept} />
       <Grain />
+      <Commission />
 
       <ScrollStage vh={420} cuts={cuts.length} className="dragon-stage">
         {({ stage, progress }) => (

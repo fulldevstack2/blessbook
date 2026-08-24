@@ -3,6 +3,7 @@ import { ConceptChrome, ConceptSwitch } from "../../components/ConceptChrome";
 import { Cursor } from "../../components/Cursor";
 import { FilmScrub } from "../../components/FilmScrub";
 import { Grain } from "../../components/Grain";
+import { Commission } from "../../components/Commission";
 import { Listen } from "../../components/Listen";
 import { NowPlaying } from "../../components/NowPlaying";
 import { Reel } from "../../components/Reel";
@@ -141,6 +142,7 @@ export function NocturnePage() {
       <NowPlaying />
       <ConceptChrome concept={concept} />
       <Grain />
+      <Commission />
       <Cursor />
 
       <ScrollStage vh={460} cuts={cuts.length} className="nocturne-stage">

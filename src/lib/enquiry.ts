@@ -119,6 +119,9 @@ async function deliver(answers: Answers): Promise<void> {
    locally and never sent anywhere; `clear` runs when the brief goes, so a
    finished brief does not sit in the browser afterwards. */
 const KEEP_KEY = "blesspoke:brief";
+/* Where they were, kept apart from what they wrote so an older saved brief
+   still restores rather than being thrown away for having the wrong shape. */
+const STEP_KEY = "blesspoke:brief:step";
 
 function remembered(): Answers {
   try {
@@ -143,8 +146,31 @@ function keep(answers: Answers): void {
 function forget(): void {
   try {
     window.localStorage.removeItem(KEEP_KEY);
+    window.localStorage.removeItem(STEP_KEY);
   } catch {
     /* nothing to do */
+  }
+}
+
+/** Which part they were on. Clamped, so a stored step from an older, shorter
+    brief cannot land the reader on a part that no longer exists. */
+function rememberedStep(): number {
+  try {
+    const raw = window.localStorage.getItem(STEP_KEY);
+    if (raw === null) return 0;
+    const at = Number(raw);
+    if (!Number.isInteger(at)) return 0;
+    return Math.max(0, Math.min(REVIEW, at));
+  } catch {
+    return 0;
+  }
+}
+
+function keepStep(at: number): void {
+  try {
+    window.localStorage.setItem(STEP_KEY, String(at));
+  } catch {
+    /* private mode: the position simply does not survive a reload */
   }
 }
 
@@ -163,7 +189,7 @@ export function useBrief() {
   const [stage, setStage] = useState<BriefStage>("idle");
   const [problems, setProblems] = useState<Record<string, string>>({});
   const [shown, setShown] = useState<Set<string>>(new Set());
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(rememberedStep);
 
   /* A part is "shown" once it has been checked, and only its own fields go red.
      Checking the whole form on the first press of Next would mark fourteen
@@ -200,7 +226,11 @@ export function useBrief() {
     return out;
   }, [problems, shown]);
 
-  const go = (next: number) => setStep(Math.max(0, Math.min(REVIEW, next)));
+  const go = (next: number) => {
+    const at = Math.max(0, Math.min(REVIEW, next));
+    setStep(at);
+    keepStep(at);
+  };
 
   /** Checks the part in front of the reader, and holds if it is not answered. */
   const forward = () => {
@@ -245,6 +275,7 @@ export function useBrief() {
     setProblems({});
     setShown(new Set());
     setStep(0);
+    keepStep(0);
     setStage("idle");
   };
 

@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { clients } from "../../content/clients";
-import { catalogue, films } from "../../content/work";
+import { films } from "../../content/work";
 import { pauseAll } from "../../lib/listening";
 import { useReady } from "../../lib/useReady";
 import { useTypeset } from "../../lib/useTypeset";
 import { useSectionProgress } from "../../lib/useSectionProgress";
 import { photos } from "../../content/media";
 import { Brief } from "../../components/Brief";
+import { Works } from "../../components/Works";
 import { enquiry, steps } from "../../content/commission";
 import { SceneCanvas } from "../../lib/SceneCanvas";
 import { createInstrumentScene } from "./instrumentScene";
@@ -221,28 +222,7 @@ export function FilmScrolls({ caption }: { caption: string }) {
         ))}
       </div>
 
-      {/* The rest of it, written down the sheet as titles rather than mounted as
-          sixteen more scrolls. A hand scroll ends in a colophon: the list of
-          everything the hand has done, in the margin, in a smaller brush. */}
-      <div className="colophon">
-        <div className="colophon-head">
-          <span className="colophon-mark" lang="zh" aria-hidden>
-            录
-          </span>
-          <span className="colophon-label">Also written and produced</span>
-        </div>
-        <ul className="colophon-list">
-          {catalogue.map((work) => (
-            <li key={work.id}>
-              <a href={work.href} rel="noreferrer noopener" target="_blank">
-                <span className="colophon-title">{work.title}</span>
-                <span className="colophon-note">{work.note}</span>
-                <span className="colophon-on">{work.on}</span>
-              </a>
-            </li>
-          ))}
-        </ul>
-      </div>
+      <Works head="Also written and produced" />
     </div>
   );
 }
@@ -361,7 +341,7 @@ export function Figure({ value }: { value: string }) {
  */
 export function Enquiry() {
   return (
-    <div className="sheetform" data-reveal>
+    <div className="sheetform" id="brief" data-reveal>
       <p className="sheetform-eyebrow">{enquiry.eyebrow}</p>
       <h3 className="sheetform-head">{enquiry.headline}</h3>
       <p className="sheetform-lede">{enquiry.lede}</p>

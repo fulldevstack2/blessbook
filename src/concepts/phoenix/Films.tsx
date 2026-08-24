@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { catalogue, films } from "../../content/work";
+import { films } from "../../content/work";
 import { pauseAll } from "../../lib/listening";
+import { Works } from "../../components/Works";
 
 /**
  * Three films of the work in the room it was written for. The poster frames are
@@ -57,26 +58,7 @@ export function Films({ caption }: { caption: string }) {
         </figure>
       ))}
 
-      {/* The three films are the examples. This is the rest of it, and the
-          length is the argument — a page that shows three commissions is a
-          portfolio, a page that shows seventeen is a career. Set as an index
-          rather than a wall of posters: sixteen more embeds would be sixteen
-          more megabytes and none of them would be looked at. */}
-      <div className="credits" data-reveal>
-        <p className="credits-head">Also written and produced</p>
-        <ul className="credits-list">
-          {catalogue.map((work) => (
-            <li className="credits-row" key={work.id}>
-              <a href={work.href} rel="noreferrer noopener" target="_blank">
-                <span className="credits-title">{work.title}</span>
-                <span className="credits-leader" aria-hidden />
-                <span className="credits-note">{work.note}</span>
-                <span className="credits-on">{work.on}</span>
-              </a>
-            </li>
-          ))}
-        </ul>
-      </div>
+      <Works head="Also written and produced" />
     </div>
   );
 }

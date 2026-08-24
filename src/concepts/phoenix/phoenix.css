@@ -2362,17 +2362,41 @@ canvas[hidden] + .phoenix-hero-plate {
 
 /* ---------- the plumb line down the margin ---------- */
 
+/* It can be taken hold of now, so it has to be catchable: twenty-two pixels of
+   transparent rail either side of a one-pixel line, which is the difference
+   between a control and a decoration. The cursor says which it is. */
 .phoenix .plumb {
   position: fixed;
   top: 50%;
-  right: clamp(10px, 1.6vw, 26px);
+  right: clamp(4px, 1.2vw, 20px);
   z-index: 20;
   display: none;
-  width: 20px;
+  width: 30px;
   height: 42vh;
   transform: translateY(-50%);
-  pointer-events: none;
+  cursor: grab;
+  touch-action: none;
   color: var(--gold);
+}
+
+.phoenix .plumb[data-held="true"] {
+  cursor: grabbing;
+}
+
+.phoenix .plumb:focus-visible {
+  outline: 1px solid var(--gold);
+  outline-offset: 2px;
+}
+
+/* The rail brightens under the hand, so it reads as live before it is pressed. */
+.phoenix .plumb:hover .plumb-line,
+.phoenix .plumb:focus-visible .plumb-line {
+  background: color-mix(in oklab, currentColor 42%, transparent);
+}
+
+.phoenix .plumb:hover .plumb-note,
+.phoenix .plumb[data-held="true"] .plumb-note {
+  transform: translateY(calc(var(--page, 0) * 42vh)) scale(1.18);
 }
 
 @media (min-width: 1180px) {
@@ -2415,6 +2439,11 @@ canvas[hidden] + .phoenix-hero-plate {
   filter: drop-shadow(0 0 7px color-mix(in oklab, currentColor 42%, transparent));
   transform: translateY(calc(var(--page, 0) * 42vh));
   transition: transform 220ms linear;
+}
+
+/* No easing under a drag: a bead that lags the pointer reads as broken. */
+.phoenix .plumb[data-held="true"] .plumb-note {
+  transition: none;
 }
 
 /* ---------- the sticky player, gilded ---------- */
@@ -2968,112 +2997,6 @@ canvas[hidden] + .phoenix-hero-plate {
   }
 }
 
-/* ---------- the index: everything the three films are examples of ----------
-
-   Set as an engraved index rather than more posters. The leader carries the eye
-   from the title to what it was for, which is the one thing a reader of a
-   credits list actually wants, and the platform sits out at the right where a
-   catalogue number would. */
-.phoenix .credits {
-  /* `.films` is a three-column grid from 900px up, and this is not a film — it
-     is the list under all of them, so it takes the full measure. Without this it
-     lands as a fourth cell and sets seventeen credits in a 355px column. */
-  grid-column: 1 / -1;
-  margin-top: clamp(var(--space-2xl), 8vh, var(--space-4xl));
-  border-top: 1px solid var(--rule);
-  padding-top: var(--space-xl);
-}
-
-.phoenix .credits-head {
-  font-size: 10px;
-  letter-spacing: 0.34em;
-  text-transform: uppercase;
-  color: var(--gold);
-}
-
-.phoenix .credits-list {
-  margin: var(--space-lg) 0 0;
-  padding: 0;
-  list-style: none;
-  display: grid;
-}
-
-.phoenix .credits-row a {
-  display: grid;
-  grid-template-columns: minmax(0, auto) minmax(1.5rem, 1fr) minmax(0, auto) auto;
-  align-items: baseline;
-  column-gap: var(--space-md);
-  row-gap: var(--space-2xs);
-  padding-block: var(--space-sm);
-  border-bottom: 1px solid var(--rule);
-  text-decoration: none;
-  transition: color 320ms var(--ease-out);
-}
-
-.phoenix .credits-row a:hover,
-.phoenix .credits-row a:focus-visible {
-  color: var(--gold);
-}
-
-.phoenix .credits-title {
-  font-family: var(--display);
-  font-size: clamp(1rem, 1.7vw, 1.32rem);
-  color: var(--ivory);
-}
-
-.phoenix .credits-row a:hover .credits-title {
-  color: var(--gold);
-}
-
-.phoenix .credits-leader {
-  height: 1px;
-  transform: translateY(-0.32em);
-  background: repeating-linear-gradient(
-    90deg,
-    color-mix(in oklab, var(--ivory) 26%, transparent) 0 2px,
-    transparent 2px 7px
-  );
-}
-
-.phoenix .credits-note {
-  font-size: 0.9rem;
-  color: var(--ivory-faint);
-}
-
-.phoenix .credits-on {
-  font-size: 9px;
-  letter-spacing: 0.26em;
-  text-transform: uppercase;
-  color: var(--gold-deep, var(--gold));
-  /* Letter-spacing adds a space after the final letter, which pushes this
-     column past the measure. Pulled back so the right edge lines up. */
-  margin-right: -0.26em;
-}
-
-/* Narrow: the leader has nothing to lead across, so the note goes underneath. */
-@media (max-width: 760px) {
-  .phoenix .credits-row a {
-    grid-template-columns: minmax(0, 1fr) auto;
-  }
-
-  .phoenix .credits-title {
-    grid-column: 1;
-  }
-
-  .phoenix .credits-leader {
-    display: none;
-  }
-
-  .phoenix .credits-on {
-    grid-column: 2;
-    grid-row: 1;
-  }
-
-  .phoenix .credits-note {
-    grid-column: 1 / -1;
-  }
-}
-
 /* ---------- the brief, engraved ----------
 
    Rules, not boxes: every field is a line ruled under it, the way an engraver
@@ -3335,4 +3258,113 @@ canvas[hidden] + .phoenix-hero-plate {
 /* Nothing said yet reads as an absence, not as an answer. */
 .phoenix .brief-recap-list > div[data-said="false"] dd {
   color: var(--ivory-faint);
+}
+
+/* ---------- the catalogue, playable ---------- */
+/* The catalogue sits inside .films (three columns from 900px up), and it is not one of
+   them — it is the grid under all of them, so it takes the full measure.
+   Without this it lands as one more cell and sets fourteen cards in a column. */
+.phoenix .gallery {
+  grid-column: 1 / -1;
+}
+
+.phoenix .gallery-head {
+  font-size: 10px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.phoenix .gallery-frame {
+  background: #0b0705;
+  border: 1px solid var(--rule);
+  transition: border-color 400ms var(--ease-out);
+}
+
+.phoenix .gallery-item:hover .gallery-frame {
+  border-color: var(--gold);
+}
+
+/* The frame lifts a little under the pointer, which is the only motion a grid
+   of seventeen needs — anything more and it fidgets. */
+.phoenix .gallery-open img {
+  transform: scale(1);
+  transition:
+    transform 900ms var(--ease-out),
+    opacity 400ms var(--ease-out);
+  opacity: 0.86;
+}
+
+.phoenix .gallery-item:hover .gallery-open img {
+  transform: scale(1.035);
+  opacity: 1;
+}
+
+/* One triangle, drawn in CSS: the site ships no icon assets. */
+.phoenix .gallery-mark {
+  position: absolute;
+  left: var(--space-sm);
+  bottom: var(--space-sm);
+  width: 13px;
+  height: 15px;
+  background: var(--gold);
+  clip-path: polygon(0 0, 100% 50%, 0 100%);
+  transition: transform 400ms var(--ease-out);
+}
+
+.phoenix .gallery-item:hover .gallery-mark {
+  transform: scale(1.16);
+}
+
+.phoenix .gallery-plate {
+  font-family: var(--display);
+  font-size: clamp(1rem, 2vw, 1.4rem);
+  line-height: 1.2;
+  color: var(--ivory);
+}
+
+.phoenix .gallery-title {
+  font-family: var(--display);
+  font-size: clamp(0.98rem, 1.5vw, 1.14rem);
+  line-height: 1.2;
+  color: var(--ivory);
+}
+
+.phoenix .gallery-note {
+  font-size: 0.84rem;
+  line-height: 1.6;
+  color: var(--ivory-faint);
+}
+
+.phoenix .gallery-on {
+  font-size: 9px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--gold);
+  /* Letter-spacing adds a space after the final letter; pulled back so the
+     label sits flush with the card's left edge. */
+  margin-left: 0;
+}
+
+/* ---------- the way back to the brief ---------- */
+.phoenix .tocommission {
+  background: color-mix(in oklab, #0b0705 88%, transparent);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--gold);
+  font-size: 10px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--gold);
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.4);
+  transition:
+    opacity 460ms var(--ease-out),
+    transform 560ms var(--ease-out),
+    visibility 460ms,
+    background 320ms var(--ease-out),
+    color 320ms var(--ease-out);
+}
+
+.phoenix .tocommission:hover {
+  background: var(--gold);
+  color: var(--lacquer, #140f0a);
 }

@@ -1,4 +1,4 @@
-import { useEffect, useRef, type CSSProperties } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { ScrollStage } from "../../lib/ScrollStage";
 import { SceneCanvas } from "../../lib/SceneCanvas";
 import { createBandScene } from "./bandScene";
@@ -129,12 +129,29 @@ export function Marking({ text }: { text: string }) {
 }
 
 /**
- * A plumb line down the margin with a gilded bead riding it, so you always know
- * how far through the piece you are. The margin used to hold a five-line staff,
- * which was the same pretence as the score: this is a hairline and a bead.
+ * A plumb line down the margin with a gilded bead riding it — and you can take
+ * hold of it.
+ *
+ * It began as a readout: it said how far through the piece you were and did
+ * nothing. Anything that looks exactly like a scrollbar and cannot be dragged is
+ * a small lie, and on a page this long the affordance is worth having anyway. So
+ * press it and the page goes there, drag the bead and the page follows, and it
+ * takes the keyboard too: arrows by a screen-tenth, page keys by a screen,
+ * Home and End for the ends.
+ *
+ * `role="slider"` rather than `scrollbar`, deliberately: the scrollbar role
+ * expects to own a named region and announces itself as furniture, where this is
+ * one control with one value. It is no longer `aria-hidden`, because a thing you
+ * can operate has to be reachable.
+ *
+ * Dragging sets `scrollTop` directly and never smoothly — a smooth scroll under
+ * a drag lags the pointer and feels broken. The bead's own transition is
+ * suppressed while dragging for the same reason.
  */
 export function Plumb() {
   const line = useRef<HTMLDivElement>(null);
+  const [held, setHeld] = useState(false);
+  const [at, setAt] = useState(0);
 
   useEffect(() => {
     const element = line.current;
@@ -145,7 +162,9 @@ export function Plumb() {
       frame = 0;
       const travel = document.documentElement.scrollHeight - window.innerHeight;
       const progress = travel > 0 ? window.scrollY / travel : 0;
-      element.style.setProperty("--page", Math.min(1, Math.max(0, progress)).toFixed(4));
+      const bounded = Math.min(1, Math.max(0, progress));
+      element.style.setProperty("--page", bounded.toFixed(4));
+      setAt(Math.round(bounded * 100));
     };
 
     const onScroll = () => {
@@ -164,10 +183,70 @@ export function Plumb() {
     };
   }, []);
 
+  /** Where along the rail a pointer is, as 0 → 1. */
+  const fraction = (clientY: number) => {
+    const element = line.current;
+    if (!element) return 0;
+    const box = element.getBoundingClientRect();
+    if (box.height === 0) return 0;
+    return Math.min(1, Math.max(0, (clientY - box.top) / box.height));
+  };
+
+  const jump = (portion: number) => {
+    const travel = document.documentElement.scrollHeight - window.innerHeight;
+    window.scrollTo({ top: portion * travel, behavior: "auto" });
+  };
+
+  const nudge = (by: number) => {
+    const travel = document.documentElement.scrollHeight - window.innerHeight;
+    if (travel <= 0) return;
+    jump(Math.min(1, Math.max(0, window.scrollY / travel + by)));
+  };
+
   return (
-    <div className="plumb" ref={line} aria-hidden>
-      <span className="plumb-line" />
-      <span className="plumb-fill" />
+    <div
+      className="plumb"
+      ref={line}
+      data-held={held}
+      role="slider"
+      tabIndex={0}
+      aria-label="Scroll the page"
+      aria-orientation="vertical"
+      aria-valuemin={0}
+      aria-valuemax={100}
+      aria-valuenow={at}
+      aria-valuetext={`${at}% through the page`}
+      onPointerDown={(event) => {
+        // Ignore the secondary buttons: a right-click is a menu, not a scroll.
+        if (event.button !== 0) return;
+        event.currentTarget.setPointerCapture(event.pointerId);
+        setHeld(true);
+        jump(fraction(event.clientY));
+      }}
+      onPointerMove={(event) => {
+        if (!held) return;
+        jump(fraction(event.clientY));
+      }}
+      onPointerUp={() => setHeld(false)}
+      onPointerCancel={() => setHeld(false)}
+      onKeyDown={(event) => {
+        const step = 0.1;
+        const keys: Record<string, () => void> = {
+          ArrowDown: () => nudge(step),
+          ArrowUp: () => nudge(-step),
+          PageDown: () => nudge(1 / 3),
+          PageUp: () => nudge(-1 / 3),
+          Home: () => jump(0),
+          End: () => jump(1),
+        };
+        const act = keys[event.key];
+        if (!act) return;
+        event.preventDefault();
+        act();
+      }}
+    >
+      <span className="plumb-line" aria-hidden />
+      <span className="plumb-fill" aria-hidden />
       {/* An open notehead threaded on the line.
 
           A filled head with a drawn stem read as clip art: at fourteen pixels a
@@ -176,7 +255,7 @@ export function Plumb() {
           ellipse cut on the slant a nib makes, hairline like everything else
           gold on this concept, and the rail passes behind it as its stem, which
           is exactly how a note sits on a staff. */}
-      <svg className="plumb-note" viewBox="0 0 20 20" focusable="false">
+      <svg className="plumb-note" viewBox="0 0 20 20" focusable="false" aria-hidden>
         <ellipse cx="10" cy="10" rx="6.7" ry="4.4" transform="rotate(-20 10 10)" />
       </svg>
     </div>
@@ -268,7 +347,7 @@ export function Figure({ value }: { value: string }) {
  */
 export function Enquiry() {
   return (
-    <div className="plate" data-reveal>
+    <div className="plate" id="brief" data-reveal>
       <p className="plate-eyebrow">{enquiry.eyebrow}</p>
       <h3 className="plate-head">{enquiry.headline}</h3>
       <p className="plate-lede">{enquiry.lede}</p>

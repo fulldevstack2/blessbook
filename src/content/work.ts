@@ -174,12 +174,24 @@ export const films: readonly Film[] = [
  */
 export interface Work {
   readonly id: string;
-  /** Where it lives. Changes the wording of the link and nothing else. */
+  /** Where it lives. Decides the wording, and what the frame loads. */
   readonly on: "YouTube" | "Spotify" | "Instagram";
+  /** The page it lives on, for opening it there instead. */
   readonly href: string;
+  /** What the frame loads, and only once a reader has pressed it. */
+  readonly embed: string;
   readonly title: string;
   /** Who it was for, and what for. */
   readonly note: string;
+  /**
+   * A frame served from this site. Fetched once by `tools/posters.py` — never
+   * hotlinked, because a grid of seventeen hotlinked thumbnails would tell three
+   * platforms who visited the page before anyone asked for anything.
+   *
+   * Instagram gives no usable frame, so that one has none and the page sets it
+   * typographically. Deliberate, not a gap.
+   */
+  readonly poster?: string;
 }
 
 export const catalogue: readonly Work[] = [
@@ -187,6 +199,8 @@ export const catalogue: readonly Work[] = [
     id: "glory",
     on: "YouTube",
     href: "https://youtu.be/8vBQ-BdAbjA",
+    embed: "https://www.youtube-nocookie.com/embed/8vBQ-BdAbjA?autoplay=1&rel=0",
+    poster: poster("glory.webp"),
     title: "GLORY",
     note: "With Datuk Syafinaz Selamat.",
   },
@@ -194,6 +208,8 @@ export const catalogue: readonly Work[] = [
     id: "wanna-be-free-live",
     on: "YouTube",
     href: "https://youtu.be/CJbWBhn0y2k",
+    embed: "https://www.youtube-nocookie.com/embed/CJbWBhn0y2k?autoplay=1&rel=0",
+    poster: poster("wanna-be-free-live.webp"),
     title: "I Wanna Be Free",
     note: "With Jeryl Lee \u674e\u4f69\u73b2, live at The Chosen.",
   },
@@ -201,6 +217,8 @@ export const catalogue: readonly Work[] = [
     id: "wanna-be-free",
     on: "YouTube",
     href: "https://youtu.be/gPVI1KYpr1o",
+    embed: "https://www.youtube-nocookie.com/embed/gPVI1KYpr1o?autoplay=1&rel=0",
+    poster: poster("wanna-be-free.webp"),
     title: "I Wanna Be Free",
     note: "Jeryl Lee \u674e\u4f69\u73b2, for #VoiceBeyondHorizon.",
   },
@@ -208,6 +226,8 @@ export const catalogue: readonly Work[] = [
     id: "abadi-kita",
     on: "YouTube",
     href: "https://youtu.be/VVHZ1DOIj18",
+    embed: "https://www.youtube-nocookie.com/embed/VVHZ1DOIj18?autoplay=1&rel=0",
+    poster: poster("abadi-kita.webp"),
     title: "ABADI KITA",
     note: "Written for Aisyah Aziz, the Singaporean artiste.",
   },
@@ -215,6 +235,8 @@ export const catalogue: readonly Work[] = [
     id: "nugget",
     on: "YouTube",
     href: "https://youtu.be/Piki1mKblAc",
+    embed: "https://www.youtube-nocookie.com/embed/Piki1mKblAc?autoplay=1&rel=0",
+    poster: poster("nugget.webp"),
     title: "Nugget",
     note: "First single for Sharnaaz Ahmad, the Malaysian A-list actor.",
   },
@@ -222,6 +244,8 @@ export const catalogue: readonly Work[] = [
     id: "nugget-acoustic",
     on: "YouTube",
     href: "https://youtu.be/zrS48blMetg",
+    embed: "https://www.youtube-nocookie.com/embed/zrS48blMetg?autoplay=1&rel=0",
+    poster: poster("nugget-acoustic.webp"),
     title: "Nugget \u00b7 acoustic",
     note: "One take, with Sharnaaz Ahmad.",
   },
@@ -229,6 +253,8 @@ export const catalogue: readonly Work[] = [
     id: "makan-cintaku-acoustic",
     on: "YouTube",
     href: "https://youtu.be/N0UUpt0RFTc",
+    embed: "https://www.youtube-nocookie.com/embed/N0UUpt0RFTc?autoplay=1&rel=0",
+    poster: poster("makan-cintaku-acoustic.webp"),
     title: "Makan Cintaku \u00b7 acoustic",
     note: "With Khai Bahar and Wany Hasrita.",
   },
@@ -236,6 +262,8 @@ export const catalogue: readonly Work[] = [
     id: "jadi-tak-keruan",
     on: "YouTube",
     href: "https://youtu.be/HFtwimMVMz4",
+    embed: "https://www.youtube-nocookie.com/embed/HFtwimMVMz4?autoplay=1&rel=0",
+    poster: poster("jadi-tak-keruan.webp"),
     title: "JADI TAK KERUAN",
     note: "First single for Fara Dolhadi.",
   },
@@ -243,6 +271,8 @@ export const catalogue: readonly Work[] = [
     id: "light-home",
     on: "YouTube",
     href: "https://youtu.be/ecuaYtAmwxs",
+    embed: "https://www.youtube-nocookie.com/embed/ecuaYtAmwxs?autoplay=1&rel=0",
+    poster: poster("light-home.webp"),
     title: "The Light Home \uff5c \u56de\u5bb6\u7684\u5149",
     note: "Chinese New Year theme song, 2026.",
   },
@@ -250,6 +280,8 @@ export const catalogue: readonly Work[] = [
     id: "beauty-in-the-pot",
     on: "YouTube",
     href: "https://youtu.be/jKVLyHmMBaY",
+    embed: "https://www.youtube-nocookie.com/embed/jKVLyHmMBaY?autoplay=1&rel=0",
+    poster: poster("beauty-in-the-pot.webp"),
     title: "\u6211\u60f3\u5bf9\u4f60\u8bf4",
     note: "Theme song for the Beauty in the Pot hotpot chain.",
   },
@@ -257,6 +289,8 @@ export const catalogue: readonly Work[] = [
     id: "safe-harbour",
     on: "YouTube",
     href: "https://youtu.be/mFGa7RPHnW0",
+    embed: "https://www.youtube-nocookie.com/embed/mFGa7RPHnW0?autoplay=1&rel=0",
+    poster: poster("safe-harbour.webp"),
     title: "\u907f\u98ce\u6e2f",
     note: "For Daniel Tan: a groom's dedication to his bride.",
   },
@@ -264,6 +298,7 @@ export const catalogue: readonly Work[] = [
     id: "one-corsa-film",
     on: "Instagram",
     href: "https://www.instagram.com/p/DcVHIZ0TSAl/",
+    embed: "https://www.instagram.com/p/DcVHIZ0TSAl/embed",
     title: "ONE CORSA",
     note: "The commercial the song was written for.",
   },
@@ -271,6 +306,8 @@ export const catalogue: readonly Work[] = [
     id: "phoenix-album",
     on: "Spotify",
     href: "https://open.spotify.com/album/22hh21F0ImbOAnuIPiXjO1",
+    embed: "https://open.spotify.com/embed/album/22hh21F0ImbOAnuIPiXjO1",
+    poster: poster("phoenix-album.webp"),
     title: "The Phoenix Rising Concert",
     note: "The 2016 concert, recorded live.",
   },
@@ -278,6 +315,8 @@ export const catalogue: readonly Work[] = [
     id: "chosen-album",
     on: "Spotify",
     href: "https://open.spotify.com/album/2Pp6yeK5T7teXzoFHbMzM4",
+    embed: "https://open.spotify.com/embed/album/2Pp6yeK5T7teXzoFHbMzM4",
+    poster: poster("chosen-album.webp"),
     title: "The Chosen Concert",
     note: "The 2019 concert, recorded live.",
   },

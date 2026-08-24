@@ -2969,117 +2969,6 @@
   }
 }
 
-/* ---------- the rest of the bill ----------
-
-   A programme prints its feature in full and lists the rest. Same leaders as
-   the cast page and the box office board, because on this page a leader is how
-   any two facts are joined. */
-.nocturne .alsobill {
-  /* `.programme` is two columns from 1000px up; this list is under both of
-     them, not beside one. */
-  grid-column: 1 / -1;
-  margin-top: clamp(var(--space-2xl), 7vh, var(--space-4xl));
-  border-top: 1px solid var(--rule);
-  padding-top: var(--space-xl);
-}
-
-.nocturne .alsobill-head {
-  margin: 0;
-  font-size: 10px;
-  letter-spacing: 0.32em;
-  text-transform: uppercase;
-  color: color-mix(in oklab, var(--ivory) 62%, transparent);
-}
-
-.nocturne .alsobill-head em {
-  font-family: var(--display);
-  font-size: 15px;
-  font-style: italic;
-  letter-spacing: 0.02em;
-  text-transform: none;
-  color: var(--brass);
-}
-
-.nocturne .alsobill-list {
-  margin: var(--space-lg) 0 0;
-  padding: 0;
-  list-style: none;
-}
-
-.nocturne .alsobill-list a {
-  display: grid;
-  grid-template-columns: minmax(0, auto) minmax(1.5rem, 1fr) minmax(0, auto) auto;
-  align-items: baseline;
-  column-gap: var(--space-md);
-  row-gap: var(--space-2xs);
-  padding-block: var(--space-sm);
-  border-bottom: 1px solid var(--rule);
-  text-decoration: none;
-  transition: color 320ms var(--ease-out);
-}
-
-.nocturne .alsobill-list a:hover .alsobill-title,
-.nocturne .alsobill-list a:focus-visible .alsobill-title {
-  color: var(--brass);
-}
-
-.nocturne .alsobill-title {
-  font-family: var(--display);
-  font-weight: 400;
-  font-variation-settings: "SOFT" 16, "WONK" 0, "opsz" 48;
-  font-size: clamp(1rem, 1.7vw, 1.3rem);
-  color: var(--ivory);
-  transition: color 320ms var(--ease-out);
-}
-
-.nocturne .alsobill-leader {
-  height: 1px;
-  transform: translateY(-0.32em);
-  background: repeating-linear-gradient(
-    90deg,
-    color-mix(in oklab, var(--ivory) 26%, transparent) 0 2px,
-    transparent 2px 7px
-  );
-}
-
-.nocturne .alsobill-note {
-  font-size: 0.9rem;
-  color: color-mix(in oklab, var(--ivory) 58%, transparent);
-}
-
-.nocturne .alsobill-on {
-  font-size: 9px;
-  letter-spacing: 0.26em;
-  text-transform: uppercase;
-  color: var(--brass-deep);
-  /* Letter-spacing adds a space after the final letter, which pushes this
-     column past the measure. Pulled back so the right edge lines up. */
-  margin-right: -0.26em;
-}
-
-@media (max-width: 760px) {
-  .nocturne .alsobill-list a {
-    grid-template-columns: minmax(0, 1fr) auto;
-  }
-
-  .nocturne .alsobill-title {
-    grid-column: 1;
-  }
-
-  .nocturne .alsobill-leader {
-    display: none;
-  }
-
-  .nocturne .alsobill-on {
-    grid-column: 2;
-    grid-row: 1;
-  }
-
-  .nocturne .alsobill-note {
-    grid-column: 1 / -1;
-  }
-}
-
 /* ---------- the brief, as an order card ----------
 
    Brass rules and leaders, the way this concept joins any two facts. Structure
@@ -3345,4 +3234,114 @@
 /* Nothing said yet reads as an absence, not as an answer. */
 .nocturne .brief-recap-list > div[data-said="false"] dd {
   color: color-mix(in oklab, var(--ivory) 56%, transparent);
+}
+
+/* ---------- the catalogue, playable ---------- */
+/* The catalogue sits inside .programme (two columns from 1000px up), and it is not one of
+   them — it is the grid under all of them, so it takes the full measure.
+   Without this it lands as one more cell and sets fourteen cards in a column. */
+.nocturne .gallery {
+  grid-column: 1 / -1;
+}
+
+.nocturne .gallery-head {
+  font-size: 10px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--brass);
+}
+
+.nocturne .gallery-frame {
+  background: var(--velvet-deep);
+  border: 1px solid var(--rule);
+  transition: border-color 400ms var(--ease-out);
+}
+
+.nocturne .gallery-item:hover .gallery-frame {
+  border-color: var(--brass);
+}
+
+/* The frame lifts a little under the pointer, which is the only motion a grid
+   of seventeen needs — anything more and it fidgets. */
+.nocturne .gallery-open img {
+  transform: scale(1);
+  transition:
+    transform 900ms var(--ease-out),
+    opacity 400ms var(--ease-out);
+  opacity: 0.86;
+}
+
+.nocturne .gallery-item:hover .gallery-open img {
+  transform: scale(1.035);
+  opacity: 1;
+}
+
+/* One triangle, drawn in CSS: the site ships no icon assets. */
+.nocturne .gallery-mark {
+  position: absolute;
+  left: var(--space-sm);
+  bottom: var(--space-sm);
+  width: 13px;
+  height: 15px;
+  background: var(--brass);
+  clip-path: polygon(0 0, 100% 50%, 0 100%);
+  transition: transform 400ms var(--ease-out);
+}
+
+.nocturne .gallery-item:hover .gallery-mark {
+  transform: scale(1.16);
+}
+
+.nocturne .gallery-plate {
+  font-family: var(--display);
+  font-size: clamp(1rem, 2vw, 1.4rem);
+  line-height: 1.2;
+  color: var(--ivory);
+}
+
+.nocturne .gallery-title {
+  font-family: var(--display);
+  font-variation-settings: "SOFT" 16, "WONK" 0, "opsz" 48;
+  font-size: clamp(0.98rem, 1.5vw, 1.14rem);
+  line-height: 1.2;
+  color: var(--ivory);
+}
+
+.nocturne .gallery-note {
+  font-size: 0.84rem;
+  line-height: 1.6;
+  color: color-mix(in oklab, var(--ivory) 56%, transparent);
+}
+
+.nocturne .gallery-on {
+  font-size: 9px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--brass);
+  /* Letter-spacing adds a space after the final letter; pulled back so the
+     label sits flush with the card's left edge. */
+  margin-left: 0;
+}
+
+/* ---------- the way back to the brief ---------- */
+.nocturne .tocommission {
+  background: color-mix(in oklab, var(--velvet-deep) 88%, transparent);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--brass);
+  font-size: 10px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--brass);
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.4);
+  transition:
+    opacity 460ms var(--ease-out),
+    transform 560ms var(--ease-out),
+    visibility 460ms,
+    background 320ms var(--ease-out),
+    color 320ms var(--ease-out);
+}
+
+.nocturne .tocommission:hover {
+  background: var(--brass);
+  color: var(--velvet-deep);
 }
