@@ -3373,3 +3373,62 @@
   text-transform: uppercase;
   color: var(--brass);
 }
+
+/* ---------- the brief's chosen values ---------- */
+
+/* A select is styled like the ruled lines beside it, not like a system widget:
+   `appearance: none` and the concept's own caret, so a row of questions does not
+   change typeface halfway down. */
+.nocturne .brief-select {
+  appearance: none;
+  padding: var(--space-xs) var(--space-xl) var(--space-xs) 0;
+  background: none;
+  border: 0;
+  border-bottom: 1px solid var(--rule);
+  color: var(--ivory);
+  /* The caret, drawn: two strokes rotated, in the concept's accent. */
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--brass) 50%),
+    linear-gradient(135deg, var(--brass) 50%, transparent 50%);
+  background-size: 6px 6px, 6px 6px;
+  background-position: right 12px center, right 7px center;
+  background-repeat: no-repeat;
+  transition: border-color 320ms var(--ease-out);
+}
+
+.nocturne .brief-select:focus {
+  outline: none;
+  border-bottom-color: var(--brass);
+}
+
+/* The list itself is the platform's, so it has to be told the colours or it
+   arrives white-on-white on the dark concepts. */
+.nocturne .brief-select option {
+  background: #1a0d10;
+  color: #f6f1e6;
+}
+
+.nocturne .brief-field[data-bad="true"] .brief-select {
+  border-bottom-color: var(--brass);
+}
+
+/* Not an error — the form knows something the reader does not, and says it. */
+.nocturne .brief-soon {
+  max-width: 56ch;
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: var(--brass);
+}
+
+.nocturne .brief-left {
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  color: color-mix(in oklab, var(--ivory) 54%, transparent);
+}
+
+/* The date picker is the platform's own chrome; it has to be told which way up
+   this page is or it arrives as the wrong half of a light-and-dark pair. */
+.nocturne .brief-input--date,
+.nocturne .brief-select {
+  color-scheme: dark;
+}

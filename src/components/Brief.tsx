@@ -1,6 +1,7 @@
 import { brief, enquiry, type BriefField } from "../content/commission";
+import { NEAR_COUNT, countries } from "../content/countries";
 import { useEffect, useRef } from "react";
-import { OTHER, REVIEW, list, otherKey, outstandingIn, useBrief } from "../lib/enquiry";
+import { OTHER, REVIEW, dialKey, list, otherKey, outstandingIn, useBrief } from "../lib/enquiry";
 
 /**
  * The creative brief, as a form.
@@ -16,15 +17,35 @@ import { OTHER, REVIEW, list, otherKey, outstandingIn, useBrief } from "../lib/e
  * autofillable without any of that being written here.
  */
 
+/** Today, so nothing can be needed in the past. */
+function today(): string {
+  const now = new Date();
+  const pad = (value: number) => String(value).padStart(2, "0");
+  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+}
+
+/** Is the chosen day inside the next `days` days? */
+function within(chosen: string, days: number): boolean {
+  const when = new Date(`${chosen}T00:00:00`);
+  if (Number.isNaN(when.getTime())) return false;
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
+  return (when.getTime() - now.getTime()) / 86_400_000 < days;
+}
+
+const LEFT = ["none left", "one more", "two more", "three more"] as const;
+
 function Control({
   field,
   answers,
   set,
+  setAll,
   toggle,
 }: {
   field: BriefField;
   answers: ReturnType<typeof useBrief>["answers"];
   set: ReturnType<typeof useBrief>["set"];
+  setAll: ReturnType<typeof useBrief>["setAll"];
   toggle: ReturnType<typeof useBrief>["toggle"];
 }) {
   const value = typeof answers[field.id] === "string" ? (answers[field.id] as string) : "";
@@ -45,6 +66,122 @@ function Control({
       onChange={(event) => set(otherKey(field.id), event.target.value)}
     />
   );
+
+  /* The dialling code and the country are one fact asked twice, so answering
+     either answers both — and the code is chosen rather than typed, because
+     "include your country code" asks the reader to know what the form knows. */
+  if (field.kind === "dial") {
+    const dial = typeof answers[dialKey(field.id)] === "string"
+      ? (answers[dialKey(field.id)] as string)
+      : "";
+    return (
+      <div className="brief-dial">
+        <select
+          className="brief-select brief-select--dial"
+          value={dial}
+          aria-label="Dialling code"
+          onChange={(event) => {
+            const chosen = countries.find((country) => country.iso === event.target.value);
+            setAll({
+              [dialKey(field.id)]: event.target.value,
+              ...(chosen ? { country: chosen.iso } : {}),
+            });
+          }}
+        >
+          <option value="">Code</option>
+          {/* Grouped, not just ordered. An `optgroup` is the one bit of
+              structure a native list actually honours, and 243 flat entries is a
+              list you give up on. */}
+          <optgroup label="Where the work comes from">
+            {countries.slice(0, NEAR_COUNT).map((country) => (
+              <option key={country.iso} value={country.iso}>
+                {country.dial} · {country.name}
+              </option>
+            ))}
+          </optgroup>
+          <optgroup label="Everywhere else">
+            {countries.slice(NEAR_COUNT).map((country) => (
+              <option key={country.iso} value={country.iso}>
+                {country.dial} · {country.name}
+              </option>
+            ))}
+          </optgroup>
+        </select>
+        <input
+          className="brief-input"
+          id={field.id}
+          type="tel"
+          inputMode="tel"
+          autoComplete="tel-national"
+          value={value}
+          placeholder={field.placeholder}
+          onChange={(event) => set(field.id, event.target.value)}
+        />
+      </div>
+    );
+  }
+
+  if (field.kind === "country") {
+    return (
+      <select
+        className="brief-select"
+        id={field.id}
+        value={value}
+        autoComplete="country"
+        onChange={(event) => {
+          const chosen = countries.find((country) => country.iso === event.target.value);
+          setAll({
+            [field.id]: event.target.value,
+            // Only fills the code if one has not been chosen already.
+            ...(chosen && !answers[dialKey("whatsapp")] ? { [dialKey("whatsapp")]: chosen.iso } : {}),
+          });
+        }}
+      >
+        <option value="">Choose</option>
+        <optgroup label="Where the work comes from">
+          {countries.slice(0, NEAR_COUNT).map((country) => (
+            <option key={country.iso} value={country.iso}>
+              {country.name}
+            </option>
+          ))}
+        </optgroup>
+        <optgroup label="Everywhere else">
+          {countries.slice(NEAR_COUNT).map((country) => (
+            <option key={country.iso} value={country.iso}>
+              {country.name}
+            </option>
+          ))}
+        </optgroup>
+      </select>
+    );
+  }
+
+  if (field.kind === "date") {
+    /* He delivers a sample in seven days. Someone who picks Friday has not done
+       anything wrong, but the form knows something they do not, and telling them
+       now is worth more than his team telling them tomorrow. Said, not blocked:
+       rush work happens, and it is his to agree to. */
+    const soon = field.id === "due" && value !== "" && within(value, 7);
+    return (
+      <>
+        <input
+          className="brief-input brief-input--date"
+          id={field.id}
+          type="date"
+          // Nothing can be needed in the past.
+          min={today()}
+          value={value}
+          onChange={(event) => set(field.id, event.target.value)}
+        />
+        {soon ? (
+          <p className="brief-soon" aria-live="polite">
+            Sooner than the seven days a sample usually takes. Say so in question
+            20 and his team will tell you straight away whether it can be done.
+          </p>
+        ) : null}
+      </>
+    );
+  }
 
   if (field.kind === "long") {
     return (
@@ -92,6 +229,13 @@ function Control({
             );
           })}
         </div>
+        {/* How many are left, in words. "Up to three" says the rule; this says
+            where you are in it, which is the part a reader actually wants. */}
+        {many && field.max !== undefined ? (
+          <p className="brief-left" aria-live="polite">
+            {LEFT[Math.max(0, field.max - picked.length)] ?? `${field.max - picked.length} more`}
+          </p>
+        ) : null}
         {(many ? picked.includes(OTHER) : value === OTHER) ? other : null}
       </>
     );
@@ -138,6 +282,7 @@ export function Brief() {
     forward,
     back,
     set,
+    setAll,
     toggle,
     submit,
     again,
@@ -256,6 +401,20 @@ export function Brief() {
               </p>
               <dl className="brief-recap-list">
                 {part.fields.map((field) => {
+                  if (field.kind === "dial" || field.kind === "country") {
+                    const iso = answerOf(answers, field.kind === "dial" ? dialKey(field.id) : field.id);
+                    const country = countries.find((entry) => entry.iso === iso);
+                    const said =
+                      field.kind === "dial"
+                        ? [country?.dial, answerOf(answers, field.id)].filter(Boolean).join(" ")
+                        : (country?.name ?? "");
+                    return (
+                      <div key={field.id} data-said={said.length > 0}>
+                        <dt>{field.label}</dt>
+                        <dd>{said || "—"}</dd>
+                      </div>
+                    );
+                  }
                   const picked =
                     field.kind === "many" ? list(answers, field.id) : [answerOf(answers, field.id)];
                   const written = answerOf(answers, otherKey(field.id)).trim();
@@ -326,7 +485,7 @@ export function Brief() {
 
               {field.hint ? <p className="brief-hint">{field.hint}</p> : null}
 
-              <Control field={field} answers={answers} set={set} toggle={toggle} />
+              <Control field={field} answers={answers} set={set} setAll={setAll} toggle={toggle} />
 
               {problems[field.id] ? (
                 <p className="brief-problem" role="alert">

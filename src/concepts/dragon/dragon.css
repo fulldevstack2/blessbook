@@ -3540,3 +3540,62 @@ canvas:not([hidden]) + .dragon-hero-plate {
   text-transform: uppercase;
   color: var(--jade);
 }
+
+/* ---------- the brief's chosen values ---------- */
+
+/* A select is styled like the ruled lines beside it, not like a system widget:
+   `appearance: none` and the concept's own caret, so a row of questions does not
+   change typeface halfway down. */
+.dragon .brief-select {
+  appearance: none;
+  padding: var(--space-xs) var(--space-xl) var(--space-xs) 0;
+  background: none;
+  border: 0;
+  border-bottom: 1px solid var(--rule);
+  color: var(--ink);
+  /* The caret, drawn: two strokes rotated, in the concept's accent. */
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--cinnabar) 50%),
+    linear-gradient(135deg, var(--cinnabar) 50%, transparent 50%);
+  background-size: 6px 6px, 6px 6px;
+  background-position: right 12px center, right 7px center;
+  background-repeat: no-repeat;
+  transition: border-color 320ms var(--ease-out);
+}
+
+.dragon .brief-select:focus {
+  outline: none;
+  border-bottom-color: var(--cinnabar);
+}
+
+/* The list itself is the platform's, so it has to be told the colours or it
+   arrives white-on-white on the dark concepts. */
+.dragon .brief-select option {
+  background: #f4efe4;
+  color: #22201d;
+}
+
+.dragon .brief-field[data-bad="true"] .brief-select {
+  border-bottom-color: var(--cinnabar);
+}
+
+/* Not an error — the form knows something the reader does not, and says it. */
+.dragon .brief-soon {
+  max-width: 56ch;
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: var(--cinnabar);
+}
+
+.dragon .brief-left {
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-faint);
+}
+
+/* The date picker is the platform's own chrome; it has to be told which way up
+   this page is or it arrives as the wrong half of a light-and-dark pair. */
+.dragon .brief-input--date,
+.dragon .brief-select {
+  color-scheme: light;
+}

@@ -138,7 +138,17 @@ export interface BriefOption {
   readonly note?: string;
 }
 
-export type BriefKind = "text" | "email" | "tel" | "date" | "long" | "one" | "many";
+export type BriefKind =
+  | "text"
+  | "email"
+  /** A dialling code chosen from a list, and the number beside it. */
+  | "dial"
+  /** A country chosen from a list rather than spelled out. */
+  | "country"
+  | "date"
+  | "long"
+  | "one"
+  | "many";
 
 export interface BriefField {
   readonly id: string;
@@ -171,16 +181,19 @@ export const brief: readonly BriefSection[] = [
     fields: [
       { id: "name", q: 1, label: "Full name or company name", kind: "text", required: true },
       { id: "email", q: 2, label: "Email address", kind: "email", required: true },
+      /* The code is picked, not typed. "Include your country code" asks the
+         reader to know something the form already knows, and a number that
+         arrives without one cannot be dialled. Choosing here also answers
+         question 4, and answering 4 fills this — the two are the same fact. */
       {
         id: "whatsapp",
         q: 3,
         label: "WhatsApp number",
-        hint: "Include your country code.",
-        kind: "tel",
+        kind: "dial",
         required: true,
-        placeholder: "+60 12 345 6789",
+        placeholder: "12 345 6789",
       },
-      { id: "country", q: 4, label: "Country", kind: "text", required: true },
+      { id: "country", q: 4, label: "Country", kind: "country", required: true },
     ],
   },
   {
@@ -396,8 +409,8 @@ export const brief: readonly BriefSection[] = [
         id: "occasion",
         q: 19,
         label: "Is there an event, launch or occasion it is tied to?",
-        hint: "Optional. The date, if there is one.",
-        kind: "text",
+        hint: "Optional. Its date, if there is one.",
+        kind: "date",
       },
       {
         id: "anything",

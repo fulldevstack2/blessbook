@@ -32,6 +32,11 @@ export function otherKey(id: string): string {
 
 export const OTHER = "Other";
 
+/** Where a phone field keeps its dialling code, beside the number itself. */
+export function dialKey(id: string): string {
+  return `${id}~dial`;
+}
+
 const FIELDS: readonly BriefField[] = brief.flatMap((section) => section.fields);
 
 /** Deliberately loose. A form that argues with a valid address is worse than one
@@ -48,8 +53,15 @@ export function list(answers: Answers, id: string): readonly string[] {
   return Array.isArray(value) ? value : [];
 }
 
-/** Answered at all? A picked "Other" with nothing written in does not count. */
+/** Answered at all? A picked "Other" with nothing written in does not count,
+    and neither does a phone number with no code in front of it. */
 function answered(answers: Answers, field: BriefField): boolean {
+  if (field.kind === "dial") {
+    return (
+      text(answers, dialKey(field.id)).trim().length > 0 &&
+      text(answers, field.id).trim().length > 0
+    );
+  }
   if (field.kind === "many") {
     const picked = list(answers, field.id);
     if (picked.length === 0) return false;
@@ -69,7 +81,11 @@ function check(answers: Answers): Record<string, string> {
   for (const field of FIELDS) {
     if (field.required && !answered(answers, field)) {
       problems[field.id] =
-        field.kind === "one" || field.kind === "many" ? "Pick one." : "This one he needs.";
+        field.kind === "one" || field.kind === "many" || field.kind === "country"
+          ? "Pick one."
+          : field.kind === "dial"
+            ? "A code and a number."
+            : "This one he needs.";
     }
   }
 
@@ -89,6 +105,13 @@ export function flatten(answers: Answers): string {
   for (const section of brief) {
     lines.push(`${section.letter}. ${section.title.toUpperCase()}`);
     for (const field of section.fields) {
+      if (field.kind === "dial") {
+        const code = text(answers, dialKey(field.id)).trim();
+        const number = text(answers, field.id).trim();
+        lines.push(`  ${field.q}. ${field.label}`);
+        lines.push(`     ${code || number ? `${code} ${number}`.trim() : "—"}`);
+        continue;
+      }
       const picked = field.kind === "many" ? list(answers, field.id) : [text(answers, field.id)];
       const written = text(answers, otherKey(field.id)).trim();
       const shown = picked
@@ -202,6 +225,12 @@ export function useBrief() {
 
   const set = (id: string, value: string) => revise({ ...answers, [id]: value });
 
+  /* Two answers at once. Needed because `set` closes over `answers`, so calling
+     it twice in one handler would build both patches off the same stale base and
+     the second would win — which is exactly the shape of the bug where picking a
+     dialling code silently unset the country. */
+  const setAll = (patch: Record<string, string>) => revise({ ...answers, ...patch });
+
   /** For "many". Refuses past the cap rather than dropping the oldest pick:
       silently swapping a choice the reader made is worse than not taking it. */
   const toggle = (id: string, value: string, max?: number) => {
@@ -295,6 +324,7 @@ export function useBrief() {
     forward,
     back: () => go(step - 1),
     set,
+    setAll,
     toggle,
     submit,
     again,

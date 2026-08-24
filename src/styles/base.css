@@ -1595,3 +1595,36 @@ body {
     transition-duration: 1ms;
   }
 }
+
+/* The dialling code and the number sit on one line, the code as wide as its
+   longest entry and the number taking the rest. */
+.brief-dial {
+  display: grid;
+  grid-template-columns: minmax(0, auto) minmax(0, 1fr);
+  align-items: end;
+  gap: var(--space-sm);
+}
+
+.brief-select {
+  width: 100%;
+  max-width: 40ch;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+.brief-select--dial {
+  max-width: 22ch;
+}
+
+.brief-input--date {
+  max-width: 24ch;
+}
+
+.brief-left {
+  margin: 0;
+}
+
+.brief-soon {
+  margin: 0;
+}

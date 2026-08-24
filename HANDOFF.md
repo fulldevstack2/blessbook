@@ -841,6 +841,15 @@ Everything below is generated, and **the generators are checked in under
   `public/audio/the-journey-live.mp3` and writes one peak per bucket, 900 of
   them, normalised. Nocturne builds a room out of these and walks down it, so
   they have to be the real ones. Rerun if `livePhrase` is ever replaced.
+- `tools/countries.py` → `src/content/countries.ts`. Every dialling region, its
+  name and its calling code, from Google's libphonenumber by way of
+  `phonenumbers`, with names from `pycountry`. Generated rather than typed for a
+  reason: a dialling code written by hand is a bug nobody notices until someone
+  in Sri Lanka cannot reach him, and the list of *countries* is not the list of
+  *dialling regions* — Puerto Rico shares +1 with the United States, Kosovo has
+  +383 and no ISO 3166 entry. Build-time only; nothing shipped depends on either
+  package. `python3 -m pip install phonenumbers pycountry`, then rerun after
+  upgrading `phonenumbers`.
 - `tools/posters.py` → `public/films/*.webp`. One poster frame per catalogue
   entry, fetched once from YouTube (`maxresdefault`, falling back to
   `hqdefault`) or from Spotify's oEmbed art, and served from here. **That is the
