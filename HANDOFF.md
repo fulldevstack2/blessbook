@@ -1065,9 +1065,20 @@ came from screenshots he sent back, in his order.
   section passes `cuts={TURNED.length}` so `ScrollStage`'s cut index and the
   scene's own arithmetic cannot disagree. The stand had to come off the Phoenix
   scan first: see §7.
-- **A commission form** (`lib/enquiry.ts`). It validates, it reports, and it
-  **sends nothing**. `deliver()` waits 900 ms and resolves. Replace its body with
-  a POST to whatever endpoint mails Dennis's team.
+- **Dennis's creative brief** — twenty questions in five parts, his wording, in
+  `content/commission.ts` as data. `lib/enquiry.ts` is generic over that schema
+  and `components/Brief.tsx` renders it; each concept only supplies a skin, so a
+  twenty-first question is one entry in one array and appears on all three
+  pages. It validates (fourteen required, the rest optional as he asks) and it
+  **sends nothing**: `deliver()` waits 900 ms and resolves. `flatten()` already
+  renders the answers as the plain-text brief a human would want to read, so the
+  endpoint that replaces it needs to do nothing but mail that string.
+
+  Two departures from his sheet, both to avoid asking the same thing twice. His
+  question 16 is the song's length, which on this site is also its price, so each
+  length carries its tier and the old "what you are after" chooser is gone. And
+  the controls are real radios and checkboxes with `appearance: none`, not spans
+  pretending, which is why none of the concepts had to think about keyboards.
 - **A font gate before every loader** (`useTypeset.ts`). His name never paints in
   Times New Roman and swaps.
 - **Dragon's territories became a chart.** 1,773 land dots rasterised from

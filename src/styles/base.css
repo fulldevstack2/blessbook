@@ -1230,3 +1230,118 @@ body {
     transition: none;
   }
 }
+
+/* ════════════════════════════════════════════════════════════════════════════
+   The creative brief: structure only.
+
+   A form field's shape is not a design decision — a label, a hint, a control
+   and a problem, in that order — so the stack lives here once and each concept
+   paints it. What a concept never has to decide is that a fieldset needs
+   `min-width: 0` or it will refuse to shrink inside a grid, which is the single
+   most common way a long form breaks a narrow page.
+
+   The radios and checkboxes are the real controls with `appearance: none`, not
+   spans pretending. That keeps them focusable, labelled and operable by
+   keyboard for free; the concept only has to say what a taken one looks like.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.brief {
+  /* Clear of the frame's own lede. Each concept sets the eyebrow, the heading
+     and the standfirst above this; without the margin part A begins on the last
+     line of the paragraph introducing it. */
+  margin-top: clamp(var(--space-xl), 4vh, var(--space-3xl));
+  display: grid;
+  gap: clamp(var(--space-2xl), 5vh, var(--space-4xl));
+}
+
+.brief-part {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  display: grid;
+  gap: var(--space-xl);
+}
+
+.brief-part-head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-md);
+  padding: 0;
+}
+
+.brief-field {
+  min-width: 0;
+  display: grid;
+  gap: var(--space-xs);
+}
+
+.brief-label {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-xs);
+}
+
+.brief-hint {
+  margin: 0;
+  max-width: 62ch;
+}
+
+.brief-choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  margin-top: var(--space-2xs);
+}
+
+.brief-choice {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: var(--space-xs);
+  cursor: pointer;
+}
+
+.brief-choice input {
+  appearance: none;
+  flex: none;
+  margin: 0;
+  cursor: pointer;
+}
+
+.brief-choice-word {
+  display: grid;
+}
+
+.brief-input {
+  width: 100%;
+  font: inherit;
+  color: inherit;
+}
+
+.brief-input--long {
+  resize: vertical;
+}
+
+.brief-other {
+  width: min(100%, 40ch);
+  margin-top: var(--space-xs);
+  font: inherit;
+  color: inherit;
+}
+
+.brief-foot {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-md);
+}
+
+.brief-count {
+  margin: 0;
+  max-width: 56ch;
+}
+
+.brief--sent {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-md);
+}

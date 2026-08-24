@@ -2005,7 +2005,6 @@ canvas:not([hidden]) + .dragon-hero-plate {
   color: var(--ink-faint);
 }
 
-
 /* ---------- twelve territories, as a chart ---------- */
 
 /* Twelve place names are geography, and geography wants a map. The land is a
@@ -2421,7 +2420,6 @@ canvas:not([hidden]) + .dragon-hero-plate {
   font-size: 0.9rem;
   color: var(--ink-soft);
 }
-
 
 /* ---------- the scroll on a small screen ----------
    The wash ran behind the type at this width and the ink swallowed it. Below the
@@ -2849,191 +2847,7 @@ canvas:not([hidden]) + .dragon-hero-plate {
   line-height: 1.75;
 }
 
-.dragon .sheetform-body {
-  display: grid;
-  gap: clamp(18px, 2.6vw, 30px);
-  margin-top: clamp(26px, 4vw, 44px);
-}
-
 @media (min-width: 760px) {
-  .dragon .sheetform-body {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .dragon .sheetform-line--wide,
-  .dragon .sheetform-choice,
-  .dragon .sheetform-send {
-    grid-column: 1 / -1;
-  }
-}
-
-.dragon .sheetform-line {
-  display: grid;
-  gap: 4px;
-}
-
-.dragon .sheetform-label {
-  font-size: 10px;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: var(--ink-faint);
-}
-
-/* Ruled lines, the way a sheet is ruled. */
-.dragon .sheetform-line input,
-.dragon .sheetform-line textarea {
-  width: 100%;
-  padding: var(--space-sm) 0;
-  border: 0;
-  border-bottom: 1px solid var(--rule);
-  background: none;
-  color: var(--ink);
-  font-family: var(--display);
-  font-size: 1.05rem;
-  line-height: 1.7;
-  transition: border-color 320ms var(--ease-out);
-}
-
-.dragon .sheetform-line textarea {
-  resize: vertical;
-  min-height: 8em;
-  /* Every line ruled, not just the last one, and offset so the text sits on the
-     rule rather than being struck through by it. */
-  background-position: 0 0.44em;
-  background-image: repeating-linear-gradient(
-    to bottom,
-    transparent 0,
-    transparent calc(1.7em - 1px),
-    var(--rule) calc(1.7em - 1px),
-    var(--rule) 1.7em
-  );
-  border-bottom: 0;
-}
-
-.dragon .sheetform-line input:focus,
-.dragon .sheetform-line textarea:focus {
-  outline: none;
-  border-bottom-color: var(--jade);
-}
-
-.dragon .sheetform-problem {
-  font-size: 11px;
-  color: var(--cinnabar);
-}
-
-.dragon .sheetform-choice {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-sm);
-  border: 0;
-  padding: 0;
-  margin: 0;
-}
-
-.dragon .sheetform-choice legend {
-  margin-bottom: var(--space-sm);
-}
-
-.dragon .sheetform-chip {
-  display: inline-flex;
-  align-items: baseline;
-  gap: var(--space-sm);
-  padding: var(--space-xs) var(--space-lg);
-  border: 1px solid var(--rule);
-  cursor: pointer;
-  color: var(--ink-soft);
-  transition:
-    border-color 320ms var(--ease-out),
-    color 320ms var(--ease-out);
-}
-
-.dragon .sheetform-chip input {
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.dragon .sheetform-chip[data-chosen="true"] {
-  border-color: var(--jade);
-  color: var(--ink);
-}
-
-.dragon .sheetform-chip-price {
-  font-family: var(--display);
-  color: var(--jade);
-}
-
-.dragon .sheetform-send {
-  justify-self: start;
-  padding: var(--space-sm) clamp(22px, 4vw, 40px);
-  border: 1px solid var(--cinnabar);
-  background: none;
-  cursor: pointer;
-  font-size: 11px;
-  letter-spacing: 0.26em;
-  text-transform: uppercase;
-  color: var(--cinnabar);
-  transition:
-    background 340ms var(--ease-out),
-    color 340ms var(--ease-out);
-}
-
-.dragon .sheetform-send:hover:not(:disabled) {
-  background: var(--cinnabar);
-  color: var(--paper);
-}
-
-.dragon .sheetform-send:disabled {
-  opacity: 0.55;
-  cursor: default;
-}
-
-/* And the seal, pressed. */
-.dragon .sheetform-sent {
-  display: flex;
-  gap: clamp(18px, 3vw, 32px);
-  margin-top: clamp(26px, 4vw, 40px);
-  padding-top: clamp(20px, 3vw, 30px);
-  border-top: 1px solid var(--rule);
-}
-
-.dragon .sheetform-seal {
-  flex: none;
-  display: grid;
-  place-items: center;
-  width: clamp(46px, 6vw, 64px);
-  height: clamp(46px, 6vw, 64px);
-  background: var(--cinnabar);
-  color: var(--paper);
-  font-family: var(--brush);
-  font-size: clamp(1.4rem, 3vw, 2rem);
-  transform: rotate(-4deg);
-}
-
-.dragon .sheetform-sent-head {
-  font-family: var(--display);
-  font-size: clamp(1.3rem, 3vw, 1.9rem);
-  color: var(--ink);
-}
-
-.dragon .sheetform-sent-body {
-  margin-top: var(--space-sm);
-  max-width: 50ch;
-  color: var(--ink-soft);
-  line-height: 1.75;
-}
-
-.dragon .sheetform-again {
-  margin-top: var(--space-lg);
-  padding: 0;
-  border: 0;
-  border-bottom: 1px solid var(--rule);
-  background: none;
-  cursor: pointer;
-  font-size: 10px;
-  letter-spacing: 0.26em;
-  text-transform: uppercase;
-  color: var(--ink-faint);
 }
 
 /* ---------- 工序: the order of the work, brushed one character at a time ---------- */
@@ -3415,4 +3229,166 @@ canvas:not([hidden]) + .dragon-hero-plate {
   .dragon .colophon-list {
     columns: 1;
   }
+}
+
+/* ---------- the brief, written on the sheet ----------
+
+   Ruled lines to write on, jade for the labels, cinnabar for the marks.
+   Structure is in base.css. */
+.dragon .brief-part {
+  border-top: 1px solid var(--rule);
+  padding-top: var(--space-lg);
+}
+
+.dragon .brief-letter {
+  font-family: var(--brush);
+  font-size: 1.8rem;
+  line-height: 1;
+  color: var(--cinnabar);
+}
+
+.dragon .brief-part-title {
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--jade);
+}
+
+.dragon .brief-q {
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  color: var(--jade);
+  font-variant-numeric: tabular-nums;
+}
+
+.dragon .brief-ask {
+  font-family: var(--display);
+  font-size: clamp(1rem, 1.7vw, 1.22rem);
+  color: var(--ink);
+}
+
+.dragon .brief-must {
+  color: var(--cinnabar);
+}
+
+.dragon .brief-hint {
+  font-size: 0.86rem;
+  line-height: 1.68;
+  color: var(--ink-faint);
+}
+
+.dragon .brief-input,
+.dragon .brief-other {
+  padding: var(--space-xs) 0;
+  background: none;
+  border: 0;
+  border-bottom: 1px solid var(--rule);
+  color: var(--ink);
+  transition: border-color 320ms var(--ease-out);
+}
+
+.dragon .brief-input:focus,
+.dragon .brief-other:focus {
+  outline: none;
+  border-bottom-color: var(--cinnabar);
+}
+
+.dragon .brief-input::placeholder {
+  color: color-mix(in oklab, var(--ink) 28%, transparent);
+}
+
+.dragon .brief-choice {
+  padding: var(--space-2xs) var(--space-sm) var(--space-2xs) var(--space-xs);
+  border: 1px solid var(--rule);
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+  transition:
+    border-color 260ms var(--ease-out),
+    color 260ms var(--ease-out);
+}
+
+.dragon .brief-choice input {
+  width: 9px;
+  height: 9px;
+  margin-top: 0.42em;
+  border: 1px solid color-mix(in oklab, var(--jade) 62%, transparent);
+  border-radius: 50%;
+}
+
+.dragon .brief-choice input[type="checkbox"] {
+  border-radius: 0;
+}
+
+.dragon .brief-choice[data-on="true"] {
+  border-color: var(--cinnabar);
+  color: var(--ink);
+}
+
+/* A pressed seal rather than a filled dot: this concept stamps things. */
+.dragon .brief-choice[data-on="true"] input {
+  background: var(--cinnabar);
+  border-color: var(--cinnabar);
+}
+
+.dragon .brief-choice[data-off="true"] {
+  color: var(--ink-faint);
+}
+
+.dragon .brief-choice-note {
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--jade);
+}
+
+.dragon .brief-problem {
+  font-size: 0.82rem;
+  color: var(--cinnabar);
+}
+
+.dragon .brief-field[data-bad="true"] .brief-input {
+  border-bottom-color: var(--cinnabar);
+}
+
+.dragon .brief-send {
+  padding: var(--space-sm) var(--space-xl);
+  border: 1px solid var(--ink);
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--ink);
+  transition:
+    background 320ms var(--ease-out),
+    color 320ms var(--ease-out);
+}
+
+.dragon .brief-send:hover:not(:disabled) {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.dragon .brief-count,
+.dragon .brief-sent-body {
+  font-size: 0.88rem;
+  line-height: 1.7;
+  color: var(--ink-soft);
+}
+
+.dragon .brief-stamp {
+  font-family: var(--brush);
+  font-size: 1.4rem;
+  color: var(--cinnabar);
+}
+
+.dragon .brief-sent-head {
+  font-family: var(--display);
+  font-size: 1.3rem;
+  color: var(--ink);
+}
+
+.dragon .brief-again {
+  font-size: 10px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--cinnabar);
 }

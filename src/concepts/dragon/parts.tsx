@@ -6,8 +6,8 @@ import { useReady } from "../../lib/useReady";
 import { useTypeset } from "../../lib/useTypeset";
 import { useSectionProgress } from "../../lib/useSectionProgress";
 import { photos } from "../../content/media";
-import { enquiry, steps, tiers } from "../../content/commission";
-import { useEnquiry } from "../../lib/enquiry";
+import { Brief } from "../../components/Brief";
+import { enquiry, steps } from "../../content/commission";
 import { SceneCanvas } from "../../lib/SceneCanvas";
 import { createInstrumentScene } from "./instrumentScene";
 import { ScrollStage } from "../../lib/ScrollStage";
@@ -351,99 +351,21 @@ export function Figure({ value }: { value: string }) {
 /**
  * The commission request, written on a sheet.
  *
- * Nothing is bought on this site. A client writes a paragraph and Dennis's team
+ * Nothing is bought on this site. Someone fills in Dennis's brief and his team
  * writes back, and the sample, the payment details and the finished song all
- * travel in that one thread. So the form is a sheet of paper with ruled lines
- * rather than a checkout: you write on the rules, and a seal is pressed when it
- * goes. Nothing is delivered here; see `lib/enquiry.ts`.
+ * travel in that one thread. So it is a sheet of paper with ruled lines rather
+ * than a checkout: you write on the rules, and a seal is pressed when it goes.
+ *
+ * The sheet is Dragon's; the twenty questions on it are machinery shared with
+ * the other two concepts. Nothing is delivered here; see `lib/enquiry.ts`.
  */
 export function Enquiry() {
-  const { enquiry: form, stage, problems, set, submit, again } = useEnquiry();
-  const sent = stage === "sent";
-
   return (
-    <div className="sheetform" data-sent={sent} data-reveal>
+    <div className="sheetform" data-reveal>
       <p className="sheetform-eyebrow">{enquiry.eyebrow}</p>
       <h3 className="sheetform-head">{enquiry.headline}</h3>
       <p className="sheetform-lede">{enquiry.lede}</p>
-
-      {sent ? (
-        <div className="sheetform-sent" role="status">
-          <span className="sheetform-seal" lang="zh" aria-hidden>
-            收
-          </span>
-          <div>
-            <p className="sheetform-sent-head">{enquiry.sentHead}</p>
-            <p className="sheetform-sent-body">{enquiry.sentBody}</p>
-            <button type="button" className="sheetform-again" onClick={again}>
-              {enquiry.again}
-            </button>
-          </div>
-        </div>
-      ) : (
-        <form
-          className="sheetform-body"
-          onSubmit={(event) => {
-            event.preventDefault();
-            void submit();
-          }}
-          noValidate
-        >
-          <label className="sheetform-line">
-            <span className="sheetform-label">{enquiry.fields.name}</span>
-            <input
-              type="text"
-              value={form.name}
-              autoComplete="name"
-              onChange={(event) => set("name", event.target.value)}
-            />
-            {problems.name ? <span className="sheetform-problem">{problems.name}</span> : null}
-          </label>
-
-          <label className="sheetform-line">
-            <span className="sheetform-label">{enquiry.fields.email}</span>
-            <input
-              type="email"
-              value={form.email}
-              autoComplete="email"
-              onChange={(event) => set("email", event.target.value)}
-            />
-            {problems.email ? <span className="sheetform-problem">{problems.email}</span> : null}
-          </label>
-
-          <fieldset className="sheetform-choice">
-            <legend className="sheetform-label">{enquiry.fields.tier}</legend>
-            {[...tiers, { id: "unsure", name: enquiry.undecided, price: "" }].map((tier) => (
-              <label className="sheetform-chip" key={tier.id} data-chosen={form.tier === tier.id}>
-                <input
-                  type="radio"
-                  name="tier"
-                  value={tier.id}
-                  checked={form.tier === tier.id}
-                  onChange={() => set("tier", tier.id)}
-                />
-                <span>{tier.name}</span>
-                {tier.price ? <span className="sheetform-chip-price">{tier.price}</span> : null}
-              </label>
-            ))}
-          </fieldset>
-
-          <label className="sheetform-line sheetform-line--wide">
-            <span className="sheetform-label">{enquiry.fields.prompt}</span>
-            <textarea
-              rows={5}
-              value={form.prompt}
-              placeholder={enquiry.placeholder}
-              onChange={(event) => set("prompt", event.target.value)}
-            />
-            {problems.prompt ? <span className="sheetform-problem">{problems.prompt}</span> : null}
-          </label>
-
-          <button type="submit" className="sheetform-send" disabled={stage === "sending"}>
-            {stage === "sending" ? enquiry.sending : enquiry.send}
-          </button>
-        </form>
-      )}
+      <Brief />
     </div>
   );
 }

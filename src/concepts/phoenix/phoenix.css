@@ -1898,7 +1898,6 @@ canvas[hidden] + .phoenix-hero-plate {
   color: var(--ivory);
 }
 
-
 /* ---------- his name, struck once ---------- */
 
 .struck {
@@ -1995,7 +1994,6 @@ canvas[hidden] + .phoenix-hero-plate {
   color: var(--gold);
 }
 
-
 /* ---------- the gilded room on a small screen ---------- */
 
 @media (max-width: 899px) {
@@ -2060,7 +2058,6 @@ canvas[hidden] + .phoenix-hero-plate {
     height: 74vh;
   }
 }
-
 
 .veil-name,
 .veil-mark {
@@ -2624,171 +2621,7 @@ canvas[hidden] + .phoenix-hero-plate {
   line-height: 1.7;
 }
 
-.phoenix .plate-form {
-  display: grid;
-  gap: clamp(20px, 3vw, 34px);
-  margin-top: clamp(28px, 4vw, 48px);
-}
-
 @media (min-width: 760px) {
-  .phoenix .plate-form {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .phoenix .plate-field--wide,
-  .phoenix .plate-tiers,
-  .phoenix .plate-send {
-    grid-column: 1 / -1;
-  }
-}
-
-.phoenix .plate-field {
-  display: grid;
-  gap: var(--space-xs);
-}
-
-.phoenix .plate-label {
-  font-size: 10px;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  color: var(--ivory-faint);
-}
-
-/* A rule to write on, not a box to fill in. */
-.phoenix .plate-field input,
-.phoenix .plate-field textarea {
-  width: 100%;
-  padding: var(--space-sm) 0;
-  border: 0;
-  border-bottom: 1px solid var(--rule);
-  background: none;
-  color: var(--ivory);
-  font-family: var(--text);
-  font-size: 1rem;
-  line-height: 1.6;
-  transition: border-color 320ms var(--ease-out);
-}
-
-.phoenix .plate-field textarea {
-  resize: vertical;
-  min-height: 7.5em;
-}
-
-.phoenix .plate-field input::placeholder,
-.phoenix .plate-field textarea::placeholder {
-  color: color-mix(in oklab, var(--ivory-faint) 70%, transparent);
-}
-
-.phoenix .plate-field input:focus,
-.phoenix .plate-field textarea:focus {
-  outline: none;
-  border-bottom-color: var(--gold);
-}
-
-.phoenix .plate-problem {
-  font-size: 11px;
-  letter-spacing: 0.06em;
-  color: var(--gold);
-}
-
-.phoenix .plate-tiers {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-md);
-  border: 0;
-  padding: 0;
-  margin: 0;
-}
-
-.phoenix .plate-tiers legend {
-  margin-bottom: var(--space-sm);
-}
-
-.phoenix .plate-tier {
-  display: inline-flex;
-  align-items: baseline;
-  gap: var(--space-sm);
-  padding: var(--space-sm) var(--space-lg);
-  border: 1px solid var(--rule);
-  cursor: pointer;
-  transition:
-    border-color 320ms var(--ease-out),
-    color 320ms var(--ease-out);
-  color: var(--ivory-soft);
-}
-
-.phoenix .plate-tier input {
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.phoenix .plate-tier[data-chosen="true"] {
-  border-color: var(--gold);
-  color: var(--ivory);
-}
-
-.phoenix .plate-tier-price {
-  font-family: var(--display);
-  color: var(--gold);
-}
-
-.phoenix .plate-send {
-  justify-self: start;
-  padding: var(--space-md) clamp(24px, 4vw, 44px);
-  border: 1px solid var(--gold);
-  background: none;
-  cursor: pointer;
-  font-size: 11px;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  color: var(--gold);
-  transition:
-    background 360ms var(--ease-out),
-    color 360ms var(--ease-out);
-}
-
-.phoenix .plate-send:hover:not(:disabled) {
-  background: var(--gold);
-  color: var(--lacquer);
-}
-
-.phoenix .plate-send:disabled {
-  opacity: 0.55;
-  cursor: default;
-}
-
-/* Struck, once, when it goes. */
-.phoenix .plate-sent {
-  margin-top: clamp(28px, 4vw, 44px);
-  padding-top: clamp(20px, 3vw, 32px);
-  border-top: 2px solid var(--gold);
-}
-
-.phoenix .plate-sent-head {
-  font-family: var(--display);
-  font-size: clamp(1.4rem, 3vw, 2rem);
-  color: var(--gold);
-}
-
-.phoenix .plate-sent-body {
-  margin-top: var(--space-md);
-  max-width: 52ch;
-  color: var(--ivory-soft);
-  line-height: 1.7;
-}
-
-.phoenix .plate-again {
-  margin-top: var(--space-xl);
-  padding: 0;
-  border: 0;
-  background: none;
-  cursor: pointer;
-  font-size: 10px;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  color: var(--ivory-faint);
-  border-bottom: 1px solid var(--rule);
 }
 
 /* ---------- how a commission goes, struck one plate at a time ---------- */
@@ -3239,4 +3072,165 @@ canvas[hidden] + .phoenix-hero-plate {
   .phoenix .credits-note {
     grid-column: 1 / -1;
   }
+}
+
+/* ---------- the brief, engraved ----------
+
+   Rules, not boxes: every field is a line ruled under it, the way an engraver
+   sets a plate. Structure is in base.css; this is what it looks like. */
+.phoenix .brief-part {
+  border-top: 1px solid var(--rule);
+  padding-top: var(--space-lg);
+}
+
+.phoenix .brief-part-head {
+  color: var(--gold);
+}
+
+.phoenix .brief-letter {
+  font-family: var(--display);
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.phoenix .brief-part-title {
+  font-size: 11px;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+}
+
+.phoenix .brief-q {
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: var(--gold-deep, var(--gold));
+  font-variant-numeric: tabular-nums;
+}
+
+.phoenix .brief-ask {
+  font-family: var(--display);
+  font-size: clamp(1rem, 1.7vw, 1.24rem);
+  color: var(--ivory);
+}
+
+.phoenix .brief-must {
+  color: var(--gold);
+}
+
+.phoenix .brief-hint {
+  font-size: 0.86rem;
+  line-height: 1.65;
+  color: var(--ivory-faint);
+}
+
+/* A ruled line to write on, which is the whole idea — no filled boxes. */
+.phoenix .brief-input,
+.phoenix .brief-other {
+  padding: var(--space-xs) 0;
+  background: none;
+  border: 0;
+  border-bottom: 1px solid var(--rule);
+  color: var(--ivory);
+  transition: border-color 320ms var(--ease-out);
+}
+
+.phoenix .brief-input:focus,
+.phoenix .brief-other:focus {
+  outline: none;
+  border-bottom-color: var(--gold);
+}
+
+.phoenix .brief-input::placeholder {
+  color: color-mix(in oklab, var(--ivory) 30%, transparent);
+}
+
+.phoenix .brief-choice {
+  padding: var(--space-2xs) var(--space-sm) var(--space-2xs) var(--space-xs);
+  border: 1px solid var(--rule);
+  font-size: 0.9rem;
+  color: var(--ivory-soft);
+  transition:
+    border-color 260ms var(--ease-out),
+    color 260ms var(--ease-out);
+}
+
+.phoenix .brief-choice input {
+  width: 9px;
+  height: 9px;
+  margin-top: 0.42em;
+  border: 1px solid color-mix(in oklab, var(--gold) 52%, transparent);
+  border-radius: 50%;
+}
+
+.phoenix .brief-choice input[type="checkbox"] {
+  border-radius: 0;
+}
+
+.phoenix .brief-choice[data-on="true"] {
+  border-color: var(--gold);
+  color: var(--ivory);
+}
+
+.phoenix .brief-choice[data-on="true"] input {
+  background: var(--gold);
+  border-color: var(--gold);
+}
+
+/* At the cap the rest stay operable and simply read as not taken. */
+.phoenix .brief-choice[data-off="true"] {
+  color: var(--ivory-faint);
+}
+
+.phoenix .brief-choice-note {
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold-deep, var(--gold));
+}
+
+.phoenix .brief-field[data-bad="true"] .brief-input,
+.phoenix .brief-field[data-bad="true"] .brief-choices {
+  border-bottom-color: var(--rose, #c98b8b);
+}
+
+.phoenix .brief-problem {
+  font-size: 0.82rem;
+  color: var(--rose, #c98b8b);
+}
+
+.phoenix .brief-send {
+  padding: var(--space-sm) var(--space-xl);
+  border: 1px solid var(--gold);
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gold);
+  transition:
+    background 320ms var(--ease-out),
+    color 320ms var(--ease-out);
+}
+
+.phoenix .brief-send:hover:not(:disabled) {
+  background: var(--gold);
+  color: var(--lacquer, #140f0a);
+}
+
+.phoenix .brief-count,
+.phoenix .brief-sent-body {
+  font-size: 0.88rem;
+  line-height: 1.7;
+  color: var(--ivory-faint);
+}
+
+.phoenix .brief-stamp,
+.phoenix .brief-sent-head {
+  font-family: var(--display);
+  font-size: 1.2rem;
+  color: var(--gold);
+}
+
+.phoenix .brief-again {
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--gold);
 }

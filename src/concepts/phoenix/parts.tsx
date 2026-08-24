@@ -7,9 +7,9 @@ import { clients, clientWall } from "../../content/clients";
 import { useReady } from "../../lib/useReady";
 import { useTypeset } from "../../lib/useTypeset";
 import { photos } from "../../content/media";
+import { Brief } from "../../components/Brief";
 import { artist, record, territories } from "../../content/dennis";
-import { enquiry, steps, tiers } from "../../content/commission";
-import { useEnquiry } from "../../lib/enquiry";
+import { enquiry, steps } from "../../content/commission";
 import type { Photo } from "../../content/media";
 import { conceptById, violin } from "../registry";
 import { TURNED } from "../../lib/loadModel";
@@ -257,96 +257,22 @@ export function Figure({ value }: { value: string }) {
 /**
  * The commission request, as a plate to be engraved.
  *
- * Nothing on this site is bought. A client writes a paragraph, and Dennis's team
- * writes back; the sample, the payment details and the finished song all travel
- * in that one email thread. So the form is not a checkout, it is a request laid
- * out the way a commission plate would be: rules rather than boxes, small caps
- * for the labels, and one struck line when it is sent.
+ * Nothing on this site is bought. Someone fills in Dennis's brief, his team
+ * reads it and writes back, and the sample, the payment details and the finished
+ * song all travel in that one thread. So this is not a checkout, it is a request
+ * laid out the way a commission plate would be: rules rather than boxes, small
+ * caps for the labels, and one struck line when it goes.
  *
- * Nothing is delivered here. See `lib/enquiry.ts`.
+ * The frame is Phoenix's; the twenty questions inside it are machinery shared
+ * with the other two concepts. Nothing is delivered here — see `lib/enquiry.ts`.
  */
 export function Enquiry() {
-  const { enquiry: form, stage, problems, set, submit, again } = useEnquiry();
-  const sent = stage === "sent";
-
   return (
-    <div className="plate" data-sent={sent} data-reveal>
+    <div className="plate" data-reveal>
       <p className="plate-eyebrow">{enquiry.eyebrow}</p>
       <h3 className="plate-head">{enquiry.headline}</h3>
       <p className="plate-lede">{enquiry.lede}</p>
-
-      {sent ? (
-        <div className="plate-sent" role="status">
-          <p className="plate-sent-head">{enquiry.sentHead}</p>
-          <p className="plate-sent-body">{enquiry.sentBody}</p>
-          <button type="button" className="plate-again" onClick={again}>
-            {enquiry.again}
-          </button>
-        </div>
-      ) : (
-        <form
-          className="plate-form"
-          onSubmit={(event) => {
-            event.preventDefault();
-            void submit();
-          }}
-          noValidate
-        >
-          <label className="plate-field">
-            <span className="plate-label">{enquiry.fields.name}</span>
-            <input
-              type="text"
-              value={form.name}
-              autoComplete="name"
-              onChange={(event) => set("name", event.target.value)}
-            />
-            {problems.name ? <span className="plate-problem">{problems.name}</span> : null}
-          </label>
-
-          <label className="plate-field">
-            <span className="plate-label">{enquiry.fields.email}</span>
-            <input
-              type="email"
-              value={form.email}
-              autoComplete="email"
-              onChange={(event) => set("email", event.target.value)}
-            />
-            {problems.email ? <span className="plate-problem">{problems.email}</span> : null}
-          </label>
-
-          <fieldset className="plate-tiers">
-            <legend className="plate-label">{enquiry.fields.tier}</legend>
-            {[...tiers, { id: "unsure", name: enquiry.undecided, price: "" }].map((tier) => (
-              <label className="plate-tier" key={tier.id} data-chosen={form.tier === tier.id}>
-                <input
-                  type="radio"
-                  name="tier"
-                  value={tier.id}
-                  checked={form.tier === tier.id}
-                  onChange={() => set("tier", tier.id)}
-                />
-                <span className="plate-tier-name">{tier.name}</span>
-                {tier.price ? <span className="plate-tier-price">{tier.price}</span> : null}
-              </label>
-            ))}
-          </fieldset>
-
-          <label className="plate-field plate-field--wide">
-            <span className="plate-label">{enquiry.fields.prompt}</span>
-            <textarea
-              rows={5}
-              value={form.prompt}
-              placeholder={enquiry.placeholder}
-              onChange={(event) => set("prompt", event.target.value)}
-            />
-            {problems.prompt ? <span className="plate-problem">{problems.prompt}</span> : null}
-          </label>
-
-          <button type="submit" className="plate-send" disabled={stage === "sending"}>
-            {stage === "sending" ? enquiry.sending : enquiry.send}
-          </button>
-        </form>
-      )}
+      <Brief />
     </div>
   );
 }

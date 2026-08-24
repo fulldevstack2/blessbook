@@ -5,8 +5,8 @@ import { useState } from "react";
 import { useReady } from "../../lib/useReady";
 import { useTypeset } from "../../lib/useTypeset";
 import { photos } from "../../content/media";
-import { commission, enquiry, steps, tiers } from "../../content/commission";
-import { useEnquiry } from "../../lib/enquiry";
+import { Brief } from "../../components/Brief";
+import { commission, enquiry, steps } from "../../content/commission";
 import { SceneCanvas } from "../../lib/SceneCanvas";
 import { createInstrumentScene } from "./instrumentScene";
 import { ScrollStage } from "../../lib/ScrollStage";
@@ -209,99 +209,21 @@ export function Figure({ value }: { value: string }) {
 /**
  * The commission request, as a card left at the desk.
  *
- * Nothing is bought on this site: a client writes a paragraph, Dennis's team
- * writes back, and the sample, the payment details and the finished song all
- * travel in that one thread. So the form is an order card, brass-ruled, the way
- * a box office takes a booking. Nothing is delivered here; see `lib/enquiry.ts`.
+ * Nothing is bought on this site: someone fills in Dennis's brief, his team
+ * reads it and writes back, and the sample, the payment details and the finished
+ * song all travel in that one thread. So it is an order card, brass-ruled, the
+ * way a box office takes a booking.
+ *
+ * The card is Nocturne's; the twenty questions on it are machinery shared with
+ * the other two concepts. Nothing is delivered here; see `lib/enquiry.ts`.
  */
 export function Enquiry() {
-  const { enquiry: form, stage, problems, set, submit, again } = useEnquiry();
-  const sent = stage === "sent";
-
   return (
-    <div className="card" data-sent={sent} data-reveal>
+    <div className="card" data-reveal>
       <p className="card-eyebrow">{enquiry.eyebrow}</p>
-      <h3 className="card-head">
-        <em>write</em> THE PROMPT
-      </h3>
+      <h3 className="card-head"><em>the</em> CREATIVE BRIEF</h3>
       <p className="card-lede">{enquiry.lede}</p>
-
-      {sent ? (
-        <div className="card-sent" role="status">
-          <p className="card-stamp" aria-hidden>
-            Received
-          </p>
-          <p className="card-sent-head">{enquiry.sentHead}</p>
-          <p className="card-sent-body">{enquiry.sentBody}</p>
-          <button type="button" className="card-again" onClick={again}>
-            {enquiry.again}
-          </button>
-        </div>
-      ) : (
-        <form
-          className="card-body"
-          onSubmit={(event) => {
-            event.preventDefault();
-            void submit();
-          }}
-          noValidate
-        >
-          <label className="card-field">
-            <span className="card-label">{enquiry.fields.name}</span>
-            <input
-              type="text"
-              value={form.name}
-              autoComplete="name"
-              onChange={(event) => set("name", event.target.value)}
-            />
-            {problems.name ? <span className="card-problem">{problems.name}</span> : null}
-          </label>
-
-          <label className="card-field">
-            <span className="card-label">{enquiry.fields.email}</span>
-            <input
-              type="email"
-              value={form.email}
-              autoComplete="email"
-              onChange={(event) => set("email", event.target.value)}
-            />
-            {problems.email ? <span className="card-problem">{problems.email}</span> : null}
-          </label>
-
-          <fieldset className="card-choice">
-            <legend className="card-label">{enquiry.fields.tier}</legend>
-            {[...tiers, { id: "unsure", name: enquiry.undecided, price: "" }].map((tier) => (
-              <label className="card-option" key={tier.id} data-chosen={form.tier === tier.id}>
-                <input
-                  type="radio"
-                  name="tier"
-                  value={tier.id}
-                  checked={form.tier === tier.id}
-                  onChange={() => set("tier", tier.id)}
-                />
-                <span className="card-option-name">{tier.name}</span>
-                <span className="card-option-leader" aria-hidden />
-                {tier.price ? <span className="card-option-price">{tier.price}</span> : null}
-              </label>
-            ))}
-          </fieldset>
-
-          <label className="card-field card-field--wide">
-            <span className="card-label">{enquiry.fields.prompt}</span>
-            <textarea
-              rows={5}
-              value={form.prompt}
-              placeholder={enquiry.placeholder}
-              onChange={(event) => set("prompt", event.target.value)}
-            />
-            {problems.prompt ? <span className="card-problem">{problems.prompt}</span> : null}
-          </label>
-
-          <button type="submit" className="card-send" disabled={stage === "sending"}>
-            {stage === "sending" ? enquiry.sending : enquiry.send}
-          </button>
-        </form>
-      )}
+      <Brief />
     </div>
   );
 }
