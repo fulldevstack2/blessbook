@@ -863,27 +863,6 @@
   color: var(--ink-faint);
 }
 
-.dragon .reel-stage {
-  padding: clamp(var(--space-lg), 3vw, var(--space-2xl));
-  border: 1px solid var(--rule);
-  background: color-mix(in oklab, var(--paper) 70%, white);
-}
-
-.dragon .reel-kind {
-  font-size: 10px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--jade);
-}
-
-.dragon .reel-title {
-  margin-top: var(--space-2xs);
-  font-family: var(--display);
-  font-weight: 400;
-  font-size: clamp(1.5rem, 3.4vw, 2.4rem);
-  line-height: 1.1;
-}
-
 .dragon .reel-note {
   margin-top: var(--space-xs);
   max-width: 54ch;
@@ -920,53 +899,6 @@
 }
 
 .dragon .reel-seek-input {
-  color: var(--cinnabar);
-}
-
-.dragon .reel-time {
-  font-size: 10px;
-  letter-spacing: 0.12em;
-  color: var(--ink-faint);
-}
-
-.dragon .reel-time-sep {
-  color: var(--jade);
-}
-
-.dragon .reel-item {
-  border-bottom: 1px solid var(--rule);
-  color: var(--ink-soft);
-  transition: color 260ms var(--ease-out);
-}
-
-.dragon .reel-item:hover {
-  color: var(--ink);
-}
-
-.dragon .reel-item-index {
-  font-family: var(--display);
-  font-size: 0.9rem;
-  color: var(--jade);
-}
-
-.dragon .reel-item-title {
-  font-family: var(--display);
-  font-size: 1.08rem;
-}
-
-.dragon .reel-item-kind,
-.dragon .reel-item-time {
-  font-size: 10px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--ink-faint);
-}
-
-.dragon .reel-item[data-current="true"] {
-  color: var(--ink);
-}
-
-.dragon .reel-item[data-current="true"] .reel-item-index {
   color: var(--cinnabar);
 }
 
@@ -3487,7 +3419,6 @@ canvas:not([hidden]) + .dragon-hero-plate {
   margin-left: 0;
 }
 
-
 /* ---------- the way in to the commission: a seal, pressed ----------
 
    Every name on this page is closed with a seal, so the way in carries one too:
@@ -3737,4 +3668,141 @@ canvas:not([hidden]) + .dragon-hero-plate {
 /* Before the floor: still readable, plainly not takeable. */
 .dragon .when-day:disabled {
   color: color-mix(in oklab, var(--ink) 24%, transparent);
+}
+
+/* ---------- the wall of plaques: album leaves, flooded with ink ----------
+
+   Neither a turn nor a lamp. This concept is ink on paper, so a plaque is a leaf
+   of an album and pressing it lets the ink in: it floods out of the seal in the
+   corner, across the leaf, and what the wash leaves behind is the player. A
+   circle growing from a corner rather than a wipe from an edge, because that is
+   how a drop actually spreads on paper.
+
+   The leaves are cream on cream — this is the only concept where the plaques sit
+   on a light ground, so their edges do the separating and there is no glow to be
+   had. */
+.dragon .plaque-face,
+.dragon .plaque-back {
+  background: linear-gradient(168deg, #faf6ec 0%, var(--paper) 58%, #efe9db 100%);
+  border: 1px solid var(--rule);
+  transition:
+    border-color 460ms var(--ease-out),
+    box-shadow 620ms var(--ease-out);
+}
+
+.dragon .plaque:hover .plaque-face {
+  border-color: color-mix(in oklab, var(--jade) 58%, transparent);
+  box-shadow: 0 10px 26px rgba(50, 40, 28, 0.12);
+}
+
+/* The ink, arriving from the seal corner. `circle()` at the corner and a radius
+   past the diagonal, so the leaf is covered rather than nearly covered. */
+.dragon .plaque-back {
+  background: linear-gradient(168deg, #2b2a26 0%, #22201d 62%, #191816 100%);
+  border-color: var(--ink);
+  clip-path: circle(0% at 88% 100%);
+  transition: clip-path 900ms cubic-bezier(0.5, 0.02, 0.28, 1);
+}
+
+.dragon .plaque[data-open="true"] .plaque-back {
+  clip-path: circle(150% at 88% 100%);
+}
+
+.dragon .plaque[data-open="true"] .plaque-face {
+  border-color: var(--ink);
+}
+
+.dragon .plaque-index {
+  font-family: var(--brush);
+  font-size: 17px;
+  color: var(--cinnabar);
+}
+
+.dragon .plaque-name {
+  font-family: var(--display);
+  font-size: clamp(0.98rem, 1.5vw, 1.2rem);
+  line-height: 1.18;
+  color: var(--ink);
+}
+
+.dragon .plaque-kind,
+.dragon .plaque-time {
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--jade);
+}
+
+.dragon .plaque-foot {
+  padding-top: var(--space-2xs);
+  border-top: 1px solid var(--rule);
+}
+
+/* The seal the ink comes out of, in the corner it comes out of. */
+.dragon .plaque-mark {
+  display: grid;
+  place-items: center;
+  width: 17px;
+  height: 17px;
+  background: var(--cinnabar);
+  transform: rotate(-2.5deg);
+  transition: transform 460ms var(--ease-out);
+}
+
+.dragon .plaque-mark::before {
+  content: "听";
+  font-family: var(--brush);
+  font-size: 11px;
+  line-height: 1;
+  color: var(--paper);
+}
+
+.dragon .plaque:hover .plaque-mark {
+  transform: rotate(2deg) scale(1.08);
+}
+
+/* Everything on the flooded leaf is paper-coloured, because it is now ink. */
+.dragon .plaque-note {
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: color-mix(in oklab, var(--paper) 72%, transparent);
+}
+
+.dragon .plaque-scope {
+  --reel-trace: color-mix(in oklab, var(--paper) 52%, transparent);
+  --reel-edge: var(--cinnabar);
+}
+
+.dragon .plaque-play {
+  border: 1px solid color-mix(in oklab, var(--paper) 40%, transparent);
+  color: var(--paper);
+  transition: border-color 320ms var(--ease-out);
+}
+
+.dragon .plaque-play:hover {
+  border-color: var(--paper);
+}
+
+.dragon .plaque-clock,
+.dragon .plaque-shut {
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--paper) 58%, transparent);
+}
+
+.dragon .plaque-shut:hover {
+  color: var(--cinnabar);
+}
+
+/* The fader and the seek rail are on ink now, not on paper, so they take the
+   paper colour rather than the page's ink. */
+.dragon .plaque-back .volume {
+  color: color-mix(in oklab, var(--paper) 62%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dragon .plaque-back {
+    transition: none;
+  }
 }

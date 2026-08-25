@@ -1085,6 +1085,21 @@ came from screenshots he sent back, in his order.
   section passes `cuts={TURNED.length}` so `ScrollStage`'s cut index and the
   scene's own arithmetic cannot disagree. The stand had to come off the Phoenix
   scan first: see §7.
+- **The ten commissions, as a wall of plaques** (`components/Reel.tsx`). Both
+  faces of each plaque are always in the DOM — that is what lets the change of
+  state be a physical one — and whichever faces away is `inert`, so a keyboard
+  never lands on a control behind a plaque's own back. How a plaque opens belongs
+  to each concept: Phoenix turns it like a struck medal, Nocturne brings a lamp
+  up on it, Dragon floods it with ink from the seal in the corner. Same DOM, same
+  state, three different objects.
+
+  **Never put `min-height` on `.plaque`.** It carries an `aspect-ratio`, and
+  aspect-ratio runs both ways: given a floor on the height it derives the *width*
+  from it. A 186px floor made every plaque 279px wide inside a 195px column and
+  clipped a whole column of the grid out of the page. The ratio steps with the
+  column count instead, and the player compresses via a container query on the
+  plaque's own height.
+
 - **Two drawn controls**, `components/Choose.tsx` and `components/When.tsx`. They
   replace a `<select>` and an `<input type="date">` whose *open* state is
   operating-system chrome and cannot be styled at all — white group bars, a

@@ -899,26 +899,6 @@
   color: var(--ivory-faint);
 }
 
-.phoenix .reel-stage {
-  padding: clamp(var(--space-lg), 3.5vw, var(--space-3xl));
-  border: 1px solid color-mix(in oklab, var(--gold) 30%, transparent);
-  background: var(--lacquer);
-}
-
-.phoenix .reel-kind {
-  font-size: 11px;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-  color: var(--gold);
-}
-
-.phoenix .reel-title {
-  margin-top: var(--space-xs);
-  font-family: var(--display);
-  font-size: clamp(1.7rem, 4vw, 3rem);
-  line-height: 1.04;
-}
-
 .phoenix .reel-note {
   margin-top: var(--space-sm);
   max-width: 52ch;
@@ -956,53 +936,6 @@
 }
 
 .phoenix .reel-seek-input {
-  color: var(--gold);
-}
-
-.phoenix .reel-time {
-  font-size: 11px;
-  letter-spacing: 0.16em;
-  color: var(--ivory-faint);
-}
-
-.phoenix .reel-time-sep {
-  color: var(--gold-deep);
-}
-
-.phoenix .reel-item {
-  border-bottom: 1px solid var(--rule);
-  color: var(--ivory-soft);
-  transition: color 280ms var(--ease-out);
-}
-
-.phoenix .reel-item:hover {
-  color: var(--ivory);
-}
-
-.phoenix .reel-item-index {
-  font-family: var(--display);
-  font-size: 0.95rem;
-  color: var(--gold-deep);
-}
-
-.phoenix .reel-item-title {
-  font-size: 1rem;
-}
-
-.phoenix .reel-item-kind,
-.phoenix .reel-item-time {
-  font-size: 10px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--ivory-faint);
-}
-
-.phoenix .reel-item[data-current="true"] {
-  color: var(--ivory);
-}
-
-.phoenix .reel-item[data-current="true"] .reel-item-index,
-.phoenix .reel-item[data-current="true"] .reel-item-title {
   color: var(--gold);
 }
 
@@ -3346,7 +3279,6 @@ canvas[hidden] + .phoenix-hero-plate {
   margin-left: 0;
 }
 
-
 /* ---------- the way in to the commission: a struck seam ----------
 
    This concept's whole signature is one hairline of gold, so that is what the
@@ -3604,4 +3536,161 @@ canvas[hidden] + .phoenix-hero-plate {
 /* Before the floor: still readable, plainly not takeable. */
 .phoenix .when-day:disabled {
   color: color-mix(in oklab, var(--ivory) 24%, transparent);
+}
+
+/* ---------- the wall of plaques: struck medals, turned ----------
+
+   This concept strikes things, so a plaque is a struck plate and pressing it
+   turns the plate over. A real turn on the Y axis rather than a cross-fade,
+   because the whole point of a plaque is that it is an object with two faces —
+   and the gold rule down the leading edge catches as it goes, which is the one
+   moment in the section where the metal reads as metal. */
+.phoenix .plaque-face,
+.phoenix .plaque-back {
+  background:
+    linear-gradient(165deg, #1a130d 0%, #120d09 52%, #0d0906 100%);
+  border: 1px solid var(--rule);
+  backface-visibility: hidden;
+  transition: border-color 420ms var(--ease-out);
+}
+
+/* Struck, not printed: a hairline of gold along the top edge only, the way a
+   plate catches the light it was engraved under. */
+.phoenix .plaque-face::before,
+.phoenix .plaque-back::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in oklab, var(--gold) 62%, transparent) 30%,
+    color-mix(in oklab, var(--gold) 62%, transparent) 70%,
+    transparent
+  );
+}
+
+.phoenix .plaque-back {
+  transform: rotateY(180deg);
+}
+
+.phoenix .plaque-turn {
+  transition: transform 1020ms cubic-bezier(0.62, 0.02, 0.3, 1);
+}
+
+.phoenix .plaque[data-open="true"] .plaque-turn {
+  transform: rotateY(180deg);
+}
+
+.phoenix .plaque:hover .plaque-face {
+  border-color: color-mix(in oklab, var(--gold) 52%, transparent);
+}
+
+/* The plate lifts a hair under the hand — a thing sitting on velvet, not
+   printed onto it. */
+.phoenix .plaque-press {
+  transition: transform 620ms var(--ease-out);
+}
+
+.phoenix .plaque:hover .plaque-press {
+  transform: translateY(-2px);
+}
+
+.phoenix .plaque-index {
+  font-family: var(--display);
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  color: var(--gold);
+  font-variant-numeric: tabular-nums;
+}
+
+.phoenix .plaque-name {
+  font-family: var(--display);
+  font-size: clamp(0.98rem, 1.5vw, 1.2rem);
+  line-height: 1.18;
+  color: var(--ivory);
+}
+
+.phoenix .plaque-kind,
+.phoenix .plaque-time {
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ivory-faint);
+}
+
+.phoenix .plaque-foot {
+  padding-top: var(--space-2xs);
+  border-top: 1px solid var(--rule);
+}
+
+/* One struck triangle, and it goes gold when the plate is the one sounding. */
+.phoenix .plaque-mark {
+  width: 9px;
+  height: 11px;
+  background: color-mix(in oklab, var(--gold) 54%, transparent);
+  clip-path: polygon(0 0, 100% 50%, 0 100%);
+  transition: background 380ms var(--ease-out);
+}
+
+.phoenix .plaque:hover .plaque-mark {
+  background: var(--gold);
+}
+
+.phoenix .plaque[data-open="true"] .plaque-back {
+  border-color: color-mix(in oklab, var(--gold) 58%, transparent);
+}
+
+.phoenix .plaque-note {
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--ivory-soft);
+}
+
+.phoenix .plaque-scope {
+  --reel-trace: color-mix(in oklab, var(--gold) 62%, transparent);
+  --reel-edge: var(--gold);
+}
+
+.phoenix .plaque-play {
+  border: 1px solid color-mix(in oklab, var(--gold) 42%, transparent);
+  color: var(--gold);
+  transition: border-color 320ms var(--ease-out);
+}
+
+.phoenix .plaque-play:hover {
+  border-color: var(--gold);
+}
+
+.phoenix .plaque-clock,
+.phoenix .plaque-shut {
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ivory-faint);
+}
+
+.phoenix .plaque-shut:hover {
+  color: var(--gold);
+}
+
+/* With motion turned down the plate does not turn: the reverse simply is the
+   face. Same information, no movement. */
+@media (prefers-reduced-motion: reduce) {
+  .phoenix .plaque-turn {
+    transition: none;
+  }
+
+  .phoenix .plaque[data-open="true"] .plaque-turn {
+    transform: none;
+  }
+
+  .phoenix .plaque[data-open="true"] .plaque-face {
+    visibility: hidden;
+  }
+
+  .phoenix .plaque-back {
+    transform: none;
+  }
 }

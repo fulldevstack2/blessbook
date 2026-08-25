@@ -6,12 +6,24 @@ import { prefersReducedMotion } from "../lib/prefersReducedMotion";
 import { Volume } from "./Volume";
 
 /**
- * Ten real commissions, playable. The scope draws the signal as it arrives —
- * the song is written across the panel while you listen, which is the same
- * gesture the whole site is selling.
+ * Ten real commissions, as a wall of plaques.
  *
- * Nothing is preloaded and nothing plays on arrival. As with the plucked
- * strings, sound only ever happens because someone asked for it.
+ * It was one player with a list of titles underneath it, which made nine of the
+ * ten songs a line of text and the tenth a thing you could hear. A plaque is an
+ * object: ten of them read as a body of work at a glance, and the one you press
+ * turns into the player rather than driving a player somewhere else on the page.
+ * The scope is drawn inside it, so the signal is written across the object being
+ * listened to.
+ *
+ * Two faces per plaque, both always in the DOM because that is what lets the
+ * turn be a turn. Whichever is facing away is `inert`, so a keyboard never lands
+ * on a control it cannot see — a flip that leaves a focusable button behind its
+ * own back is the commonest bug in this pattern.
+ *
+ * How a plaque opens belongs to each concept, not here: Phoenix turns it like a
+ * struck medal, Nocturne brings a lamp up on it, Dragon floods it with ink. All
+ * three are the same DOM and the same state; see `.plaque` in the three
+ * stylesheets. Nothing is preloaded and nothing plays on arrival.
  */
 
 /** ~3.7 seconds of trail at 60fps, which is about one phrase. */
@@ -28,7 +40,8 @@ function twoDigit(position: number): string {
 }
 
 export function Reel({ caption, index = twoDigit }: ReelProps) {
-  const [current, setCurrent] = useState(0);
+  /** Which plaque is turned over. Null until one is pressed. */
+  const [open, setOpen] = useState<number | null>(null);
   const [playing, setPlaying] = useState(false);
   const [elapsed, setElapsed] = useState(0);
   const [measured, setMeasured] = useState(0);
@@ -39,6 +52,7 @@ export function Reel({ caption, index = twoDigit }: ReelProps) {
   /** Set when a track change should start playing once the new src is attached. */
   const pending = useRef(false);
 
+  const current = open ?? 0;
   const track = demos[current];
   if (!track) throw new Error("the reel needs at least one demo");
 
@@ -54,24 +68,20 @@ export function Reel({ caption, index = twoDigit }: ReelProps) {
     play(element, { title: track.title, where: track.kind });
   }, [track]);
 
-  const move = useCallback((position: number) => {
-    pending.current = true;
-    setCurrent(position);
-    setElapsed(0);
-    setMeasured(0);
-  }, []);
-
-  const select = useCallback(
+  /** Turn a plaque over and play it. Pressing the open one closes it. */
+  const turn = useCallback(
     (position: number) => {
-      const element = audioRef.current;
-      if (position !== current) {
-        move(position);
+      if (position === open) {
+        audioRef.current?.pause();
+        setOpen(null);
         return;
       }
-      if (!element || element.paused) start();
-      else element.pause();
+      pending.current = true;
+      setOpen(position);
+      setElapsed(0);
+      setMeasured(0);
     },
-    [current, move, start],
+    [open],
   );
 
   /** The src swap happens on render, so playing waits for the new file to land. */
@@ -79,54 +89,68 @@ export function Reel({ caption, index = twoDigit }: ReelProps) {
     if (!pending.current) return;
     pending.current = false;
     start();
-  }, [current, start]);
+  }, [open, start]);
 
-  /** The scope and the played fraction both run off one frame loop. */
+  /** The scope and the played fraction both run off one frame loop.
+   *
+   *  The canvas lives inside whichever plaque is open, so it unmounts and
+   *  remounts as the reader moves between them — which is why the loop reads the
+   *  ref every frame and re-measures when the element changes, rather than
+   *  capturing it once at setup. */
   useEffect(() => {
     // Under reduced motion the scope is not drawn at all; the numeric readout
     // and the seek fill carry the same information without any movement.
     if (prefersReducedMotion()) return;
 
-    const canvas = canvasRef.current;
     const root = rootRef.current;
-    if (!canvas || !root) return;
-
-    const context = canvas.getContext("2d");
-    if (!context) return;
+    if (!root) return;
 
     const trail = new Float32Array(COLUMNS);
     const samples = new Float32Array(1024);
     let head = 0;
     let raf = 0;
 
-    const style = getComputedStyle(canvas);
-    const trace = style.getPropertyValue("--reel-trace").trim() || "currentColor";
-    const edge = style.getPropertyValue("--reel-edge").trim() || trace;
-
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    let seen: HTMLCanvasElement | null = null;
     let width = 1;
     let height = 1;
+    let trace = "currentColor";
+    let edge = "currentColor";
 
-    const size = () => {
+    const size = (canvas: HTMLCanvasElement) => {
       const box = canvas.getBoundingClientRect();
       width = Math.max(1, Math.round(box.width * dpr));
       height = Math.max(1, Math.round(box.height * dpr));
       canvas.width = width;
       canvas.height = height;
+      const style = getComputedStyle(canvas);
+      trace = style.getPropertyValue("--reel-trace").trim() || "currentColor";
+      edge = style.getPropertyValue("--reel-edge").trim() || trace;
     };
-    size();
-
-    const observer = new ResizeObserver(size);
-    observer.observe(canvas);
 
     const draw = () => {
       raf = requestAnimationFrame(draw);
 
       const element = audioRef.current;
-
       if (element && element.duration > 0) {
         root.style.setProperty("--played", (element.currentTime / element.duration).toFixed(4));
       }
+
+      const canvas = canvasRef.current;
+      if (!canvas) {
+        seen = null;
+        return;
+      }
+      if (canvas !== seen) {
+        seen = canvas;
+        size(canvas);
+        // A new plaque is a new signal: clear the trail rather than letting the
+        // previous track's decay draw itself across a fresh scope.
+        trail.fill(0);
+        head = 0;
+      }
+      const context = canvas.getContext("2d");
+      if (!context) return;
 
       // On pause the trail decays rather than cutting, so it settles out.
       let peak = 0;
@@ -170,11 +194,7 @@ export function Reel({ caption, index = twoDigit }: ReelProps) {
     };
 
     raf = requestAnimationFrame(draw);
-
-    return () => {
-      cancelAnimationFrame(raf);
-      observer.disconnect();
-    };
+    return () => cancelAnimationFrame(raf);
   }, []);
 
   useEffect(() => {
@@ -186,79 +206,101 @@ export function Reel({ caption, index = twoDigit }: ReelProps) {
     <div className="reel" ref={rootRef}>
       <p className="reel-caption">{caption}</p>
 
-      <div className="reel-stage">
-        <div className="reel-now">
-          <p className="reel-kind">{track.kind}</p>
-          <h3 className="reel-title">{track.title}</h3>
-          <p className="reel-note">{track.note}</p>
-        </div>
+      <ol className="plaques">
+        {demos.map((demo, position) => {
+          const on = position === open;
+          return (
+            <li className="plaque" key={demo.id} data-open={on} data-playing={on && playing}>
+              <div className="plaque-turn">
+                {/* The face: what it is, before you have heard it. */}
+                <div className="plaque-face" inert={on}>
+                  <button
+                    type="button"
+                    className="plaque-press"
+                    onClick={() => turn(position)}
+                    aria-label={`Play ${demo.title} — ${demo.note}`}
+                  >
+                    <span className="plaque-index" aria-hidden>
+                      {index(position)}
+                    </span>
+                    <span className="plaque-name">{demo.title}</span>
+                    <span className="plaque-kind">{demo.kind}</span>
+                    <span className="plaque-foot">
+                      <span className="plaque-time">{timecode(demo.seconds)}</span>
+                      <span className="plaque-mark" aria-hidden />
+                    </span>
+                  </button>
+                </div>
 
-        <canvas className="reel-scope" ref={canvasRef} aria-hidden />
+                {/* The reverse: the player, and the signal written across it. */}
+                <div className="plaque-back" inert={!on}>
+                  {on ? (
+                    <>
+                      <p className="plaque-note">{demo.note}</p>
+                      <canvas className="plaque-scope reel-scope" ref={canvasRef} aria-hidden />
 
-        <div className="reel-transport">
-          <button
-            type="button"
-            className="reel-play"
-            onClick={() => select(current)}
-            aria-label={playing ? `Pause ${track.title}` : `Play ${track.title}`}
-          >
-            <span className="reel-play-mark" data-playing={playing} aria-hidden />
-            <span className="reel-play-word">{playing ? "Pause" : "Play"}</span>
-          </button>
+                      <div className="plaque-transport">
+                        <button
+                          type="button"
+                          className="plaque-play"
+                          onClick={() => {
+                            const element = audioRef.current;
+                            if (!element) return;
+                            if (element.paused) start();
+                            else element.pause();
+                          }}
+                          aria-label={playing ? `Pause ${demo.title}` : `Play ${demo.title}`}
+                        >
+                          <span className="plaque-play-mark" data-playing={playing} aria-hidden />
+                        </button>
 
-          <div className="reel-seek">
-            <div className="reel-seek-rail" aria-hidden>
-              <div className="reel-seek-fill" />
-            </div>
-            <input
-              type="range"
-              className="reel-seek-input"
-              min={0}
-              max={Math.round(total)}
-              step={1}
-              value={Math.min(Math.round(elapsed), Math.round(total))}
-              aria-label={`Seek within ${track.title}`}
-              onChange={(event) => {
-                const element = audioRef.current;
-                const next = Number(event.target.value);
-                setElapsed(next);
-                if (element) element.currentTime = next;
-              }}
-            />
-          </div>
+                        <div className="plaque-seek reel-seek">
+                          <div className="reel-seek-rail" aria-hidden>
+                            <div className="reel-seek-fill" />
+                          </div>
+                          <input
+                            type="range"
+                            className="reel-seek-input"
+                            min={0}
+                            max={Math.round(total)}
+                            step={1}
+                            value={Math.min(Math.round(elapsed), Math.round(total))}
+                            aria-label={`Seek within ${demo.title}`}
+                            onChange={(event) => {
+                              const element = audioRef.current;
+                              const next = Number(event.target.value);
+                              setElapsed(next);
+                              if (element) element.currentTime = next;
+                            }}
+                          />
+                        </div>
 
-          <Volume label="Playback volume" />
+                        <p className="plaque-clock">
+                          <span>{timecode(elapsed)}</span>
+                          <span className="plaque-clock-sep" aria-hidden>
+                            /
+                          </span>
+                          <span>{timecode(total)}</span>
+                        </p>
+                      </div>
 
-          <p className="reel-time">
-            <span>{timecode(elapsed)}</span>
-            <span className="reel-time-sep" aria-hidden>
-              /
-            </span>
-            <span>{timecode(total)}</span>
-          </p>
-        </div>
-      </div>
-
-      <ol className="reel-list">
-        {demos.map((demo, position) => (
-          <li key={demo.id}>
-            <button
-              type="button"
-              className="reel-item"
-              data-current={position === current}
-              data-playing={position === current && playing}
-              onClick={() => select(position)}
-              {...(position === current ? { "aria-current": "true" as const } : {})}
-            >
-              <span className="reel-item-index" aria-hidden>
-                {index(position)}
-              </span>
-              <span className="reel-item-title">{demo.title}</span>
-              <span className="reel-item-kind">{demo.kind}</span>
-              <span className="reel-item-time">{timecode(demo.seconds)}</span>
-            </button>
-          </li>
-        ))}
+                      <div className="plaque-tail">
+                        <Volume label="Playback volume" />
+                        <button
+                          type="button"
+                          className="plaque-shut"
+                          onClick={() => turn(position)}
+                        >
+                          Turn back
+                        </button>
+                      </div>
+                    </>
+                  ) : null}
+                </div>
+              </div>
+            </li>
+          );
+        })}
       </ol>
 
       <p className="reel-foot">
@@ -284,7 +326,15 @@ export function Reel({ caption, index = twoDigit }: ReelProps) {
             );
           }
         }}
-        onEnded={() => move((current + 1) % demos.length)}
+        /* On to the next plaque, which turns as it starts — the wall plays
+           through in order if you leave it alone. */
+        onEnded={() => {
+          const next = (current + 1) % demos.length;
+          pending.current = true;
+          setOpen(next);
+          setElapsed(0);
+          setMeasured(0);
+        }}
       />
     </div>
   );

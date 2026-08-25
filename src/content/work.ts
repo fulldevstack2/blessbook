@@ -154,7 +154,7 @@ export const films: readonly Film[] = [
     id: "theo",
     youtube: "Dq52GzlIaAQ",
     title: "天赐 · Heaven's Gift",
-    note: "A song written for one child, and played at his birthday.",
+    note: "A song written for one child, and debuted during his 100th day celebration.",
     poster: poster("theo.webp"),
   },
 ];

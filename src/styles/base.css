@@ -264,22 +264,9 @@ body {
   gap: var(--space-2xl);
 }
 
-.reel-stage {
-  position: relative;
-  display: grid;
-  gap: var(--space-lg);
-}
-
 .reel-scope {
   width: 100%;
   height: clamp(76px, 11vw, 132px);
-}
-
-.reel-transport {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  align-items: center;
-  gap: var(--space-lg);
 }
 
 .reel-play {
@@ -364,60 +351,7 @@ body {
   background: currentColor;
 }
 
-.reel-time {
-  display: inline-flex;
-  gap: var(--space-2xs);
-  font-variant-numeric: tabular-nums;
-}
-
-.reel-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.reel-item {
-  width: 100%;
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto auto;
-  grid-template-areas: "index title kind time";
-  align-items: baseline;
-  gap: var(--space-md);
-  text-align: left;
-  padding: var(--space-sm) 0;
-}
-
-.reel-item-index {
-  grid-area: index;
-}
-.reel-item-title {
-  grid-area: title;
-}
-.reel-item-kind {
-  grid-area: kind;
-}
-.reel-item-time {
-  grid-area: time;
-  font-variant-numeric: tabular-nums;
-}
-
 @media (max-width: 660px) {
-  .reel-item {
-    grid-template-columns: auto minmax(0, 1fr) auto;
-    grid-template-areas:
-      "index title time"
-      ". kind kind";
-    gap: var(--space-2xs) var(--space-md);
-  }
-
-  .reel-transport {
-    grid-template-columns: auto minmax(0, 1fr);
-    gap: var(--space-md);
-  }
-
-  .reel-time {
-    grid-column: 1 / -1;
-  }
 }
 
 /* Click-to-load film posters. Nothing from YouTube is fetched until asked. */
@@ -1159,7 +1093,6 @@ body {
   height: 100%;
 }
 
-
 /* ════════════════════════════════════════════════════════════════════════════
    The bar that appears when what you started has scrolled away.
 
@@ -1335,8 +1268,6 @@ body {
   font: inherit;
   color: inherit;
 }
-
-
 
 .brief--sent {
   display: grid;
@@ -1800,4 +1731,300 @@ body {
 
 .when-day:disabled {
   cursor: not-allowed;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   The wall of plaques: structure only.
+
+   Ten commissions as objects. Both faces of each plaque sit in the same box —
+   that is what lets the change of state be a physical one — and the box holds
+   its own aspect ratio so neither face can resize the grid as it opens.
+
+   How a plaque opens is the concept's, not this file's. What is here is the
+   part that is the same everywhere and easy to get wrong: the grid, the two
+   stacked faces, and the fact that the one facing away must not be reachable.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.plaques {
+  margin: var(--space-xl) 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: clamp(var(--space-sm), 1.6vw, var(--space-lg));
+  /* Four across on a desk, and fewer as the room goes — stated in steps rather
+     than left to auto-fill, because a plaque has a fixed shape and a column
+     count that drifts by a pixel of viewport looks like a mistake. */
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 420px) {
+  .plaques {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* The steps sit where the next column is still wide enough to hold a player,
+   rather than at round numbers. Three across at 760px gives a 217px column and
+   a 163px plaque; the player needs about 180, so the step waits until 830. */
+@media (min-width: 830px) {
+  .plaques {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1180px) {
+  .plaques {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* The plaque's own proportion, held whether it is turned or not so the wall
+   never reflows around the open one.
+
+   **Never `min-height` on this box.** `aspect-ratio` runs both ways: given a
+   floor on the height it derives the *width* from it, so a 186px floor made
+   every plaque 279px wide inside a 195px column and a whole column of the grid
+   was being clipped out of the page. The ratio does the work instead, stepping
+   with the column count so the shorter side never falls under the ~180px the
+   player needs. */
+.plaque {
+  min-width: 0;
+  aspect-ratio: 4 / 3;
+  perspective: 1400px;
+}
+
+/* One wide plaque on a small phone. 16:9 is a card rather than a plate — but
+   not on the smallest, where 320px of width is only 153px of height and the
+   player will not fit. */
+@media (max-width: 419px) {
+  .plaque {
+    aspect-ratio: 16 / 9;
+  }
+}
+
+@media (max-width: 379px) {
+  .plaque {
+    aspect-ratio: 5 / 3;
+  }
+}
+
+/* Two up is the narrowest column on the site — square, or the player will not
+   fit inside it. */
+@media (min-width: 420px) and (max-width: 759px) {
+  .plaque {
+    aspect-ratio: 1 / 1;
+  }
+}
+
+/* Wide enough that 3:2 clears the floor comfortably. */
+@media (min-width: 1400px) {
+  .plaque {
+    aspect-ratio: 3 / 2;
+  }
+}
+
+.plaque-turn {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+}
+
+.plaque-face,
+.plaque-back {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* The face is one press target, edge to edge: a plaque is pressed, not clicked
+   on a word inside it. */
+.plaque-press {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: var(--space-xs);
+  width: 100%;
+  height: 100%;
+  padding: clamp(var(--space-sm), 1.4vw, var(--space-lg));
+  text-align: left;
+}
+
+.plaque-name {
+  align-self: end;
+  text-wrap: balance;
+  /* Wraps rather than running out of the plaque. A title like FREE SHIPPING,
+     FUN SHOPPING has no short words in it, so on a two-column phone it needs
+     permission to break inside one. */
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}
+
+/* Two columns on a phone is 180px of plaque, and display type set to the
+   viewport does not know that. Below the three-column step the type comes down
+   to the size of the object it is written on. */
+@media (max-width: 759px) and (min-width: 420px) {
+  .plaque-name {
+    font-size: 0.86rem !important;
+    line-height: 1.22;
+  }
+
+  .plaque-kind,
+  .plaque-time {
+    font-size: 8px !important;
+    letter-spacing: 0.14em !important;
+  }
+
+  .plaque-press {
+    padding: var(--space-xs);
+    gap: 2px;
+  }
+
+  .plaque-back {
+    padding: var(--space-xs);
+  }
+
+  .plaque-note {
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    font-size: 0.72rem !important;
+  }
+}
+
+.plaque-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+}
+
+/* The reverse has four things to fit in the same box the face uses, and it was
+   losing the first of them: the note was flattened to nothing while the whole
+   stack overflowed. So the transport is laid out to cost less — one row instead
+   of two — and the note takes what is left rather than what it wants. */
+.plaque-back {
+  padding: clamp(var(--space-sm), 1.4vw, var(--space-lg));
+  gap: var(--space-xs);
+  justify-content: space-between;
+}
+
+.plaque-back > * {
+  flex: none;
+}
+
+.plaque-scope {
+  width: 100%;
+  /* Takes the slack. On a short plaque the scope gives up its height before the
+     note or the transport does — it is the one thing here that reads at any
+     size. */
+  flex: 1 1 auto;
+  min-height: 22px;
+  max-height: 54px;
+}
+
+/* Play, seek and clock on one line. Two rows cost thirty pixels that the note
+   needed more. */
+.plaque-transport {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.plaque-play {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  flex: none;
+}
+
+/* Triangle and bar-pair drawn in CSS — the site ships no icon assets. */
+.plaque-play-mark {
+  width: 10px;
+  height: 12px;
+  background: currentColor;
+  clip-path: polygon(0 0, 100% 50%, 0 100%);
+}
+
+.plaque-play-mark[data-playing="true"] {
+  clip-path: none;
+  background: linear-gradient(
+    90deg,
+    currentColor 0 34%,
+    transparent 34% 66%,
+    currentColor 66% 100%
+  );
+}
+
+.plaque-clock {
+  display: flex;
+  gap: var(--space-2xs);
+  margin: 0;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.plaque-tail {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+}
+
+/* Two words, and they stay on one line: a control that wraps mid-phrase reads
+   as an accident rather than as a label. */
+.plaque-shut {
+  flex: none;
+  white-space: nowrap;
+}
+
+/* The fader is beside it in a narrow box, so it gives up its length first. */
+.plaque-tail .volume-input {
+  width: clamp(44px, 7vw, 84px);
+}
+
+/* The seek rail is the reel's, reused: same mechanism, smaller box. */
+.plaque-seek {
+  height: 18px;
+}
+
+/* Two lines at most, and it is allowed to run out rather than to squeeze
+   everything under it — one line where the plaque is short enough that two
+   would push the transport off the bottom. */
+.plaque-note {
+  margin: 0;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+}
+
+/* A plaque under 190px tall has room for the transport, the tail and one line
+   of note. Container units, so it is the plaque's own height that decides and
+   not the viewport's — the same plaque is short at 1080px wide and tall at
+   1440. */
+.plaque {
+  container-type: size;
+}
+
+@container (max-height: 190px) {
+  .plaque-note {
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+  }
+
+  .plaque-scope {
+    min-height: 14px;
+    max-height: 30px;
+  }
+}
+
+/* Nothing facing away may be reached. `inert` does it in the markup; this is
+   only so a hidden face cannot be hit by a stray pointer mid-turn. */
+[inert] {
+  pointer-events: none;
 }
