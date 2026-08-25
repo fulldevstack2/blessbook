@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { catalogue } from "../content/work";
-import { pauseAll } from "../lib/listening";
+import { catalogue, type Work } from "../content/work";
+import { Lightbox } from "./Lightbox";
 
 /**
  * The catalogue, playable.
@@ -13,12 +13,19 @@ import { pauseAll } from "../lib/listening";
  * `tools/posters.py`. The whole grid is about three hundred kilobytes and it is
  * lazy, so most of it never loads at all.
  *
- * Machinery, as with the reel and the brief: a poster, a press, a frame in its
- * place. Each concept paints it.
+ * Pressing one no longer plays it in place. A card is two hundred and sixty
+ * pixels across — a thumbnail with sound — so the card opens instead: the poster
+ * travels out of the grid and into a stage the size the film was cut for. See
+ * `Lightbox`.
+ *
+ * Machinery, as with the reel and the brief: a poster, a press, a frame
+ * somewhere worth watching it. Each concept paints it.
  */
 
 export function Works({ head }: { head: string }) {
-  const [open, setOpen] = useState<string | null>(null);
+  const [open, setOpen] = useState<Work | null>(null);
+  /* Where it was pressed, so the stage can grow out of it and shrink back. */
+  const [from, setFrom] = useState<DOMRect | null>(null);
 
   return (
     <div className="gallery">
@@ -26,52 +33,35 @@ export function Works({ head }: { head: string }) {
 
       <ul className="gallery-grid">
         {catalogue.map((work) => (
-          <li
-            className="gallery-item"
-            key={work.id}
-            data-on={work.on}
-            data-open={open === work.id}
-            data-reveal="wipe"
-          >
+          <li className="gallery-item" key={work.id} data-on={work.on} data-reveal="wipe">
             <div className="gallery-frame">
-              {open === work.id ? (
-                <iframe
-                  className="gallery-media"
-                  src={work.embed}
-                  title={work.title}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture"
-                  allowFullScreen
-                />
-              ) : (
-                <button
-                  type="button"
-                  className="gallery-open"
-                  onClick={() => {
-                    // A third-party embed cannot be metered or faded, so stop ours first.
-                    pauseAll();
-                    setOpen(work.id);
-                  }}
-                  aria-label={`Play ${work.title} — ${work.note}`}
-                >
-                  {work.poster ? (
-                    <img
-                      src={work.poster}
-                      width={640}
-                      height={360}
-                      alt=""
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  ) : (
-                    /* Instagram hands out no frame. Rather than a grey box with
-                       a broken icon in it, the card says what it is. */
-                    <span className="gallery-plate" aria-hidden>
-                      {work.title}
-                    </span>
-                  )}
-                  <span className="gallery-mark" aria-hidden />
-                </button>
-              )}
+              <button
+                type="button"
+                className="gallery-open"
+                onClick={(event) => {
+                  setFrom(event.currentTarget.getBoundingClientRect());
+                  setOpen(work);
+                }}
+                aria-label={`Watch ${work.title} — ${work.note}`}
+              >
+                {work.poster ? (
+                  <img
+                    src={work.poster}
+                    width={640}
+                    height={360}
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                  />
+                ) : (
+                  /* Instagram hands out no frame. Rather than a grey box with a
+                     broken icon in it, the card says what it is. */
+                  <span className="gallery-plate" aria-hidden>
+                    {work.title}
+                  </span>
+                )}
+                <span className="gallery-mark" aria-hidden />
+              </button>
             </div>
 
             <div className="gallery-caption">
@@ -89,6 +79,8 @@ export function Works({ head }: { head: string }) {
           </li>
         ))}
       </ul>
+
+      <Lightbox work={open} from={from} onClose={() => setOpen(null)} />
     </div>
   );
 }

@@ -3806,3 +3806,92 @@ canvas:not([hidden]) + .dragon-hero-plate {
     transition: none;
   }
 }
+
+/* ---------- the lightbox ----------
+   The stage is a mounted scroll: a rod above and below the picture, and the
+   title written under it. The scrim is ink rather than paper — this is the one
+   place the concept goes dark, because a film is watched in the dark. */
+.dragon .lightbox-scrim {
+  background: rgba(24, 23, 20, 0.95);
+  backdrop-filter: blur(14px) saturate(0.8);
+}
+
+/* The rods. A mounted scroll has one at each end and they are what it hangs
+   from, so they are heavier than a rule and they overhang the picture. */
+.dragon .lightbox-frame {
+  border: 0;
+}
+
+.dragon .lightbox-frame::before,
+.dragon .lightbox-frame::after {
+  content: "";
+  position: absolute;
+  left: -2%;
+  right: -2%;
+  height: 3px;
+  z-index: 2;
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--cinnabar) 70%, white),
+    var(--cinnabar) 60%,
+    color-mix(in oklab, var(--cinnabar) 60%, black)
+  );
+}
+
+.dragon .lightbox-frame::before {
+  top: 0;
+}
+
+.dragon .lightbox-frame::after {
+  bottom: 0;
+}
+
+.dragon .lightbox-frame img,
+.dragon .lightbox-media {
+  background: #000;
+}
+
+.dragon .lightbox-plate {
+  font-family: var(--display);
+  font-size: clamp(1.4rem, 4vw, 3rem);
+  color: var(--paper);
+}
+
+.dragon .lightbox-title {
+  font-family: var(--display);
+  font-size: clamp(1.1rem, 2.2vw, 1.6rem);
+  line-height: 1.2;
+  color: var(--paper);
+}
+
+.dragon .lightbox-note {
+  margin-top: var(--space-2xs);
+  max-width: 56ch;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: color-mix(in oklab, var(--paper) 62%, transparent);
+}
+
+.dragon .lightbox-on,
+.dragon .lightbox-shut {
+  font-size: 9px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--cinnabar);
+  transition:
+    background 320ms var(--ease-out),
+    color 320ms var(--ease-out);
+}
+
+.dragon .lightbox-shut {
+  border: 1px solid color-mix(in oklab, var(--cinnabar) 46%, transparent);
+}
+
+.dragon .lightbox-shut:hover {
+  background: var(--cinnabar);
+  color: var(--paper);
+}
+
+.dragon .lightbox-on:hover {
+  color: var(--paper);
+}

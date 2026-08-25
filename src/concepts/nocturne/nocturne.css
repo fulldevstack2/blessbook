@@ -3542,60 +3542,162 @@
 
 /* ---------- the wall of plaques: a house board, lit one at a time ----------
 
-   No turn here, deliberately. This concept has one lamp and points it, and the
-   plaques are the numbered boxes on a house board — so pressing one does not
-   flip it over, it brings the lamp up on it: the card rises off the velvet, the
-   brass edge takes the light, and the player is revealed from the top down like
-   a stage the moment the house lights find it.
+   No turn here, deliberately: this concept has one lamp and it points it. What
+   was wrong with the first attempt was not the idea but the timing — a single
+   clip-path wipe on a single duration, so everything happened at once and it
+   read as a switch being thrown.
 
-   The face stays put and dims rather than leaving, because a board keeps its
-   numbers whatever is playing. */
+   A lighting cue is a sequence. The lamp arrives *before* what it lights: the
+   pool blooms, a hot brass edge travels down the card ahead of the reveal, the
+   face goes down as that edge crosses it, and the player's own parts settle in
+   behind it one after another. Six overlapping movements on five durations,
+   which is the whole difference between choreography and a toggle.
+
+   Nothing bounces. The card rises on a long decelerating ease and stops, the way
+   a counterweighted thing does. */
 .nocturne .plaque-face,
 .nocturne .plaque-back {
   background: linear-gradient(168deg, #2a151b 0%, #1f1014 60%, #180c10 100%);
   border: 1px solid var(--rule);
   transition:
-    border-color 460ms var(--ease-out),
-    box-shadow 620ms var(--ease-out),
-    opacity 460ms var(--ease-out);
+    border-color 520ms var(--ease-out),
+    box-shadow 760ms var(--ease-out),
+    opacity 620ms var(--ease-out) 120ms;
 }
 
-/* The card lifts into the light. */
+/* 1 — the card comes up into the light, and keeps coming a moment after the
+   light has arrived: the slowest thing in the cue, so it reads as weight. */
 .nocturne .plaque-turn {
-  transition:
-    transform 720ms var(--ease-out),
-    box-shadow 720ms var(--ease-out);
+  transition: transform 1180ms cubic-bezier(0.16, 1, 0.28, 1);
 }
 
-.nocturne .plaque:hover .plaque-turn,
+.nocturne .plaque:hover .plaque-turn {
+  transform: translateY(-3px);
+}
+
 .nocturne .plaque[data-open="true"] .plaque-turn {
-  transform: translateY(-4px);
+  transform: translateY(-7px);
 }
 
+/* 2 — the pool. A warm wash above and behind the card, which grows rather than
+   appearing; the shadow under it deepens on the same curve so the card feels
+   lifted off the velvet rather than merely brighter. */
 .nocturne .plaque[data-open="true"] .plaque-face,
 .nocturne .plaque[data-open="true"] .plaque-back {
   border-color: var(--brass);
   box-shadow:
-    0 0 0 1px color-mix(in oklab, var(--brass) 26%, transparent),
-    0 22px 46px rgba(0, 0, 0, 0.5),
-    /* The lamp itself: a warm pool above the card. */
-    0 -14px 40px color-mix(in oklab, var(--brass) 18%, transparent);
+    0 0 0 1px color-mix(in oklab, var(--brass) 30%, transparent),
+    0 26px 54px rgba(0, 0, 0, 0.55),
+    0 -18px 52px color-mix(in oklab, var(--brass) 22%, transparent);
 }
 
-/* The reverse is drawn down over the face like a lamp coming up, from the top
-   edge — a wipe, not a fade, because a lamp has a leading edge. */
+/* 3 — the reveal, drawn down from the top edge. Slower than the light that
+   leads it, so the edge is always a little ahead of what it uncovers. */
 .nocturne .plaque-back {
   clip-path: inset(0 0 100% 0);
-  transition: clip-path 760ms var(--ease-out);
+  transition: clip-path 900ms cubic-bezier(0.32, 0.02, 0.24, 1);
 }
 
 .nocturne .plaque[data-open="true"] .plaque-back {
   clip-path: inset(0 0 0 0);
 }
 
-/* And the face goes down as the light passes over it. */
+/* 4 — the leading edge itself, and the thing that makes this read as a lamp
+   rather than a wipe: a hot brass line that travels the height of the card just
+   ahead of the reveal, with its own glow spilling below it. It leaves at the
+   bottom and does not come back until the card is shut and opened again. */
+.nocturne .plaque-turn::after {
+  content: "";
+  position: absolute;
+  left: -6%;
+  right: -6%;
+  top: 0;
+  height: 2px;
+  z-index: 3;
+  opacity: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in oklab, var(--brass) 40%, white) 22%,
+    color-mix(in oklab, var(--brass) 60%, white) 50%,
+    color-mix(in oklab, var(--brass) 40%, white) 78%,
+    transparent
+  );
+  box-shadow:
+    0 0 22px 6px color-mix(in oklab, var(--brass) 34%, transparent),
+    0 14px 30px 2px color-mix(in oklab, var(--brass) 18%, transparent);
+  transform: translateY(0);
+  transition:
+    transform 860ms cubic-bezier(0.32, 0.02, 0.24, 1),
+    opacity 300ms var(--ease-out) 520ms;
+}
+
+.nocturne .plaque[data-open="true"] .plaque-turn::after {
+  opacity: 1;
+  transform: translateY(calc(100cqh - 2px));
+  transition:
+    transform 860ms cubic-bezier(0.32, 0.02, 0.24, 1),
+    /* On the way in it is instant; on the way out it fades as it leaves. */
+    opacity 180ms linear;
+}
+
+/* 5 — the face goes down as the edge crosses it, not before. */
 .nocturne .plaque[data-open="true"] .plaque-face {
-  opacity: 0.16;
+  opacity: 0.12;
+}
+
+/* 6 — and the player's own parts settle in behind the light, in the order a
+   reader needs them: what it is, then the signal, then the controls.
+
+   An animation and not a transition, and that distinction is the bug this
+   replaces. The player's parts are only rendered while the plaque is open, so
+   they mount into the open state — a transition has no previous value to move
+   from and never fires, which is why the stagger measured as already finished on
+   the first frame. Keyframes run on mount, so they do. */
+@keyframes nocturne-settle {
+  from {
+    opacity: 0;
+    transform: translateY(7px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.nocturne .plaque[data-open="true"] .plaque-back > * {
+  animation: nocturne-settle 560ms var(--ease-out) backwards;
+}
+
+.nocturne .plaque[data-open="true"] .plaque-back > *:nth-child(1) {
+  animation-delay: 300ms;
+}
+
+.nocturne .plaque[data-open="true"] .plaque-back > *:nth-child(2) {
+  animation-delay: 420ms;
+}
+
+.nocturne .plaque[data-open="true"] .plaque-back > *:nth-child(3) {
+  animation-delay: 540ms;
+}
+
+.nocturne .plaque[data-open="true"] .plaque-back > *:nth-child(4) {
+  animation-delay: 650ms;
+}
+
+/* The numbered card, before anything is lit: the index brightens under the hand
+   so a board of ten still answers a pointer. */
+.nocturne .plaque-press {
+  transition: background 620ms var(--ease-out);
+}
+
+.nocturne .plaque:hover .plaque-press {
+  background: radial-gradient(
+    120% 80% at 50% 0%,
+    color-mix(in oklab, var(--brass) 7%, transparent),
+    transparent 70%
+  );
 }
 
 .nocturne .plaque-index {
@@ -3674,13 +3776,89 @@
   color: var(--brass);
 }
 
+/* With motion turned down there is no cue, only the state it arrives at: the
+   travelling edge never appears and nothing is staggered. */
 @media (prefers-reduced-motion: reduce) {
   .nocturne .plaque-turn,
   .nocturne .plaque-back {
     transition: none;
   }
 
-  .nocturne .plaque:hover .plaque-turn {
+  .nocturne .plaque[data-open="true"] .plaque-back > * {
+    animation: none;
+  }
+
+  .nocturne .plaque:hover .plaque-turn,
+  .nocturne .plaque[data-open="true"] .plaque-turn {
     transform: none;
   }
+
+  .nocturne .plaque-turn::after {
+    display: none;
+  }
+
+}
+
+/* ---------- the lightbox ----------
+   The stage is the proscenium: brass rules above and below the picture and
+   nothing at the sides, which is how this concept has framed every photograph on
+   the page. The scrim is velvet with the house lights down. */
+.nocturne .lightbox-scrim {
+  background: rgba(14, 6, 8, 0.95);
+  backdrop-filter: blur(14px) saturate(0.8);
+}
+
+.nocturne .lightbox-frame {
+  border-block: 1px solid var(--brass);
+  border-inline: 0;
+}
+
+.nocturne .lightbox-frame img,
+.nocturne .lightbox-media {
+  background: #000;
+}
+
+.nocturne .lightbox-plate {
+  font-family: var(--display);
+  font-size: clamp(1.4rem, 4vw, 3rem);
+  color: var(--ivory);
+}
+
+.nocturne .lightbox-title {
+  font-family: var(--display);
+  font-size: clamp(1.1rem, 2.2vw, 1.6rem);
+  line-height: 1.2;
+  color: var(--ivory);
+}
+
+.nocturne .lightbox-note {
+  margin-top: var(--space-2xs);
+  max-width: 56ch;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: color-mix(in oklab, var(--ivory) 56%, transparent);
+}
+
+.nocturne .lightbox-on,
+.nocturne .lightbox-shut {
+  font-size: 9px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--brass);
+  transition:
+    background 320ms var(--ease-out),
+    color 320ms var(--ease-out);
+}
+
+.nocturne .lightbox-shut {
+  border: 1px solid color-mix(in oklab, var(--brass) 46%, transparent);
+}
+
+.nocturne .lightbox-shut:hover {
+  background: var(--brass);
+  color: var(--velvet-deep);
+}
+
+.nocturne .lightbox-on:hover {
+  color: var(--ivory);
 }

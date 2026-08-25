@@ -3694,3 +3694,66 @@ canvas[hidden] + .phoenix-hero-plate {
     transform: none;
   }
 }
+
+/* ---------- the lightbox ----------
+   The stage is a plate: one gold hairline, and the caption struck beneath it
+   rather than laid over it. Nothing rounded — this concept has no radii. */
+.phoenix .lightbox-scrim {
+  background: rgba(8, 5, 4, 0.94);
+  backdrop-filter: blur(14px) saturate(0.8);
+}
+
+.phoenix .lightbox-frame {
+  border: 1px solid color-mix(in oklab, var(--gold) 54%, transparent);
+  box-shadow: 0 40px 90px rgba(0, 0, 0, 0.6);
+}
+
+.phoenix .lightbox-frame img,
+.phoenix .lightbox-media {
+  background: #000;
+}
+
+.phoenix .lightbox-plate {
+  font-family: var(--display);
+  font-size: clamp(1.4rem, 4vw, 3rem);
+  color: var(--ivory);
+}
+
+.phoenix .lightbox-title {
+  font-family: var(--display);
+  font-size: clamp(1.1rem, 2.2vw, 1.6rem);
+  line-height: 1.2;
+  color: var(--ivory);
+}
+
+.phoenix .lightbox-note {
+  margin-top: var(--space-2xs);
+  max-width: 56ch;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--ivory-faint);
+}
+
+.phoenix .lightbox-on,
+.phoenix .lightbox-shut {
+  font-size: 9px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--gold);
+  transition:
+    background 320ms var(--ease-out),
+    color 320ms var(--ease-out);
+}
+
+.phoenix .lightbox-shut {
+  border: 1px solid color-mix(in oklab, var(--gold) 46%, transparent);
+}
+
+.phoenix .lightbox-shut:hover {
+  background: var(--gold);
+  color: #140f0a;
+}
+
+.phoenix .lightbox-on:hover {
+  color: var(--ivory);
+}

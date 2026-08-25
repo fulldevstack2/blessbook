@@ -38,8 +38,20 @@ const from = tiers.reduce(
 export function Commission({ label = "Commission a song" }: { label?: string }) {
   const [shown, setShown] = useState(false);
   const [sounding, setSounding] = useState(false);
+  const [blocked, setBlocked] = useState(false);
 
   useEffect(() => watch(() => setSounding(Boolean(sounding_()))), []);
+
+  /* Out of the way of anything modal. A floating button on top of a film — or
+     over that film's own "open on YouTube" link — is the exact opposite of
+     staying out of the way, which is the whole brief for this thing. */
+  useEffect(() => {
+    const watch = () => setBlocked(Boolean(document.querySelector(".lightbox")));
+    watch();
+    const seen = new MutationObserver(watch);
+    seen.observe(document.body, { childList: true, subtree: true });
+    return () => seen.disconnect();
+  }, []);
 
   useEffect(() => {
     const target = document.getElementById("commission");
@@ -82,9 +94,9 @@ export function Commission({ label = "Commission a song" }: { label?: string }) 
     <a
       className="tocommission"
       href="#commission"
-      data-shown={shown}
+      data-shown={shown && !blocked}
       data-lifted={sounding}
-      tabIndex={shown ? undefined : -1}
+      tabIndex={shown && !blocked ? undefined : -1}
       onClick={(event) => {
         const target = document.getElementById("commission");
         if (!target) return; // let the anchor do it

@@ -1085,6 +1085,22 @@ came from screenshots he sent back, in his order.
   section passes `cuts={TURNED.length}` so `ScrollStage`'s cut index and the
   scene's own arithmetic cannot disagree. The stand had to come off the Phoenix
   scan first: see §7.
+- **`components/Lightbox.tsx`** — the catalogue at the size it was made to be
+  watched. A card is 260px across, which is a thumbnail with sound, so pressing
+  one opens it instead. The opening is the point: the stage is rendered where it
+  will end up, then pushed back onto the card's own rectangle and released, so the
+  poster appears to *be* the object you pressed growing into the room. That is a
+  FLIP — measure last, invert to first, play — and it costs two rectangles and a
+  transform. The embed is withheld until the travel finishes, because a video
+  starting mid-flight is a video being scaled by the compositor.
+
+  The parts a lightbox usually gets wrong are all here: the page behind it stops
+  scrolling and is paid the scrollbar's width back as padding so the site does not
+  jump sideways; focus moves in, is trapped, and is handed back to the card;
+  Escape and the scrim both close it; whatever the site was playing is hushed
+  first; and the stage is sized off the *smaller* of the room's width and height,
+  so a 16:9 frame never runs off the bottom of a short window.
+
 - **The ten commissions, as a wall of plaques** (`components/Reel.tsx`). Both
   faces of each plaque are always in the DOM — that is what lets the change of
   state be a physical one — and whichever faces away is `inert`, so a keyboard

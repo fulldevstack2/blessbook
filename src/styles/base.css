@@ -294,6 +294,14 @@ body {
   );
 }
 
+/* The seek: one line, one thumb, and *one* source of truth for the middle.
+
+   It had two. The rail was centred by the grid — its static position — while the
+   range input carried its own hardcoded 22px height, so the thumb centred on the
+   input's box and the rail on the container's. Identical while both were 22, and
+   two pixels apart the moment a context asked for a shorter one, which is what
+   the plaques did. The container's height decides now: the rail is placed at 50%
+   of it and the input fills it, so nothing can drift them apart again. */
 .reel-seek {
   position: relative;
   display: grid;
@@ -304,8 +312,10 @@ body {
 .reel-seek-rail {
   position: absolute;
   inset-inline: 0;
+  top: 50%;
   height: 1px;
   overflow: hidden;
+  transform: translateY(-50%);
 }
 
 /* --played is written straight onto the reel by the frame loop, so the fill
@@ -318,7 +328,8 @@ body {
 .reel-seek-input {
   position: relative;
   width: 100%;
-  height: 22px;
+  /* Fills its container rather than naming a height of its own — see above. */
+  height: 100%;
   margin: 0;
   appearance: none;
   background: none;
@@ -326,7 +337,7 @@ body {
 }
 
 .reel-seek-input::-webkit-slider-runnable-track {
-  height: 22px;
+  height: 100%;
   background: none;
 }
 
@@ -339,7 +350,7 @@ body {
 }
 
 .reel-seek-input::-moz-range-track {
-  height: 22px;
+  height: 100%;
   background: none;
 }
 
@@ -1016,6 +1027,11 @@ body {
   margin: 0;
   background: none;
   cursor: pointer;
+  /* Named, because the webkit thumb has to be nudged by exactly half the
+     difference between the two to sit on the line — and a magic -4px is a
+     number that silently stops being right the moment either changes. */
+  --track: 3px;
+  --thumb: 11px;
 }
 
 .volume-input:focus-visible {
@@ -1024,7 +1040,7 @@ body {
 }
 
 .volume-input::-webkit-slider-runnable-track {
-  height: 3px;
+  height: var(--track);
   border-radius: 999px;
   background: linear-gradient(
     to right,
@@ -1035,9 +1051,9 @@ body {
 
 .volume-input::-webkit-slider-thumb {
   appearance: none;
-  width: 11px;
-  height: 11px;
-  margin-top: -4px;
+  width: var(--thumb);
+  height: var(--thumb);
+  margin-top: calc((var(--track) - var(--thumb)) / 2);
   border-radius: 50%;
   background: currentColor;
   transition: transform 160ms var(--ease-out);
@@ -1050,20 +1066,20 @@ body {
 
 /* Firefox fills its own track, so it needs no gradient — just the two halves. */
 .volume-input::-moz-range-track {
-  height: 3px;
+  height: var(--track);
   border-radius: 999px;
   background: color-mix(in oklch, currentColor 20%, transparent);
 }
 
 .volume-input::-moz-range-progress {
-  height: 3px;
+  height: var(--track);
   border-radius: 999px;
   background: currentColor;
 }
 
 .volume-input::-moz-range-thumb {
-  width: 11px;
-  height: 11px;
+  width: var(--thumb);
+  height: var(--thumb);
   border: 0;
   border-radius: 50%;
   background: currentColor;
@@ -2027,4 +2043,160 @@ body {
    only so a hidden face cannot be hit by a stray pointer mid-turn. */
 [inert] {
   pointer-events: none;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   The lightbox: structure only.
+
+   A stage the size the film was cut for, and a scrim that is the way out. The
+   stage is sized from the *smaller* of the room's width and height, so a
+   sixteen-by-nine frame is never taller than the window it is in — the commonest
+   fault in a lightbox is a stage that fits the width and runs off the bottom.
+   Each concept frames it; see the three stylesheets.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  padding: clamp(var(--space-md), 4vw, var(--space-4xl));
+}
+
+.lightbox-scrim {
+  position: absolute;
+  inset: 0;
+  padding: 0;
+  cursor: zoom-out;
+}
+
+.lightbox-stage {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 1200px, calc((100vh - 15rem) * 16 / 9));
+  display: grid;
+  gap: clamp(var(--space-sm), 1.6vw, var(--space-lg));
+  will-change: transform;
+}
+
+.lightbox-frame {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+}
+
+.lightbox-frame img,
+.lightbox-media {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  object-fit: cover;
+  display: block;
+}
+
+.lightbox-plate {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  padding: var(--space-lg);
+  text-align: center;
+}
+
+.lightbox-say {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+
+.lightbox-title {
+  margin: 0;
+}
+
+.lightbox-note {
+  margin: 0;
+}
+
+.lightbox-on {
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+/* Out of the way of the stage, and never on top of it. */
+.lightbox-shut {
+  position: absolute;
+  top: clamp(var(--space-sm), 2.6vw, var(--space-xl));
+  right: clamp(var(--space-sm), 2.6vw, var(--space-xl));
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-md);
+}
+
+/* Two strokes crossed, drawn: no icon assets anywhere on this site. */
+.lightbox-shut-mark {
+  position: relative;
+  width: 11px;
+  height: 11px;
+}
+
+.lightbox-shut-mark::before,
+.lightbox-shut-mark::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 100%;
+  height: 1px;
+  background: currentColor;
+}
+
+.lightbox-shut-mark::before {
+  transform: rotate(45deg);
+}
+
+.lightbox-shut-mark::after {
+  transform: rotate(-45deg);
+}
+
+/* The scrim and the furniture arrive; the stage has its own travel in JS. */
+@keyframes lightbox-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.lightbox-scrim,
+.lightbox-shut,
+.lightbox-say {
+  animation: lightbox-in 460ms var(--ease-out) backwards;
+}
+
+.lightbox-say {
+  animation-delay: 420ms;
+}
+
+.lightbox-shut {
+  animation-delay: 300ms;
+}
+
+@media (max-width: 700px) {
+  .lightbox-shut-word {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lightbox-scrim,
+  .lightbox-shut,
+  .lightbox-say {
+    animation: none;
+  }
 }
