@@ -1,5 +1,4 @@
-import { useEffect, useRef, useState } from "react";
-import type { Work } from "../content/work";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { pauseAll } from "../lib/listening";
 import { prefersReducedMotion } from "../lib/prefersReducedMotion";
 
@@ -24,13 +23,48 @@ import { prefersReducedMotion } from "../lib/prefersReducedMotion";
  *
  * Each concept mounts it in its own frame; see `.lightbox` in the three
  * stylesheets.
+ *
+ * It takes a shape rather than a type, so the three featured films and the
+ * fourteen in the catalogue both go through it — they are the same thing seen at
+ * two sizes, and there is no reason for one of them to be watched in a box.
  */
 
+export interface Screening {
+  readonly id: string;
+  readonly title: string;
+  readonly note: string;
+  /** What the frame loads, and only once a reader has asked for it. */
+  readonly embed: string;
+  /** The page it lives on, for opening it there instead. */
+  readonly href: string;
+  readonly on: string;
+  /** Served from this site. Absent where the platform gives no usable frame. */
+  readonly poster?: string | undefined;
+}
+
 interface LightboxProps {
-  readonly work: Work | null;
+  readonly work: Screening | null;
   /** Where it came from, so it can travel from there and back to it. */
   readonly from: DOMRect | null;
   readonly onClose: () => void;
+}
+
+/**
+ * The plumbing, so four places do not each keep their own copy of it: what is
+ * open, the rectangle it came out of, and the two calls.
+ */
+export function useLightbox() {
+  const [work, setWork] = useState<Screening | null>(null);
+  const [from, setFrom] = useState<DOMRect | null>(null);
+
+  const show = useCallback((next: Screening, event: { currentTarget: Element }) => {
+    setFrom(event.currentTarget.getBoundingClientRect());
+    setWork(next);
+  }, []);
+
+  const hide = useCallback(() => setWork(null), []);
+
+  return { work, from, show, hide };
 }
 
 export function Lightbox({ work, from, onClose }: LightboxProps) {

@@ -1843,8 +1843,8 @@
   border: 1px solid var(--rule);
 }
 
-.programme-open,
-.programme-frame {
+/* `.programme-frame` was the inline player; films go to the lightbox now. */
+.programme-open {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -1853,14 +1853,19 @@
   border: 0;
 }
 
-.programme-open img {
+/* The picture is a sibling of the press target now — it used to be inside it —
+   so it is sized by the frame it sits in rather than by the button. Same rule,
+   addressed to the thing that is actually there. */
+.programme-bill img {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
   transition: transform 900ms var(--ease-out);
 }
 
-.programme-open:hover img {
+.programme-bill:hover img {
   transform: scale(1.03);
 }
 

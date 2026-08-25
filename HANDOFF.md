@@ -1085,8 +1085,10 @@ came from screenshots he sent back, in his order.
   section passes `cuts={TURNED.length}` so `ScrollStage`'s cut index and the
   scene's own arithmetic cannot disagree. The stand had to come off the Phoenix
   scan first: see §7.
-- **`components/Lightbox.tsx`** — the catalogue at the size it was made to be
-  watched. A card is 260px across, which is a thumbnail with sound, so pressing
+- **`components/Lightbox.tsx`** — every film, at the size it was made to be
+  watched. All seventeen go through it: the three featured ones and the fourteen
+  in the catalogue are the same thing at two sizes, and there was no reason for
+  three of them to be the ones played in a box. A card is 260px across, which is a thumbnail with sound, so pressing
   one opens it instead. The opening is the point: the stage is rendered where it
   will end up, then pushed back onto the card's own rectangle and released, so the
   poster appears to *be* the object you pressed growing into the room. That is a

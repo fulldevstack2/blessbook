@@ -1,6 +1,5 @@
-import { useState } from "react";
-import { catalogue, type Work } from "../content/work";
-import { Lightbox } from "./Lightbox";
+import { catalogue } from "../content/work";
+import { Lightbox, useLightbox } from "./Lightbox";
 
 /**
  * The catalogue, playable.
@@ -23,9 +22,7 @@ import { Lightbox } from "./Lightbox";
  */
 
 export function Works({ head }: { head: string }) {
-  const [open, setOpen] = useState<Work | null>(null);
-  /* Where it was pressed, so the stage can grow out of it and shrink back. */
-  const [from, setFrom] = useState<DOMRect | null>(null);
+  const { work: showing, from, show, hide } = useLightbox();
 
   return (
     <div className="gallery">
@@ -38,10 +35,7 @@ export function Works({ head }: { head: string }) {
               <button
                 type="button"
                 className="gallery-open"
-                onClick={(event) => {
-                  setFrom(event.currentTarget.getBoundingClientRect());
-                  setOpen(work);
-                }}
+                onClick={(event) => show(work, event)}
                 aria-label={`Watch ${work.title} — ${work.note}`}
               >
                 {work.poster ? (
@@ -80,7 +74,7 @@ export function Works({ head }: { head: string }) {
         ))}
       </ul>
 
-      <Lightbox work={open} from={from} onClose={() => setOpen(null)} />
+      <Lightbox work={showing} from={from} onClose={hide} />
     </div>
   );
 }

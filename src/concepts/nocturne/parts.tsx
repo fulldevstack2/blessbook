@@ -6,6 +6,7 @@ import { useReady } from "../../lib/useReady";
 import { useTypeset } from "../../lib/useTypeset";
 import { photos } from "../../content/media";
 import { Brief } from "../../components/Brief";
+import { Lightbox, useLightbox } from "../../components/Lightbox";
 import { Works } from "../../components/Works";
 import { commission, enquiry, steps } from "../../content/commission";
 import { SceneCanvas } from "../../lib/SceneCanvas";
@@ -74,11 +75,13 @@ export function BoxOffice() {
 }
 
 /**
- * The films as tonight's programme: one on the bill, the rest listed beneath it
- * with their running times. Nothing loads from YouTube until a title is pressed.
+ * The films as tonight's programme: one on the bill, the rest listed beneath it.
+ * Nothing loads from YouTube until the bill is pressed, and pressing it puts the
+ * film on the stage rather than inside the poster — the same stage the catalogue
+ * uses, because they are the same thing at two sizes.
  */
 export function Programme() {
-  const [opened, setOpened] = useState<string | null>(null);
+  const { work, from, show, hide } = useLightbox();
   const [featured, setFeatured] = useState(0);
   const film = films[featured];
   if (!film) throw new Error("the programme needs at least one film");
@@ -86,27 +89,17 @@ export function Programme() {
   return (
     <div className="programme">
       <div className="programme-bill">
-        {opened === film.id ? (
-          <iframe
-            className="programme-frame"
-            src={`https://www.youtube-nocookie.com/embed/${film.youtube}?autoplay=1&rel=0`}
-            title={film.title}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture"
-            allowFullScreen
-          />
-        ) : (
-          <button
-            type="button"
-            className="programme-open"
-            onClick={() => setOpened(film.id)}
-            aria-label={`Play ${film.title}`}
-          >
-            <img src={film.poster} alt="" width={1280} height={720} loading="lazy" />
-            <span className="programme-open-word">
-              <em>play</em> TONIGHT&rsquo;S FILM
-            </span>
-          </button>
-        )}
+        <img src={film.poster} alt="" width={1280} height={720} loading="lazy" />
+        <button
+          type="button"
+          className="programme-open"
+          onClick={(event) => show(film, event)}
+          aria-label={`Watch ${film.title} — ${film.note}`}
+        >
+          <span className="programme-open-word">
+            <em>play</em> TONIGHT&rsquo;S FILM
+          </span>
+        </button>
       </div>
 
       <ol className="programme-list">
@@ -116,10 +109,7 @@ export function Programme() {
               type="button"
               className="programme-item"
               data-current={index === featured}
-              onClick={() => {
-                setFeatured(index);
-                setOpened(null);
-              }}
+              onClick={() => setFeatured(index)}
             >
               <span className="programme-index">{["I", "II", "III", "IV"][index]}</span>
               <span className="programme-title">{item.title}</span>
@@ -128,6 +118,8 @@ export function Programme() {
           </li>
         ))}
       </ol>
+
+      <Lightbox work={work} from={from} onClose={hide} />
 
       <Works head="Also written and produced" />
     </div>

@@ -1,12 +1,12 @@
-import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useRef, type CSSProperties, type ReactNode } from "react";
 import { clients } from "../../content/clients";
 import { films } from "../../content/work";
-import { pauseAll } from "../../lib/listening";
 import { useReady } from "../../lib/useReady";
 import { useTypeset } from "../../lib/useTypeset";
 import { useSectionProgress } from "../../lib/useSectionProgress";
 import { photos } from "../../content/media";
 import { Brief } from "../../components/Brief";
+import { Lightbox, useLightbox } from "../../components/Lightbox";
 import { Works } from "../../components/Works";
 import { enquiry, steps } from "../../content/commission";
 import { SceneCanvas } from "../../lib/SceneCanvas";
@@ -177,8 +177,12 @@ export function BrushStroke({ caption }: { caption: string }) {
   );
 }
 
+/**
+ * The three films as mounted scrolls. Pressing one hangs it on the stage rather
+ * than playing it inside its own mount — the same stage the catalogue uses.
+ */
 export function FilmScrolls({ caption }: { caption: string }) {
-  const [open, setOpen] = useState<string | null>(null);
+  const { work, from, show, hide } = useLightbox();
   const numerals = ["一", "二", "三", "四"];
 
   return (
@@ -186,33 +190,20 @@ export function FilmScrolls({ caption }: { caption: string }) {
       <p className="scrolls-caption">{caption}</p>
       <div className="scrolls-row">
         {films.map((film, index) => (
-          <figure className="scroll" key={film.id} data-open={open === film.id} data-reveal="wipe">
+          <figure className="scroll" key={film.id} data-reveal="wipe">
             <span className="scroll-rod" aria-hidden />
             <div className="scroll-frame">
-              {open === film.id ? (
-                <iframe
-                  className="scroll-media"
-                  src={`https://www.youtube-nocookie.com/embed/${film.youtube}?autoplay=1&rel=0`}
-                  title={film.title}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture"
-                  allowFullScreen
-                />
-              ) : (
-                <button
-                  type="button"
-                  className="scroll-open"
-                  onClick={() => {
-                    pauseAll();
-                    setOpen(film.id);
-                  }}
-                  aria-label={`Play ${film.title}`}
-                >
-                  <img src={film.poster} alt="" width={1280} height={720} loading="lazy" />
-                  <span className="scroll-numeral" lang="zh" aria-hidden>
-                    {numerals[index]}
-                  </span>
-                </button>
-              )}
+              <img src={film.poster} alt="" width={1280} height={720} loading="lazy" />
+              <button
+                type="button"
+                className="scroll-open"
+                onClick={(event) => show(film, event)}
+                aria-label={`Watch ${film.title} — ${film.note}`}
+              >
+                <span className="scroll-numeral" lang="zh" aria-hidden>
+                  {numerals[index]}
+                </span>
+              </button>
             </div>
             <figcaption className="scroll-caption">
               <span className="scroll-title">{film.title}</span>
@@ -221,6 +212,8 @@ export function FilmScrolls({ caption }: { caption: string }) {
           </figure>
         ))}
       </div>
+
+      <Lightbox work={work} from={from} onClose={hide} />
 
       <Works head="Also written and produced" />
     </div>

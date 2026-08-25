@@ -122,13 +122,24 @@ export const demos: readonly Demo[] = [
   },
 ];
 
+/**
+ * A film. The three featured ones, as against the fourteen in `catalogue`.
+ *
+ * `embed`, `href` and `on` are the same three fields a `Work` carries, and they
+ * are here for the same reason: both go through the one lightbox, so both have
+ * to say where they live and what to load. Nothing is requested from YouTube
+ * until somebody presses a poster either way.
+ */
 export interface Film {
   readonly id: string;
-  /** YouTube id. Nothing from YouTube loads until the poster is clicked. */
+  /** YouTube id. Nothing from YouTube loads until the poster is pressed. */
   readonly youtube: string;
   readonly title: string;
   readonly note: string;
   readonly poster: string;
+  readonly embed: string;
+  readonly href: string;
+  readonly on: "YouTube";
 }
 
 function poster(file: string): string {
@@ -139,6 +150,9 @@ export const films: readonly Film[] = [
   {
     id: "denza",
     youtube: "FtXeR3TTtbE",
+    embed: "https://www.youtube-nocookie.com/embed/FtXeR3TTtbE?autoplay=1&rel=0",
+    href: "https://youtu.be/FtXeR3TTtbE",
+    on: "YouTube",
     title: "DENZA Z9 GT · launch at KLCC",
     note: "Music written, produced and then performed live for the car's reveal.",
     poster: poster("denza.webp"),
@@ -146,6 +160,9 @@ export const films: readonly Film[] = [
   {
     id: "seafood",
     youtube: "QGlYj8CrJ6E",
+    embed: "https://www.youtube-nocookie.com/embed/QGlYj8CrJ6E?autoplay=1&rel=0",
+    href: "https://youtu.be/QGlYj8CrJ6E",
+    on: "YouTube",
     title: "ONE SEAFOOD · six Michelin-starred chefs",
     note: "A score for a single evening's dinner, and the film cut around it.",
     poster: poster("seafood.webp"),
@@ -153,6 +170,9 @@ export const films: readonly Film[] = [
   {
     id: "theo",
     youtube: "Dq52GzlIaAQ",
+    embed: "https://www.youtube-nocookie.com/embed/Dq52GzlIaAQ?autoplay=1&rel=0",
+    href: "https://youtu.be/Dq52GzlIaAQ",
+    on: "YouTube",
     title: "天赐 · Heaven's Gift",
     note: "A song written for one child, and debuted during his 100th day celebration.",
     poster: poster("theo.webp"),

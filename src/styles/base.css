@@ -335,29 +335,47 @@ body {
   appearance: none;
   background: none;
   cursor: pointer;
+  /* The track is a hairline the browser centres in the input, and the thumb is
+     then pulled up by half the difference to sit on it. Both named, because that
+     relationship is arithmetic and not a guess. */
+  --track: 1px;
+  --thumb: 11px;
 }
 
+/* An invisible track of a *stated* height, not `100%`.
+
+   This is the fix for the handle sitting above its line. With `height: 100%` the
+   track filled the input, and WebKit puts a bare `appearance: none` thumb at the
+   top of its track rather than in the middle of it — so an 11px handle in an
+   18px track sat with its centre at 5.5 while the rail was drawn at 9. Three and
+   a half pixels high, on every seek, in every concept.
+
+   It survived an audit because the audit compared the rail with the *input*, and
+   those did agree. The thumb was never measured against anything. */
 .reel-seek-input::-webkit-slider-runnable-track {
-  height: 100%;
+  height: var(--track);
   background: none;
 }
 
 .reel-seek-input::-webkit-slider-thumb {
   appearance: none;
-  width: 11px;
-  height: 11px;
+  width: var(--thumb);
+  height: var(--thumb);
+  margin-top: calc((var(--track) - var(--thumb)) / 2);
   border-radius: 50%;
   background: var(--fader);
 }
 
+/* Firefox centres its own thumb on its track, so it needs the height and not
+   the offset. */
 .reel-seek-input::-moz-range-track {
-  height: 100%;
+  height: var(--track);
   background: none;
 }
 
 .reel-seek-input::-moz-range-thumb {
-  width: 11px;
-  height: 11px;
+  width: var(--thumb);
+  height: var(--thumb);
   border: 0;
   border-radius: 50%;
   background: var(--fader);
@@ -385,8 +403,7 @@ body {
   overflow: hidden;
 }
 
-.film-frame img,
-.film-frame iframe {
+.film-frame img {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -2233,26 +2250,33 @@ body {
 }
 
 /* ════════════════════════════════════════════════════════════════════════════
-   The crawl: a line that travels only when it does not fit.
+   The crawl: a line that travels one way, only when it does not fit.
 
-   The frame clips, the line inside it is `nowrap`, and the distance to travel is
-   measured in JS and handed here as `--crawl-by`. It waits a beat at each end
-   rather than looping, and the mask fades both edges so the text runs out of the
-   window instead of being cut off by it — the mask is only applied when there is
-   something to hide, or short text would fade for no reason.
+   The frame clips; the track inside it holds the line twice with a gap; the
+   distance is measured in JS and handed here as `--crawl-by`, which is one copy
+   plus that gap. So the animation runs to the point where the second copy sits
+   exactly where the first began — and because that frame is identical to frame
+   zero, the loop has no seam and the eye never sees it restart.
+
+   The mask fades both edges so text runs out of the window rather than being cut
+   off by it, and it is applied only when there is something to hide.
    ════════════════════════════════════════════════════════════════════════════ */
 
 .crawl {
   display: block;
   min-width: 0;
   overflow: hidden;
-  white-space: nowrap;
+}
+
+.crawl-track {
+  display: flex;
+  gap: var(--crawl-gap, 0px);
+  width: max-content;
+  will-change: transform;
 }
 
 .crawl-line {
-  display: inline-block;
   white-space: nowrap;
-  will-change: transform;
 }
 
 .crawl[data-over="true"] {
@@ -2272,36 +2296,34 @@ body {
   );
 }
 
-/* Out and back, with a pause at each end. Not a loop: a loop is a ticker, and a
-   ticker is the thing this is deliberately not. */
-@keyframes crawl-across {
-  0%,
-  14% {
+/* One direction, and no reversal. A marquee that comes back drags the eye
+   backwards through text it has already read, and the turn has a flinch in it. */
+@keyframes crawl-one-way {
+  from {
     transform: translateX(0);
   }
-  50%,
-  64% {
+  to {
     transform: translateX(calc(-1 * var(--crawl-by, 0px)));
-  }
-  100% {
-    transform: translateX(0);
   }
 }
 
-.crawl[data-running="true"] .crawl-line {
-  /* The pauses are part of the cycle, so the travel is roughly a third of it
-     each way — hence the multiplier on the measured duration. */
-  animation: crawl-across calc(var(--crawl-for, 6s) * 3.2) linear infinite;
+.crawl[data-running="true"] .crawl-track {
+  animation: crawl-one-way var(--crawl-for, 8s) linear var(--crawl-wait, 2200ms) infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .crawl[data-running="true"] .crawl-line {
+  .crawl[data-running="true"] .crawl-track {
     animation: none;
   }
 
-  /* Nothing moves, so the whole line has to be reachable another way. */
+  /* Nothing moves, so the whole line has to be reachable another way — and the
+     duplicate would only be in the way of that. */
   .crawl[data-over="true"] {
     overflow-x: auto;
     scrollbar-width: none;
+  }
+
+  .crawl[data-over="true"] .crawl-line[aria-hidden] {
+    display: none;
   }
 }
