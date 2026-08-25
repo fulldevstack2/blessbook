@@ -326,6 +326,7 @@ body {
 }
 
 .reel-seek-input {
+  --fader: currentColor;
   position: relative;
   width: 100%;
   /* Fills its container rather than naming a height of its own — see above. */
@@ -346,7 +347,7 @@ body {
   width: 11px;
   height: 11px;
   border-radius: 50%;
-  background: currentColor;
+  background: var(--fader);
 }
 
 .reel-seek-input::-moz-range-track {
@@ -359,7 +360,7 @@ body {
   height: 11px;
   border: 0;
   border-radius: 50%;
-  background: currentColor;
+  background: var(--fader);
 }
 
 @media (max-width: 660px) {
@@ -1044,7 +1045,7 @@ body {
   border-radius: 999px;
   background: linear-gradient(
     to right,
-    currentColor 0 calc(var(--level, 0.8) * 100%),
+    var(--fader) 0 calc(var(--level, 0.8) * 100%),
     color-mix(in oklch, currentColor 20%, transparent) calc(var(--level, 0.8) * 100%) 100%
   );
 }
@@ -1055,7 +1056,7 @@ body {
   height: var(--thumb);
   margin-top: calc((var(--track) - var(--thumb)) / 2);
   border-radius: 50%;
-  background: currentColor;
+  background: var(--fader);
   transition: transform 160ms var(--ease-out);
 }
 
@@ -1074,7 +1075,7 @@ body {
 .volume-input::-moz-range-progress {
   height: var(--track);
   border-radius: 999px;
-  background: currentColor;
+  background: var(--fader);
 }
 
 .volume-input::-moz-range-thumb {
@@ -1082,7 +1083,7 @@ body {
   height: var(--thumb);
   border: 0;
   border-radius: 50%;
-  background: currentColor;
+  background: var(--fader);
   transition: transform 160ms var(--ease-out);
 }
 
@@ -1091,14 +1092,12 @@ body {
   transform: scale(1.2);
 }
 
-/* Muted reads as muted: the bars drop and the track loses its fill anyway,
-   because the level is zero and the fill is the level. */
-.volume[data-muted="true"] .volume-input::-webkit-slider-thumb {
-  background: color-mix(in oklch, currentColor 45%, transparent);
-}
-
-.volume[data-muted="true"] .volume-input::-moz-range-thumb {
-  background: color-mix(in oklch, currentColor 45%, transparent);
+/* Muted reads as muted without the handle going soft: the bars drop, and the
+   track has no fill anyway because the fill *is* the level. The handle stays
+   solid — it is the thing you are about to take hold of. */
+.volume[data-muted="true"] .volume-bar:nth-child(2),
+.volume[data-muted="true"] .volume-bar:nth-child(3) {
+  opacity: 0.22;
 }
 
 /* The loader's scene fills its screen and sits under the type. */
@@ -1931,11 +1930,15 @@ body {
 
 .plaque-scope {
   width: 100%;
-  /* Takes the slack. On a short plaque the scope gives up its height before the
-     note or the transport does — it is the one thing here that reads at any
-     size. */
+  /* Takes *all* the slack, and `min-height: 0` is what makes that true. A floor
+     here blocks flex-shrink, so the fixed rows plus the floor could add up to
+     more than the plaque and the reverse overflowed by a few pixels at four of
+     the fourteen widths — small enough to miss by eye and always the same three
+     pixels of the transport. With no floor the scope is exactly the leftover,
+     so overflow is arithmetically impossible: it is the one thing here that
+     reads at any height, and the only one that is not information. */
   flex: 1 1 auto;
-  min-height: 22px;
+  min-height: 0;
   max-height: 54px;
 }
 
@@ -2007,16 +2010,36 @@ body {
   height: 18px;
 }
 
-/* Two lines at most, and it is allowed to run out rather than to squeeze
-   everything under it — one line where the plaque is short enough that two
-   would push the transport off the bottom. */
+/* What is playing, on the reverse: the number, the name and the kind on one
+   line. The name travels if it is too long for the room — see `Crawl` — which
+   is also what buys the vertical space for this line to exist at all. */
+/* One row, three columns. It was two rows: `grid-column: 2` on the kind pushed
+   it onto a line of its own, which cost twelve pixels the plaque did not have
+   and made the whole reverse overflow. */
+.plaque-said {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: baseline;
+  column-gap: var(--space-xs);
+  margin: 0;
+}
+
+.plaque-said-index,
+.plaque-said-name,
+.plaque-said-kind {
+  grid-row: 1;
+}
+
+.plaque-said-kind {
+  white-space: nowrap;
+}
+
+/* One line, and it travels rather than wrapping. Single-line is the point: two
+   wrapped lines here cost the same height as the name above them, and a player
+   that says what it is beats one that describes it more fully and does not. */
 .plaque-note {
   margin: 0;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  overflow: hidden;
+  min-width: 0;
 }
 
 /* A plaque under 190px tall has room for the transport, the tail and one line
@@ -2027,15 +2050,23 @@ body {
   container-type: size;
 }
 
-@container (max-height: 190px) {
-  .plaque-note {
-    -webkit-line-clamp: 1;
-    line-clamp: 1;
+/* Tighter rows where the plaque is short, so the scope keeps something to show
+   rather than being squeezed to a line by the gaps around it. */
+@container (max-height: 200px) {
+  .plaque-back {
+    gap: var(--space-2xs);
   }
 
   .plaque-scope {
-    min-height: 14px;
-    max-height: 30px;
+    max-height: 26px;
+  }
+}
+
+/* Shorter still and the kind is the first thing to go: it is on the face of the
+   plaque, an inch away, and the name is not. */
+@container (max-height: 172px) {
+  .plaque-said-kind {
+    display: none;
   }
 }
 
@@ -2198,5 +2229,79 @@ body {
   .lightbox-shut,
   .lightbox-say {
     animation: none;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   The crawl: a line that travels only when it does not fit.
+
+   The frame clips, the line inside it is `nowrap`, and the distance to travel is
+   measured in JS and handed here as `--crawl-by`. It waits a beat at each end
+   rather than looping, and the mask fades both edges so the text runs out of the
+   window instead of being cut off by it — the mask is only applied when there is
+   something to hide, or short text would fade for no reason.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.crawl {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.crawl-line {
+  display: inline-block;
+  white-space: nowrap;
+  will-change: transform;
+}
+
+.crawl[data-over="true"] {
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent 0,
+    black 10px,
+    black calc(100% - 14px),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    90deg,
+    transparent 0,
+    black 10px,
+    black calc(100% - 14px),
+    transparent 100%
+  );
+}
+
+/* Out and back, with a pause at each end. Not a loop: a loop is a ticker, and a
+   ticker is the thing this is deliberately not. */
+@keyframes crawl-across {
+  0%,
+  14% {
+    transform: translateX(0);
+  }
+  50%,
+  64% {
+    transform: translateX(calc(-1 * var(--crawl-by, 0px)));
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.crawl[data-running="true"] .crawl-line {
+  /* The pauses are part of the cycle, so the travel is roughly a third of it
+     each way — hence the multiplier on the measured duration. */
+  animation: crawl-across calc(var(--crawl-for, 6s) * 3.2) linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .crawl[data-running="true"] .crawl-line {
+    animation: none;
+  }
+
+  /* Nothing moves, so the whole line has to be reachable another way. */
+  .crawl[data-over="true"] {
+    overflow-x: auto;
+    scrollbar-width: none;
   }
 }

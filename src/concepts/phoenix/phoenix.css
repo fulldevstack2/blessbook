@@ -937,6 +937,7 @@
 
 .phoenix .reel-seek-input {
   color: var(--gold);
+  --fader: var(--gold);
 }
 
 .phoenix .reel-foot {
@@ -1716,6 +1717,7 @@ canvas[hidden] + .phoenix-hero-plate {
 .phoenix .volume {
   margin-top: var(--space-md);
   color: var(--gold);
+  --fader: var(--gold);
 }
 
 /* ════════════════════════════════════════════════════════════════════════════
@@ -3756,4 +3758,27 @@ canvas[hidden] + .phoenix-hero-plate {
 
 .phoenix .lightbox-on:hover {
   color: var(--ivory);
+}
+
+/* ---------- what is playing, on the reverse ---------- */
+.phoenix .plaque-said-index {
+  font-family: var(--display);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: var(--gold);
+  font-variant-numeric: tabular-nums;
+}
+
+.phoenix .plaque-said-name {
+  font-family: var(--display);
+  font-size: 0.95rem;
+  line-height: 1.2;
+  color: var(--ivory);
+}
+
+.phoenix .plaque-said-kind {
+  font-size: 8px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ivory-faint);
 }

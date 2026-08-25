@@ -1631,14 +1631,17 @@
 
 .nocturne .volume {
   color: var(--brass);
+  --fader: var(--brass);
 }
 
 /* Ivory on ivory is nothing at all, and that is where the fader went: the reel
    — the pieces he was asked for — is a lit page, and the control was being
    painted in the colour of the dark ones. It takes the ink of whatever page it
    is standing on. */
+/* The labels sit back on a lit page; the handle does not. */
 .nocturne .nocturne-act--ivory .volume {
   color: color-mix(in oklab, var(--ink) 66%, transparent);
+  --fader: var(--brass-deep);
 }
 
 /* An uncropped plate: the instrument is a landscape object and an arch cuts its
@@ -3861,4 +3864,33 @@
 
 .nocturne .lightbox-on:hover {
   color: var(--ivory);
+}
+
+/* ---------- what is playing, on the reverse ---------- */
+.nocturne .plaque-said-index {
+  font-family: var(--display);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: var(--brass);
+  font-variant-numeric: tabular-nums;
+}
+
+.nocturne .plaque-said-name {
+  font-family: var(--display);
+  font-size: 0.95rem;
+  line-height: 1.2;
+  color: var(--ivory);
+}
+
+.nocturne .plaque-said-kind {
+  font-size: 8px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--ivory) 56%, transparent);
+}
+
+/* The seek inside a plaque, and the one on the lit pages. */
+.nocturne .reel-seek-input {
+  color: var(--brass);
+  --fader: var(--brass);
 }

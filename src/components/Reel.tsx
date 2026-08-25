@@ -3,6 +3,7 @@ import { demos, timecode } from "../content/work";
 import { audioContext, resumeAudio } from "../lib/audioContext";
 import { play, waveform } from "../lib/listening";
 import { prefersReducedMotion } from "../lib/prefersReducedMotion";
+import { Crawl } from "./Crawl";
 import { Volume } from "./Volume";
 
 /**
@@ -236,7 +237,25 @@ export function Reel({ caption, index = twoDigit }: ReelProps) {
                 <div className="plaque-back" inert={!on}>
                   {on ? (
                     <>
-                      <p className="plaque-note">{demo.note}</p>
+                      {/* What you are listening to, still said while you listen.
+                          The face has turned away, so the reverse has to carry
+                          the name — a player that only tells you the number of
+                          the thing playing is a player you have to turn back to
+                          read. Both lines travel if they do not fit; see
+                          `Crawl`. */}
+                      <p className="plaque-said">
+                        <span className="plaque-said-index" aria-hidden>
+                          {index(position)}
+                        </span>
+                        <Crawl className="plaque-said-name" running={playing}>
+                          {demo.title}
+                        </Crawl>
+                        <span className="plaque-said-kind">{demo.kind}</span>
+                      </p>
+
+                      <p className="plaque-note">
+                        <Crawl running={playing}>{demo.note}</Crawl>
+                      </p>
                       <canvas className="plaque-scope reel-scope" ref={canvasRef} aria-hidden />
 
                       <div className="plaque-transport">

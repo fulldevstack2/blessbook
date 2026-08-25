@@ -900,6 +900,7 @@
 
 .dragon .reel-seek-input {
   color: var(--cinnabar);
+  --fader: var(--cinnabar);
 }
 
 .dragon .reel-foot {
@@ -1720,6 +1721,7 @@ canvas:not([hidden]) + .dragon-hero-plate {
 .dragon .volume {
   margin-top: var(--space-md);
   color: color-mix(in oklab, var(--ink) 74%, transparent);
+  --fader: var(--ink);
 }
 
 /* ════════════════════════════════════════════════════════════════════════════
@@ -3797,8 +3799,10 @@ canvas:not([hidden]) + .dragon-hero-plate {
 
 /* The fader and the seek rail are on ink now, not on paper, so they take the
    paper colour rather than the page's ink. */
+/* On the flooded leaf the labels are paper at 62%; the handle is paper. */
 .dragon .plaque-back .volume {
   color: color-mix(in oklab, var(--paper) 62%, transparent);
+  --fader: var(--paper);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -3894,4 +3898,41 @@ canvas:not([hidden]) + .dragon-hero-plate {
 
 .dragon .lightbox-on:hover {
   color: var(--paper);
+}
+
+/* ---------- what is playing, on the reverse ---------- */
+.dragon .plaque-said-index {
+  font-family: var(--brush);
+  font-size: 15px;
+  letter-spacing: 0;
+  color: var(--cinnabar);
+  font-variant-numeric: tabular-nums;
+}
+
+.dragon .plaque-said-name {
+  font-family: var(--display);
+  font-size: 0.95rem;
+  line-height: 1.2;
+  color: var(--paper);
+}
+
+.dragon .plaque-said-kind {
+  font-size: 8px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--paper) 62%, transparent);
+}
+
+/* On the flooded leaf the seek is on ink, so its handle is paper. */
+.dragon .plaque-back .reel-seek-input {
+  color: color-mix(in oklab, var(--paper) 62%, transparent);
+  --fader: var(--paper);
+}
+
+.dragon .plaque-back .reel-seek-fill {
+  background: var(--paper);
+}
+
+.dragon .plaque-back .reel-seek-rail {
+  background: color-mix(in oklab, var(--paper) 26%, transparent);
 }
