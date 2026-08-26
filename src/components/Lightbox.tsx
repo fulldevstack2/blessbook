@@ -42,11 +42,71 @@ export interface Screening {
   readonly poster?: string | undefined;
 }
 
+/**
+ * Where a film came from, in *document* coordinates.
+ *
+ * Not viewport coordinates, and that distinction is a bug I had: the card is
+ * measured when it is pressed, the stage is measured after the page has been
+ * locked against scrolling, and locking can move the page under them. The two
+ * rectangles were then in different frames of reference, which on one path
+ * produced a transform asking the stage to travel twenty-five thousand pixels
+ * downwards. Held against the document and converted back at the moment of use,
+ * nothing that happens to the scroll in between can matter.
+ */
+export interface Origin {
+  readonly left: number;
+  readonly top: number;
+  readonly width: number;
+  readonly height: number;
+}
+
 interface LightboxProps {
   readonly work: Screening | null;
   /** Where it came from, so it can travel from there and back to it. */
-  readonly from: DOMRect | null;
+  readonly from: Origin | null;
   readonly onClose: () => void;
+}
+
+/**
+ * The rectangle the *picture* occupies in a pressed card, which is not always the
+ * rectangle of the thing pressed.
+ *
+ * Dragon hangs its films on scrolls, and a scroll's press target is nearly
+ * square while the poster inside it is sixteen-by-nine, letterboxed by
+ * `object-fit: contain`. Handing the button's box to the travel made the stage
+ * fly to a shape the picture was never in — measured at 1.8 times too tall. So
+ * where a poster is contained rather than cropped, this works out where the
+ * image is actually painted, which is what the reader sees and therefore the
+ * only rectangle worth animating to.
+ *
+ * The shape comes from the `width` and `height` attributes before it comes from
+ * the decoded file, and that order matters: posters are lazy, so someone who
+ * presses one the moment it scrolls into view is pressing a picture whose
+ * `naturalWidth` is still zero. Falling back to the button's box there put the
+ * travel back to the wrong shape on exactly the slow connection least able to
+ * hide it. The attributes are on every one of these images for this reason.
+ */
+function pictureRect(pressed: Element): Origin {
+  const img = pressed.querySelector("img") ?? pressed.parentElement?.querySelector("img");
+  const box = (img ?? pressed).getBoundingClientRect();
+  const held = (left: number, top: number, width: number, height: number): Origin => ({
+    // Document coordinates — see `Origin`.
+    left: left + window.scrollX,
+    top: top + window.scrollY,
+    width,
+    height,
+  });
+
+  const across = img?.naturalWidth || Number(img?.getAttribute("width")) || 0;
+  const down = img?.naturalHeight || Number(img?.getAttribute("height")) || 0;
+  if (!img || !across || !down || getComputedStyle(img).objectFit !== "contain") {
+    return held(box.left, box.top, box.width, box.height);
+  }
+
+  const scale = Math.min(box.width / across, box.height / down);
+  const width = across * scale;
+  const height = down * scale;
+  return held(box.left + (box.width - width) / 2, box.top + (box.height - height) / 2, width, height);
 }
 
 /**
@@ -55,10 +115,10 @@ interface LightboxProps {
  */
 export function useLightbox() {
   const [work, setWork] = useState<Screening | null>(null);
-  const [from, setFrom] = useState<DOMRect | null>(null);
+  const [from, setFrom] = useState<Origin | null>(null);
 
   const show = useCallback((next: Screening, event: { currentTarget: Element }) => {
-    setFrom(event.currentTarget.getBoundingClientRect());
+    setFrom(pictureRect(event.currentTarget));
     setWork(next);
   }, []);
 
@@ -70,6 +130,46 @@ export function useLightbox() {
 /** How long the stage takes to go back where it came from. */
 const LEAVING = 520;
 
+/**
+ * The transform that puts the stage's *picture* onto a card.
+ *
+ * The picture, not the stage. The stage is the frame with the title and the note
+ * under it, so it is proportionally taller than the sixteen-by-nine card it came
+ * out of — and scaling the whole of it to that rectangle gave a vertical scale
+ * smaller than the horizontal one and squashed the picture flat at the end of
+ * the journey. What has to land on the card is the frame; the caption rides
+ * along and is faded out by then anyway.
+ *
+ * One scale for both axes, therefore, taken from the widths, because both boxes
+ * are the same shape. With `transform-origin: center`, a point p maps to
+ * `centre + (p - centre) * scale + shift`, so the shift is whatever puts the
+ * frame's centre on the card's.
+ */
+function mapOnto(stage: HTMLElement, origin: Origin): string | null {
+  // Back into the viewport, at whatever the scroll happens to be right now.
+  const card = {
+    left: origin.left - window.scrollX,
+    top: origin.top - window.scrollY,
+    width: origin.width,
+    height: origin.height,
+  };
+
+  const frame = stage.querySelector<HTMLElement>(".lightbox-frame");
+  const box = stage.getBoundingClientRect();
+  const picture = frame?.getBoundingClientRect() ?? box;
+  if (picture.width === 0 || picture.height === 0 || box.width === 0) return null;
+
+  const scale = card.width / picture.width;
+  const shiftX =
+    card.left + card.width / 2 - (box.left + box.width / 2) -
+    (picture.left + picture.width / 2 - (box.left + box.width / 2)) * scale;
+  const shiftY =
+    card.top + card.height / 2 - (box.top + box.height / 2) -
+    (picture.top + picture.height / 2 - (box.top + box.height / 2)) * scale;
+
+  return `translate(${shiftX}px, ${shiftY}px) scale(${scale})`;
+}
+
 export function Lightbox({ work, from, onClose }: LightboxProps) {
   const stage = useRef<HTMLDivElement>(null);
   const shut = useRef<HTMLButtonElement>(null);
@@ -77,7 +177,7 @@ export function Lightbox({ work, from, onClose }: LightboxProps) {
   /** Set once the travel has finished, which is when the embed is allowed in. */
   const [arrived, setArrived] = useState(false);
   const [leaving, setLeaving] = useState(false);
-  const cameFrom = useRef<DOMRect | null>(from);
+  const cameFrom = useRef<Origin | null>(from);
   /** Escape pressed twice should not start two exits. */
   const going = useRef(false);
 
@@ -109,24 +209,19 @@ export function Lightbox({ work, from, onClose }: LightboxProps) {
       return;
     }
 
-    // At rest the stage carries no transform, so this is its true box.
-    const box = element.getBoundingClientRect();
-    if (box.width === 0 || box.height === 0) {
+    // At rest the stage carries no transform, so this measures its true box.
+    const onto = mapOnto(element, start);
+    if (!onto) {
       onClose();
       return;
     }
-
-    const scaleX = start.width / box.width;
-    const scaleY = start.height / box.height;
-    const shiftX = start.left + start.width / 2 - (box.left + box.width / 2);
-    const shiftY = start.top + start.height / 2 - (box.top + box.height / 2);
 
     /* Moves immediately and settles into the card. An earlier attempt used a
        hard ease-in, which held the stage at full size for four fifths of the
        duration and then snatched it away — measured, not guessed. Closing should
        be decisive, not deferred. */
     element.style.transition = `transform ${LEAVING}ms cubic-bezier(0.32, 0, 0.24, 1)`;
-    element.style.transform = `translate(${shiftX}px, ${shiftY}px) scale(${scaleX}, ${scaleY})`;
+    element.style.transform = onto;
 
     setLeaving(true);
 
@@ -164,17 +259,11 @@ export function Lightbox({ work, from, onClose }: LightboxProps) {
       return;
     }
 
-    const box = element.getBoundingClientRect();
-    if (box.width === 0 || box.height === 0) {
+    const onto = mapOnto(element, start);
+    if (!onto) {
       setArrived(true);
       return;
     }
-
-    const scaleX = start.width / box.width;
-    const scaleY = start.height / box.height;
-    const shiftX = start.left + start.width / 2 - (box.left + box.width / 2);
-    const shiftY = start.top + start.height / 2 - (box.top + box.height / 2);
-    const onto = `translate(${shiftX}px, ${shiftY}px) scale(${scaleX}, ${scaleY})`;
 
     element.style.transition = "none";
     element.style.transformOrigin = "center";
