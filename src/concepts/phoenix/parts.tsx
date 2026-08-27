@@ -41,10 +41,14 @@ const site = conceptById("phoenix");
  * type. Same door on phone and desktop. On the work page the passage waits
  * until the hero has left; on the man page the brand (and "The work") bring
  * you back.
+ *
+ * Over the ivory turn the marks ink themselves dark — no lacquer bloom, which
+ * reads as a smudge on cream. Over lacquer they stay light.
  */
 export function SiteChrome() {
   const onStory = useLocation().pathname === site.story;
   const [passageShown, setPassageShown] = useState(onStory);
+  const [ground, setGround] = useState<"lacquer" | "ivory">("lacquer");
 
   useEffect(() => {
     if (onStory) {
@@ -66,8 +70,34 @@ export function SiteChrome() {
     return () => watcher.disconnect();
   }, [onStory]);
 
+  useEffect(() => {
+    const lights = Array.from(
+      document.querySelectorAll<HTMLElement>(".phoenix-section--invert"),
+    );
+    if (lights.length === 0) {
+      setGround("lacquer");
+      return;
+    }
+
+    /* A thin band at the top of the viewport — where the masthead sits. If any
+       ivory section crosses it, the marks switch ink. */
+    const seen = new Set<Element>();
+    const watcher = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) seen.add(entry.target);
+          else seen.delete(entry.target);
+        }
+        setGround(seen.size > 0 ? "ivory" : "lacquer");
+      },
+      { rootMargin: "0px 0px -88% 0px", threshold: 0 },
+    );
+    for (const light of lights) watcher.observe(light);
+    return () => watcher.disconnect();
+  }, [onStory]);
+
   return (
-    <header className="chrome">
+    <header className="chrome" data-ground={ground}>
       <Link className="chrome-brand" to={site.path}>
         Blesspoke
       </Link>

@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { ConceptChrome, ConceptSwitch } from "../../components/ConceptChrome";
 import { Cursor } from "../../components/Cursor";
 import { FilmScrub } from "../../components/FilmScrub";
 import { Grain } from "../../components/Grain";
@@ -10,7 +9,19 @@ import { Reel } from "../../components/Reel";
 import { Showreel } from "../../components/Showreel";
 import { Volume } from "../../components/Volume";
 import { Words } from "../../components/Words";
-import { BoxOffice, Cast, Enquiry, Figure, Instrument, Interval, Loader, Process, Programme } from "./parts";
+import {
+  BoxOffice,
+  Cast,
+  Enquiry,
+  Figure,
+  Instrument,
+  Interval,
+  Loader,
+  OpenPlate,
+  Process,
+  Programme,
+  SiteChrome,
+} from "./parts";
 import { commission, promise, rights, service, tiers } from "../../content/commission";
 import {
   artist,
@@ -98,40 +109,12 @@ function Readout() {
   );
 }
 
-/** Everything on this page is seen through the same arch. */
-function Arch({
-  photo,
-  caption,
-  tall = false,
-}: {
-  photo: (typeof photos)[keyof typeof photos];
-  caption?: string;
-  tall?: boolean;
-}) {
-  return (
-    <figure className="arch" data-tall={tall} data-parallax data-scroll>
-      <div className="arch-frame">
-        <img
-          src={photo.src}
-          width={photo.width}
-          height={photo.height}
-          alt={photo.alt}
-          loading="lazy"
-        />
-      </div>
-      <figcaption className="arch-caption">
-        {caption ? <span>{caption}</span> : null}
-        <span className="nocturne-credit">{photo.credit}</span>
-      </figcaption>
-    </figure>
-  );
-}
-
 /**
- * The frame both of this concept's pages sit in.
+ * The frame both of this house's pages sit in.
  *
- * Two pages now: the work, and the man behind it. The curtain hero belongs to
- * the work page; the night of the firsts opens the story instead.
+ * Nocturne is its own house once you are inside it — not one of three proposals.
+ * The curtain hero belongs to the work page; the night of the firsts opens the
+ * story instead.
  */
 function Frame({ hero, children }: { hero?: ReactNode; children: ReactNode }) {
   useFonts(concept.fonts);
@@ -146,7 +129,7 @@ function Frame({ hero, children }: { hero?: ReactNode; children: ReactNode }) {
       </a>
       <Loader />
       <NowPlaying />
-      <ConceptChrome concept={concept} />
+      <SiteChrome />
       <Grain />
       <Commission {...(hero ? {} : { to: `${concept.path}#commission` })} />
       <Cursor />
@@ -155,8 +138,6 @@ function Frame({ hero, children }: { hero?: ReactNode; children: ReactNode }) {
 
       <main id="main" className="nocturne-body" ref={main}>
         {children}
-
-        <ConceptSwitch concept={concept} />
       </main>
     </div>
   );
@@ -493,7 +474,7 @@ export function NocturneStory() {
             </dl>
           </div>
 
-          <Arch photo={photos.seated} caption="Plate I" />
+          <OpenPlate photo={photos.seated} caption="Plate I" />
         </div>
 
         <ol className="nocturne-list">

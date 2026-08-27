@@ -51,6 +51,8 @@
   pointer-events: none;
 }
 
+/* Type only — no bar, no bloom. Legibility on lacquer is the light ink; on the
+   ivory turn the chrome flips to dark ink (see [data-ground="ivory"]). */
 .phoenix .chrome-brand {
   pointer-events: auto;
   position: relative;
@@ -69,10 +71,8 @@
   color: var(--ivory);
 }
 
-/* An open passage, not a boxed button. Gold seam, Italiana, a hairline that
-   draws under the phrase. A faint lacquer wash keeps it legible over content.
-   On the work page it stays dark through the hero, then arrives: one door, at
-   the moment you have started reading rather than the moment you land. */
+/* An open passage, not a boxed button. Gold seam, Italiana. On the work page
+   it waits until the hero has left, then arrives. */
 .phoenix .chrome-passage {
   pointer-events: none;
   position: relative;
@@ -85,12 +85,6 @@
   padding: 0.55rem 0.15rem 0.55rem 0;
   text-decoration: none;
   color: var(--ivory);
-  background: linear-gradient(
-    100deg,
-    color-mix(in oklab, #0b0705 78%, transparent) 0%,
-    color-mix(in oklab, #0b0705 42%, transparent) 55%,
-    transparent 100%
-  );
   opacity: 0;
   transform: translateY(-8px);
   transition:
@@ -143,8 +137,26 @@
   text-wrap: balance;
 }
 
-/* No stub hairline under the label — a short rest mark only covered the
-   first word and read as a broken underline. Affordance is the seam + gold. */
+/* Over cream: gold marks, not lacquer — ivory sections can still hold dark
+   panels underneath the masthead. */
+.phoenix .chrome[data-ground="ivory"] .chrome-brand {
+  color: var(--gold-deep);
+}
+
+.phoenix .chrome[data-ground="ivory"] .chrome-brand:hover,
+.phoenix .chrome[data-ground="ivory"] .chrome-brand:focus-visible {
+  color: var(--gold);
+}
+
+.phoenix .chrome[data-ground="ivory"] .chrome-passage {
+  color: var(--gold-deep);
+}
+
+.phoenix .chrome[data-ground="ivory"] .chrome-passage:hover,
+.phoenix .chrome[data-ground="ivory"] .chrome-passage:focus-visible,
+.phoenix .chrome[data-ground="ivory"] .chrome-passage:active {
+  color: var(--gold);
+}
 
 @media (max-width: 720px) {
   .phoenix .chrome {
@@ -157,7 +169,6 @@
     letter-spacing: 0.2em;
   }
 
-  /* Same door as desktop, sized for a narrow bar. No stub underline. */
   .phoenix .chrome-passage {
     gap: 0.65rem;
     max-width: min(100%, 11.5rem);
@@ -1616,25 +1627,6 @@ canvas[hidden] + .phoenix-hero-plate {
 
 .phoenix-silhouette figcaption {
   margin-top: var(--space-sm);
-}
-
-/* The chrome sits over whatever is scrolling past. A denser lacquer wash keeps
-   the masthead legible and stops a bright section (the ivory turn) from flashing
-   through as a white bar behind the wordmark. */
-.phoenix .chrome::before {
-  content: "";
-  position: absolute;
-  inset: 0 0 auto 0;
-  height: calc(100% + var(--space-3xl));
-  z-index: -1;
-  pointer-events: none;
-  background: linear-gradient(
-    180deg,
-    var(--lacquer) 0%,
-    var(--lacquer) 42%,
-    color-mix(in oklab, var(--lacquer) 78%, transparent) 72%,
-    transparent 100%
-  );
 }
 
 /* ---------- the instrument, pinned and turning ---------- */

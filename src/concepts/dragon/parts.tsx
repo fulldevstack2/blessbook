@@ -1,11 +1,13 @@
-import { useEffect, useRef, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { clients } from "../../content/clients";
 import { audience } from "../../content/dennis";
 import { films } from "../../content/work";
 import { useReady } from "../../lib/useReady";
 import { useTypeset } from "../../lib/useTypeset";
+import { prefersReducedMotion } from "../../lib/prefersReducedMotion";
 import { useSectionProgress } from "../../lib/useSectionProgress";
-import { photos } from "../../content/media";
+import { photos, type Photo } from "../../content/media";
 import { Brief } from "../../components/Brief";
 import { Lightbox, useLightbox } from "../../components/Lightbox";
 import { Works } from "../../components/Works";
@@ -26,7 +28,156 @@ import { conceptById, violin } from "../registry";
  *
  * Everything below comes from the same object the concept is built on: a hand
  * scroll. It unrolls, it is stamped with seals, and it is written with a brush.
+ *
+ * Dragon is treated as its own site once you are inside it: no way back to the
+ * design chooser, no links to the other two directions.
  */
+
+const site = conceptById("dragon");
+
+/**
+ * The site bar. Brand on the left; the other room on the right.
+ *
+ * A cinnabar seam and the destination in display type — ink on paper, not a
+ * chip of UI. On the work page the passage waits until the hero wash has left.
+ * Over ink-dark ground the marks flip to paper so they stay readable.
+ */
+export function SiteChrome() {
+  const onStory = useLocation().pathname === site.story;
+  const [passageShown, setPassageShown] = useState(onStory);
+  const [ground, setGround] = useState<"paper" | "ink">("paper");
+
+  useEffect(() => {
+    if (onStory) {
+      setPassageShown(true);
+      return;
+    }
+
+    const hero = document.querySelector(".dragon-stage");
+    if (!hero) {
+      setPassageShown(true);
+      return;
+    }
+
+    setPassageShown(false);
+    const watcher = new IntersectionObserver(([entry]) => {
+      setPassageShown(!(entry?.isIntersecting ?? true));
+    });
+    watcher.observe(hero);
+    return () => watcher.disconnect();
+  }, [onStory]);
+
+  useEffect(() => {
+    const darks = Array.from(
+      document.querySelectorAll<HTMLElement>(
+        ".dragon-stage, .dragon-section--invert, .marks",
+      ),
+    );
+    if (darks.length === 0) {
+      setGround("paper");
+      return;
+    }
+
+    const seen = new Set<Element>();
+    const watcher = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) seen.add(entry.target);
+          else seen.delete(entry.target);
+        }
+        setGround(seen.size > 0 ? "ink" : "paper");
+      },
+      { rootMargin: "0px 0px -88% 0px", threshold: 0 },
+    );
+    for (const dark of darks) watcher.observe(dark);
+    return () => watcher.disconnect();
+  }, [onStory]);
+
+  return (
+    <header className="chrome" data-ground={ground}>
+      <Link className="chrome-brand" to={site.path}>
+        Blesspoke
+      </Link>
+      <Link
+        className="chrome-passage"
+        to={onStory ? site.path : site.story}
+        data-room={onStory ? "work" : "man"}
+        data-shown={passageShown}
+        tabIndex={passageShown ? undefined : -1}
+        aria-hidden={passageShown ? undefined : true}
+      >
+        <span className="chrome-passage-seam" aria-hidden />
+        <span className="chrome-passage-label">
+          {onStory ? "The work" : "The man behind the music"}
+        </span>
+      </Link>
+    </header>
+  );
+}
+
+/**
+ * The first plate on the man page: held until the sheet has begun to lift,
+ * then wiped open the way a brush stroke fills. Timed to the arrival so the
+ * gesture is seen, not finished behind the paper.
+ */
+export function OpenPlate({ photo }: { photo: Photo }) {
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    if (prefersReducedMotion()) {
+      setOpen(true);
+      return;
+    }
+
+    const sheet = document.querySelector(".sheet");
+    let delayId = 0;
+
+    const begin = () => {
+      delayId = window.setTimeout(() => setOpen(true), 380);
+    };
+
+    if (!sheet) {
+      begin();
+      return () => window.clearTimeout(delayId);
+    }
+
+    if (sheet.getAttribute("data-ready") === "true") {
+      begin();
+      return () => window.clearTimeout(delayId);
+    }
+
+    const watcher = new MutationObserver(() => {
+      if (sheet.getAttribute("data-ready") !== "true") return;
+      watcher.disconnect();
+      begin();
+    });
+    watcher.observe(sheet, { attributes: true, attributeFilter: ["data-ready"] });
+
+    return () => {
+      watcher.disconnect();
+      window.clearTimeout(delayId);
+    };
+  }, []);
+
+  return (
+    <div className="dragon-open" data-open={open || undefined}>
+      <span className="dragon-open-seal" lang="zh" aria-hidden>
+        樂
+      </span>
+      <figure className="dragon-photo dragon-open-photo">
+        <img
+          src={photo.src}
+          width={photo.width}
+          height={photo.height}
+          alt={photo.alt}
+          loading="eager"
+          decoding="async"
+        />
+        <figcaption className="dragon-credit">{photo.credit}</figcaption>
+      </figure>
+    </div>
+  );
+}
 
 /** The pinned frame that pulls its contents sideways as the page goes down. */
 export function Unroll({
@@ -225,10 +376,12 @@ export function FilmScrolls({ caption }: { caption: string }) {
 /**
  * A drop of ink, spreading while the page loads, and a brush stroke that wipes
  * it away when the page is ready. Paper first, then the hand, then the work —
- * which is the order this concept does everything in.
+ * which is the order this concept does everything in. On the man page the
+ * critical plate is the opening portrait, not the hero silhouette.
  */
 export function Loader() {
-  const ready = useReady(photos.silhouette.src);
+  const onStory = useLocation().pathname === site.story;
+  const ready = useReady(onStory ? photos.cutout.src : photos.silhouette.src);
   const typeset = useTypeset(["400 96px \"Ma Shan Zheng\"", "400 40px Faustina"]);
 
   return (
@@ -248,9 +401,7 @@ export function Loader() {
           樂
         </span>
       </div>
-      <p className="sheet-mark">
-        {["一", "二", "三"][Number(conceptById("dragon").ordinal) - 1]} · Dragon · Ink and jade
-      </p>
+      <p className="sheet-mark">Blesspoke</p>
     </div>
   );
 }

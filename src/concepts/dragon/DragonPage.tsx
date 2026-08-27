@@ -1,5 +1,4 @@
 import { useRef, type ReactNode } from "react";
-import { ConceptChrome, ConceptSwitch } from "../../components/ConceptChrome";
 import { Grain } from "../../components/Grain";
 import { Commission } from "../../components/Commission";
 import { FilmScrub } from "../../components/FilmScrub";
@@ -11,7 +10,20 @@ import { StringRow } from "../../components/StringRow";
 import { Volume } from "../../components/Volume";
 import { Words } from "../../components/Words";
 import { Territories } from "./Territories";
-import { BrushStroke, ClientScroll, Enquiry, Figure, FilmScrolls, Instrument, Loader, Marks, Process, Unroll } from "./parts";
+import {
+  BrushStroke,
+  ClientScroll,
+  Enquiry,
+  Figure,
+  FilmScrolls,
+  Instrument,
+  Loader,
+  Marks,
+  OpenPlate,
+  Process,
+  SiteChrome,
+  Unroll,
+} from "./parts";
 import {
   commission,
   promise,
@@ -27,7 +39,6 @@ import {
   credentials,
   halls,
   milestones,
-  record,
   teachers,
   training,
   violins,
@@ -96,11 +107,12 @@ function Margin({ index, label }: { index: number; label: string }) {
 }
 
 /**
- * The frame both of this concept's pages sit in.
+ * The frame both of this site's pages sit in.
  *
- * Two pages now: the work, and the man behind it. Everything outside the
- * narrative is identical — fonts, loader, bar, grain, reveal — so it is declared
- * once here. The hero belongs to the work page alone.
+ * Dragon is its own site once you are inside it — not one of three proposals.
+ * Everything outside the narrative is identical between the work page and the
+ * man page: fonts, loader, masthead, grain, reveal. The hero belongs to the
+ * work page alone.
  */
 function Frame({ hero, children }: { hero?: ReactNode; children: ReactNode }) {
   useFonts(concept.fonts);
@@ -114,7 +126,7 @@ function Frame({ hero, children }: { hero?: ReactNode; children: ReactNode }) {
       </a>
       <Loader />
       <NowPlaying />
-      <ConceptChrome concept={concept} />
+      <SiteChrome />
       <Grain />
       <Commission {...(hero ? {} : { to: `${concept.path}#commission` })} />
 
@@ -122,8 +134,6 @@ function Frame({ hero, children }: { hero?: ReactNode; children: ReactNode }) {
 
       <main id="main" className="dragon-body" ref={main}>
         {children}
-
-        <ConceptSwitch concept={concept} />
       </main>
     </div>
   );
@@ -314,7 +324,7 @@ export function DragonPage() {
 
 /**
  * The man behind the music: who he is, the record, the instrument, the calling.
- * No hero — the portrait and the brush open it.
+ * No scroll hero — the opening plate is the portrait, timed to the sheet.
  */
 export function DragonStory() {
   return (
@@ -363,16 +373,7 @@ export function DragonStory() {
               <StringRow caption="Pluck one of the four strings he writes on" />
             </div>
 
-            <figure className="dragon-photo" data-reveal="wipe">
-              <img
-                src={photos.cutout.src}
-                width={photos.cutout.width}
-                height={photos.cutout.height}
-                alt={photos.cutout.alt}
-                loading="lazy"
-              />
-              <figcaption className="dragon-credit">{photos.cutout.credit}</figcaption>
-            </figure>
+            <OpenPlate photo={photos.cutout} />
           </div>
         </div>
       </section>
@@ -405,17 +406,6 @@ export function DragonStory() {
       <section className="dragon-section">
         <Margin index={2} label="The record" />
         <div>
-          <dl className="dragon-terms">
-            {record.map((item) => (
-              <div className="dragon-term" key={item.label} data-reveal>
-                <dt>{item.label}</dt>
-                <dd>
-                  <Figure value={item.value} />
-                </dd>
-              </div>
-            ))}
-          </dl>
-
           <figure className="dragon-photo dragon-photo--tall" data-reveal="wipe">
             <img
               src={photos.seated.src}

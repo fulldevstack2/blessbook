@@ -1,10 +1,12 @@
 import { clients } from "../../content/clients";
 import { films } from "../../content/work";
 import { record } from "../../content/dennis";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { useReady } from "../../lib/useReady";
 import { useTypeset } from "../../lib/useTypeset";
-import { photos } from "../../content/media";
+import { prefersReducedMotion } from "../../lib/prefersReducedMotion";
+import { photos, type Photo } from "../../content/media";
 import { Brief } from "../../components/Brief";
 import { Lightbox, useLightbox } from "../../components/Lightbox";
 import { Works } from "../../components/Works";
@@ -25,7 +27,160 @@ import { conceptById, violin } from "../registry";
  * audio bus, the scroll hooks, the frame scrubber.
  *
  * Everything here is drawn from one idea: a printed programme for tonight.
+ *
+ * Nocturne is treated as its own house once you are inside it: no way back to
+ * the design chooser, no links to the other two directions.
  */
+
+const site = conceptById("nocturne");
+
+/**
+ * The site bar. Brand on the left; the other room on the right.
+ *
+ * Brass seam, programme type — not a velvet toolbar. On the work page the
+ * passage waits until the curtain hero has left. Over ivory acts the marks
+ * ink themselves dark so they stay readable without a bloom.
+ */
+export function SiteChrome() {
+  const onStory = useLocation().pathname === site.story;
+  const [passageShown, setPassageShown] = useState(onStory);
+  const [ground, setGround] = useState<"velvet" | "ivory">("velvet");
+
+  useEffect(() => {
+    if (onStory) {
+      setPassageShown(true);
+      return;
+    }
+
+    const hero = document.querySelector(".nocturne-stage");
+    if (!hero) {
+      setPassageShown(true);
+      return;
+    }
+
+    setPassageShown(false);
+    const watcher = new IntersectionObserver(([entry]) => {
+      setPassageShown(!(entry?.isIntersecting ?? true));
+    });
+    watcher.observe(hero);
+    return () => watcher.disconnect();
+  }, [onStory]);
+
+  useEffect(() => {
+    const lights = Array.from(
+      document.querySelectorAll<HTMLElement>(".nocturne-act--ivory"),
+    );
+    if (lights.length === 0) {
+      setGround("velvet");
+      return;
+    }
+
+    const seen = new Set<Element>();
+    const watcher = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) seen.add(entry.target);
+          else seen.delete(entry.target);
+        }
+        setGround(seen.size > 0 ? "ivory" : "velvet");
+      },
+      { rootMargin: "0px 0px -88% 0px", threshold: 0 },
+    );
+    for (const light of lights) watcher.observe(light);
+    return () => watcher.disconnect();
+  }, [onStory]);
+
+  return (
+    <header className="chrome" data-ground={ground}>
+      <Link className="chrome-brand" to={site.path}>
+        Blesspoke
+      </Link>
+      <Link
+        className="chrome-passage"
+        to={onStory ? site.path : site.story}
+        data-room={onStory ? "work" : "man"}
+        data-shown={passageShown}
+        tabIndex={passageShown ? undefined : -1}
+        aria-hidden={passageShown ? undefined : true}
+      >
+        <span className="chrome-passage-seam" aria-hidden />
+        <span className="chrome-passage-label">
+          {onStory ? "The work" : "The man behind the music"}
+        </span>
+      </Link>
+    </header>
+  );
+}
+
+/**
+ * A plate that waits for the house title to part, then opens. Used for the
+ * first portrait on the man page so the wipe is not spent behind the curtain.
+ */
+export function OpenPlate({
+  photo,
+  caption,
+}: {
+  photo: Photo;
+  caption?: string;
+}) {
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    if (prefersReducedMotion()) {
+      setOpen(true);
+      return;
+    }
+
+    const house = document.querySelector(".house");
+    let delayId = 0;
+
+    const begin = () => {
+      delayId = window.setTimeout(() => setOpen(true), 420);
+    };
+
+    if (!house) {
+      begin();
+      return () => window.clearTimeout(delayId);
+    }
+
+    if (house.getAttribute("data-ready") === "true") {
+      begin();
+      return () => window.clearTimeout(delayId);
+    }
+
+    const watcher = new MutationObserver(() => {
+      if (house.getAttribute("data-ready") !== "true") return;
+      watcher.disconnect();
+      begin();
+    });
+    watcher.observe(house, { attributes: true, attributeFilter: ["data-ready"] });
+
+    return () => {
+      watcher.disconnect();
+      window.clearTimeout(delayId);
+    };
+  }, []);
+
+  return (
+    <figure className="arch nocturne-open" data-open={open || undefined} data-parallax data-scroll>
+      <span className="nocturne-open-rule" aria-hidden />
+      <div className="arch-frame nocturne-open-frame">
+        <img
+          src={photo.src}
+          width={photo.width}
+          height={photo.height}
+          alt={photo.alt}
+          loading="eager"
+          decoding="async"
+        />
+      </div>
+      <figcaption className="arch-caption">
+        {caption ? <span>{caption}</span> : null}
+        <span className="nocturne-credit">{photo.credit}</span>
+      </figcaption>
+    </figure>
+  );
+}
 
 /** The client list as a cast page: names set, not logos pasted. */
 export function Cast() {
@@ -144,10 +299,12 @@ export function Interval({ label = "Interval" }: { label?: string }) {
  * A curtain was wrong because the hero already opens one. A lit stage was wrong
  * because it was a second piece of scenery arguing with the first. What is left
  * is the thing the whole page is about — the name, on black, with a rule drawn
- * under it — which is also what the best title pages have always done.
+ * under it — which is also what the best title pages have always done. On the
+ * man page the critical plate is the opening portrait.
  */
 export function Loader() {
-  const ready = useReady(photos.press.src);
+  const onStory = useLocation().pathname === site.story;
+  const ready = useReady(onStory ? photos.seated.src : photos.press.src);
   const typeset = useTypeset(["300 88px Fraunces"]);
 
   return (
@@ -157,9 +314,7 @@ export function Loader() {
         <span>Dennis Lau</span>
       </p>
       <span className="house-rule" aria-hidden />
-      <p className="house-mark">
-        {conceptById("nocturne").ordinal} · Nocturne · Velvet and lamplight
-      </p>
+      <p className="house-mark">Blesspoke</p>
     </div>
   );
 }

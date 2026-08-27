@@ -45,72 +45,139 @@
   left: 0;
   right: 0;
   z-index: 30;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-  align-items: baseline;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: var(--space-md);
-  padding: var(--space-lg) clamp(var(--space-md), 4vw, var(--space-3xl));
+  padding: var(--space-md) clamp(var(--space-md), 4vw, var(--space-3xl));
   pointer-events: none;
 }
 
-.dragon .chrome-back,
-.dragon .chrome-title,
-.dragon .chrome-cross {
+/* Type only — no paper chips, no full-width wash. Ink on paper by default;
+   paper on ink when the dark sections cross the masthead. */
+.dragon .chrome-brand {
   pointer-events: auto;
-  margin: 0;
+  position: relative;
+  z-index: 1;
+  flex: 0 0 auto;
   font-size: 11px;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.28em;
   text-transform: uppercase;
-  color: var(--ink-soft);
-  background: color-mix(in oklab, var(--paper) 84%, transparent);
-  padding: var(--space-2xs) var(--space-xs);
-}
-
-.dragon .chrome-back {
-  justify-self: start;
-  text-decoration: none;
-}
-
-.dragon .chrome-back:hover,
-.dragon .chrome-cross:hover {
   color: var(--cinnabar);
+  text-decoration: none;
+  transition: color 320ms var(--ease-out);
 }
 
-.dragon .chrome-title {
+.dragon .chrome-brand:hover,
+.dragon .chrome-brand:focus-visible {
+  color: var(--ink);
+}
+
+.dragon .chrome-passage {
+  pointer-events: none;
+  position: relative;
+  z-index: 1;
   display: flex;
-  gap: var(--space-sm);
-  justify-self: center;
-}
-
-.dragon .chrome-cross {
-  justify-self: end;
-  text-align: right;
+  align-items: center;
+  gap: 0.85rem;
+  max-width: min(100%, 22rem);
+  min-height: 2.75rem;
+  padding: 0.55rem 0.15rem 0.55rem 0;
   text-decoration: none;
+  color: var(--ink);
+  opacity: 0;
+  transform: translateY(-8px);
+  transition:
+    color 320ms var(--ease-out),
+    opacity 520ms var(--ease-out),
+    transform 620ms var(--ease-out);
 }
 
-.dragon .chrome-cross-narrow {
-  display: none;
+.dragon .chrome-passage[data-shown="true"] {
+  pointer-events: auto;
+  opacity: 1;
+  transform: none;
 }
 
-.dragon .chrome-ordinal {
+.dragon .chrome-passage:hover,
+.dragon .chrome-passage:focus-visible,
+.dragon .chrome-passage:active {
+  color: var(--cinnabar);
+  outline: none;
+}
+
+.dragon .chrome-passage-seam {
+  flex: 0 0 1px;
+  align-self: stretch;
+  min-height: 1.55rem;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    var(--cinnabar) 22%,
+    var(--cinnabar) 78%,
+    transparent
+  );
+}
+
+.dragon .chrome-passage-label {
+  min-width: 0;
+  padding: 0.15rem 0;
+  font-family: var(--display);
+  font-size: clamp(1rem, 0.9rem + 0.4vw, 1.2rem);
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+  text-wrap: balance;
+}
+
+/* Over ink: flip to paper. */
+.dragon .chrome[data-ground="ink"] .chrome-brand {
   color: var(--cinnabar);
 }
 
-.dragon .chrome-tag {
-  color: var(--ink-faint);
+.dragon .chrome[data-ground="ink"] .chrome-brand:hover,
+.dragon .chrome[data-ground="ink"] .chrome-brand:focus-visible {
+  color: var(--paper);
+}
+
+.dragon .chrome[data-ground="ink"] .chrome-passage {
+  color: var(--paper);
+}
+
+.dragon .chrome[data-ground="ink"] .chrome-passage:hover,
+.dragon .chrome[data-ground="ink"] .chrome-passage:focus-visible,
+.dragon .chrome[data-ground="ink"] .chrome-passage:active {
+  color: color-mix(in oklab, var(--cinnabar) 70%, var(--paper));
 }
 
 @media (max-width: 720px) {
-  .dragon .chrome-tag {
-    display: none;
+  .dragon .chrome {
+    gap: 0.65rem;
+    padding: 0.55rem 0.85rem;
   }
 
-  .dragon .chrome-cross-wide {
-    display: none;
+  .dragon .chrome-brand {
+    font-size: 10px;
+    letter-spacing: 0.2em;
   }
 
-  .dragon .chrome-cross-narrow {
-    display: inline;
+  .dragon .chrome-passage {
+    gap: 0.65rem;
+    max-width: min(100%, 11.5rem);
+    min-height: 2.5rem;
+    padding: 0.35rem 0;
+  }
+
+  .dragon .chrome-passage-label {
+    font-size: 0.95rem;
+    line-height: 1.2;
+    text-align: right;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dragon .chrome-passage {
+    transition: none;
+    transform: none;
   }
 }
 
@@ -312,6 +379,79 @@
   padding: clamp(var(--space-3xl), 9vw, var(--space-5xl))
     clamp(var(--space-lg), 7vw, var(--space-5xl));
   border-top: 1px solid var(--rule);
+}
+
+/* Extra top padding clears the masthead. Scroll lands on the section edge so
+   paper fills under the bar — not a strip of the previous block. */
+.dragon #commission {
+  padding-top: calc(clamp(var(--space-3xl), 9vw, var(--space-5xl)) + clamp(3.25rem, 8vh, 5.5rem));
+}
+
+/* Opening plate: held until the sheet lifts, then wiped like a brush stroke. */
+.dragon-open {
+  position: relative;
+}
+
+.dragon-open-seal {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  z-index: 2;
+  font-family: "Ma Shan Zheng", var(--display);
+  font-size: 1.4rem;
+  color: var(--cinnabar);
+  opacity: 0;
+  transform: scale(0.86);
+  transition:
+    opacity 700ms var(--ease-out) 480ms,
+    transform 900ms var(--ease-out) 480ms;
+  pointer-events: none;
+}
+
+.dragon-open-photo {
+  overflow: hidden;
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 1500ms var(--ease-out);
+}
+
+.dragon-open-photo img {
+  transform: scale(1.08);
+  transition: transform 2000ms var(--ease-out);
+  will-change: transform;
+}
+
+.dragon-open[data-open] .dragon-open-seal {
+  opacity: 1;
+  transform: none;
+}
+
+.dragon-open[data-open] .dragon-open-photo {
+  clip-path: inset(0 0 0 0);
+}
+
+.dragon-open[data-open] .dragon-open-photo img {
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dragon-open-seal,
+  .dragon-open-photo,
+  .dragon-open-photo img {
+    transition: none;
+  }
+
+  .dragon-open-seal {
+    opacity: 1;
+    transform: none;
+  }
+
+  .dragon-open-photo {
+    clip-path: none;
+  }
+
+  .dragon-open-photo img {
+    transform: none;
+  }
 }
 
 @media (min-width: 940px) {
@@ -1447,23 +1587,6 @@ canvas:not([hidden]) + .dragon-hero-plate {
 
 .dragon .showreel-open:hover .showreel-play {
   background: color-mix(in oklab, var(--ink) 24%, transparent);
-}
-
-/* The chrome sits over whatever is scrolling past. A short gradient of the
-   concept's own ground keeps it legible without a bar or a border. */
-.dragon .chrome::before {
-  content: "";
-  position: absolute;
-  inset: 0 0 auto 0;
-  height: calc(100% + var(--space-2xl));
-  z-index: -1;
-  pointer-events: none;
-  background: linear-gradient(
-    180deg,
-    var(--paper) 0%,
-    color-mix(in oklab, var(--paper) 74%, transparent) 54%,
-    transparent 100%
-  );
 }
 
 .dragon-born {

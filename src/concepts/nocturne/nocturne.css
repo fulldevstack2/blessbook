@@ -57,69 +57,143 @@
   left: 0;
   right: 0;
   z-index: 30;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-  align-items: baseline;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: var(--space-md);
-  padding: var(--space-lg) clamp(var(--space-lg), 5vw, var(--space-4xl));
+  padding: var(--space-md) clamp(var(--space-lg), 5vw, var(--space-4xl));
+  pointer-events: none;
+}
+
+/* Type only — no velvet wash across the page. Light marks on velvet; ink on
+   ivory when a lit act crosses the masthead. */
+.nocturne .chrome-brand {
+  pointer-events: auto;
+  position: relative;
+  z-index: 1;
+  flex: 0 0 auto;
   font-size: 10px;
   letter-spacing: 0.32em;
   text-transform: uppercase;
-  color: var(--ivory-soft);
+  color: var(--brass);
+  text-decoration: none;
+  transition: color 400ms var(--ease-out);
 }
 
-.nocturne .chrome::before {
-  content: "";
-  position: absolute;
-  inset: 0 0 auto 0;
-  height: calc(100% + var(--space-2xl));
-  z-index: -1;
+.nocturne .chrome-brand:hover,
+.nocturne .chrome-brand:focus-visible {
+  color: var(--ivory);
+}
+
+.nocturne .chrome-passage {
   pointer-events: none;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  max-width: min(100%, 22rem);
+  min-height: 2.75rem;
+  padding: 0.55rem 0.15rem 0.55rem 0;
+  text-decoration: none;
+  color: var(--ivory-soft);
+  opacity: 0;
+  transform: translateY(-8px);
+  transition:
+    color 400ms var(--ease-out),
+    opacity 520ms var(--ease-out),
+    transform 620ms var(--ease-out);
+}
+
+.nocturne .chrome-passage[data-shown="true"] {
+  pointer-events: auto;
+  opacity: 1;
+  transform: none;
+}
+
+.nocturne .chrome-passage:hover,
+.nocturne .chrome-passage:focus-visible,
+.nocturne .chrome-passage:active {
+  color: var(--brass);
+  outline: none;
+}
+
+.nocturne .chrome-passage-seam {
+  flex: 0 0 1px;
+  align-self: stretch;
+  min-height: 1.55rem;
   background: linear-gradient(
     180deg,
-    var(--velvet-deep) 0%,
-    color-mix(in oklab, var(--velvet-deep) 70%, transparent) 52%,
-    transparent 100%
+    transparent,
+    var(--brass) 22%,
+    var(--brass) 78%,
+    transparent
   );
 }
 
-.nocturne .chrome-back {
-  justify-self: start;
-  text-decoration: none;
-  color: var(--ivory-soft);
-  transition: color 400ms var(--ease-out);
+.nocturne .chrome-passage-label {
+  min-width: 0;
+  padding: 0.15rem 0;
+  font-family: var(--display);
+  font-size: clamp(1rem, 0.9rem + 0.35vw, 1.15rem);
+  font-weight: 300;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+  text-transform: none;
+  text-wrap: balance;
 }
 
-.nocturne .chrome-back:hover,
-.nocturne .chrome-cross:hover {
+/* Over cream: keep brass marks — never near-black ink. Ivory acts still hold
+   dark panels (the reel), and ink type vanishes on those. */
+.nocturne .chrome[data-ground="ivory"] .chrome-brand {
+  color: var(--brass-deep);
+}
+
+.nocturne .chrome[data-ground="ivory"] .chrome-brand:hover,
+.nocturne .chrome[data-ground="ivory"] .chrome-brand:focus-visible {
   color: var(--brass);
 }
 
-.nocturne .chrome-title {
-  display: flex;
-  gap: var(--space-md);
-  justify-self: center;
-  margin: 0;
+.nocturne .chrome[data-ground="ivory"] .chrome-passage {
+  color: var(--brass-deep);
 }
 
-.nocturne .chrome-cross {
-  justify-self: end;
-  text-align: right;
-  text-decoration: none;
-  color: var(--ivory-soft);
-  transition: color 400ms var(--ease-out);
-}
-
-.nocturne .chrome-cross-narrow {
-  display: none;
-}
-
-.nocturne .chrome-ordinal {
+.nocturne .chrome[data-ground="ivory"] .chrome-passage:hover,
+.nocturne .chrome[data-ground="ivory"] .chrome-passage:focus-visible,
+.nocturne .chrome[data-ground="ivory"] .chrome-passage:active {
   color: var(--brass);
 }
 
-.nocturne .chrome-tag {
-  color: color-mix(in oklab, var(--ivory) 52%, transparent);
+@media (max-width: 720px) {
+  .nocturne .chrome {
+    gap: 0.65rem;
+    padding: 0.55rem 0.85rem;
+  }
+
+  .nocturne .chrome-brand {
+    font-size: 9px;
+    letter-spacing: 0.24em;
+  }
+
+  .nocturne .chrome-passage {
+    gap: 0.65rem;
+    max-width: min(100%, 11.5rem);
+    min-height: 2.5rem;
+    padding: 0.35rem 0;
+  }
+
+  .nocturne .chrome-passage-label {
+    font-size: 0.95rem;
+    line-height: 1.2;
+    text-align: right;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nocturne .chrome-passage {
+    transition: none;
+    transform: none;
+  }
 }
 
 /* ---------- the hero ---------- */
@@ -311,6 +385,85 @@
   padding: clamp(var(--space-4xl), 12vh, 180px) clamp(var(--space-lg), 6vw, var(--space-5xl));
   max-width: 1360px;
   margin-inline: auto;
+}
+
+/* Extra top padding clears the masthead when arriving at the last door. */
+.nocturne #commission {
+  padding-top: calc(clamp(var(--space-4xl), 12vh, 180px) + clamp(3.25rem, 8vh, 5.5rem));
+}
+
+/* Opening plate: held until the house parts, then wiped open. */
+.nocturne-open-rule {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 2;
+  width: 1px;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    var(--brass) 18%,
+    var(--brass) 82%,
+    transparent
+  );
+  opacity: 0;
+  transform: scaleY(0.2);
+  transform-origin: center top;
+  transition:
+    opacity 900ms var(--ease-out) 180ms,
+    transform 1400ms var(--ease-out) 180ms;
+  pointer-events: none;
+}
+
+.nocturne-open {
+  position: relative;
+}
+
+.nocturne-open-frame {
+  overflow: hidden;
+  clip-path: inset(0 0 100% 0);
+  transition: clip-path 1600ms var(--ease-out);
+}
+
+.nocturne-open-frame img {
+  transform: scale(1.08);
+  transition: transform 2200ms var(--ease-out);
+  will-change: transform;
+}
+
+.nocturne-open[data-open] .nocturne-open-rule {
+  opacity: 1;
+  transform: none;
+}
+
+.nocturne-open[data-open] .nocturne-open-frame {
+  clip-path: inset(0 0 0 0);
+}
+
+.nocturne-open[data-open] .nocturne-open-frame img {
+  transform: scale(1.02) translateY(calc(var(--shift, 0) * -3%));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nocturne-open-rule,
+  .nocturne-open-frame,
+  .nocturne-open-frame img {
+    transition: none;
+  }
+
+  .nocturne-open-rule {
+    opacity: 1;
+    transform: none;
+  }
+
+  .nocturne-open-frame {
+    clip-path: none;
+  }
+
+  .nocturne-open-frame img {
+    transform: none;
+  }
 }
 
 /* Lit pages between dark ones: the pulse of the scroll. */
@@ -2298,24 +2451,9 @@
 
 /* ---------- narrow screens ----------
 
-   Three things go wrong on a phone and they all reduce to width. The chrome
-   tagline wraps onto the title, the proscenium's round head becomes a dome
-   because the frame is taller than it is wide, and ivory type on lit velvet
-   loses the contrast it has when the cloth is further away. */
-
-@media (max-width: 560px) {
-  .nocturne .chrome-tag {
-    display: none;
-  }
-
-  .nocturne .chrome-cross-wide {
-    display: none;
-  }
-
-  .nocturne .chrome-cross-narrow {
-    display: inline;
-  }
-}
+   On a phone the proscenium's round head becomes a dome because the frame is
+   taller than it is wide, and ivory type on lit velvet loses the contrast it
+   has when the cloth is further away. */
 
 @media (max-width: 899px) {
   /* A pool of the house's own dark behind the type, so the words sit on
