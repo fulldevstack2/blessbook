@@ -1,5 +1,6 @@
 import { useEffect, useRef, type CSSProperties, type ReactNode } from "react";
 import { clients } from "../../content/clients";
+import { audience } from "../../content/dennis";
 import { films } from "../../content/work";
 import { useReady } from "../../lib/useReady";
 import { useTypeset } from "../../lib/useTypeset";
@@ -255,20 +256,28 @@ export function Loader() {
 }
 
 /**
- * A hundred and sixty-eight thousand people, counted the way they are counted.
+ * A million people, counted the way they are counted.
  *
  * This was a photograph of the hall — a dark, soft frame in which you could not
  * actually see a single person, captioned with a number you had to take on
  * trust. So the number is drawn instead, in the mark every Chinese-speaking
  * child learns to count with: 正, five strokes, one per person tallied. Here one
- * mark is a thousand, and there are a hundred and sixty-eight of them.
+ * *stroke* is a thousand people — so each 正 stands for five thousand, and a
+ * million of them is two hundred marks.
+ *
+ * The count is derived from the figure in `content/dennis.ts` rather than typed.
+ * It used to be a literal beside a literal number, which is exactly how the two
+ * came apart when the figure changed.
  *
  * They are brushed on in sequence as the section passes, so the count happens in
  * front of you rather than arriving finished.
  */
 export function Marks() {
   const root = useRef<HTMLElement>(null);
-  const marks = Array.from({ length: 168 }, (_, index) => index);
+  const marks = Array.from(
+    { length: audience.people / (audience.perStroke * audience.strokes) },
+    (_, index) => index,
+  );
   // Dragon does not run the parallax pass — it has no framed photography to
   // drift — so this section measures its own passage.
   useSectionProgress(root, { ease: 0.14 });
@@ -276,7 +285,7 @@ export function Marks() {
   return (
     <section className="marks" ref={root}>
       <p className="marks-head" data-reveal>
-        <span className="marks-figure">168,000</span>
+        <span className="marks-figure">{audience.shown}</span>
         <span className="marks-unit">people, so far</span>
       </p>
 

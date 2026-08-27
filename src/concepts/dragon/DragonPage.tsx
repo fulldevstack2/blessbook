@@ -229,7 +229,7 @@ export function DragonPage() {
         <section className="dragon-section">
           <Margin index={1} label="Training" />
           <div>
-            <Words as="h2" className="dragon-h2" text={"Eighteen years of training, then eighteen years on stage"} />
+            <Words as="h2" className="dragon-h2" text={"Eighteen years of training, then twenty-three years on stage"} />
             <ul className="dragon-list">
               {training.map((line, index) => (
                 <li key={line} data-reveal>

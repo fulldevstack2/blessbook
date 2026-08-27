@@ -66,11 +66,32 @@ export interface Credential {
  * His own counters, from his own site. These are the scale that makes one
  * commission feel like access rather than a transaction.
  */
+/**
+ * How many people have been in his audiences, and how that number gets drawn.
+ *
+ * One figure, not two. Dragon counts this out in 正 marks and used to carry both
+ * the number and the number of marks as separate literals — the same fact
+ * written twice, which is how a figure ends up updated in one place and stale in
+ * the other. The count is derived from `people` now.
+ *
+ * 正 is the five-stroke tally every Chinese-speaking child learns to count with,
+ * so a stroke is the unit and the character is five of them.
+ */
+export const audience = {
+  people: 1_000_000,
+  /** As it is set on the page. */
+  shown: "1,000,000",
+  /** One stroke stands for this many people. */
+  perStroke: 1_000,
+  /** Strokes in 正. */
+  strokes: 5,
+} as const;
+
 export const record: readonly Credential[] = [
-  { label: "Years on stage", value: "18" },
+  { label: "Years on stage", value: "23" },
   { label: "Performances", value: "10,000+" },
-  { label: "In his audiences", value: "168,000" },
-  { label: "Original songs", value: "57" },
+  { label: "In his audiences", value: audience.shown },
+  { label: "Original songs", value: "100+" },
   { label: "Awards", value: "10" },
   { label: "Continents", value: "Five" },
 ];
@@ -272,7 +293,7 @@ export const commissionStory = {
  * full record above.
  */
 export const tallies: readonly Credential[] = [
-  { label: "Original songs", value: "57" },
+  { label: "Original songs", value: "100+" },
   { label: "Performances", value: "10,000+" },
   { label: "Continents", value: "Five" },
   { label: "Instruments built to his drawings", value: "Three" },

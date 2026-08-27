@@ -64,7 +64,7 @@ const cuts = [
   {
     mark: "The record",
     line: "Ten thousand performances",
-    sub: "In front of a hundred and sixty-eight thousand people, across five continents.",
+    sub: "In front of a million people, across five continents.",
   },
 ];
 

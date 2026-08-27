@@ -2792,11 +2792,26 @@ canvas[hidden] + .phoenix-hero-plate {
   width: min(30ch, 42vw);
   display: grid;
   gap: var(--space-md);
-  /* It clears out of the way as the object comes round to face you, then comes
-     back for the next one. Off `--cut` and not `--p`: the section turns all
-     three instruments now, and a plate that reads the whole track would leave
-     after the Phoenix and take the other two sets of particulars with it. */
-  opacity: clamp(0, min(var(--cut, 0) * 8, 1.5 - var(--cut, 0) * 2.4), 1);
+  /* It stays while you are reading it, and leaves only when the next instrument
+     is arriving.
+
+     It used to clear out of the way early — full at a tenth of the way through a
+     cut, gone by five eighths — so for most of the time an object was on screen
+     its particulars were not, which is the wrong way round: the plate is the
+     reason the object is being turned slowly enough to look at. A tenth of a cut
+     to arrive and a tenth to leave now, and it is up the whole way between. The
+     hand-over happens inside that gap: the text is swapped when `--cut` wraps
+     past one, which is exactly where the opacity is nought, so the change is
+     never seen.
+
+     Off `--cut` and not `--p`: the section turns all three instruments, and a
+     plate that read the whole track would leave after the Phoenix and take the
+     other two sets of particulars with it. */
+  opacity: clamp(
+    0,
+    min((var(--cut, 0) - 0.05) * 14, (0.95 - var(--cut, 0)) * 14),
+    1
+  );
 }
 
 .phoenix .turned-eyebrow {
