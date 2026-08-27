@@ -55,8 +55,12 @@ export function useSmoothScroll(): void {
       // Nothing accumulates while the page is still arriving, or the wheel you
       // turned during the loader would fire the moment it lifted.
       if (document.documentElement.dataset.loading) {
-        target = 0;
-        current = 0;
+        /* Commission (and other hash) arrivals are already pinned to their
+           section under the veil — do not yank the target back to the hero. */
+        if (!document.documentElement.dataset.arrive) {
+          target = 0;
+          current = 0;
+        }
         return;
       }
       target = Math.min(limit(), Math.max(0, target + amount));
@@ -106,6 +110,20 @@ export function useSmoothScroll(): void {
       current = target;
     };
 
+    /** Hash landings (and the loader pin) move scroll without the wheel. When
+        arrival ends, adopt whatever position ScrollToTop just asked for. */
+    const onArrival = () => {
+      if (document.documentElement.dataset.loading === "true") return;
+      target = window.scrollY;
+      current = target;
+    };
+
+    const loadingWatch = new MutationObserver(onArrival);
+    loadingWatch.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-loading"],
+    });
+
     window.addEventListener("wheel", onWheel, { passive: false });
     window.addEventListener("keydown", onKey);
     window.addEventListener("scroll", resync, { passive: true });
@@ -113,6 +131,7 @@ export function useSmoothScroll(): void {
 
     return () => {
       if (frame) cancelAnimationFrame(frame);
+      loadingWatch.disconnect();
       window.removeEventListener("wheel", onWheel);
       window.removeEventListener("keydown", onKey);
       window.removeEventListener("scroll", resync);

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { tiers } from "../content/commission";
 import { sounding_, watch } from "../lib/listening";
 
@@ -20,6 +21,10 @@ import { sounding_, watch } from "../lib/listening";
  * nearly the full width, so this lifts above it rather than fighting for the
  * corner.
  *
+ * On the second page there is no commission to point at, so it points at the
+ * first page's — same button, same price, one navigation further. The absence of
+ * a local target is the signal: nothing has to be configured per page.
+ *
  * It is a real anchor to a real id, so it works before any of this runs. The
  * *shape* of it belongs to each concept: see `.tocommission` in the three
  * stylesheets. A single boxed pill in three colours was the one piece of
@@ -35,7 +40,14 @@ const from = tiers.reduce(
   tiers[0] as (typeof tiers)[number],
 );
 
-export function Commission({ label = "Commission a song" }: { label?: string }) {
+export function Commission({
+  label = "Commission a song",
+  /** Where the commission lives, when it is not on this page. */
+  to,
+}: {
+  label?: string;
+  to?: string;
+}) {
   const [shown, setShown] = useState(false);
   const [sounding, setSounding] = useState(false);
   const [blocked, setBlocked] = useState(false);
@@ -55,10 +67,18 @@ export function Commission({ label = "Commission a song" }: { label?: string }) 
 
   useEffect(() => {
     const target = document.getElementById("commission");
-    if (!target) return;
     /* The hero is the first pinned track on the page and it is four or five
        screens tall, so "past the hero" is simply "that track has left". */
     const hero = document.querySelector(".stage-track");
+
+    /* No commission on this page: it cannot be in the way of what you are
+       reading, so it is shown from the moment there is any page behind you. */
+    if (!target) {
+      const enough = () => setShown(window.scrollY > window.innerHeight * 0.6);
+      enough();
+      window.addEventListener("scroll", enough, { passive: true });
+      return () => window.removeEventListener("scroll", enough);
+    }
 
     let atTarget = false;
     let atHero = Boolean(hero);
@@ -90,25 +110,50 @@ export function Commission({ label = "Commission a song" }: { label?: string }) 
     return () => watchers.forEach((watcher) => watcher.disconnect());
   }, []);
 
-  return (
-    <a
-      className="tocommission"
-      href="#commission"
-      data-shown={shown && !blocked}
-      data-lifted={sounding}
-      tabIndex={shown && !blocked ? undefined : -1}
-      onClick={(event) => {
-        const target = document.getElementById("commission");
-        if (!target) return; // let the anchor do it
-        event.preventDefault();
-        target.scrollIntoView({ behavior: "smooth", block: "start" });
-      }}
-    >
+  const props = {
+    className: "tocommission",
+    "data-shown": shown && !blocked,
+    "data-lifted": sounding,
+    tabIndex: shown && !blocked ? undefined : -1,
+  } as const;
+
+  const body = (
+    <>
       <span className="tocommission-rule" aria-hidden />
       <span className="tocommission-words">
         <span className="tocommission-word">{label}</span>
         <span className="tocommission-price">From {from.price}</span>
       </span>
+    </>
+  );
+
+  /* Another page: open onto the commission under the veil — same curtain, no
+     hero, no fast-forward through the work. Hash is the arrival intent. */
+  if (to) {
+    const pathname = to.replace(/#.*$/, "");
+    return (
+      <Link
+        {...props}
+        to={{ pathname, hash: "#commission" }}
+        state={{ arrive: "commission" }}
+      >
+        {body}
+      </Link>
+    );
+  }
+
+  return (
+    <a
+      {...props}
+      href="#commission"
+      onClick={(event) => {
+        const target = document.getElementById("commission");
+        if (!target) return;
+        event.preventDefault();
+        target.scrollIntoView({ behavior: "smooth", block: "start" });
+      }}
+    >
+      {body}
     </a>
   );
 }

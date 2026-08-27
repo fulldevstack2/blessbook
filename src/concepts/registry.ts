@@ -11,6 +11,15 @@ export interface Concept {
   readonly id: ConceptId;
   readonly ordinal: string;
   readonly path: string;
+  /**
+   * The second page: everything about the man rather than the work.
+   *
+   * The work comes first now — a visitor lands on the songs, the films and who
+   * books him, and the biography, the record, the instrument and the calling sit
+   * one click away. That was the client's read and it is the right one: this is a
+   * page for commissioning music, and the reason to commission it is the music.
+   */
+  readonly story: string;
   /** Design direction name — also the instrument it is named for. */
   readonly name: string;
   readonly tagline: string;
@@ -42,6 +51,7 @@ export const concepts: readonly Concept[] = [
     id: "phoenix",
     ordinal: "01",
     path: "/phoenix",
+    story: "/phoenix/the-man",
     name: "Phoenix",
     tagline: "Gilded",
     object: "A gold-leaf lacquer screen, and a velvet-lined flight case.",
@@ -63,6 +73,7 @@ export const concepts: readonly Concept[] = [
     id: "nocturne",
     ordinal: "02",
     path: "/nocturne",
+    story: "/nocturne/the-man",
     name: "Nocturne",
     tagline: "Velvet and lamplight",
     object: "A velvet house before the doors open, and one lamp still lit.",
@@ -87,6 +98,7 @@ export const concepts: readonly Concept[] = [
     id: "dragon",
     ordinal: "03",
     path: "/dragon",
+    story: "/dragon/the-man",
     name: "Dragon",
     tagline: "Ink and jade",
     object: "An ink-wash scroll, jade hairlines, and a carved seal in the margin.",

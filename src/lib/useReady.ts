@@ -13,11 +13,27 @@ import { useEffect, useState } from "react";
  * a transition put you halfway into a gesture you never saw begin, which reads
  * as a bug even when everything is working; a curtain does not go up early
  * because somebody in the stalls leaned forward.
+ *
+ * If `data-arrive` names a section id (set by Arrival before this runs), the
+ * hold pins to that section rather than the top — so the curtain opens onto
+ * the commission, not onto the hero with a jump afterward.
  */
 
 const FLOOR_MS = 1100;
 /** Long enough to cover the loader's own exit. */
 const HOLD_MS = 900;
+
+function placeArrival(): void {
+  const id = document.documentElement.dataset.arrive;
+  if (id) {
+    const target = document.getElementById(id);
+    if (target) {
+      target.scrollIntoView({ block: "start" });
+      return;
+    }
+  }
+  window.scrollTo(0, 0);
+}
 
 export function useReady(criticalImage?: string): boolean {
   const [ready, setReady] = useState(false);
@@ -58,7 +74,7 @@ export function useReady(criticalImage?: string): boolean {
 
     if (!ready) {
       root.dataset.loading = "true";
-      window.scrollTo(0, 0);
+      placeArrival();
 
       const stop = (event: Event) => event.preventDefault();
       const stopKeys = (event: KeyboardEvent) => {
@@ -66,21 +82,26 @@ export function useReady(criticalImage?: string): boolean {
           event.preventDefault();
         }
       };
-      const pin = () => window.scrollTo(0, 0);
+
+      /* Seek until the target mounts (cross-page commission lands before the
+         work page has committed #commission), then hold there under the veil. */
+      const seek = window.setInterval(placeArrival, 50);
 
       window.addEventListener("wheel", stop, { passive: false });
       window.addEventListener("touchmove", stop, { passive: false });
       window.addEventListener("keydown", stopKeys);
-      window.addEventListener("scroll", pin, { passive: true });
+      window.addEventListener("scroll", placeArrival, { passive: true });
 
       return () => {
+        window.clearInterval(seek);
         window.removeEventListener("wheel", stop);
         window.removeEventListener("touchmove", stop);
         window.removeEventListener("keydown", stopKeys);
-        window.removeEventListener("scroll", pin);
+        window.removeEventListener("scroll", placeArrival);
       };
     }
 
+    placeArrival();
     const timer = window.setTimeout(() => {
       delete root.dataset.loading;
     }, HOLD_MS);

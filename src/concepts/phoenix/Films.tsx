@@ -33,7 +33,7 @@ export function Films({ caption }: { caption: string }) {
               type="button"
               className="film-open"
               onClick={(event) => show(film, event)}
-              aria-label={`Watch ${film.title} — ${film.note}`}
+              aria-label={`Watch ${film.title}. ${film.note}`}
             >
               <span className="film-open-mark" aria-hidden />
               <span className="film-open-word">Play film</span>

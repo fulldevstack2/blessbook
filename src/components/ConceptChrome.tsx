@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { concepts, type Concept } from "../concepts/registry";
 
 /**
@@ -9,6 +9,10 @@ import { concepts, type Concept } from "../concepts/registry";
 
 export function ConceptChrome({ concept }: { concept: Concept }) {
   const bar = useRef<HTMLElement>(null);
+  /* Which of the concept's two pages this is. The bar carries the way to the
+     other one, so the crossing lives in a single place for all six pages rather
+     than being pasted into the foot of each. */
+  const onStory = useLocation().pathname === concept.story;
 
   /**
    * The bar leaves while you are reading and comes back the moment you turn
@@ -55,6 +59,19 @@ export function ConceptChrome({ concept }: { concept: Concept }) {
         <span className="chrome-name">{concept.name}</span>
         <span className="chrome-tag">{concept.tagline}</span>
       </p>
+      <Link className="chrome-cross" to={onStory ? concept.path : concept.story}>
+        {onStory ? (
+          <>
+            The work <span aria-hidden>&rarr;</span>
+          </>
+        ) : (
+          <>
+            <span className="chrome-cross-wide">The man behind the music</span>
+            <span className="chrome-cross-narrow">The man</span>{" "}
+            <span aria-hidden>&rarr;</span>
+          </>
+        )}
+      </Link>
     </header>
   );
 }

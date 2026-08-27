@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { ScrollStage } from "../../lib/ScrollStage";
 import { SceneCanvas } from "../../lib/SceneCanvas";
 import { createBandScene } from "./bandScene";
@@ -6,6 +7,7 @@ import { createInstrumentScene } from "./instrumentScene";
 import { clients, clientWall } from "../../content/clients";
 import { useReady } from "../../lib/useReady";
 import { useTypeset } from "../../lib/useTypeset";
+import { prefersReducedMotion } from "../../lib/prefersReducedMotion";
 import { photos } from "../../content/media";
 import { Brief } from "../../components/Brief";
 import { artist, record, territories } from "../../content/dennis";
@@ -25,7 +27,66 @@ import { TURNED } from "../../lib/loadModel";
  * The shape here is gilding: a hairline of gold, struck numerals, engraved
  * plaques. Nothing is drawn as a dot or a chart, because this concept does not
  * measure — it strikes.
+ *
+ * Phoenix is treated as the live site now: no way back to the design chooser,
+ * no links to the other two directions. The bar is Blesspoke's own masthead.
  */
+
+const site = conceptById("phoenix");
+
+/**
+ * The site bar. Brand on the left; the other room on the right (work or man).
+ *
+ * Not a button with an arrow. A short gold seam and the destination in display
+ * type. Same door on phone and desktop. On the work page the passage waits
+ * until the hero has left; on the man page the brand (and "The work") bring
+ * you back.
+ */
+export function SiteChrome() {
+  const onStory = useLocation().pathname === site.story;
+  const [passageShown, setPassageShown] = useState(onStory);
+
+  useEffect(() => {
+    if (onStory) {
+      setPassageShown(true);
+      return;
+    }
+
+    const hero = document.querySelector(".phoenix-stage");
+    if (!hero) {
+      setPassageShown(true);
+      return;
+    }
+
+    setPassageShown(false);
+    const watcher = new IntersectionObserver(([entry]) => {
+      setPassageShown(!(entry?.isIntersecting ?? true));
+    });
+    watcher.observe(hero);
+    return () => watcher.disconnect();
+  }, [onStory]);
+
+  return (
+    <header className="chrome">
+      <Link className="chrome-brand" to={site.path}>
+        Blesspoke
+      </Link>
+      <Link
+        className="chrome-passage"
+        to={onStory ? site.path : site.story}
+        data-room={onStory ? "work" : "man"}
+        data-shown={passageShown}
+        tabIndex={passageShown ? undefined : -1}
+        aria-hidden={passageShown ? undefined : true}
+      >
+        <span className="chrome-passage-seam" aria-hidden />
+        <span className="chrome-passage-label">
+          {onStory ? "The work" : "The man behind the music"}
+        </span>
+      </Link>
+    </header>
+  );
+}
 
 /**
  * The record as gilded gauges: a hairline that fills with gold, and the figure
@@ -294,10 +355,12 @@ export function Plate({ photo, line, tall = false }: { photo: Photo; line?: stri
  * The curtain this concept raises: a black room, his name, and nothing else.
  *
  * It holds while the fonts and the hero photograph load, then opens sideways and
- * the page is behind it. Nothing spins, nothing is drawn on top.
+ * the page is behind it. Nothing spins, nothing is drawn on top. On the man page
+ * the critical plate is the opening portrait, not the work-page press shot.
  */
 export function Loader() {
-  const ready = useReady(photos.press.src);
+  const onStory = useLocation().pathname === site.story;
+  const ready = useReady(onStory ? photos.live.src : photos.press.src);
   const typeset = useTypeset(["400 64px Italiana"]);
 
   return (
@@ -310,7 +373,68 @@ export function Loader() {
           刘凯彦
         </span>
       </p>
-      <p className="veil-mark">{conceptById("phoenix").ordinal} · Phoenix · Gilded</p>
+      <p className="veil-mark">Blesspoke</p>
+    </div>
+  );
+}
+
+/**
+ * The first plate on the man page: held dark until the veil has begun to part,
+ * then wiped open and settled. A plain scroll-reveal would finish behind the
+ * curtain, so the gesture never lands. This one is timed to the arrival.
+ */
+export function OpenPlate({ photo }: { photo: Photo }) {
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    if (prefersReducedMotion()) {
+      setOpen(true);
+      return;
+    }
+
+    const veil = document.querySelector(".veil");
+    let delayId = 0;
+
+    const begin = () => {
+      delayId = window.setTimeout(() => setOpen(true), 380);
+    };
+
+    if (!veil) {
+      begin();
+      return () => window.clearTimeout(delayId);
+    }
+
+    if (veil.getAttribute("data-ready") === "true") {
+      begin();
+      return () => window.clearTimeout(delayId);
+    }
+
+    const watcher = new MutationObserver(() => {
+      if (veil.getAttribute("data-ready") !== "true") return;
+      watcher.disconnect();
+      begin();
+    });
+    watcher.observe(veil, { attributes: true, attributeFilter: ["data-ready"] });
+
+    return () => {
+      watcher.disconnect();
+      window.clearTimeout(delayId);
+    };
+  }, []);
+
+  return (
+    <div className="phoenix-open" data-open={open || undefined}>
+      <span className="phoenix-open-rule" aria-hidden />
+      <div className="phoenix-photo phoenix-open-photo" data-parallax>
+        <img
+          src={photo.src}
+          width={photo.width}
+          height={photo.height}
+          alt={photo.alt}
+          loading="eager"
+          decoding="async"
+        />
+      </div>
     </div>
   );
 }

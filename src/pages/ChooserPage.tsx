@@ -40,7 +40,7 @@ function panelStyle(concept: Concept): CSSProperties {
 
 /** What to do with this page, in the order you would do it. */
 const HOW = [
-  "Open all three. Each one is a finished page from top to bottom, scroll and sound included.",
+  "Open all three. Each one is two pages — the work first, then the man behind it — scroll and sound included.",
   "The writing, the music and the photographs are identical in all three. Only the design changes.",
   "Come back with the direction you want and anything you would change inside it.",
 ];

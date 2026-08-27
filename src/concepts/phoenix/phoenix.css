@@ -44,44 +44,143 @@
   right: 0;
   z-index: 30;
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   gap: var(--space-md);
-  padding: var(--space-lg) clamp(var(--space-md), 4vw, var(--space-3xl));
-  mix-blend-mode: difference;
+  padding: var(--space-md) clamp(var(--space-md), 4vw, var(--space-3xl));
   pointer-events: none;
 }
 
-.phoenix .chrome-back,
-.phoenix .chrome-title {
+.phoenix .chrome-brand {
   pointer-events: auto;
+  position: relative;
+  z-index: 1;
+  flex: 0 0 auto;
   font-size: 11px;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.28em;
   text-transform: uppercase;
-  color: var(--ivory-soft);
-}
-
-.phoenix .chrome-back {
+  color: var(--gold);
   text-decoration: none;
-  transition: color 240ms var(--ease-out);
+  transition: color 320ms var(--ease-out);
 }
 
-.phoenix .chrome-back:hover {
+.phoenix .chrome-brand:hover,
+.phoenix .chrome-brand:focus-visible {
   color: var(--ivory);
 }
 
-.phoenix .chrome-title {
+/* An open passage, not a boxed button. Gold seam, Italiana, a hairline that
+   draws under the phrase. A faint lacquer wash keeps it legible over content.
+   On the work page it stays dark through the hero, then arrives: one door, at
+   the moment you have started reading rather than the moment you land. */
+.phoenix .chrome-passage {
+  pointer-events: none;
+  position: relative;
+  z-index: 1;
   display: flex;
-  gap: var(--space-sm);
-  margin: 0;
+  align-items: center;
+  gap: 0.85rem;
+  max-width: min(100%, 22rem);
+  min-height: 2.75rem;
+  padding: 0.55rem 0.15rem 0.55rem 0;
+  text-decoration: none;
+  color: var(--ivory);
+  background: linear-gradient(
+    100deg,
+    color-mix(in oklab, #0b0705 78%, transparent) 0%,
+    color-mix(in oklab, #0b0705 42%, transparent) 55%,
+    transparent 100%
+  );
+  opacity: 0;
+  transform: translateY(-8px);
+  transition:
+    color 320ms var(--ease-out),
+    opacity 520ms var(--ease-out),
+    transform 620ms var(--ease-out);
 }
 
-.phoenix .chrome-ordinal {
+.phoenix .chrome-passage[data-shown="true"] {
+  pointer-events: auto;
+  opacity: 1;
+  transform: none;
+}
+
+.phoenix .chrome-passage:hover,
+.phoenix .chrome-passage:focus-visible,
+.phoenix .chrome-passage:active {
   color: var(--gold);
+  outline: none;
 }
 
-.phoenix .chrome-tag {
-  color: var(--ivory-faint);
+.phoenix .chrome-passage-seam {
+  flex: 0 0 1px;
+  align-self: stretch;
+  min-height: 1.55rem;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    var(--gold) 22%,
+    var(--gold) 78%,
+    transparent
+  );
+  box-shadow: 0 0 8px color-mix(in oklab, var(--gold) 36%, transparent);
+  transition: box-shadow 420ms var(--ease-out);
+}
+
+.phoenix .chrome-passage:hover .chrome-passage-seam,
+.phoenix .chrome-passage:focus-visible .chrome-passage-seam,
+.phoenix .chrome-passage:active .chrome-passage-seam {
+  box-shadow: 0 0 14px color-mix(in oklab, var(--gold) 70%, transparent);
+}
+
+.phoenix .chrome-passage-label {
+  min-width: 0;
+  padding: 0.15rem 0;
+  font-family: var(--display);
+  font-size: clamp(1rem, 0.9rem + 0.4vw, 1.2rem);
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+  text-wrap: balance;
+}
+
+/* No stub hairline under the label — a short rest mark only covered the
+   first word and read as a broken underline. Affordance is the seam + gold. */
+
+@media (max-width: 720px) {
+  .phoenix .chrome {
+    gap: 0.65rem;
+    padding: 0.55rem 0.85rem;
+  }
+
+  .phoenix .chrome-brand {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+  }
+
+  /* Same door as desktop, sized for a narrow bar. No stub underline. */
+  .phoenix .chrome-passage {
+    gap: 0.65rem;
+    max-width: min(100%, 11.5rem);
+    min-height: 2.5rem;
+    padding: 0.35rem 0;
+  }
+
+  .phoenix .chrome-passage-label {
+    font-size: 0.95rem;
+    line-height: 1.2;
+    text-align: right;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .phoenix .chrome-passage,
+  .phoenix .chrome-passage-seam {
+    transition: none;
+  }
+
+  .phoenix .chrome-passage {
+    transform: none;
+  }
 }
 
 /* ---------- hero stage ---------- */
@@ -258,6 +357,13 @@
   padding-block: var(--space-4xl);
   padding-inline: clamp(var(--space-lg), 6vw, var(--space-5xl));
   border-top: 1px solid var(--rule);
+}
+
+/* Extra top padding clears the fixed masthead. Scroll lands on the section edge
+   (no scroll-margin), so the lacquer under the bar is this section — not the
+   ivory block above it. */
+.phoenix #commission {
+  padding-top: calc(var(--space-4xl) + clamp(3.25rem, 8vh, 5.5rem));
 }
 
 .phoenix-eyebrow {
@@ -697,6 +803,84 @@
   aspect-ratio: 4 / 5;
 }
 
+/* Opening plate on the man page: held until the veil parts, then wiped and
+   settled. Timed to the curtain so the gesture is seen, not finished behind it. */
+.phoenix-open {
+  position: relative;
+  overflow: hidden;
+  background: var(--lacquer);
+}
+
+.phoenix-open-rule {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 2;
+  width: 1px;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    var(--gold) 18%,
+    var(--gold) 82%,
+    transparent
+  );
+  box-shadow: 0 0 12px color-mix(in oklab, var(--gold) 45%, transparent);
+  opacity: 0;
+  transform: scaleY(0.2);
+  transform-origin: center top;
+  transition:
+    opacity 900ms var(--ease-out) 180ms,
+    transform 1400ms var(--ease-out) 180ms;
+  pointer-events: none;
+}
+
+.phoenix-open-photo {
+  aspect-ratio: 4 / 5;
+  clip-path: inset(0 0 100% 0);
+  transition: clip-path 1600ms var(--ease-out);
+}
+
+.phoenix-open-photo img {
+  transform: scale(1.1);
+  transition: transform 2200ms var(--ease-out);
+  will-change: transform;
+}
+
+.phoenix-open[data-open] .phoenix-open-rule {
+  opacity: 1;
+  transform: none;
+}
+
+.phoenix-open[data-open] .phoenix-open-photo {
+  clip-path: inset(0 0 0 0);
+}
+
+.phoenix-open[data-open] .phoenix-open-photo img {
+  transform: scale(1.12) translateY(calc(var(--shift, 0) * -3%));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .phoenix-open-rule,
+  .phoenix-open-photo,
+  .phoenix-open-photo img {
+    transition: none;
+  }
+
+  .phoenix-open-rule {
+    opacity: 1;
+    transform: none;
+  }
+
+  .phoenix-open-photo {
+    clip-path: none;
+  }
+
+  .phoenix-open-photo img {
+    transform: none;
+  }
+}
+
 /* ---------- training ---------- */
 
 .phoenix-training {
@@ -799,71 +983,6 @@
   100% {
     transform: scaleY(1);
   }
-}
-
-/* ---------- concept switch ---------- */
-
-.phoenix .switch {
-  padding: var(--space-4xl) clamp(var(--space-lg), 6vw, var(--space-5xl))
-    var(--space-5xl);
-  border-top: 1px solid var(--rule);
-}
-
-.phoenix .switch-lede {
-  font-size: 11px;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: var(--ivory-faint);
-  margin-bottom: var(--space-xl);
-}
-
-.phoenix .switch-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: var(--space-lg);
-}
-
-@media (min-width: 700px) {
-  .phoenix .switch-list {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-2xl);
-  }
-}
-
-.phoenix .switch-item {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  align-items: baseline;
-  gap: var(--space-md);
-  padding-top: var(--space-md);
-  border-top: 1px solid var(--rule);
-  text-decoration: none;
-  transition: border-color 300ms var(--ease-out);
-}
-
-.phoenix .switch-item:hover {
-  border-color: var(--gold);
-}
-
-.phoenix .switch-ordinal {
-  font-size: 11px;
-  letter-spacing: 0.2em;
-  color: var(--gold);
-}
-
-.phoenix .switch-name {
-  font-family: var(--display);
-  font-size: clamp(1.8rem, 4vw, 3rem);
-}
-
-.phoenix .switch-tag {
-  grid-column: 2;
-  font-size: 11px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--ivory-faint);
 }
 
 /* ---------- service line ---------- */
@@ -1183,6 +1302,16 @@
   will-change: transform;
 }
 
+/* Opening plate owns its settle; do not let the shared parallax rule snap it
+   to final scale while the veil is still parting. */
+.phoenix-open:not([data-open]) .phoenix-photo[data-parallax] img {
+  transform: scale(1.1);
+}
+
+.phoenix-open[data-open] .phoenix-photo[data-parallax] img {
+  transform: scale(1.12) translateY(calc(var(--shift, 0) * -3%));
+}
+
 /* ════════════════════════════════════════════════════════════════════════════
    Dennis first.
    Everything below serves the same reordering: the man, the instrument, the
@@ -1362,10 +1491,6 @@ canvas[hidden] + .phoenix-hero-plate {
 
 /* ---------- the record ---------- */
 
-.phoenix-record-figures {
-  margin-bottom: var(--space-4xl);
-}
-
 .phoenix-awards {
   list-style: none;
   margin: var(--space-4xl) 0 0;
@@ -1493,19 +1618,21 @@ canvas[hidden] + .phoenix-hero-plate {
   margin-top: var(--space-sm);
 }
 
-/* The chrome sits over whatever is scrolling past. A short gradient of the
-   concept's own ground keeps it legible without a bar or a border. */
+/* The chrome sits over whatever is scrolling past. A denser lacquer wash keeps
+   the masthead legible and stops a bright section (the ivory turn) from flashing
+   through as a white bar behind the wordmark. */
 .phoenix .chrome::before {
   content: "";
   position: absolute;
   inset: 0 0 auto 0;
-  height: calc(100% + var(--space-2xl));
+  height: calc(100% + var(--space-3xl));
   z-index: -1;
   pointer-events: none;
   background: linear-gradient(
     180deg,
     var(--lacquer) 0%,
-    color-mix(in oklab, var(--lacquer) 72%, transparent) 52%,
+    var(--lacquer) 42%,
+    color-mix(in oklab, var(--lacquer) 78%, transparent) 72%,
     transparent 100%
   );
 }

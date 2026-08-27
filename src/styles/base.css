@@ -139,9 +139,35 @@ p {
 
 /* Anchor jumps land under the fixed chrome otherwise — the button in the corner
    goes to #commission, and the top of that section was arriving beneath the bar. */
-#commission,
 #brief {
   scroll-margin-top: clamp(64px, 9vh, 96px);
+}
+
+/* Commission clears the chrome with its own lacquer padding, not scroll-margin.
+   Margin would leave a strip of the ivory section above it under the bar, which
+   reads as a broken white band when you arrive here from the man page. */
+#commission {
+  scroll-margin-top: 0;
+}
+
+/* Curtain opens onto this section: a quiet settle, not a scroll through the page. */
+html[data-arrive="commission"] #commission {
+  animation: arrive-section 1200ms var(--ease-out) both;
+}
+
+@keyframes arrive-section {
+  from {
+    opacity: 0.72;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-arrive="commission"] #commission {
+    animation: none;
+  }
 }
 
 .stage-pin {

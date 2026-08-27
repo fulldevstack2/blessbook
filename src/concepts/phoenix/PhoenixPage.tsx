@@ -1,5 +1,4 @@
-import { useRef } from "react";
-import { ConceptChrome, ConceptSwitch } from "../../components/ConceptChrome";
+import { useRef, type ReactNode } from "react";
 import { Grain } from "../../components/Grain";
 import { Commission } from "../../components/Commission";
 import { Films } from "./Films";
@@ -12,7 +11,22 @@ import { Showreel } from "../../components/Showreel";
 import { StringRow } from "../../components/StringRow";
 import { Volume } from "../../components/Volume";
 import { Words } from "../../components/Words";
-import { Band, Enquiry, Figure, Gauges, Index, Instrument, Loader, Marking, Plate, Plumb, Process, Struck } from "./parts";
+import {
+  Band,
+  Enquiry,
+  Figure,
+  Gauges,
+  Index,
+  Instrument,
+  Loader,
+  Marking,
+  OpenPlate,
+  Plate,
+  Plumb,
+  Process,
+  SiteChrome,
+  Struck,
+} from "./parts";
 import {
   commission,
   promise,
@@ -28,7 +42,6 @@ import {
   credentials,
   halls,
   milestones,
-  record,
   teachers,
   training,
 } from "../../content/dennis";
@@ -91,7 +104,16 @@ const instrumentBeats = [
   },
 ];
 
-export function PhoenixPage() {
+/**
+ * The frame both of this site's pages sit in.
+ *
+ * Phoenix is the live site now — not one of three proposals. Everything outside
+ * the narrative is identical between the work page and the man page: fonts,
+ * loader, masthead, plumb line, grain, reveal and parallax. The hero belongs to
+ * the work page alone, which is why it is a slot rather than part of the frame.
+ * There is no door back to the design sheet, and no link to the other two.
+ */
+function Frame({ hero, children }: { hero?: ReactNode; children: ReactNode }) {
   useFonts(concept.fonts);
   const main = useRef<HTMLElement>(null);
   useScrollReveal(main);
@@ -104,11 +126,32 @@ export function PhoenixPage() {
       </a>
       <Loader />
       <NowPlaying />
-      <ConceptChrome concept={concept} />
+      <SiteChrome />
       <Plumb />
       <Grain />
-      <Commission />
+      <Commission {...(hero ? {} : { to: `${concept.path}#commission` })} />
 
+      {hero}
+
+      <main id="main" className="phoenix-body" ref={main}>
+        {children}
+      </main>
+    </div>
+  );
+}
+
+/**
+ * The work, which is what a visitor is here for.
+ *
+ * Ten songs, three films and the fourteen who booked him, and then the
+ * commission. The biography, the record and the instrument used to sit between
+ * the hero and the songs — five movements before anything you could listen to —
+ * and they are one click away now instead.
+ */
+export function PhoenixPage() {
+  return (
+    <Frame
+      hero={
       <ScrollStage vh={420} cuts={cuts.length} className="phoenix-stage">
         {({ stage, progress }) => (
           <>
@@ -167,210 +210,12 @@ export function PhoenixPage() {
           </>
         )}
       </ScrollStage>
-
-      <main id="main" className="phoenix-body" ref={main}>
-        {/* ---------------- the instrument, pinned and turning ---------------- */}
-        <ScrollStage vh={300} cuts={instrumentBeats.length} className="phoenix-instrument">
-          {({ stage }) => (
-            <>
-              <img
-                className="phoenix-instrument-photo"
-                src={photos.violin.src}
-                width={photos.violin.width}
-                height={photos.violin.height}
-                alt={photos.violin.alt}
-              />
-              <div className="phoenix-instrument-beats">
-                {instrumentBeats.map((beat, index) => (
-                  <div
-                    className="phoenix-instrument-beat"
-                    key={beat.mark}
-                    data-active={stage === index}
-                  >
-                    <span className="phoenix-mark">{beat.mark}</span>
-                    <p className="phoenix-instrument-line">{beat.line}</p>
-                    {beat.note ? <p className="phoenix-credit">{beat.note}</p> : null}
-                  </div>
-                ))}
-              </div>
-            </>
-          )}
-        </ScrollStage>
-
-        <section className="phoenix-section">
-          <p className="phoenix-eyebrow" data-reveal>
-            {commissionStory.eyebrow}
-          </p>
-          <Words as="h2" className="phoenix-h2" text={commissionStory.lede} />
-          <p className="phoenix-lede" data-reveal style={{ maxWidth: "54ch" }}>
-            {commissionStory.body}
-          </p>
-
-          <blockquote className="phoenix-quote" data-reveal>
-            <p>{commissionStory.quote}</p>
-            <cite>{commissionStory.quoteWho}</cite>
-          </blockquote>
-
-          <blockquote className="phoenix-quote phoenix-quote--maker" data-reveal>
-            <p>{commissionStory.makerQuote}</p>
-            <cite>{commissionStory.makerWho}</cite>
-          </blockquote>
-        </section>
-
-        {/* ---------------- who he is ---------------- */}
-        <section className="phoenix-section">
-          <p className="phoenix-eyebrow" data-reveal>
-            Movement I · Who he is
-          </p>
-          <div className="phoenix-portrait">
-            <figure style={{ margin: 0 }}>
-              <div className="phoenix-photo" data-reveal="wipe" data-parallax>
-                <img
-                  src={photos.live.src}
-                  width={photos.live.width}
-                  height={photos.live.height}
-                  alt={photos.live.alt}
-                  loading="lazy"
-                />
-              </div>
-              <figcaption className="phoenix-credit">{photos.live.credit}</figcaption>
-            </figure>
-
-            <div>
-              <p className="phoenix-artist-name" data-reveal>
-                {artist.name}
-                <span className="phoenix-artist-cn" lang="zh">
-                  {artist.chineseName}
-                </span>
-              </p>
-              <p className="phoenix-roles" data-reveal>
-                {artist.roles} · {artist.city}
-              </p>
-              <p className="phoenix-lede" data-reveal style={{ marginTop: "var(--space-lg)" }}>
-                {artist.paragraph}
-              </p>
-
-              <dl className="phoenix-figures">
-                {credentials.map((item) => (
-                  <div className="phoenix-figure" key={item.label} data-reveal>
-                    <dt>{item.label}</dt>
-                    <dd>{item.value}</dd>
-                  </div>
-                ))}
-              </dl>
-
-              <dl className="phoenix-taught">
-                <div data-reveal>
-                  <dt>Taught piano by</dt>
-                  <dd>{teachers.piano}</dd>
-                </div>
-                <div data-reveal>
-                  <dt>Taught violin by</dt>
-                  <dd>{teachers.violin}</dd>
-                </div>
-              </dl>
-
-              <StringRow caption="Pluck one of the four strings he writes on" />
-            </div>
-          </div>
-
-          <ol className="phoenix-training">
-            {training.map((line) => (
-              <li key={line} data-reveal>
-                {line}
-              </li>
-            ))}
-          </ol>
-
-          <ul className="phoenix-halls">
-            {halls.map((hall) => (
-              <li key={hall} data-reveal>
-                {hall}
-              </li>
-            ))}
-          </ul>
-        </section>
-
-        <Instrument />
-
-        {/* ---------------- the record ---------------- */}
-        <section className="phoenix-section">
-          <p className="phoenix-eyebrow" data-reveal>
-            Movement II · The record
-          </p>
-
-          <dl className="phoenix-terms phoenix-record-figures">
-            {record.map((item) => (
-              <div className="phoenix-term" key={item.label} data-reveal>
-                <dt>{item.label}</dt>
-                <dd>
-                  <Figure value={item.value} />
-                </dd>
-              </div>
-            ))}
-          </dl>
-
-          <Gauges />
-
-          <div className="phoenix-portrait">
-            <div>
-              <ul className="phoenix-record" style={{ gridTemplateColumns: "minmax(0,1fr)" }}>
-                {milestones.map((item) => (
-                  <li className="phoenix-record-item" key={item.year} data-reveal>
-                    <span className="phoenix-record-year">{item.year}</span>
-                    <div>
-                      <h3 className="phoenix-record-title">{item.title}</h3>
-                      <p className="phoenix-record-detail">{item.detail}</p>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <figure style={{ margin: 0 }}>
-              <div className="phoenix-photo" data-reveal="wipe" data-parallax>
-                <img
-                  src={photos.liveBlue.src}
-                  width={photos.liveBlue.width}
-                  height={photos.liveBlue.height}
-                  alt={photos.liveBlue.alt}
-                  loading="lazy"
-                />
-              </div>
-              <figcaption className="phoenix-credit">{photos.liveBlue.credit}</figcaption>
-            </figure>
-          </div>
-
-          <ul className="phoenix-awards">
-            {awards.map((award) => (
-              <li key={award.name} data-reveal>
-                <span className="phoenix-award-name">{award.name}</span>
-                <span className="phoenix-award-detail">{award.detail}</span>
-              </li>
-            ))}
-          </ul>
-
-          <Index />
-        </section>
-
-        <FilmScrub
-          sequence="phoenix"
-          focus={0.63}
-          frames={77}
-          vh={360}
-          className="phoenix-scrub"
-          label="Dennis Lau alone on stage under a fan of white beams, playing to a three-thousand-seat hall."
-          beats={[
-            { mark: "The Phoenix Rising, 2016", line: "Three thousand seats, sold out, on his own name." },
-            { mark: "And again in 2019", line: "The first Malaysian instrumentalist to do it twice." },
-            { mark: "Music director, Aubrey Suwito", line: "A full band behind him, and the violin out in front of it." },
-          ]}
-        />
-
+      }
+    >
         {/* ---------------- hear him ---------------- */}
         <section className="phoenix-section phoenix-section--reel">
           <p className="phoenix-eyebrow" data-reveal>
-            Movement III · Hear him
+            Movement I · Hear him
           </p>
           <Words as="h2" className="phoenix-h2" text={"Sixty seconds of him playing"} />
           <Showreel caption="His own reel, cut by him." />
@@ -391,7 +236,7 @@ export function PhoenixPage() {
         {/* ---------------- in the room ---------------- */}
         <section className="phoenix-section">
           <p className="phoenix-eyebrow" data-reveal>
-            Movement IV · In the room
+            Movement II · In the room
           </p>
           <Films caption="Three films he scored" />
         </section>
@@ -413,20 +258,6 @@ export function PhoenixPage() {
               </li>
             ))}
           </ul>
-        </section>
-
-        <Plate photo={photos.stagePhoenix} line="The Phoenix's first night, October 2016" tall />
-
-        {/* ---------------- the calling ---------------- */}
-        <section className="phoenix-section phoenix-section--calling">
-          <p className="phoenix-eyebrow" data-reveal>
-            Movement V · The calling
-          </p>
-          <Words as="h2" className="phoenix-h2 phoenix-calling-lede" text={calling.lede} />
-          <p className="phoenix-lede" data-reveal style={{ maxWidth: "52ch" }}>
-            {calling.body}
-          </p>
-          <Plate photo={photos.silhouette} line="Away from the stage" tall />
         </section>
 
         {/* ---------------- and only now, the commission ---------------- */}
@@ -510,9 +341,213 @@ export function PhoenixPage() {
             ))}
           </ul>
         </section>
+    </Frame>
+  );
+}
 
-        <ConceptSwitch concept={concept} />
-      </main>
-    </div>
+/**
+ * The man behind the music.
+ *
+ * Him first, then what he has done, then the instrument he had made and the
+ * night he unveiled it, and last what he says the whole thing is for. No scroll
+ * hero: the opening plate is the portrait, timed to the veil so the first image
+ * arrives the way the work page does.
+ */
+export function PhoenixStory() {
+  return (
+    <Frame>
+        {/* ---------------- who he is ---------------- */}
+        <section className="phoenix-section phoenix-section--open">
+          <p className="phoenix-eyebrow" data-reveal>
+            Movement I · Who he is
+          </p>
+          <div className="phoenix-portrait">
+            <figure style={{ margin: 0 }}>
+              <OpenPlate photo={photos.live} />
+              <figcaption className="phoenix-credit">{photos.live.credit}</figcaption>
+            </figure>
+
+            <div>
+              <p className="phoenix-artist-name" data-reveal>
+                {artist.name}
+                <span className="phoenix-artist-cn" lang="zh">
+                  {artist.chineseName}
+                </span>
+              </p>
+              <p className="phoenix-roles" data-reveal>
+                {artist.roles} · {artist.city}
+              </p>
+              <p className="phoenix-lede" data-reveal style={{ marginTop: "var(--space-lg)" }}>
+                {artist.paragraph}
+              </p>
+
+              <dl className="phoenix-figures">
+                {credentials.map((item) => (
+                  <div className="phoenix-figure" key={item.label} data-reveal>
+                    <dt>{item.label}</dt>
+                    <dd>{item.value}</dd>
+                  </div>
+                ))}
+              </dl>
+
+              <dl className="phoenix-taught">
+                <div data-reveal>
+                  <dt>Taught piano by</dt>
+                  <dd>{teachers.piano}</dd>
+                </div>
+                <div data-reveal>
+                  <dt>Taught violin by</dt>
+                  <dd>{teachers.violin}</dd>
+                </div>
+              </dl>
+
+              <StringRow caption="Pluck one of the four strings he writes on" />
+            </div>
+          </div>
+
+          <ol className="phoenix-training">
+            {training.map((line) => (
+              <li key={line} data-reveal>
+                {line}
+              </li>
+            ))}
+          </ol>
+
+          <ul className="phoenix-halls">
+            {halls.map((hall) => (
+              <li key={hall} data-reveal>
+                {hall}
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        {/* ---------------- the record ---------------- */}
+        <section className="phoenix-section">
+          <p className="phoenix-eyebrow" data-reveal>
+            Movement II · The record
+          </p>
+
+          <Gauges />
+
+          <div className="phoenix-portrait">
+            <div>
+              <ul className="phoenix-record" style={{ gridTemplateColumns: "minmax(0,1fr)" }}>
+                {milestones.map((item) => (
+                  <li className="phoenix-record-item" key={item.year} data-reveal>
+                    <span className="phoenix-record-year">{item.year}</span>
+                    <div>
+                      <h3 className="phoenix-record-title">{item.title}</h3>
+                      <p className="phoenix-record-detail">{item.detail}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <figure style={{ margin: 0 }}>
+              <div className="phoenix-photo" data-reveal="wipe" data-parallax>
+                <img
+                  src={photos.liveBlue.src}
+                  width={photos.liveBlue.width}
+                  height={photos.liveBlue.height}
+                  alt={photos.liveBlue.alt}
+                  loading="lazy"
+                />
+              </div>
+              <figcaption className="phoenix-credit">{photos.liveBlue.credit}</figcaption>
+            </figure>
+          </div>
+
+          <ul className="phoenix-awards">
+            {awards.map((award) => (
+              <li key={award.name} data-reveal>
+                <span className="phoenix-award-name">{award.name}</span>
+                <span className="phoenix-award-detail">{award.detail}</span>
+              </li>
+            ))}
+          </ul>
+
+          <Index />
+        </section>
+
+        {/* ---------------- the instrument, pinned and turning ---------------- */}
+        <ScrollStage vh={300} cuts={instrumentBeats.length} className="phoenix-instrument">
+          {({ stage }) => (
+            <>
+              <img
+                className="phoenix-instrument-photo"
+                src={photos.violin.src}
+                width={photos.violin.width}
+                height={photos.violin.height}
+                alt={photos.violin.alt}
+              />
+              <div className="phoenix-instrument-beats">
+                {instrumentBeats.map((beat, index) => (
+                  <div
+                    className="phoenix-instrument-beat"
+                    key={beat.mark}
+                    data-active={stage === index}
+                  >
+                    <span className="phoenix-mark">{beat.mark}</span>
+                    <p className="phoenix-instrument-line">{beat.line}</p>
+                    {beat.note ? <p className="phoenix-credit">{beat.note}</p> : null}
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+        </ScrollStage>
+
+        <section className="phoenix-section">
+          <p className="phoenix-eyebrow" data-reveal>
+            {commissionStory.eyebrow}
+          </p>
+          <Words as="h2" className="phoenix-h2" text={commissionStory.lede} />
+          <p className="phoenix-lede" data-reveal style={{ maxWidth: "54ch" }}>
+            {commissionStory.body}
+          </p>
+
+          <blockquote className="phoenix-quote" data-reveal>
+            <p>{commissionStory.quote}</p>
+            <cite>{commissionStory.quoteWho}</cite>
+          </blockquote>
+
+          <blockquote className="phoenix-quote phoenix-quote--maker" data-reveal>
+            <p>{commissionStory.makerQuote}</p>
+            <cite>{commissionStory.makerWho}</cite>
+          </blockquote>
+        </section>
+
+        <Instrument />
+
+        <FilmScrub
+          sequence="phoenix"
+          focus={0.63}
+          frames={77}
+          vh={360}
+          className="phoenix-scrub"
+          label="Dennis Lau alone on stage under a fan of white beams, playing to a three-thousand-seat hall."
+          beats={[
+            { mark: "The Phoenix Rising, 2016", line: "Three thousand seats, sold out, on his own name." },
+            { mark: "And again in 2019", line: "The first Malaysian instrumentalist to do it twice." },
+            { mark: "Music director, Aubrey Suwito", line: "A full band behind him, and the violin out in front of it." },
+          ]}
+        />
+
+        <Plate photo={photos.stagePhoenix} line="The Phoenix's first night, October 2016" tall />
+
+        {/* ---------------- the calling ---------------- */}
+        <section className="phoenix-section phoenix-section--calling">
+          <p className="phoenix-eyebrow" data-reveal>
+            Movement III · The calling
+          </p>
+          <Words as="h2" className="phoenix-h2 phoenix-calling-lede" text={calling.lede} />
+          <p className="phoenix-lede" data-reveal style={{ maxWidth: "52ch" }}>
+            {calling.body}
+          </p>
+          <Plate photo={photos.silhouette} line="Away from the stage" tall />
+        </section>
+    </Frame>
   );
 }
