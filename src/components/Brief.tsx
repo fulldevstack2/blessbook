@@ -27,6 +27,8 @@ const CODE_CHOICES: readonly Choice[] = countries.map((country, index) => ({
   value: country.iso,
   label: country.name,
   extra: country.dial,
+  /* Closed, this field has to say what it is a field for — see `Choice.face`. */
+  face: `${country.name} (${country.dial})`,
   group: index < NEAR_COUNT ? NEAR : REST,
 }));
 

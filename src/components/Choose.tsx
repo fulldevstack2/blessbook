@@ -24,6 +24,16 @@ export interface Choice {
   readonly label: string;
   /** Also matched when filtering — a dialling code, say. */
   readonly extra?: string;
+  /**
+   * What the *closed* control says, where that differs from the row in the list.
+   *
+   * A dialling code needs it. In the open list the code has a column of its own
+   * and the row reads "+60 · Malaysia", but once closed the control was showing
+   * only "Malaysia" — which is a country, not a dialling code, sitting in a field
+   * asking for one. Closed it reads "Malaysia (+60)". The stored value is the
+   * region either way; this changes what is said, not what is kept.
+   */
+  readonly face?: string;
   /** The heading this sits under. Consecutive matches share one. */
   readonly group?: string;
 }
@@ -113,14 +123,14 @@ export function Choose({
             <optgroup key={group.name} label={group.name}>
               {group.items.map((choice) => (
                 <option key={choice.value} value={choice.value}>
-                  {choice.label}
+                  {choice.face ?? choice.label}
                 </option>
               ))}
             </optgroup>
           ) : (
             group.items.map((choice) => (
               <option key={choice.value} value={choice.value}>
-                {choice.label}
+                {choice.face ?? choice.label}
               </option>
             ))
           ),
@@ -159,7 +169,7 @@ export function Choose({
         autoComplete="off"
         spellCheck={false}
         placeholder={placeholder}
-        value={open ? query : (chosen?.label ?? "")}
+        value={open ? query : (chosen?.face ?? chosen?.label ?? "")}
         onChange={(event) => {
           setQuery(event.target.value);
           setOpen(true);

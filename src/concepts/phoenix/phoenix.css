@@ -2792,26 +2792,21 @@ canvas[hidden] + .phoenix-hero-plate {
   width: min(30ch, 42vw);
   display: grid;
   gap: var(--space-md);
-  /* It stays while you are reading it, and leaves only when the next instrument
-     is arriving.
+  /* It does not leave. It is replaced.
 
-     It used to clear out of the way early — full at a tenth of the way through a
-     cut, gone by five eighths — so for most of the time an object was on screen
-     its particulars were not, which is the wrong way round: the plate is the
-     reason the object is being turned slowly enough to look at. A tenth of a cut
-     to arrive and a tenth to leave now, and it is up the whole way between. The
-     hand-over happens inside that gap: the text is swapped when `--cut` wraps
-     past one, which is exactly where the opacity is nought, so the change is
-     never seen.
+     The plate used to fade out and back on every hand-over, and the fade was the
+     problem rather than its timing — twice per section the particulars vanished
+     and the reader was left watching an object with nothing said about it. There
+     is nothing here for a fade to do: the *instrument* already dissolves between
+     cuts, in the scene, over sixteen per cent of each one, and the words are
+     swapped at the point in that dissolve where there is no object on the sheet
+     at all. The hand-over is carried by the thing turning, which is the thing
+     worth watching. Dragon has always done it this way and it is the better
+     read; this is the same behaviour, in gold instead of ink.
 
-     Off `--cut` and not `--p`: the section turns all three instruments, and a
-     plate that read the whole track would leave after the Phoenix and take the
-     other two sets of particulars with it. */
-  opacity: clamp(
-    0,
-    min((var(--cut, 0) - 0.05) * 14, (0.95 - var(--cut, 0)) * 14),
-    1
-  );
+     Nothing to set, therefore. The plate is simply present for as long as the
+     section is pinned — which is what the absence of an `opacity` here means, and
+     why the absence is worth a note. */
 }
 
 .phoenix .turned-eyebrow {
@@ -2951,8 +2946,16 @@ canvas[hidden] + .phoenix-hero-plate {
 
    Rules, not boxes: every field is a line ruled under it, the way an engraver
    sets a plate. Structure is in base.css; this is what it looks like. */
+/* No rule above the head.
+
+   There was one, and it was `1px solid var(--rule)` — the identical declaration
+   every field underline on this form uses, running the full width at the same
+   weight in the same colour. So it read as an empty input sitting above the
+   section title, which is what it was reported as. A separator that looks like a
+   control is worse than no separator, and none is needed here: the letter and
+   the letterspaced title already say a new part has begun, and the space does
+   the rest. */
 .phoenix .brief-part {
-  border-top: 1px solid var(--rule);
   padding-top: var(--space-lg);
 }
 

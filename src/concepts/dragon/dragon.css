@@ -3087,8 +3087,9 @@ canvas:not([hidden]) + .dragon-hero-plate {
 
    Ruled lines to write on, jade for the labels, cinnabar for the marks.
    Structure is in base.css. */
+/* No rule above the head — see the note in phoenix.css: it was the same
+   declaration as a field underline and read as an empty input. */
 .dragon .brief-part {
-  border-top: 1px solid var(--rule);
   padding-top: var(--space-lg);
 }
 
