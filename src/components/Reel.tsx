@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { demos, timecode } from "../content/work";
+import { demoSections, demos, timecode } from "../content/work";
 import { audioContext, resumeAudio } from "../lib/audioContext";
 import { play, waveform } from "../lib/listening";
 import { prefersReducedMotion } from "../lib/prefersReducedMotion";
@@ -7,14 +7,13 @@ import { Crawl } from "./Crawl";
 import { Volume } from "./Volume";
 
 /**
- * Ten real commissions, as a wall of plaques.
+ * Real commissions, as a wall of plaques grouped by the kind of ask.
  *
- * It was one player with a list of titles underneath it, which made nine of the
- * ten songs a line of text and the tenth a thing you could hear. A plaque is an
- * object: ten of them read as a body of work at a glance, and the one you press
- * turns into the player rather than driving a player somewhere else on the page.
- * The scope is drawn inside it, so the signal is written across the object being
- * listened to.
+ * It was one player with a list of titles underneath it, which made most of the
+ * songs a line of text and one a thing you could hear. A plaque is an object:
+ * they read as a body of work at a glance, and the one you press turns into the
+ * player rather than driving a player somewhere else on the page. The scope is
+ * drawn inside it, so the signal is written across the object being listened to.
  *
  * Two faces per plaque, both always in the DOM because that is what lets the
  * turn be a turn. Whichever is facing away is `inert`, so a keyboard never lands
@@ -203,124 +202,148 @@ export function Reel({ caption, index = twoDigit }: ReelProps) {
     return () => element?.pause();
   }, []);
 
+  let offset = 0;
+  const sections = demoSections.map((section) => {
+    const base = offset;
+    offset += section.demos.length;
+    return { ...section, base };
+  });
+
   return (
     <div className="reel" ref={rootRef}>
       <p className="reel-caption">{caption}</p>
 
-      <ol className="plaques">
-        {demos.map((demo, position) => {
-          const on = position === open;
-          return (
-            <li className="plaque" key={demo.id} data-open={on} data-playing={on && playing}>
-              <div className="plaque-turn">
-                {/* The face: what it is, before you have heard it. */}
-                <div className="plaque-face" inert={on}>
-                  <button
-                    type="button"
-                    className="plaque-press"
-                    onClick={() => turn(position)}
-                    aria-label={`Play ${demo.title} — ${demo.note}`}
-                  >
-                    <span className="plaque-index" aria-hidden>
-                      {index(position)}
-                    </span>
-                    <span className="plaque-name">{demo.title}</span>
-                    <span className="plaque-kind">{demo.kind}</span>
-                    <span className="plaque-foot">
-                      <span className="plaque-time">{timecode(demo.seconds)}</span>
-                      <span className="plaque-mark" aria-hidden />
-                    </span>
-                  </button>
-                </div>
+      {sections.map((section) => (
+        <section
+          key={section.id}
+          className="reel-section"
+          aria-labelledby={section.title ? `reel-section-${section.id}` : undefined}
+        >
+          {section.title ? (
+            <h3 id={`reel-section-${section.id}`} className="reel-section-title reel-caption">
+              {section.title}
+            </h3>
+          ) : null}
 
-                {/* The reverse: the player, and the signal written across it. */}
-                <div className="plaque-back" inert={!on}>
-                  {on ? (
-                    <>
-                      {/* What you are listening to, still said while you listen.
-                          The face has turned away, so the reverse has to carry
-                          the name — a player that only tells you the number of
-                          the thing playing is a player you have to turn back to
-                          read. Both lines travel if they do not fit; see
-                          `Crawl`. */}
-                      <p className="plaque-said">
-                        <span className="plaque-said-index" aria-hidden>
+          <ol className="plaques">
+            {section.demos.map((demo, local) => {
+              const position = section.base + local;
+              const on = position === open;
+              return (
+                <li className="plaque" key={demo.id} data-open={on} data-playing={on && playing}>
+                  <div className="plaque-turn">
+                    {/* The face: what it is, before you have heard it. */}
+                    <div className="plaque-face" inert={on}>
+                      <button
+                        type="button"
+                        className="plaque-press"
+                        onClick={() => turn(position)}
+                        aria-label={`Play ${demo.title} — ${demo.note}`}
+                      >
+                        <span className="plaque-index" aria-hidden>
                           {index(position)}
                         </span>
-                        <Crawl className="plaque-said-name" running={playing}>
-                          {demo.title}
-                        </Crawl>
-                        <span className="plaque-said-kind">{demo.kind}</span>
-                      </p>
+                        <span className="plaque-name">{demo.title}</span>
+                        <span className="plaque-kind">{demo.kind}</span>
+                        <span className="plaque-foot">
+                          <span className="plaque-time">{timecode(demo.seconds)}</span>
+                          <span className="plaque-mark" aria-hidden />
+                        </span>
+                      </button>
+                    </div>
 
-                      <p className="plaque-note">
-                        <Crawl running={playing}>{demo.note}</Crawl>
-                      </p>
-                      <canvas className="plaque-scope reel-scope" ref={canvasRef} aria-hidden />
+                    {/* The reverse: the player, and the signal written across it. */}
+                    <div className="plaque-back" inert={!on}>
+                      {on ? (
+                        <>
+                          <p className="plaque-said">
+                            <span className="plaque-said-index" aria-hidden>
+                              {index(position)}
+                            </span>
+                            <Crawl className="plaque-said-name" running={playing}>
+                              {demo.title}
+                            </Crawl>
+                            <span className="plaque-said-kind">{demo.kind}</span>
+                          </p>
 
-                      <div className="plaque-transport">
-                        <button
-                          type="button"
-                          className="plaque-play"
-                          onClick={() => {
-                            const element = audioRef.current;
-                            if (!element) return;
-                            if (element.paused) start();
-                            else element.pause();
-                          }}
-                          aria-label={playing ? `Pause ${demo.title}` : `Play ${demo.title}`}
-                        >
-                          <span className="plaque-play-mark" data-playing={playing} aria-hidden />
-                        </button>
-
-                        <div className="plaque-seek reel-seek">
-                          <div className="reel-seek-rail" aria-hidden>
-                            <div className="reel-seek-fill" />
-                          </div>
-                          <input
-                            type="range"
-                            className="reel-seek-input"
-                            min={0}
-                            max={Math.round(total)}
-                            step={1}
-                            value={Math.min(Math.round(elapsed), Math.round(total))}
-                            aria-label={`Seek within ${demo.title}`}
-                            onChange={(event) => {
-                              const element = audioRef.current;
-                              const next = Number(event.target.value);
-                              setElapsed(next);
-                              if (element) element.currentTime = next;
-                            }}
+                          <p className="plaque-note">
+                            <Crawl running={playing}>{demo.note}</Crawl>
+                          </p>
+                          <canvas
+                            className="plaque-scope reel-scope"
+                            ref={canvasRef}
+                            aria-hidden
                           />
-                        </div>
 
-                        <p className="plaque-clock">
-                          <span>{timecode(elapsed)}</span>
-                          <span className="plaque-clock-sep" aria-hidden>
-                            /
-                          </span>
-                          <span>{timecode(total)}</span>
-                        </p>
-                      </div>
+                          <div className="plaque-transport">
+                            <button
+                              type="button"
+                              className="plaque-play"
+                              onClick={() => {
+                                const element = audioRef.current;
+                                if (!element) return;
+                                if (element.paused) start();
+                                else element.pause();
+                              }}
+                              aria-label={playing ? `Pause ${demo.title}` : `Play ${demo.title}`}
+                            >
+                              <span
+                                className="plaque-play-mark"
+                                data-playing={playing}
+                                aria-hidden
+                              />
+                            </button>
 
-                      <div className="plaque-tail">
-                        <Volume label="Playback volume" />
-                        <button
-                          type="button"
-                          className="plaque-shut"
-                          onClick={() => turn(position)}
-                        >
-                          Turn back
-                        </button>
-                      </div>
-                    </>
-                  ) : null}
-                </div>
-              </div>
-            </li>
-          );
-        })}
-      </ol>
+                            <div className="plaque-seek reel-seek">
+                              <div className="reel-seek-rail" aria-hidden>
+                                <div className="reel-seek-fill" />
+                              </div>
+                              <input
+                                type="range"
+                                className="reel-seek-input"
+                                min={0}
+                                max={Math.round(total)}
+                                step={1}
+                                value={Math.min(Math.round(elapsed), Math.round(total))}
+                                aria-label={`Seek within ${demo.title}`}
+                                onChange={(event) => {
+                                  const element = audioRef.current;
+                                  const next = Number(event.target.value);
+                                  setElapsed(next);
+                                  if (element) element.currentTime = next;
+                                }}
+                              />
+                            </div>
+
+                            <p className="plaque-clock">
+                              <span>{timecode(elapsed)}</span>
+                              <span className="plaque-clock-sep" aria-hidden>
+                                /
+                              </span>
+                              <span>{timecode(total)}</span>
+                            </p>
+                          </div>
+
+                          <div className="plaque-tail">
+                            <Volume label="Playback volume" />
+                            <button
+                              type="button"
+                              className="plaque-shut"
+                              onClick={() => turn(position)}
+                            >
+                              Turn back
+                            </button>
+                          </div>
+                        </>
+                      ) : null}
+                    </div>
+                  </div>
+                </li>
+              );
+            })}
+          </ol>
+        </section>
+      ))}
 
       <p className="reel-foot">
         Every one of these was commissioned, written and produced by Dennis, and

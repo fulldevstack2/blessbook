@@ -24,6 +24,12 @@ export interface Demo {
   readonly note: string;
 }
 
+export interface DemoSection {
+  readonly id: string;
+  readonly title: string;
+  readonly demos: readonly Demo[];
+}
+
 function audio(file: string): string {
   return `${import.meta.env.BASE_URL}audio/${file}`;
 }
@@ -35,164 +41,237 @@ export function timecode(seconds: number): string {
 }
 
 /**
- * Ordered to open on range rather than on length: a game trailer, then a car
- * brand, then a child's birthday. Three prompts nobody would guess share an
- * author.
+ * Grouped so a visitor can find the kind of song they need without reading
+ * twenty-three titles in one list. Dennis's own categories; the order within
+ * each group follows his credits and briefs.
  */
-export const demos: readonly Demo[] = [
+export const demoSections: readonly DemoSection[] = [
   {
-    id: "shark",
-    title: "SHARK",
-    src: audio("shark-v3.mp3"),
-    seconds: 98.7,
-    kind: "Game trailer",
-    note: "Virtual game trailer, for a suspense title by Ammo Box Studios.",
+    id: "original",
+    title: "Original songs & personal dedications",
+    demos: [
+      {
+        id: "lobak",
+        title: "LOBAK",
+        src: audio("lobak-love-ballad.mp3"),
+        seconds: 279.6,
+        kind: "Love ballad",
+        note: "Love ballad for a commercial social media campaign.",
+      },
+      {
+        id: "suen",
+        title: "TIME WILL SING | \u65f6\u95f4\u4f1a\u5531\u6b4c",
+        src: audio("suen-demo.mp3"),
+        seconds: 254.9,
+        kind: "Artiste demo",
+        note: "Artiste demo for Wen Suen, champion of The Voice Asia.",
+      },
+      {
+        id: "vanessa",
+        title: "\u7531\u6211\u5b9a",
+        src: audio("vanessa-you-wo-ding.mp3"),
+        seconds: 203.2,
+        kind: "Artiste demo",
+        note: "Artiste demo for Vanessa Reynauld, first runner-up of Sing! China Malaysia.",
+      },
+      {
+        id: "vanessa-chorus",
+        title: "\u7531\u6211\u5b9a · chorus",
+        src: audio("vanessa-v2-chorus.mp3"),
+        seconds: 133.0,
+        kind: "Artiste demo",
+        note: "Written and customised for Vanessa Reynauld, Singer 2026 Malaysia's 1st runner-up. Chorus only.",
+      },
+      {
+        id: "born",
+        title: "BORN FOR A REASON",
+        src: audio("born-for-a-reason.mp3"),
+        seconds: 272.3,
+        kind: "Birthday",
+        note: "A father's dedication to his three-year-old son's birthday.",
+      },
+      {
+        id: "unmute",
+        title: "UNMUTE",
+        src: audio("unmute-chloe.mp3"),
+        seconds: 211.0,
+        kind: "Artiste demo",
+        note: "Chloe Yu's artiste demo.",
+      },
+      {
+        id: "ballad",
+        title: "Malay / Indonesian Love Ballad",
+        src: audio("malay-indon-ballad.mp3"),
+        seconds: 71.9,
+        kind: "Chorus demo",
+        note: "Music and lyrics both by Dennis, in a register that plays across two countries.",
+      },
+      {
+        id: "fang-kai",
+        title: "\u653e\u5f00 · Let Go",
+        src: audio("fang-kai-let-go.mp3"),
+        seconds: 261.5,
+        kind: "Artiste demo",
+        note: "An original Chinese love R&B ballad demo.",
+      },
+      {
+        id: "precious-you",
+        title: "\u73cd\u8d35\u7684\u4f60 · Precious You",
+        src: audio("precious-you.mp3"),
+        seconds: 168.4,
+        kind: "Wedding dedication",
+        note: "Original Chinese love ballad for wedding dedication, slideshow, performance, or presentation.",
+      },
+      {
+        id: "tai-qing-di",
+        title: "\u592a\u8f15\u6575",
+        src: audio("tai-qing-di.mp3"),
+        seconds: 218.4,
+        kind: "Pop ballad",
+        note: "Original pop ballad. Music by Dennis Lau and award-winning composer Keon Chia (\u4f73\u65fa).",
+      },
+    ],
   },
   {
-    id: "corsa",
-    title: "ONE CORSA",
-    src: audio("one-corsa.mp3"),
-    seconds: 83.5,
-    kind: "Commercial",
-    note: "Commercial song for a premium and super car importer.",
+    id: "corporate",
+    title: "Corporate & campaign anthems",
+    demos: [
+      {
+        id: "destinasi-best",
+        title: "DESTINASI",
+        src: audio("destinasi-best-of-the-best.mp3"),
+        seconds: 236.3,
+        kind: "Awards night",
+        note: "Acson Malaysia Awards Night Dinner 2026. Written for their Malay staff winners.",
+      },
+      {
+        id: "destinasi-acoustic",
+        title: "DESTINASI · acoustic",
+        src: audio("destinasi-acoustic.mp3"),
+        seconds: 234.1,
+        kind: "Acoustic version",
+        note: "An acoustic version for their video slideshow.",
+      },
+      {
+        id: "yu-guang",
+        title: "\u4e0e\u5149\u540c\u884c",
+        src: audio("yu-guang-tong-xing.mp3"),
+        seconds: 243.2,
+        kind: "Awards gala",
+        note: "Acson Malaysia Chinese Demographic Awards Gala Dinner.",
+      },
+      {
+        id: "new-dawn",
+        title: "A NEW DAWN",
+        src: audio("a-new-dawn.mp3"),
+        seconds: 308.9,
+        kind: "Corporate anthem",
+        note: "Corporate anthem for a Web3 company.",
+      },
+    ],
   },
   {
-    id: "born",
-    title: "BORN FOR A REASON",
-    src: audio("born-for-a-reason.mp3"),
-    seconds: 272.3,
-    kind: "Birthday",
-    note: "A father's dedication to his three-year-old son's birthday.",
+    id: "brand",
+    title: "Brand anthems & commercial jingles",
+    demos: [
+      {
+        id: "corsa",
+        title: "ONE CORSA",
+        src: audio("one-corsa.mp3"),
+        seconds: 83.5,
+        kind: "Commercial",
+        note: "Commercial song for a premium and super car importer.",
+      },
+      {
+        id: "tiktok",
+        title: "FREE SHIPPING, FUN SHOPPING",
+        src: audio("free-shipping-fun-shopping.mp3"),
+        seconds: 148.0,
+        kind: "Campaign theme",
+        note: "TikTok Shop marketing campaign theme song.",
+      },
+      {
+        id: "low-sugar-lab",
+        title: "LOW SUGAR LAB",
+        src: audio("low-sugar-lab-acoustic.mp3"),
+        seconds: 115.0,
+        kind: "Brand anthem",
+        note: "Extended jingle and brand anthem for Low Sugar Lab. Fun acoustic version.",
+      },
+      {
+        id: "low-sugar-lab-acapella",
+        title: "LOW SUGAR LAB · acapella",
+        src: audio("low-sugar-lab-acapella.mp3"),
+        seconds: 48.0,
+        kind: "Brand anthem",
+        note: "Extended jingle and brand anthem for Low Sugar Lab. Fun acapella version.",
+      },
+    ],
   },
   {
-    id: "wall",
-    title: "THE GREAT WALL",
-    src: audio("great-wall-v3.mp3"),
-    seconds: 172.6,
-    kind: "Entrance theme",
-    note: "Grand entrance theme for the marketing guru Sara Yeong.",
+    id: "cinematic",
+    title: "Cinematic scores & grand launch openings",
+    demos: [
+      {
+        id: "shark",
+        title: "SHARK",
+        src: audio("shark-v3.mp3"),
+        seconds: 98.7,
+        kind: "Game trailer",
+        note: "Virtual game trailer, for a suspense title by Ammo Box Studios.",
+      },
+      {
+        id: "epic-intro",
+        title: "EPIC INTRO",
+        src: audio("epic-intro-extended.mp3"),
+        seconds: 102.0,
+        kind: "Intro theme",
+        note: "Epic cinematic dinner and light show intro theme song.",
+      },
+      {
+        id: "yujin-wong",
+        title: "GRAND ENTRANCE",
+        src: audio("yujin-wong-grand-entrance.mp3"),
+        seconds: 127.7,
+        kind: "Entrance theme",
+        note: "Walk-in song for Wong Yu Jin, mental toughness and peak performance coach.",
+      },
+      {
+        id: "wall",
+        title: "THE GREAT WALL",
+        src: audio("great-wall-v3.mp3"),
+        seconds: 172.6,
+        kind: "Entrance theme",
+        note: "Grand entrance theme for the marketing guru Sara Yeong.",
+      },
+      {
+        id: "wall-zh",
+        title: "THE GREAT WALL · \u4e2d\u6587\u7248",
+        src: audio("great-wall-zh.mp3"),
+        seconds: 183.2,
+        kind: "Entrance theme",
+        note: "The Chinese version of Sara Yeong's grand entrance theme.",
+      },
+    ],
   },
   {
-    id: "wall-zh",
-    title: "THE GREAT WALL · \u4e2d\u6587\u7248",
-    src: audio("great-wall-zh.mp3"),
-    seconds: 183.2,
-    kind: "Entrance theme",
-    note: "The Chinese version of Sara Yeong's grand entrance theme.",
-  },
-  {
-    id: "unmute",
-    title: "UNMUTE",
-    src: audio("unmute-chloe.mp3"),
-    seconds: 211.0,
-    kind: "Artiste demo",
-    note: "Chloe Yu's artiste demo.",
-  },
-  {
-    id: "suen",
-    title: "TIME WILL SING | \u65f6\u95f4\u4f1a\u5531\u6b4c",
-    src: audio("suen-demo.mp3"),
-    seconds: 254.9,
-    kind: "Artiste demo",
-    note: "Artiste demo for Wen Suen, champion of The Voice Asia.",
-  },
-  {
-    id: "vanessa",
-    title: "\u7531\u6211\u5b9a",
-    src: audio("vanessa-you-wo-ding.mp3"),
-    seconds: 203.2,
-    kind: "Artiste demo",
-    note: "Artiste demo for Vanessa Reynauld, first runner-up of Sing! China Malaysia.",
-  },
-  {
-    id: "ballad",
-    title: "Malay / Indonesian Love Ballad",
-    src: audio("malay-indon-ballad.mp3"),
-    seconds: 71.9,
-    kind: "Chorus demo",
-    note: "Music and lyrics both by Dennis, in a register that plays across two countries.",
-  },
-  {
-    id: "tiktok",
-    title: "FREE SHIPPING, FUN SHOPPING",
-    src: audio("free-shipping-fun-shopping.mp3"),
-    seconds: 148.0,
-    kind: "Campaign theme",
-    note: "TikTok Shop marketing campaign theme song.",
-  },
-  {
-    id: "destinasi-best",
-    title: "DESTINASI",
-    src: audio("destinasi-best-of-the-best.mp3"),
-    seconds: 236.3,
-    kind: "Awards night",
-    note: "Acson Malaysia Awards Night Dinner 2026. Written for their Malay staff winners.",
-  },
-  {
-    id: "destinasi-acoustic",
-    title: "DESTINASI · acoustic",
-    src: audio("destinasi-acoustic.mp3"),
-    seconds: 234.1,
-    kind: "Acoustic version",
-    note: "An acoustic version for their video slideshow.",
-  },
-  {
-    id: "yu-guang",
-    title: "\u4e0e\u5149\u540c\u884c",
-    src: audio("yu-guang-tong-xing.mp3"),
-    seconds: 243.2,
-    kind: "Awards gala",
-    note: "Acson Malaysia Chinese Demographic Awards Gala Dinner.",
-  },
-  {
-    id: "lobak",
-    title: "LOBAK",
-    src: audio("lobak-love-ballad.mp3"),
-    seconds: 279.6,
-    kind: "Commercial",
-    note: "Love ballad for a commercial social media campaign.",
-  },
-  {
-    id: "vanessa-chorus",
-    title: "\u7531\u6211\u5b9a · chorus",
-    src: audio("vanessa-v2-chorus.mp3"),
-    seconds: 133.0,
-    kind: "Artiste demo",
-    note: "Written and customised for Vanessa Reynauld, Singer 2026 Malaysia's 1st runner-up. Chorus only.",
-  },
-  {
-    id: "epic-intro",
-    title: "EPIC INTRO",
-    src: audio("epic-intro-extended.mp3"),
-    seconds: 102.0,
-    kind: "Intro theme",
-    note: "Epic cinematic dinner and light show intro theme song.",
-  },
-  {
-    id: "yujin-wong",
-    title: "GRAND ENTRANCE",
-    src: audio("yujin-wong-grand-entrance.mp3"),
-    seconds: 127.7,
-    kind: "Entrance theme",
-    note: "Walk-in song for Wong Yu Jin, mental toughness and peak performance coach.",
-  },
-  {
-    id: "new-dawn",
-    title: "A NEW DAWN",
-    src: audio("a-new-dawn.mp3"),
-    seconds: 308.9,
-    kind: "Corporate anthem",
-    note: "Corporate anthem for a Web3 company.",
-  },
-  {
-    id: "fang-kai",
-    title: "\u653e\u5f00 · Let Go",
-    src: audio("fang-kai-let-go.mp3"),
-    seconds: 261.5,
-    kind: "Artiste demo",
-    note: "An original Chinese love R&B ballad demo.",
+    id: "tail",
+    title: "",
+    demos: [
+      {
+        id: "ah-siew",
+        title: "\u6211\u662f Ah Siew!!!",
+        src: audio("ah-siew.mp3"),
+        seconds: 193.0,
+        kind: "Hip hop demo",
+        note: "A fun hip hop demo track.",
+      },
+    ],
   },
 ];
+
+/** Flat playback order — one wall, read top to bottom through the sections. */
+export const demos: readonly Demo[] = demoSections.flatMap((section) => section.demos);
 
 /**
  * A film. The three featured ones, as against the fourteen in `catalogue`.
