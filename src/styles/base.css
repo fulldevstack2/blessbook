@@ -256,46 +256,42 @@ body {
   transform: none;
 }
 
-/* Plaques: wipe on the enter shell, flip on the stage inside. Once the shell
-   has revealed, clip-path and overflow come off so perspective and rotateY are
-   not fighting the same box — that was the break. */
+/* Plaques: the `<li>` is what IntersectionObserver watches — rise only.
+   Wipe and settle live on `.plaque-enter` inside it. Clip-path on the observed
+   box itself reads as zero area and the reveal never fires, which is why the
+   plaques sat invisible or popped in with no animation. */
 .plaque-enter {
   width: 100%;
   height: 100%;
+  overflow: hidden;
+  clip-path: inset(0 0 0 0);
+  transition: clip-path 1200ms var(--ease-out) var(--reveal-delay);
+}
+
+.plaque:not([data-revealed="true"]) .plaque-enter {
+  clip-path: inset(0 0 100% 0);
+}
+
+.plaque:not([data-revealed="true"]) .plaque-face {
+  transform: scale(1.045);
+  transition: transform 1900ms var(--ease-out) var(--reveal-delay);
+}
+
+.plaque[data-revealed="true"] .plaque-face,
+.plaque[data-open="true"] .plaque-face {
+  transform: none;
+}
+
+/* Pressing while the wipe is still running should not trap the flip. */
+.plaque[data-open="true"] .plaque-enter {
+  overflow: visible;
+  clip-path: inset(0 0 0 0);
 }
 
 .plaque-stage {
   width: 100%;
   height: 100%;
   perspective: 1400px;
-}
-
-.plaque-enter[data-reveal="wipe"] {
-  overflow: hidden;
-}
-
-.plaque-enter[data-reveal="wipe"][data-revealed="true"] {
-  overflow: visible;
-  clip-path: none;
-}
-
-.plaque-enter[data-reveal="wipe"]:not([data-revealed="true"]) .plaque-face {
-  transform: scale(1.045);
-  transition: transform 1900ms var(--ease-out) var(--reveal-delay);
-}
-
-.plaque-enter[data-reveal="wipe"][data-revealed="true"] .plaque-face {
-  transform: none;
-}
-
-/* Pressing while the wipe is still running should not trap the flip. */
-.plaque[data-open="true"] .plaque-enter[data-reveal="wipe"] {
-  overflow: visible;
-  clip-path: none;
-}
-
-.plaque[data-open="true"] .plaque-enter[data-reveal="wipe"] .plaque-face {
-  transform: none;
 }
 
 /* Anything else that carries a picture and enters on the plain rise gets the
@@ -315,7 +311,7 @@ body {
   [data-reveal] img,
   [data-reveal] video,
   [data-reveal] canvas,
-  .plaque-enter[data-reveal="wipe"] .plaque-face {
+  .plaque:not([data-revealed="true"]) .plaque-face {
     transform: none;
     transition: none;
   }

@@ -3,6 +3,7 @@ import { demoSections, demos, timecode } from "../content/work";
 import { audioContext, resumeAudio } from "../lib/audioContext";
 import { play, waveform } from "../lib/listening";
 import { prefersReducedMotion } from "../lib/prefersReducedMotion";
+import { useScrollReveal } from "../lib/useScrollReveal";
 import { Crawl } from "./Crawl";
 import { Volume } from "./Volume";
 
@@ -51,6 +52,8 @@ export function Reel({ caption, index = twoDigit }: ReelProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   /** Set when a track change should start playing once the new src is attached. */
   const pending = useRef(false);
+
+  useScrollReveal(rootRef);
 
   const current = open ?? 0;
   const track = demos[current];
@@ -237,10 +240,11 @@ export function Reel({ caption, index = twoDigit }: ReelProps) {
                 <li
                   className="plaque"
                   key={demo.id}
+                  data-reveal
                   data-open={on}
                   data-playing={on && playing}
                 >
-                  <div className="plaque-enter" data-reveal="wipe">
+                  <div className="plaque-enter">
                     <div className="plaque-stage">
                       <div className="plaque-turn">
                     {/* The face: what it is, before you have heard it. */}
