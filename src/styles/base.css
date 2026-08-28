@@ -256,22 +256,46 @@ body {
   transform: none;
 }
 
-/* Plaques enter on an inner shell so the reveal never shares a box with the
-   flip. Wipe, clip-path, overflow, or any transform on the shell or on
-   `.plaque-turn` while it is rotating is what broke the player. */
+/* Plaques: wipe on the enter shell, flip on the stage inside. Once the shell
+   has revealed, clip-path and overflow come off so perspective and rotateY are
+   not fighting the same box — that was the break. */
 .plaque-enter {
   width: 100%;
   height: 100%;
 }
 
-.plaque-enter[data-reveal] {
-  transform: none;
-  opacity: 0;
-  transition: opacity 900ms var(--ease-out) var(--reveal-delay);
+.plaque-stage {
+  width: 100%;
+  height: 100%;
+  perspective: 1400px;
 }
 
-.plaque-enter[data-reveal][data-revealed="true"] {
-  opacity: 1;
+.plaque-enter[data-reveal="wipe"] {
+  overflow: hidden;
+}
+
+.plaque-enter[data-reveal="wipe"][data-revealed="true"] {
+  overflow: visible;
+  clip-path: none;
+}
+
+.plaque-enter[data-reveal="wipe"]:not([data-revealed="true"]) .plaque-face {
+  transform: scale(1.045);
+  transition: transform 1900ms var(--ease-out) var(--reveal-delay);
+}
+
+.plaque-enter[data-reveal="wipe"][data-revealed="true"] .plaque-face {
+  transform: none;
+}
+
+/* Pressing while the wipe is still running should not trap the flip. */
+.plaque[data-open="true"] .plaque-enter[data-reveal="wipe"] {
+  overflow: visible;
+  clip-path: none;
+}
+
+.plaque[data-open="true"] .plaque-enter[data-reveal="wipe"] .plaque-face {
+  transform: none;
 }
 
 /* Anything else that carries a picture and enters on the plain rise gets the
@@ -290,7 +314,8 @@ body {
 @media (prefers-reduced-motion: reduce) {
   [data-reveal] img,
   [data-reveal] video,
-  [data-reveal] canvas {
+  [data-reveal] canvas,
+  .plaque-enter[data-reveal="wipe"] .plaque-face {
     transform: none;
     transition: none;
   }
@@ -1875,7 +1900,6 @@ body {
 .plaque {
   min-width: 0;
   aspect-ratio: 4 / 3;
-  perspective: 1400px;
 }
 
 /* One wide plaque on a small phone. 16:9 is a card rather than a plate — but

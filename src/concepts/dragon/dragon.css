@@ -988,7 +988,7 @@
 .dragon .dragon-name[data-reveal],
 .dragon .dragon-photo[data-reveal],
 .dragon .film[data-reveal],
-.dragon .plaque-enter[data-reveal] {
+.dragon .plaque-enter[data-reveal="wipe"]:not([data-revealed="true"]) {
   filter: blur(7px);
   transition:
     opacity 900ms var(--ease-out) var(--reveal-delay),
@@ -1001,8 +1001,8 @@
 .dragon .dragon-name[data-reveal][data-revealed="true"],
 .dragon .dragon-photo[data-reveal][data-revealed="true"],
 .dragon .film[data-reveal][data-revealed="true"],
-.dragon .plaque-enter[data-reveal][data-revealed="true"] {
-  filter: blur(0);
+.dragon .plaque-enter[data-reveal="wipe"][data-revealed="true"] {
+  filter: none;
 }
 
 /* ---------- service line ---------- */

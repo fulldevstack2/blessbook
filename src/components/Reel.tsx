@@ -240,8 +240,9 @@ export function Reel({ caption, index = twoDigit }: ReelProps) {
                   data-open={on}
                   data-playing={on && playing}
                 >
-                  <div className="plaque-enter" data-reveal>
-                    <div className="plaque-turn">
+                  <div className="plaque-enter" data-reveal="wipe">
+                    <div className="plaque-stage">
+                      <div className="plaque-turn">
                     {/* The face: what it is, before you have heard it. */}
                     <div className="plaque-face" inert={on}>
                       <button
@@ -347,6 +348,7 @@ export function Reel({ caption, index = twoDigit }: ReelProps) {
                         </>
                       ) : null}
                     </div>
+                  </div>
                   </div>
                   </div>
                 </li>
