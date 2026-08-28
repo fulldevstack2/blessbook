@@ -240,7 +240,7 @@ export function Reel({ caption, index = twoDigit }: ReelProps) {
                 <li
                   className="plaque"
                   key={demo.id}
-                  data-reveal
+                  data-reveal="plaque"
                   data-open={on}
                   data-playing={on && playing}
                 >

@@ -256,10 +256,17 @@ body {
   transform: none;
 }
 
-/* Plaques: the `<li>` is what IntersectionObserver watches — rise only.
-   Wipe and settle live on `.plaque-enter` inside it. Clip-path on the observed
-   box itself reads as zero area and the reveal never fires, which is why the
-   plaques sat invisible or popped in with no animation. */
+/* Plaques enter like film frames: wipe and settle, not fade. The `<li>` is only
+   what IntersectionObserver watches — it must stay unclipped and fully opaque.
+   Clip-path on the observed box reads as zero area and the reveal never fires;
+   the wipe and the 1.085 settle live on `.plaque-enter` / `.plaque-face` inside,
+   which is also what keeps the flip free once scroll-in is done. */
+[data-reveal="plaque"] {
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+
 .plaque-enter {
   width: 100%;
   height: 100%;
@@ -273,8 +280,9 @@ body {
 }
 
 .plaque:not([data-revealed="true"]) .plaque-face {
-  transform: scale(1.045);
+  transform: scale(1.085);
   transition: transform 1900ms var(--ease-out) var(--reveal-delay);
+  will-change: transform;
 }
 
 .plaque[data-revealed="true"] .plaque-face,
@@ -282,7 +290,7 @@ body {
   transform: none;
 }
 
-/* Pressing while the wipe is still running should not trap the flip. */
+.plaque[data-revealed="true"] .plaque-enter,
 .plaque[data-open="true"] .plaque-enter {
   overflow: visible;
   clip-path: inset(0 0 0 0);
