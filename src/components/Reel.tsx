@@ -220,7 +220,11 @@ export function Reel({ caption, index = twoDigit }: ReelProps) {
           aria-labelledby={section.title ? `reel-section-${section.id}` : undefined}
         >
           {section.title ? (
-            <h3 id={`reel-section-${section.id}`} className="reel-section-title reel-caption">
+            <h3
+              id={`reel-section-${section.id}`}
+              className="reel-section-title reel-caption"
+              data-reveal
+            >
               {section.title}
             </h3>
           ) : null}
@@ -230,7 +234,13 @@ export function Reel({ caption, index = twoDigit }: ReelProps) {
               const position = section.base + local;
               const on = position === open;
               return (
-                <li className="plaque" key={demo.id} data-open={on} data-playing={on && playing}>
+                <li
+                  className="plaque"
+                  key={demo.id}
+                  data-reveal="wipe"
+                  data-open={on}
+                  data-playing={on && playing}
+                >
                   <div className="plaque-turn">
                     {/* The face: what it is, before you have heard it. */}
                     <div className="plaque-face" inert={on}>

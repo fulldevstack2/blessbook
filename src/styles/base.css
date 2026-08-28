@@ -256,6 +256,22 @@ body {
   transform: none;
 }
 
+/* Plaques enter the same way film frames do: the card wipes in and the plate
+   inside settles slightly, so the reel reads as part of the page rather than
+   a grid that was already there. */
+[data-reveal="wipe"].plaque {
+  overflow: hidden;
+}
+
+[data-reveal="wipe"].plaque .plaque-turn {
+  transform: scale(1.045);
+  transition: transform 1900ms var(--ease-out) var(--reveal-delay);
+}
+
+[data-reveal="wipe"].plaque[data-revealed="true"] .plaque-turn {
+  transform: none;
+}
+
 /* Anything else that carries a picture and enters on the plain rise gets the
    same courtesy, a little quieter. */
 [data-reveal=""] img,
@@ -272,7 +288,8 @@ body {
 @media (prefers-reduced-motion: reduce) {
   [data-reveal] img,
   [data-reveal] video,
-  [data-reveal] canvas {
+  [data-reveal] canvas,
+  [data-reveal="wipe"].plaque .plaque-turn {
     transform: none;
     transition: none;
   }
