@@ -168,6 +168,30 @@ export const demos: readonly Demo[] = [
     kind: "Intro theme",
     note: "Epic cinematic dinner and light show intro theme song.",
   },
+  {
+    id: "yujin-wong",
+    title: "GRAND ENTRANCE",
+    src: audio("yujin-wong-grand-entrance.mp3"),
+    seconds: 127.7,
+    kind: "Entrance theme",
+    note: "Walk-in song for Wong Yu Jin, mental toughness and peak performance coach.",
+  },
+  {
+    id: "new-dawn",
+    title: "A NEW DAWN",
+    src: audio("a-new-dawn.mp3"),
+    seconds: 308.9,
+    kind: "Corporate anthem",
+    note: "Corporate anthem for a Web3 company.",
+  },
+  {
+    id: "fang-kai",
+    title: "\u653e\u5f00 · Let Go",
+    src: audio("fang-kai-let-go.mp3"),
+    seconds: 261.5,
+    kind: "Artiste demo",
+    note: "An original Chinese love R&B ballad demo.",
+  },
 ];
 
 /**
