@@ -256,20 +256,22 @@ body {
   transform: none;
 }
 
-/* Plaques enter the same way film frames do: the card wipes in and the plate
-   inside settles slightly, so the reel reads as part of the page rather than
-   a grid that was already there. */
-[data-reveal="wipe"].plaque {
-  overflow: hidden;
+/* Plaques enter on an inner shell so the reveal never shares a box with the
+   flip. Wipe, clip-path, overflow, or any transform on the shell or on
+   `.plaque-turn` while it is rotating is what broke the player. */
+.plaque-enter {
+  width: 100%;
+  height: 100%;
 }
 
-[data-reveal="wipe"].plaque .plaque-turn {
-  transform: scale(1.045);
-  transition: transform 1900ms var(--ease-out) var(--reveal-delay);
-}
-
-[data-reveal="wipe"].plaque[data-revealed="true"] .plaque-turn {
+.plaque-enter[data-reveal] {
   transform: none;
+  opacity: 0;
+  transition: opacity 900ms var(--ease-out) var(--reveal-delay);
+}
+
+.plaque-enter[data-reveal][data-revealed="true"] {
+  opacity: 1;
 }
 
 /* Anything else that carries a picture and enters on the plain rise gets the
@@ -288,8 +290,7 @@ body {
 @media (prefers-reduced-motion: reduce) {
   [data-reveal] img,
   [data-reveal] video,
-  [data-reveal] canvas,
-  [data-reveal="wipe"].plaque .plaque-turn {
+  [data-reveal] canvas {
     transform: none;
     transition: none;
   }

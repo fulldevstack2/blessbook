@@ -988,7 +988,7 @@
 .dragon .dragon-name[data-reveal],
 .dragon .dragon-photo[data-reveal],
 .dragon .film[data-reveal],
-.dragon .plaque[data-reveal] {
+.dragon .plaque-enter[data-reveal] {
   filter: blur(7px);
   transition:
     opacity 900ms var(--ease-out) var(--reveal-delay),
@@ -1001,7 +1001,7 @@
 .dragon .dragon-name[data-reveal][data-revealed="true"],
 .dragon .dragon-photo[data-reveal][data-revealed="true"],
 .dragon .film[data-reveal][data-revealed="true"],
-.dragon .plaque[data-reveal][data-revealed="true"] {
+.dragon .plaque-enter[data-reveal][data-revealed="true"] {
   filter: blur(0);
 }
 
