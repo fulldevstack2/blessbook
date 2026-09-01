@@ -278,7 +278,7 @@ export function PhoenixPage() {
 
           <ul className="phoenix-words">
             {words.map((word) => (
-              <li key={word.text} data-reveal>
+              <li key={word.text} className="phoenix-word-plate" data-reveal>
                 <blockquote className="phoenix-word">{word.text}</blockquote>
                 <p className="phoenix-word-who">
                   {word.who} · {word.when}

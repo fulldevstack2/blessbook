@@ -9,7 +9,7 @@ const W = 1200, H = 630, SCALE = 2;
 const html = `<!doctype html><html><head><meta charset="utf-8">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,500..900&family=Commissioner:wght@200..600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400..900&family=Commissioner:wght@200..600&display=swap" rel="stylesheet">
 <style>
   * { margin:0; padding:0; box-sizing:border-box }
   body { width:${W}px; height:${H}px; overflow:hidden; background:#0c0805;
@@ -36,7 +36,7 @@ const html = `<!doctype html><html><head><meta charset="utf-8">
           display:flex; flex-direction:column; justify-content:center; gap:0 }
   .eyebrow { font-size:15px; letter-spacing:0.44em; text-transform:uppercase;
              color:#e0ac4b; font-weight:400 }
-  .name { font-family:"Bodoni Moda",serif; font-size:88px; line-height:0.98;
+  .name { font-family:"Playfair Display",serif; font-size:88px; line-height:0.98;
           font-weight:600; font-optical-sizing:auto;
           color:#f7f1e6; margin-top:26px; letter-spacing:0.005em }
   .cn { margin-top:20px; font-size:17px; letter-spacing:0.62em; color:#e0ac4b }

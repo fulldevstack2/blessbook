@@ -38,7 +38,7 @@ const CELL_ASPECT = 6.7;
 const LINE_H = Math.round(TEXTURE_W / CELL_ASPECT);
 
 /** The concept's own display face, which is what the rest of the page is set in. */
-const PLATE_FACE = '"Bodoni Moda", Georgia, serif';
+const PLATE_FACE = '"Playfair Display", Georgia, serif';
 
 function paint(context: CanvasRenderingContext2D): void {
   context.fillStyle = "#000000";
@@ -84,7 +84,7 @@ function engraving(): THREE.CanvasTexture | null {
 
   /* Canvas does not wait for a webfont: ask it to draw in a face that has not
      arrived and it quietly substitutes one that has, which is why these names
-     were being cut in Georgia while the rest of the page was set in Bodoni Moda.
+     were being cut in Georgia while the rest of the page was set in Playfair Display.
      Draw once so the bar is never blank, then draw again once the real face is
      in and hand the texture back to the GPU. */
   void document.fonts

@@ -472,7 +472,7 @@ export function Plate({ photo, line, tall = false }: { photo: Photo; line?: stri
 export function Loader() {
   const onStory = useLocation().pathname === site.story;
   const ready = useReady(onStory ? photos.live.src : photos.press.src);
-  const typeset = useTypeset(['600 64px "Bodoni Moda"']);
+  const typeset = useTypeset(['600 64px "Playfair Display"']);
 
   return (
     <div className="veil" data-ready={ready} data-typeset={typeset} aria-hidden={ready}>

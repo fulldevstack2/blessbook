@@ -17,7 +17,7 @@
      Latin face carries the glyphs, so both stacks fall through to whatever CJK
      face the reader's system has rather than to tofu. */
   --cjk: "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Heiti SC";
-  --display: "Bodoni Moda", "Times New Roman", var(--cjk), serif;
+  --display: "Playfair Display", "Times New Roman", var(--cjk), serif;
   --text: "Commissioner", ui-sans-serif, system-ui, var(--cjk), sans-serif;
 
   background: var(--lacquer);
@@ -567,8 +567,8 @@
   filter: none;
 }
 
-/* The hero has its own voice — Bodoni Moda at display size with optical sizing
-   so hairlines stay visible over the photograph. */
+/* The hero has its own voice — Playfair Display at weight 600, whose strokes
+   hold over a lit photograph where a Didone's hairlines dissolved. */
 .phoenix-cut h1,
 .phoenix-cut p.phoenix-line {
   font-family: var(--display);
@@ -1495,7 +1495,25 @@
   font-size: clamp(2.6rem, 6.5vw, 4.8rem);
   line-height: 1;
   letter-spacing: 0.005em;
-  color: var(--gold-deep);
+  /* Gold leaf, not flat ink: a slow light keeps moving through the letters. */
+  background:
+    linear-gradient(
+      105deg,
+      var(--gold-deep) 0%,
+      oklch(74% 0.125 82) 22%,
+      var(--gold-deep) 44%
+    )
+    0 0 / 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: phoenix-press-sheen 8s linear infinite alternate;
+}
+
+@keyframes phoenix-press-sheen {
+  to {
+    background-position: 100% 0;
+  }
 }
 
 .phoenix-word-press cite {
@@ -1506,6 +1524,103 @@
   letter-spacing: 0.24em;
   text-transform: uppercase;
   color: color-mix(in oklab, var(--lacquer) 62%, transparent);
+}
+
+/* ---------- each voice on its own engraved plaque ----------
+
+   The section is ivory; the plates are the concept's lacquer — the same
+   jewel-box object as the commission plate in the corner, so the voices read
+   as kept things rather than pull-quotes. Each plate lands, then a seam of
+   light draws along its top edge and a ghost of the opening mark surfaces
+   behind the words. */
+.phoenix-word-plate {
+  position: relative;
+  isolation: isolate;
+  padding: clamp(var(--space-lg), 3vw, var(--space-2xl));
+  background: linear-gradient(135deg, #0b0705 0%, #1a1208 100%);
+  border: 1px solid color-mix(in oklab, var(--gold) 42%, transparent);
+  box-shadow:
+    0 0 0 1px color-mix(in oklab, var(--gold) 12%, transparent),
+    0 26px 50px rgb(23 15 8 / 20%),
+    0 0 30px color-mix(in oklab, var(--gold) 10%, transparent);
+  overflow: hidden;
+}
+
+.phoenix-word-plate::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    var(--gold),
+    color-mix(in oklab, var(--gold) 15%, transparent)
+  );
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 1400ms var(--ease-out) calc(var(--reveal-delay) + 400ms);
+}
+
+.phoenix-word-plate[data-revealed="true"]::before {
+  transform: none;
+}
+
+.phoenix-word-plate::after {
+  content: "“";
+  position: absolute;
+  top: -0.08em;
+  right: 0.04em;
+  z-index: -1;
+  font-family: var(--display);
+  font-size: clamp(5rem, 8vw, 7rem);
+  line-height: 1;
+  color: color-mix(in oklab, var(--gold) 22%, transparent);
+  opacity: 0;
+  transition: opacity 1100ms var(--ease-out) calc(var(--reveal-delay) + 650ms);
+  pointer-events: none;
+}
+
+.phoenix-word-plate[data-revealed="true"]::after {
+  opacity: 1;
+}
+
+/* On the plate the voice is lit, and slanted — the display face's italic. */
+.phoenix-section--invert .phoenix-word-plate .phoenix-word {
+  color: var(--ivory);
+  font-style: italic;
+}
+
+.phoenix-word-plate .phoenix-word::before,
+.phoenix-word-plate .phoenix-word::after {
+  color: var(--gold);
+}
+
+.phoenix-section--invert .phoenix-word-plate .phoenix-word-who {
+  color: color-mix(in oklab, var(--gold) 72%, transparent);
+}
+
+/* The plates alternate height on a wide screen — a hung gallery, not a grid. */
+@media (min-width: 760px) {
+  .phoenix-words {
+    align-items: start;
+  }
+
+  .phoenix-word-plate:nth-child(even) {
+    margin-top: var(--space-3xl);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .phoenix-word-press p {
+    animation: none;
+  }
+
+  .phoenix-word-plate::before,
+  .phoenix-word-plate::after {
+    transition: none;
+  }
 }
 
 /* ---------- the clauses: a ledger, not legalese ---------- */
@@ -3398,7 +3513,7 @@ canvas[hidden] + .phoenix-hero-plate {
 }
 
 /* The name is not shown until it can be shown in the right face. Painted before
-   Bodoni Moda lands it appears in Times New Roman and then swaps under the reader,
+   Playfair Display lands it appears in Times New Roman and then swaps under the reader,
    which happens in the first half second, before the site has said anything
    else at all. */
 /* His name waits for the display face before it paints, and then it has to be able to
