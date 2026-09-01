@@ -1738,6 +1738,9 @@ body {
   width: min(100%, 620px);
   padding: clamp(var(--space-xl), 5vw, var(--space-3xl));
   overflow: hidden;
+  /* When the card itself scrolls, reaching its end must not hand the wheel
+     to the page behind it. */
+  overscroll-behavior: contain;
 }
 
 /* The instrument sits behind the words, an object in the dark of the card —

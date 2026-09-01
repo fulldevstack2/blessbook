@@ -284,11 +284,19 @@ export function Brief() {
 
   useEffect(() => {
     if (!gate) return;
+    /* The page holds still under the plate, so the wheel can only mean the
+       disclaimer itself. */
+    const root = document.documentElement;
+    const prior = root.style.overflow;
+    root.style.overflow = "hidden";
     const away = (event: KeyboardEvent) => {
       if (event.key === "Escape") setGate(false);
     };
     window.addEventListener("keydown", away);
-    return () => window.removeEventListener("keydown", away);
+    return () => {
+      root.style.overflow = prior;
+      window.removeEventListener("keydown", away);
+    };
   }, [gate]);
 
   /* Moving between parts replaces everything on screen, so say where you are

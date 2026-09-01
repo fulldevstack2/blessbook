@@ -65,6 +65,17 @@ export function PromoOffer() {
     return () => window.clearTimeout(delay);
   }, []);
 
+  /* The page holds still under the card while it is up. */
+  useEffect(() => {
+    if (!open) return;
+    const root = document.documentElement;
+    const prior = root.style.overflow;
+    root.style.overflow = "hidden";
+    return () => {
+      root.style.overflow = prior;
+    };
+  }, [open]);
+
   if (!open) return null;
 
   const dismiss = () => {

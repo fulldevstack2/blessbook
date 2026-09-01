@@ -70,9 +70,21 @@ export function useSmoothScroll(): void {
       }
     };
 
+    /* An open veil owns its own scrolling. The weighted wheel exists for the
+       page; over the offer, the disclaimer, the menu or the lightbox it must
+       yield, or a card that needs to scroll simply cannot — the wheel eats
+       the event and moves the room behind it instead. */
+    const veiled = (target: EventTarget | null) =>
+      target instanceof Element &&
+      Boolean(target.closest('.promo, .chrome-menu[data-open="true"], .lightbox'));
+
+    const anyVeil = () =>
+      Boolean(document.querySelector('.promo, .chrome-menu[data-open="true"], .lightbox'));
+
     const onWheel = (event: WheelEvent) => {
       // Pinch-zoom and horizontal wheels stay the browser's business.
       if (event.ctrlKey || Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
+      if (veiled(event.target)) return;
       event.preventDefault();
       const amount = event.deltaMode === 1 ? event.deltaY * LINE : event.deltaY;
       push(amount);
@@ -87,6 +99,7 @@ export function useSmoothScroll(): void {
       const target_ = event.target as HTMLElement | null;
       if (target_ && /^(input|textarea|select)$/i.test(target_.tagName)) return;
       if (event.metaKey || event.ctrlKey || event.altKey) return;
+      if (anyVeil()) return;
 
       const page = window.innerHeight * 0.9;
       const step_ = 120;
