@@ -36,6 +36,34 @@
   color: var(--lacquer);
 }
 
+/* ---------- the scrollbar wears the house ----------
+
+   A seam of gold on lacquer, everywhere the site scrolls: the page, the
+   disclaimer plate, anything that overflows. Firefox and new Chrome take
+   the two-colour form; WebKit takes the drawn one. */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: oklch(52% 0.09 78) oklch(15% 0.015 45);
+}
+
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: oklch(15% 0.015 45);
+}
+
+::-webkit-scrollbar-thumb {
+  background: oklch(52% 0.09 78);
+  border: 4px solid oklch(15% 0.015 45);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: oklch(68% 0.12 82);
+}
+
 /* ---------- chrome ---------- */
 
 .phoenix .chrome {
@@ -4658,9 +4686,11 @@ canvas[hidden] + .phoenix-hero-plate {
 /* ----- the same plate, standing as a gate: the disclaimer before the brief
    is sent. No instrument, tighter measure, and it may scroll on a short
    screen — legal words must be readable to be worth showing. */
+/* The plate takes its natural height; the scrollbar exists only when the
+   screen is genuinely too short for the whole text and its buttons. */
 .phoenix .promo--gate .promo-card {
   width: min(100%, 560px);
-  max-height: min(84vh, 40rem);
+  max-height: calc(100vh - 2 * var(--space-lg));
   overflow-y: auto;
 }
 

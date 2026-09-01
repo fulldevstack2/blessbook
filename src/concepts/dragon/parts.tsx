@@ -350,7 +350,7 @@ export function FilmScrolls({ caption }: { caption: string }) {
                 type="button"
                 className="scroll-open"
                 onClick={(event) => show(film, event)}
-                aria-label={`Watch ${film.title} — ${film.note}`}
+                aria-label={`Watch ${film.title}. ${film.note}`}
               >
                 <span className="scroll-numeral" lang="zh" aria-hidden>
                   {numerals[index]}

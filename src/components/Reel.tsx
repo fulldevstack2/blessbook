@@ -253,7 +253,7 @@ export function Reel({ caption, index = twoDigit }: ReelProps) {
                         type="button"
                         className="plaque-press"
                         onClick={() => turn(position)}
-                        aria-label={`Play ${demo.title} — ${demo.note}`}
+                        aria-label={`Play ${demo.title}. ${demo.note}`}
                       >
                         <span className="plaque-index" aria-hidden>
                           {index(position)}

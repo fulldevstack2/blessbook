@@ -138,7 +138,7 @@ export function When({
           ref={pane}
           role="dialog"
           aria-modal={false}
-          aria-label={`${label ?? "Date"} — ${MONTHS[month]} ${year}`}
+          aria-label={`${label ?? "Date"}, ${MONTHS[month]} ${year}`}
           onKeyDown={(event) => {
             if (event.key === "Escape") {
               event.preventDefault();

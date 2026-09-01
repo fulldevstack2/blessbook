@@ -249,7 +249,7 @@ export function Programme() {
           type="button"
           className="programme-open"
           onClick={(event) => show(film, event)}
-          aria-label={`Watch ${film.title} — ${film.note}`}
+          aria-label={`Watch ${film.title}. ${film.note}`}
         >
           <span className="programme-open-word">
             <em>play</em> TONIGHT&rsquo;S FILM

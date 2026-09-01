@@ -560,7 +560,7 @@ export const words: readonly Word[] = [
   {
     text: "This project has been one of the most rewarding commissions of my career.",
     who: "Alistair Hay",
-    when: "Luthier, Emerald Guitars — builder of the Phoenix",
+    when: "Luthier, Emerald Guitars · builder of the Phoenix",
     what: "On being commissioned by Dennis",
   },
 ];

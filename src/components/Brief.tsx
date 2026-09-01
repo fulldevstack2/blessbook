@@ -83,7 +83,7 @@ function Control({
       className="brief-other"
       type="text"
       value={written}
-      aria-label={`${field.label} — please say`}
+      aria-label={`${field.label}, please say`}
       placeholder="Please say"
       onChange={(event) => set(otherKey(field.id), event.target.value)}
     />
@@ -376,7 +376,7 @@ export function Brief() {
         </span>
         <p className="brief-progress-word">
           {outstanding > 0
-            ? `${done} of ${required} answered — fill in what you can and leave the rest.`
+            ? `${done} of ${required} answered. Fill in what you can and leave the rest.`
             : "Everything needed is answered."}
         </p>
       </nav>

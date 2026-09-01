@@ -298,7 +298,7 @@ export const brief: readonly BriefSection[] = [
         id: "keywords",
         q: 10,
         label: "Any names, words, phrases or slogans that should be in it?",
-        hint: "Optional, and more useful than it sounds — a single right word can carry a chorus.",
+        hint: "Optional, and more useful than it sounds: a single right word can carry a chorus.",
         kind: "long",
       },
       {
@@ -341,7 +341,7 @@ export const brief: readonly BriefSection[] = [
         id: "references",
         q: 13,
         label: "Up to three reference songs.",
-        hint: "YouTube or Spotify links, and a line on what you like about each — the melody, the mood, the lyrics, the voice, the arrangement.",
+        hint: "YouTube or Spotify links, and a line on what you like about each: the melody, the mood, the lyrics, the voice, the arrangement.",
         kind: "long",
       },
       {
@@ -452,7 +452,7 @@ export const brief: readonly BriefSection[] = [
 export const enquiry = {
   eyebrow: "Start the commission",
   headline: "The creative brief",
-  lede: "Twenty questions, in five parts. The more of them you answer the more the song is yours rather than merely a song — and the story, in part C, is the one it is really written from. Nothing is bought here: his team reads this themselves and replies from their own address.",
+  lede: "Twenty questions, in five parts. The more of them you answer the more the song is yours rather than merely a song, and the story, in part C, is the one it is really written from. Nothing is bought here: his team reads this themselves and replies from their own address.",
   send: "Send the brief",
   sending: "Sending",
   sentHead: "It is with his team.",
@@ -484,7 +484,7 @@ export const disclaimer = {
     "The Composer has no responsibility or liability whatsoever for the accuracy, completeness, authenticity or veracity of any information or contents contained in this form, and shall not be responsible or liable for any reliance placed upon, or any consequences arising from, such information or contents.",
     "For the avoidance of doubt, nothing contained in this form shall be construed as an endorsement, verification, confirmation or representation by the Composer as to the accuracy or completeness of its contents.",
   ],
-  agree: "I understand — send the brief",
+  agree: "I understand · Send the brief",
   back: "Go back",
 } as const;
 
@@ -498,7 +498,7 @@ export const clauses: readonly { numeral: string; term: string; body: string }[]
   {
     numeral: "I",
     term: "Ownership",
-    body: "Every composition belongs to the person who commissioned it. On delivery you receive 100% of the copyright, the master recordings, the stems and every commercial usage right, in all media, in perpetuity — signed over in a deed of transfer. Dennis keeps no publishing and no royalty.",
+    body: "Every composition belongs to the person who commissioned it. On delivery you receive 100% of the copyright, the master recordings, the stems and every commercial usage right, in all media, in perpetuity, signed over in a deed of transfer. Dennis keeps no publishing and no royalty.",
   },
   {
     numeral: "II",

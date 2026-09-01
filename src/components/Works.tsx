@@ -36,7 +36,7 @@ export function Works({ head }: { head: string }) {
                 type="button"
                 className="gallery-open"
                 onClick={(event) => show(work, event)}
-                aria-label={`Watch ${work.title} — ${work.note}`}
+                aria-label={`Watch ${work.title}. ${work.note}`}
               >
                 {work.poster ? (
                   <img
