@@ -50,7 +50,7 @@ export const concepts: readonly Concept[] = [
   {
     id: "phoenix",
     ordinal: "01",
-    path: "/phoenix",
+    path: "/",
     story: "/phoenix/the-man",
     name: "Phoenix",
     tagline: "Gilded",

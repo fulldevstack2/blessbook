@@ -28,8 +28,8 @@ jobs:
         # Set explicitly rather than relying on the checked-in .env, so the
         # deployed origin is visible here rather than buried in a dotfile.
         env:
-          VITE_BASE: /blesspoke/
-          VITE_SITE_URL: https://fulldevstack2.github.io/blesspoke
+          VITE_BASE: /blessbook/
+          VITE_SITE_URL: https://fulldevstack2.github.io/blessbook
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

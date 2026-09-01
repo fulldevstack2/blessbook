@@ -71,6 +71,47 @@
   color: var(--ivory);
 }
 
+.phoenix .chrome-nav {
+  pointer-events: auto;
+  display: flex;
+  flex: 1 1 auto;
+  justify-content: center;
+  align-items: center;
+  gap: clamp(0.35rem, 1.4vw, 1.15rem);
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.phoenix .chrome-nav::-webkit-scrollbar {
+  display: none;
+}
+
+.phoenix .chrome-nav-link {
+  flex: 0 0 auto;
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--ivory) 72%, transparent);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 320ms var(--ease-out);
+}
+
+.phoenix .chrome-nav-link:hover,
+.phoenix .chrome-nav-link:focus-visible {
+  color: var(--gold);
+}
+
+.phoenix .chrome[data-ground="ivory"] .chrome-nav-link {
+  color: color-mix(in oklab, var(--gold-deep) 78%, transparent);
+}
+
+.phoenix .chrome[data-ground="ivory"] .chrome-nav-link:hover,
+.phoenix .chrome[data-ground="ivory"] .chrome-nav-link:focus-visible {
+  color: var(--gold);
+}
+
 /* An open passage, not a boxed button. Gold seam, Italiana. On the work page
    it waits until the hero has left, then arrives. */
 .phoenix .chrome-passage {
@@ -181,6 +222,10 @@
     line-height: 1.2;
     text-align: right;
   }
+
+  .phoenix .chrome-nav {
+    display: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -256,7 +301,19 @@
 .phoenix-cuts {
   position: relative;
   align-self: center;
-  max-width: 20ch;
+  max-width: min(100%, 26ch);
+}
+
+.phoenix-hero-name,
+.phoenix-nowrap,
+.veil-name-en {
+  white-space: nowrap;
+}
+
+.phoenix-hero-name {
+  display: block;
+  hyphens: none;
+  overflow-wrap: normal;
 }
 
 /* All four cuts share one grid cell, so the three you cannot see are still lying
@@ -2130,6 +2187,12 @@ canvas[hidden] + .phoenix-hero-plate {
   color: var(--ivory);
 }
 
+.veil-name-en {
+  display: block;
+  hyphens: none;
+  overflow-wrap: normal;
+}
+
 .veil-cn {
   display: block;
   margin-top: var(--space-md);
@@ -3425,16 +3488,35 @@ canvas[hidden] + .phoenix-hero-plate {
    and no arrow — an engraved plate has neither, and a bordered pill was the one
    thing on this page that could have come off any site. */
 .phoenix .tocommission {
-  /* The seam sits inside the plate, not flush to its edge — against the edge it
-     reads as a rendering artefact rather than as the mark it is. */
-  padding: var(--space-sm) var(--space-lg) var(--space-sm) var(--space-md);
+  right: clamp(12px, 3vw, 34px);
+  bottom: clamp(92px, 14vh, 124px);
+  padding: var(--space-md) var(--space-xl) var(--space-md) var(--space-lg);
+  border: 1px solid color-mix(in oklab, var(--gold) 55%, transparent);
+  box-shadow:
+    0 0 0 1px color-mix(in oklab, var(--gold) 18%, transparent),
+    0 18px 40px rgb(0 0 0 / 45%),
+    0 0 28px color-mix(in oklab, var(--gold) 22%, transparent);
   background: linear-gradient(
-    90deg,
-    color-mix(in oklab, #0b0705 94%, transparent) 0%,
-    color-mix(in oklab, #0b0705 88%, transparent) 70%,
-    transparent 100%
+    135deg,
+    color-mix(in oklab, #0b0705 96%, transparent) 0%,
+    color-mix(in oklab, #1a1208 92%, transparent) 100%
   );
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(12px);
+  color: var(--gold);
+}
+
+.phoenix .tocommission-word {
+  font-family: var(--display);
+  font-size: clamp(1.05rem, 1.2vw, 1.22rem);
+  letter-spacing: 0.02em;
+  color: var(--ivory);
+  transition: color 320ms var(--ease-out);
+}
+
+.phoenix .tocommission-price {
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
   color: var(--gold);
 }
 
@@ -3460,22 +3542,7 @@ canvas[hidden] + .phoenix-hero-plate {
   box-shadow: 0 0 16px color-mix(in oklab, var(--gold) 80%, transparent);
 }
 
-.phoenix .tocommission-word {
-  font-family: var(--display);
-  font-size: 1.02rem;
-  letter-spacing: 0.02em;
-  color: var(--ivory);
-  transition: color 320ms var(--ease-out);
-}
-
 .phoenix .tocommission:hover .tocommission-word {
-  color: var(--gold);
-}
-
-.phoenix .tocommission-price {
-  font-size: 9px;
-  letter-spacing: 0.26em;
-  text-transform: uppercase;
   color: var(--gold);
 }
 
@@ -3746,17 +3813,17 @@ canvas[hidden] + .phoenix-hero-plate {
 
 .phoenix .plaque-name {
   font-family: var(--display);
-  font-size: clamp(0.98rem, 1.5vw, 1.2rem);
-  line-height: 1.18;
+  font-size: clamp(1.08rem, 1.75vw, 1.38rem);
+  line-height: 1.2;
   color: var(--ivory);
 }
 
 .phoenix .plaque-kind,
 .phoenix .plaque-time {
-  font-size: 9px;
-  letter-spacing: 0.22em;
+  font-size: 10px;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--ivory-faint);
+  color: var(--ivory-soft);
 }
 
 .phoenix .plaque-foot {
@@ -3918,4 +3985,75 @@ canvas[hidden] + .phoenix-hero-plate {
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--ivory-faint);
+}
+
+/* ---------- promo offer ---------- */
+
+.phoenix .promo-card {
+  background: linear-gradient(168deg, #2a1510 0%, #120d09 100%);
+  border: 1px solid color-mix(in oklab, var(--gold) 48%, transparent);
+  box-shadow: 0 28px 60px rgb(0 0 0 / 55%);
+  color: var(--ivory);
+}
+
+.phoenix .promo-eyebrow {
+  margin: 0;
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.phoenix .promo-title {
+  margin: 0;
+  font-family: var(--display);
+  font-size: clamp(1.35rem, 2.4vw, 1.75rem);
+  line-height: 1.15;
+}
+
+.phoenix .promo-price {
+  margin: 0;
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.phoenix .promo-summary,
+.phoenix .promo-note {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--ivory-soft);
+}
+
+.phoenix .promo-primary {
+  background: var(--gold);
+  color: #1a1208;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.phoenix .promo-secondary {
+  border: 1px solid var(--rule);
+  color: var(--ivory);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.phoenix .promo-dismiss {
+  color: var(--ivory-faint);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.phoenix-tier--intro {
+  border-color: color-mix(in oklab, var(--gold) 62%, transparent);
+}
+
+.phoenix-terms-block {
+  margin-top: var(--space-3xl);
 }

@@ -56,7 +56,7 @@ export const rights: readonly Right[] = [
 ];
 
 export interface Tier {
-  readonly id: "song" | "track";
+  readonly id: "song" | "track" | "intro";
   readonly name: string;
   readonly price: string;
   readonly length: string;
@@ -68,6 +68,22 @@ export interface Tier {
  * Dennis's two real commission tiers. Prices are USD, as quoted — the work sells
  * internationally, not only into Malaysia.
  */
+export const introTier: Tier = {
+  id: "intro",
+  name: "1st love / 1st baby song",
+  price: "USD 288",
+  length: "Short original song",
+  summary:
+    "An introductory song for a wedding, first dance, baby's arrival, or another milestone you want set to music.",
+  includes: [
+    "Original short dedication written for you",
+    "Lyrics written if required",
+    "100% copyright and master ownership",
+    "All commercial usage rights",
+    "One request for change",
+  ],
+};
+
 export const tiers: readonly Tier[] = [
   {
     id: "song",

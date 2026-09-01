@@ -24,7 +24,7 @@
 
 import { chromium } from "playwright-core";
 
-const ORIGIN = process.argv[2] ?? "http://localhost:4319/blesspoke";
+const ORIGIN = process.argv[2] ?? "http://localhost:4319/blessbook";
 const PAGES = ["", "phoenix", "nocturne", "dragon"];
 
 /* Real shapes, plus the short ones that break things: a laptop with the window

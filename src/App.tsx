@@ -1,10 +1,7 @@
 import { useLayoutEffect } from "react";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { useSmoothScroll } from "./lib/useSmoothScroll";
-import { ChooserPage } from "./pages/ChooserPage";
 import { PhoenixPage, PhoenixStory } from "./concepts/phoenix/PhoenixPage";
-import { DragonPage, DragonStory } from "./concepts/dragon/DragonPage";
-import { NocturnePage, NocturneStory } from "./concepts/nocturne/NocturnePage";
 
 /**
  * Where the curtain should open.
@@ -40,21 +37,17 @@ function Arrival() {
 }
 
 export function App() {
-  // Weighted scrolling for the whole site, not one concept: it is a property of
-  // the surface, like the grain.
   useSmoothScroll();
 
   return (
     <>
       <Arrival />
       <Routes>
-        <Route path="/" element={<ChooserPage />} />
-        <Route path="/phoenix" element={<PhoenixPage />} />
+        <Route path="/" element={<PhoenixPage />} />
+        <Route path="/phoenix" element={<Navigate to="/" replace />} />
         <Route path="/phoenix/the-man" element={<PhoenixStory />} />
-        <Route path="/dragon" element={<DragonPage />} />
-        <Route path="/dragon/the-man" element={<DragonStory />} />
-        <Route path="/nocturne" element={<NocturnePage />} />
-        <Route path="/nocturne/the-man" element={<NocturneStory />} />
+        <Route path="/dragon/*" element={<Navigate to="/" replace />} />
+        <Route path="/nocturne/*" element={<Navigate to="/" replace />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </>

@@ -15,6 +15,7 @@ import { enquiry, steps } from "../../content/commission";
 import type { Photo } from "../../content/media";
 import { conceptById, violin } from "../registry";
 import { TURNED } from "../../lib/loadModel";
+import { siteName, workNav } from "../../content/site";
 
 /**
  * Phoenix's own furniture.
@@ -29,7 +30,7 @@ import { TURNED } from "../../lib/loadModel";
  * measure — it strikes.
  *
  * Phoenix is treated as the live site now: no way back to the design chooser,
- * no links to the other two directions. The bar is Blesspoke's own masthead.
+ * no links to the other two directions. The bar is Blessbook's own masthead.
  */
 
 const site = conceptById("phoenix");
@@ -99,8 +100,21 @@ export function SiteChrome() {
   return (
     <header className="chrome" data-ground={ground}>
       <Link className="chrome-brand" to={site.path}>
-        Blesspoke
+        {siteName}
       </Link>
+
+      <nav className="chrome-nav" aria-label="Primary">
+        {workNav.map((item) => (
+          <Link
+            key={item.id}
+            className="chrome-nav-link"
+            to={{ pathname: site.path, hash: item.hash }}
+          >
+            {item.label}
+          </Link>
+        ))}
+      </nav>
+
       <Link
         className="chrome-passage"
         to={onStory ? site.path : site.story}
@@ -398,12 +412,12 @@ export function Loader() {
       <div className="veil-half veil-half--left" />
       <div className="veil-half veil-half--right" />
       <p className="veil-name">
-        Dennis Lau
+        <span className="veil-name-en">Dennis Lau</span>
         <span className="veil-cn" lang="zh">
           刘凯彦
         </span>
       </p>
-      <p className="veil-mark">Blesspoke</p>
+      <p className="veil-mark">{siteName}</p>
     </div>
   );
 }

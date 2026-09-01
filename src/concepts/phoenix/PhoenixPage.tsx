@@ -6,6 +6,8 @@ import { FilmScrub } from "../../components/FilmScrub";
 import { Listen } from "../../components/Listen";
 import { NowPlaying } from "../../components/NowPlaying";
 import { Reel } from "../../components/Reel";
+import { PromoOffer } from "../../components/PromoOffer";
+import { WhatsAppFab } from "../../components/WhatsAppFab";
 import { Groove } from "./Groove";
 import { Showreel } from "../../components/Showreel";
 import { StringRow } from "../../components/StringRow";
@@ -33,6 +35,7 @@ import {
   rights,
   service,
   tiers,
+  introTier,
 } from "../../content/commission";
 import {
   artist,
@@ -94,7 +97,12 @@ const instrumentBeats = [
   },
   {
     mark: "Drawn by him",
-    line: "Nobody had built one before, so Dennis asked, and then waited a year.",
+    line: (
+      <>
+        Nobody had built one before, so{" "}
+        <span className="phoenix-nowrap">Dennis asked,</span> and then waited a year.
+      </>
+    ),
     note: commissionStory.eyebrow,
   },
   {
@@ -130,6 +138,8 @@ function Frame({ hero, children }: { hero?: ReactNode; children: ReactNode }) {
       <Plumb />
       <Grain />
       <Commission {...(hero ? {} : { to: `${concept.path}#commission` })} />
+      <WhatsAppFab />
+      {hero ? <PromoOffer /> : null}
 
       {hero}
 
@@ -180,7 +190,7 @@ export function PhoenixPage() {
                     <span className="phoenix-mark">{cut.mark}</span>
                     {index === 0 ? (
                       <h1>
-                        {cut.line}
+                        <span className="phoenix-hero-name">{cut.line}</span>
                         <span className="phoenix-hero-cn" lang="zh">
                           {artist.chineseName}
                         </span>
@@ -213,7 +223,7 @@ export function PhoenixPage() {
       }
     >
         {/* ---------------- hear him ---------------- */}
-        <section className="phoenix-section phoenix-section--reel">
+        <section className="phoenix-section phoenix-section--reel" id="work">
           <p className="phoenix-eyebrow" data-reveal>
             Movement I · Hear him
           </p>
@@ -234,7 +244,7 @@ export function PhoenixPage() {
         </section>
 
         {/* ---------------- in the room ---------------- */}
-        <section className="phoenix-section">
+        <section className="phoenix-section" id="portfolio">
           <p className="phoenix-eyebrow" data-reveal>
             Movement II · In the room
           </p>
@@ -246,7 +256,13 @@ export function PhoenixPage() {
         {/* ---------------- who books him ---------------- */}
         <Band />
 
-        <section className="phoenix-section phoenix-section--invert">
+        <section className="phoenix-section phoenix-section--invert" id="testimonials">
+          <p className="phoenix-eyebrow" data-reveal>
+            Testimonials
+          </p>
+          <p className="phoenix-lede" data-reveal style={{ maxWidth: "48ch", marginBottom: "var(--space-3xl)" }}>
+            Placeholder quotes for now — final testimonials from Dennis to follow.
+          </p>
 
           <ul className="phoenix-words">
             {words.map((word) => (
@@ -278,7 +294,7 @@ export function PhoenixPage() {
 
         <Process />
 
-        <section className="phoenix-section">
+        <section className="phoenix-section" id="packages">
 
           <div className="phoenix-deed" data-reveal>
             <div className="phoenix-deed-head">
@@ -296,6 +312,19 @@ export function PhoenixPage() {
           </div>
 
           <ul className="phoenix-tiers">
+            <li className="phoenix-tier phoenix-tier--intro" key={introTier.id} data-reveal>
+              <p className="phoenix-tier-price">
+                <Figure value={introTier.price} />
+              </p>
+              <h3 className="phoenix-tier-name">{introTier.name}</h3>
+              <p className="phoenix-tier-length">{introTier.length}</p>
+              <p className="phoenix-tier-summary">{introTier.summary}</p>
+              <ul className="phoenix-tier-list">
+                {introTier.includes.map((line) => (
+                  <li key={line}>{line}</li>
+                ))}
+              </ul>
+            </li>
             {tiers.map((tier) => (
               <li className="phoenix-tier" key={tier.id} data-reveal>
                 <p className="phoenix-tier-price">
@@ -328,6 +357,15 @@ export function PhoenixPage() {
             </div>
           </dl>
           <Enquiry />
+
+          <section className="phoenix-terms-block" id="terms" data-reveal>
+            <p className="phoenix-eyebrow">Terms &amp; conditions</p>
+            <p className="phoenix-lede" style={{ maxWidth: "52ch" }}>
+              {service.against} Full written terms are supplied by Dennis&apos;s team
+              when you enquire — final T&amp;C copy to follow.
+            </p>
+          </section>
+
           <p className="phoenix-note">{commission.note}</p>
 
           <ul className="phoenix-socials">

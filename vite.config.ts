@@ -11,7 +11,7 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, ".", "VITE_");
 
   return {
-    base: env.VITE_BASE || "/blesspoke/",
+    base: env.VITE_BASE || "/blessbook/",
     plugins: [react()],
     server: { port: 4300 },
     build: {
