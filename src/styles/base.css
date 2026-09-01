@@ -139,8 +139,19 @@ p {
 
 /* Anchor jumps land under the fixed chrome otherwise — the button in the corner
    goes to #commission, and the top of that section was arriving beneath the bar. */
-#brief {
+#brief,
+#work,
+#packages,
+#terms,
+#testimonials {
   scroll-margin-top: clamp(64px, 9vh, 96px);
+}
+
+/* A named place in the page with no body of its own — the chrome's links
+   land on it. */
+.phoenix-anchor {
+  display: block;
+  height: 0;
 }
 
 /* Commission clears the chrome with its own lacquer padding, not scroll-margin.

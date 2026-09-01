@@ -471,6 +471,40 @@ export const commission = {
 } as const;
 
 /**
+ * The terms, as clauses. Nothing here is invented: each one restates a promise
+ * the page already makes — the deed, the seven days, the payment order, the
+ * one-of-one guarantee — in the plain order a client would ask about them.
+ * Dennis's team supplies the full written contract at enquiry.
+ */
+export const clauses: readonly { numeral: string; term: string; body: string }[] = [
+  {
+    numeral: "I",
+    term: "Ownership",
+    body: "Every composition belongs to the person who commissioned it. On delivery you receive 100% of the copyright, the master recordings, the stems and every commercial usage right, in all media, in perpetuity — signed over in a deed of transfer. Dennis keeps no publishing and no royalty.",
+  },
+  {
+    numeral: "II",
+    term: "Delivery",
+    body: "A private preview of your piece comes back to you inside seven days of the brief, guaranteed. The finished work follows on your approval.",
+  },
+  {
+    numeral: "III",
+    term: "Changes",
+    body: "A full commission includes two requests for change; the introductory package includes one. Each request is heard and answered before anything is final.",
+  },
+  {
+    numeral: "IV",
+    term: "Payment",
+    body: "Nothing is owed until you have heard the preview and are happy with it. Payment details are sent then, and once payment clears, the full mix, the stems and the deed of transfer come back the same way.",
+  },
+  {
+    numeral: "V",
+    term: "One of one",
+    body: "Every piece is written once, for one client, and never re-sold, re-cut or re-licensed. What is made for you exists nowhere else.",
+  },
+];
+
+/**
  * His own description of the service, condensed. Better positioning copy than
  * anything invented for the site, because it is what he actually sells.
  */

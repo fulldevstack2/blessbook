@@ -30,6 +30,7 @@ import {
   Struck,
 } from "./parts";
 import {
+  clauses,
   commission,
   promise,
   rights,
@@ -49,7 +50,7 @@ import {
   training,
 } from "../../content/dennis";
 import { photos } from "../../content/media";
-import { socials, words } from "../../content/work";
+import { pressWord, socials, words } from "../../content/work";
 import { SceneCanvas } from "../../lib/SceneCanvas";
 import { ScrollStage } from "../../lib/ScrollStage";
 import { useFonts } from "../../lib/useFonts";
@@ -223,7 +224,7 @@ export function PhoenixPage() {
       }
     >
         {/* ---------------- hear him ---------------- */}
-        <section className="phoenix-section phoenix-section--reel" id="work">
+        <section className="phoenix-section phoenix-section--reel">
           <p className="phoenix-eyebrow" data-reveal>
             Movement I · Hear him
           </p>
@@ -235,6 +236,9 @@ export function PhoenixPage() {
           </p>
           <Groove />
 
+          {/* The chrome's "Work" lands here — on the commissioned pieces, not
+              the reel above them. */}
+          <span id="work" className="phoenix-anchor" aria-hidden />
           <Words as="h2" className="phoenix-h2" text={"Written to order"} style={{ marginTop: "var(--space-5xl)" }} />
           <p className="phoenix-lede" data-reveal style={{ maxWidth: "48ch" }}>
             A game trailer, a car launch, a boy's third birthday and a Mandopop
@@ -260,9 +264,17 @@ export function PhoenixPage() {
           <p className="phoenix-eyebrow" data-reveal>
             Testimonials
           </p>
-          <p className="phoenix-lede" data-reveal style={{ maxWidth: "48ch", marginBottom: "var(--space-3xl)" }}>
+          <p className="phoenix-lede" data-reveal style={{ maxWidth: "48ch" }}>
             In their words.
           </p>
+
+          {/* The press, first and largest — three words that say the rest. */}
+          <blockquote className="phoenix-word-press" data-reveal>
+            <p>&ldquo;{pressWord.text}&rdquo;</p>
+            <cite>
+              {pressWord.who} · {pressWord.when}
+            </cite>
+          </blockquote>
 
           <ul className="phoenix-words">
             {words.map((word) => (
@@ -294,7 +306,7 @@ export function PhoenixPage() {
 
         <Process />
 
-        <section className="phoenix-section" id="packages">
+        <section className="phoenix-section">
 
           <div className="phoenix-deed" data-reveal>
             <div className="phoenix-deed-head">
@@ -311,7 +323,8 @@ export function PhoenixPage() {
             </dl>
           </div>
 
-          <ul className="phoenix-tiers">
+          {/* The chrome's "Packages" lands here, on the USD 288 way in. */}
+          <ul className="phoenix-tiers" id="packages">
             <li className="phoenix-tier phoenix-tier--intro" key={introTier.id} data-reveal>
               <p className="phoenix-tier-price">
                 <Figure value={introTier.price} />
@@ -358,11 +371,27 @@ export function PhoenixPage() {
           </dl>
           <Enquiry />
 
-          <section className="phoenix-terms-block" id="terms" data-reveal>
-            <p className="phoenix-eyebrow">Terms &amp; conditions</p>
-            <p className="phoenix-lede" style={{ maxWidth: "52ch" }}>
-              {service.against} Full written terms are supplied by Dennis&apos;s team
-              when you enquire.
+          <section className="phoenix-terms-block" id="terms">
+            <p className="phoenix-eyebrow" data-reveal>
+              Terms &amp; conditions
+            </p>
+            <p className="phoenix-lede" data-reveal style={{ maxWidth: "52ch" }}>
+              {service.against}
+            </p>
+            <ol className="phoenix-clauses">
+              {clauses.map((clause) => (
+                <li className="phoenix-clause" key={clause.numeral} data-reveal>
+                  <p className="phoenix-clause-numeral">{clause.numeral}</p>
+                  <div>
+                    <h3 className="phoenix-clause-term">{clause.term}</h3>
+                    <p className="phoenix-clause-body">{clause.body}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+            <p className="phoenix-clauses-note" data-reveal>
+              The full written contract is supplied by Dennis&apos;s team when you
+              enquire.
             </p>
           </section>
 

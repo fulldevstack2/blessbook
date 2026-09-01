@@ -527,29 +527,40 @@ export interface Word {
  * are named. The two anonymous commission quotes that used to sit here came
  * from the previous project and were never verified, so they are gone.
  */
+/* Attributions verified against dennislau.thechosen.io (his own site) on
+   2026-09-01 — two of them had been swapped here. Alistair Hay's line is from
+   emeraldguitars.com/dennis-lau-phoenix-violin, and it earns its place on a
+   commissions site: it is what the man who built the Phoenix said about
+   being commissioned by Dennis. */
+export const pressWord = {
+  text: "Simply electric.",
+  who: "The Star",
+  when: "2016",
+} as const;
+
 export const words: readonly Word[] = [
   {
-    text: "You are the pride, not only to the university, but to the nation, a shining ambassador to the music industry.",
+    text: "Dennis, you are the pride, not only to the UCSI University, but also to the nation.",
     who: "Dato' Dr Peter Ng",
     when: "Chairman, UCSI Group",
     what: "On his record",
   },
   {
-    text: "Never fails to amaze me with his unique blend and skill of putting his music abilities together.",
-    who: "Winnie Loo",
-    when: "Founder, A Cut Above",
+    text: "Never fail to amaze me with his unique blend and skill of putting his music abilities together.",
+    who: "Soren Ravn",
+    when: "Managing Director, Carlsberg Malaysia",
     what: "On his playing",
   },
   {
-    text: "The new generation of artist management, specialising in music-inspired performers, led by the ever talented Dennis Lau.",
-    who: "Soren Ravn",
-    when: "Managing Director, Carlsberg Malaysia",
-    what: "On working with him",
+    text: "Get mesmerised by Malaysia's most breath-taking performer for your next event.",
+    who: "Winnie Loo",
+    when: "Founder, A Cut Above",
+    what: "On his performances",
   },
   {
-    text: "A great one-stop, worry-free solution, with a myriad of talents to suit the right mood.",
-    who: "Yuri Wong",
-    when: "Founder, The Factory Music Studio",
-    what: "On the work",
+    text: "This project has been one of the most rewarding commissions of my career.",
+    who: "Alistair Hay",
+    when: "Luthier, Emerald Guitars — builder of the Phoenix",
+    what: "On being commissioned by Dennis",
   },
 ];

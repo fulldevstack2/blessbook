@@ -370,6 +370,19 @@
   white-space: nowrap;
 }
 
+/* While the menu veil is up the passage folds away (its door is inside the
+   menu), so Close stands alone at the top right. Its label holds one line
+   while folded, for the same ghost-height reason as above. */
+.phoenix .chrome[data-menu-open="true"] .chrome-passage {
+  max-width: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.phoenix .chrome[data-menu-open="true"] .chrome-passage-label {
+  white-space: nowrap;
+}
+
 @media (min-width: 721px) {
   .phoenix .chrome-passage-label {
     white-space: nowrap;
@@ -1465,6 +1478,93 @@
   font-size: 10px;
   letter-spacing: 0.2em;
   text-transform: uppercase;
+  color: var(--ivory-faint);
+}
+
+/* The press verdict, first and largest: three words in the display face,
+   struck in deep gold on the ivory, before any client speaks. */
+.phoenix-word-press {
+  margin: var(--space-2xl) 0 0;
+  padding: 0;
+}
+
+.phoenix-word-press p {
+  margin: 0;
+  font-family: var(--display);
+  font-optical-sizing: auto;
+  font-size: clamp(2.6rem, 6.5vw, 4.8rem);
+  line-height: 1;
+  letter-spacing: 0.005em;
+  color: var(--gold-deep);
+}
+
+.phoenix-word-press cite {
+  display: block;
+  margin-top: var(--space-md);
+  font-style: normal;
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--lacquer) 62%, transparent);
+}
+
+/* ---------- the clauses: a ledger, not legalese ---------- */
+
+.phoenix-clauses {
+  list-style: none;
+  margin: var(--space-2xl) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-xl);
+}
+
+@media (min-width: 900px) {
+  .phoenix-clauses {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-2xl) var(--space-4xl);
+  }
+
+  .phoenix-clause:last-child {
+    grid-column: 1 / -1;
+  }
+}
+
+.phoenix-clause {
+  display: flex;
+  gap: var(--space-md);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--rule);
+}
+
+.phoenix-clause-numeral {
+  margin: 0;
+  flex: 0 0 2.6ch;
+  padding-top: 0.4rem;
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  color: var(--gold);
+}
+
+.phoenix-clause-term {
+  margin: 0;
+  font-family: var(--display);
+  font-size: clamp(1.15rem, 1.6vw, 1.45rem);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: var(--ivory);
+}
+
+.phoenix-clause-body {
+  margin: var(--space-xs) 0 0;
+  font-size: 0.95rem;
+  line-height: 1.65;
+  max-width: 46ch;
+  color: var(--ivory-soft);
+}
+
+.phoenix-clauses-note {
+  margin: var(--space-xl) 0 0;
+  font-size: 0.85rem;
   color: var(--ivory-faint);
 }
 

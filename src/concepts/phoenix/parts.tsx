@@ -119,7 +119,7 @@ export function SiteChrome() {
   }, [onStory]);
 
   return (
-    <header className="chrome" data-ground={ground}>
+    <header className="chrome" data-ground={ground} data-menu-open={menuOpen}>
       <Link className="chrome-brand" to={site.path} onClick={() => setMenuOpen(false)}>
         {siteName}
       </Link>
