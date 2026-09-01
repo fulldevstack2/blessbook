@@ -90,18 +90,26 @@
 
 .phoenix .chrome-nav-link {
   flex: 0 0 auto;
-  font-size: 9px;
-  letter-spacing: 0.16em;
+  padding: 0.3rem 0.1rem;
+  font-size: 10px;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   color: color-mix(in oklab, var(--ivory) 72%, transparent);
   text-decoration: none;
   white-space: nowrap;
-  transition: color 320ms var(--ease-out);
+  /* The concept's seam, in miniature: a gold hairline that draws in under the
+     word rather than an underline that switches on. */
+  background: linear-gradient(90deg, var(--gold), var(--gold)) left bottom / 0% 1px
+    no-repeat;
+  transition:
+    color 320ms var(--ease-out),
+    background-size 420ms var(--ease-out);
 }
 
 .phoenix .chrome-nav-link:hover,
 .phoenix .chrome-nav-link:focus-visible {
   color: var(--gold);
+  background-size: 100% 1px;
 }
 
 .phoenix .chrome[data-ground="ivory"] .chrome-nav-link {
@@ -475,6 +483,12 @@
   font-size: clamp(3rem, 11vw, 9rem);
   line-height: 0.86;
   letter-spacing: 0.01em;
+  /* The body allows mid-word emergency breaks so nothing ever spills a box,
+     but at this size that "emergency" is real: with the window zoomed the way
+     a Mac user zooms, the name went out as "Denn / is". It may wrap at the
+     space, never inside a word. */
+  hyphens: none;
+  overflow-wrap: normal;
 }
 
 .phoenix-artist-cn {
@@ -2022,6 +2036,10 @@ canvas[hidden] + .phoenix-hero-plate {
   line-height: 0.86;
   letter-spacing: -0.01em;
   color: var(--ivory);
+  /* Same rule as every large setting of his name: the body's emergency
+     mid-word break may never touch it. Space wrap only. */
+  hyphens: none;
+  overflow-wrap: normal;
   /* Struck, not scrolled: it settles a fraction as the band passes. */
   transform: translateY(calc((0.5 - var(--s, 0.5)) * 14px));
 }
@@ -3985,10 +4003,15 @@ canvas[hidden] + .phoenix-hero-plate {
 
 /* ---------- promo offer ---------- */
 
+/* The card is the same plate as the commission button: the concept's lacquer,
+   not a warmer brown of its own, with the hairline and its faint ring. */
 .phoenix .promo-card {
-  background: linear-gradient(168deg, #2a1510 0%, #120d09 100%);
+  background: linear-gradient(135deg, #0b0705 0%, #1a1208 100%);
   border: 1px solid color-mix(in oklab, var(--gold) 48%, transparent);
-  box-shadow: 0 28px 60px rgb(0 0 0 / 55%);
+  box-shadow:
+    0 0 0 1px color-mix(in oklab, var(--gold) 16%, transparent),
+    0 28px 60px rgb(0 0 0 / 55%),
+    0 0 36px color-mix(in oklab, var(--gold) 14%, transparent);
   color: var(--ivory);
 }
 
@@ -4023,20 +4046,40 @@ canvas[hidden] + .phoenix-hero-plate {
   color: var(--ivory-soft);
 }
 
+/* A filled gold block and an outlined box are furniture from someone else's
+   site. The primary is a small engraved plate — hairline, lacquer, gold type —
+   and the secondary is bare tracked caps, the same quiet register as the
+   chrome. */
 .phoenix .promo-primary {
-  background: var(--gold);
-  color: #1a1208;
+  border: 1px solid color-mix(in oklab, var(--gold) 55%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in oklab, var(--gold) 16%, transparent);
+  background: linear-gradient(135deg, #14100a 0%, #221808 100%);
+  color: var(--gold);
   font-size: 10px;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
+  transition:
+    color 320ms var(--ease-out),
+    border-color 320ms var(--ease-out);
+}
+
+.phoenix .promo-primary:hover,
+.phoenix .promo-primary:focus-visible {
+  color: var(--ivory);
+  border-color: color-mix(in oklab, var(--gold) 85%, transparent);
 }
 
 .phoenix .promo-secondary {
-  border: 1px solid var(--rule);
-  color: var(--ivory);
+  color: var(--ivory-soft);
   font-size: 10px;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
+  transition: color 320ms var(--ease-out);
+}
+
+.phoenix .promo-secondary:hover,
+.phoenix .promo-secondary:focus-visible {
+  color: var(--gold);
 }
 
 .phoenix .promo-dismiss {

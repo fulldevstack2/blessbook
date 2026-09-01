@@ -261,7 +261,7 @@ export function PhoenixPage() {
             Testimonials
           </p>
           <p className="phoenix-lede" data-reveal style={{ maxWidth: "48ch", marginBottom: "var(--space-3xl)" }}>
-            Placeholder quotes for now — final testimonials from Dennis to follow.
+            In their words.
           </p>
 
           <ul className="phoenix-words">
@@ -362,7 +362,7 @@ export function PhoenixPage() {
             <p className="phoenix-eyebrow">Terms &amp; conditions</p>
             <p className="phoenix-lede" style={{ maxWidth: "52ch" }}>
               {service.against} Full written terms are supplied by Dennis&apos;s team
-              when you enquire — final T&amp;C copy to follow.
+              when you enquire.
             </p>
           </section>
 
