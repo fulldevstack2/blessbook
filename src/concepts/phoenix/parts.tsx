@@ -46,10 +46,31 @@ const site = conceptById("phoenix");
  * Over the ivory turn the marks ink themselves dark — no lacquer bloom, which
  * reads as a smudge on cream. Over lacquer they stay light.
  */
+/* The page's own numbering — every section is announced as a movement. */
+const NUMERALS = ["I", "II", "III", "IV", "V", "VI"] as const;
+
 export function SiteChrome() {
   const onStory = useLocation().pathname === site.story;
   const [passageShown, setPassageShown] = useState(onStory);
   const [ground, setGround] = useState<"lacquer" | "ivory">("lacquer");
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  /* The menu is a veil over the page: the page must not scroll beneath it,
+     and Escape must put it away. */
+  useEffect(() => {
+    if (!menuOpen) return;
+    const root = document.documentElement;
+    const prior = root.style.overflow;
+    root.style.overflow = "hidden";
+    const away = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMenuOpen(false);
+    };
+    window.addEventListener("keydown", away);
+    return () => {
+      root.style.overflow = prior;
+      window.removeEventListener("keydown", away);
+    };
+  }, [menuOpen]);
 
   useEffect(() => {
     if (onStory) {
@@ -99,7 +120,7 @@ export function SiteChrome() {
 
   return (
     <header className="chrome" data-ground={ground}>
-      <Link className="chrome-brand" to={site.path}>
+      <Link className="chrome-brand" to={site.path} onClick={() => setMenuOpen(false)}>
         {siteName}
       </Link>
 
@@ -114,6 +135,52 @@ export function SiteChrome() {
           </Link>
         ))}
       </nav>
+
+      {/* The phone has no room for the link row, so it gets the word instead
+          of a hamburger, and the links get what this concept gives every
+          arrival: a veil. */}
+      <button
+        type="button"
+        className="chrome-menu-button"
+        aria-expanded={menuOpen}
+        onClick={() => setMenuOpen((open) => !open)}
+      >
+        {menuOpen ? "Close" : "Menu"}
+      </button>
+
+      <div className="chrome-menu" data-open={menuOpen} aria-hidden={!menuOpen}>
+        <nav className="chrome-menu-rooms" aria-label="Site">
+          {workNav.map((item, index) => (
+            <Link
+              key={item.id}
+              className="chrome-menu-link"
+              to={{ pathname: site.path, hash: item.hash }}
+              onClick={() => setMenuOpen(false)}
+              tabIndex={menuOpen ? undefined : -1}
+              style={{ "--i": index } as CSSProperties}
+            >
+              <span className="chrome-menu-count" aria-hidden>
+                {NUMERALS[index]}
+              </span>
+              <span className="chrome-menu-word">{item.label}</span>
+            </Link>
+          ))}
+          <Link
+            className="chrome-menu-link chrome-menu-link--man"
+            to={onStory ? site.path : site.story}
+            onClick={() => setMenuOpen(false)}
+            tabIndex={menuOpen ? undefined : -1}
+            style={{ "--i": workNav.length } as CSSProperties}
+          >
+            <span className="chrome-menu-count" aria-hidden>
+              ·
+            </span>
+            <span className="chrome-menu-word">
+              {onStory ? "The work" : "The man behind the music"}
+            </span>
+          </Link>
+        </nav>
+      </div>
 
       <Link
         className="chrome-passage"

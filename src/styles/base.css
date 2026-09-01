@@ -1724,16 +1724,41 @@ body {
 .promo-card {
   position: relative;
   z-index: 1;
-  width: min(100%, 420px);
-  padding: clamp(var(--space-lg), 4vw, var(--space-2xl));
+  width: min(100%, 620px);
+  padding: clamp(var(--space-xl), 5vw, var(--space-3xl));
+  overflow: hidden;
+}
+
+/* The instrument sits behind the words, an object in the dark of the card —
+   kept to the card's right edge so it never crosses the text column. */
+.promo-violin {
+  position: absolute;
+  right: -16%;
+  bottom: -10%;
+  width: 82%;
+  pointer-events: none;
+}
+
+.promo-body {
+  position: relative;
+  z-index: 1;
   display: grid;
   gap: var(--space-sm);
+  max-width: 24rem;
 }
 
 .promo-actions {
   display: grid;
-  gap: var(--space-xs);
+  gap: var(--space-sm);
   margin-top: var(--space-sm);
+}
+
+/* Under the plate, in the clear column — never over the instrument. */
+.promo-quiet {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--space-xl);
 }
 
 .promo-primary,

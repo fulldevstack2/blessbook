@@ -43,7 +43,10 @@
   top: 0;
   left: 0;
   right: 0;
-  z-index: 30;
+  /* Above the corner plates (60), below the offer (80) and the lightbox
+     (200): the menu veil lives inside this stacking context and must cover
+     the plates. */
+  z-index: 70;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -82,7 +85,8 @@
 .phoenix .chrome-brand {
   pointer-events: auto;
   position: relative;
-  z-index: 1;
+  /* Above the menu veil, so the mark keeps burning while the menu is open. */
+  z-index: 3;
   flex: 0 0 auto;
   font-size: 11px;
   letter-spacing: 0.28em;
@@ -151,6 +155,142 @@
   color: var(--gold);
 }
 
+/* ---------- the phone's menu: a veil, not a drawer ---------- */
+
+/* The word, not a hamburger. Same register as the links it stands in for. */
+.phoenix .chrome-menu-button {
+  display: none;
+  pointer-events: auto;
+  position: relative;
+  z-index: 3;
+  /* Flush right while the passage is collapsed; beside it once it arrives. */
+  margin-left: auto;
+  border: 0;
+  background: none;
+  padding: 0.35rem 0;
+  font: inherit;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--ivory) 78%, transparent);
+  cursor: pointer;
+  transition: color 320ms var(--ease-out);
+}
+
+.phoenix .chrome-menu-button:hover,
+.phoenix .chrome-menu-button:focus-visible,
+.phoenix .chrome-menu-button[aria-expanded="true"] {
+  color: var(--gold);
+}
+
+.phoenix .chrome[data-ground="ivory"] .chrome-menu-button {
+  color: color-mix(in oklab, var(--gold-deep) 82%, transparent);
+}
+
+.phoenix .chrome[data-ground="ivory"] .chrome-menu-button:hover,
+.phoenix .chrome[data-ground="ivory"] .chrome-menu-button:focus-visible,
+.phoenix .chrome[data-ground="ivory"] .chrome-menu-button[aria-expanded="true"] {
+  color: var(--gold);
+}
+
+/* Lacquer over the whole page, one seam, and the rooms in display type —
+   the same way everything else on this site arrives. The brand and the
+   button stay above it, so "Close" is the same word in the same place. */
+.phoenix .chrome-menu {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  display: grid;
+  align-content: center;
+  padding: clamp(var(--space-xl), 12vh, var(--space-5xl))
+    clamp(var(--space-lg), 8vw, var(--space-4xl));
+  background: color-mix(in oklab, var(--lacquer) 94%, transparent);
+  backdrop-filter: blur(18px);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 480ms var(--ease-out),
+    visibility 0s linear 480ms;
+}
+
+.phoenix .chrome-menu[data-open="true"] {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition: opacity 480ms var(--ease-out);
+}
+
+.phoenix .chrome-menu-rooms {
+  display: grid;
+  gap: clamp(var(--space-md), 3.5vh, var(--space-xl));
+  border-left: 1px solid transparent;
+  border-image: linear-gradient(180deg, transparent, var(--gold) 22%, var(--gold) 78%, transparent)
+    1;
+  padding-left: clamp(var(--space-lg), 7vw, var(--space-2xl));
+}
+
+.phoenix .chrome-menu-link {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-md);
+  text-decoration: none;
+  color: var(--ivory);
+  opacity: 0;
+  transform: translateY(14px);
+  transition:
+    color 320ms var(--ease-out),
+    opacity 460ms var(--ease-out),
+    transform 560ms var(--ease-out);
+}
+
+.phoenix .chrome-menu[data-open="true"] .chrome-menu-link {
+  opacity: 1;
+  transform: none;
+  transition-delay: 0s, calc(90ms + var(--i) * 65ms), calc(90ms + var(--i) * 65ms);
+}
+
+.phoenix .chrome-menu-link:hover,
+.phoenix .chrome-menu-link:focus-visible {
+  color: var(--gold);
+  outline: none;
+}
+
+.phoenix .chrome-menu-count {
+  flex: 0 0 2.4ch;
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  color: var(--gold);
+}
+
+.phoenix .chrome-menu-word {
+  font-family: var(--display);
+  font-size: clamp(1.7rem, 8vw, 2.3rem);
+  line-height: 1.12;
+  letter-spacing: 0.01em;
+}
+
+.phoenix .chrome-menu-link--man {
+  margin-top: var(--space-sm);
+}
+
+.phoenix .chrome-menu-link--man .chrome-menu-word {
+  color: var(--gold);
+  font-size: clamp(1.15rem, 5.5vw, 1.5rem);
+}
+
+.phoenix .chrome-menu-link--man:hover .chrome-menu-word,
+.phoenix .chrome-menu-link--man:focus-visible .chrome-menu-word {
+  color: var(--ivory);
+}
+
+@media (min-width: 721px) {
+  .phoenix .chrome-menu,
+  .phoenix .chrome-menu-button {
+    display: none;
+  }
+}
+
 /* An open passage, not a boxed button. Gold seam, display type. On the work page
    it waits until the hero has left, then arrives. */
 .phoenix .chrome-passage {
@@ -160,7 +300,10 @@
   display: flex;
   align-items: center;
   gap: 0.85rem;
-  max-width: min(100%, 22rem);
+  /* Collapsed until it arrives: no held-open hole in the chrome, on any
+     screen — the passage opens out of its own seam. */
+  max-width: 0;
+  overflow: hidden;
   min-height: 2.75rem;
   padding: 0.55rem 0.15rem 0.55rem 0;
   text-decoration: none;
@@ -170,13 +313,15 @@
   transition:
     color 320ms var(--ease-out),
     opacity 520ms var(--ease-out),
-    transform 620ms var(--ease-out);
+    transform 620ms var(--ease-out),
+    max-width 680ms var(--ease-out);
 }
 
 .phoenix .chrome-passage[data-shown="true"] {
   pointer-events: auto;
   opacity: 1;
   transform: none;
+  max-width: min(100%, 22rem);
 }
 
 .phoenix .chrome-passage:hover,
@@ -217,24 +362,15 @@
   text-wrap: balance;
 }
 
-/* Until the hero has left there is no passage, and no hole where it will be:
-   it opens out of its own seam, and the section links make room in the same
-   motion. Wide screens only — the phone chrome has no link row to make room. */
+/* While collapsed the label must hold one line: at max-width 0 a wrapping
+   label reflows to a character per line, and six hundred pixels of ghost
+   height stretch the whole chrome row. On a wide screen it holds one line
+   always, so the drawer opens cleanly. */
+.phoenix .chrome-passage:not([data-shown="true"]) .chrome-passage-label {
+  white-space: nowrap;
+}
+
 @media (min-width: 721px) {
-  .phoenix .chrome-passage {
-    max-width: 0;
-    overflow: hidden;
-    transition:
-      color 320ms var(--ease-out),
-      opacity 520ms var(--ease-out),
-      transform 620ms var(--ease-out),
-      max-width 680ms var(--ease-out);
-  }
-
-  .phoenix .chrome-passage[data-shown="true"] {
-    max-width: 22rem;
-  }
-
   .phoenix .chrome-passage-label {
     white-space: nowrap;
   }
@@ -274,9 +410,12 @@
 
   .phoenix .chrome-passage {
     gap: 0.65rem;
-    max-width: min(100%, 11.5rem);
     min-height: 2.5rem;
     padding: 0.35rem 0;
+  }
+
+  .phoenix .chrome-passage[data-shown="true"] {
+    max-width: min(100%, 11.5rem);
   }
 
   .phoenix .chrome-passage-label {
@@ -288,9 +427,18 @@
   .phoenix .chrome-nav {
     display: none;
   }
+
+  .phoenix .chrome-menu-button {
+    display: inline-block;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .phoenix .chrome-menu,
+  .phoenix .chrome-menu-link {
+    transition: none;
+  }
+
   .phoenix .chrome-passage,
   .phoenix .chrome-passage-seam {
     transition: none;
@@ -4079,24 +4227,144 @@ canvas[hidden] + .phoenix-hero-plate {
 .phoenix .promo-title {
   margin: 0;
   font-family: var(--display);
-  font-size: clamp(1.35rem, 2.4vw, 1.75rem);
-  line-height: 1.15;
+  font-size: clamp(1.9rem, 4.2vw, 2.5rem);
+  line-height: 1.08;
+  font-optical-sizing: auto;
 }
 
+/* The figure in the concept's own numerals — struck, not shouted. */
 .phoenix .promo-price {
   margin: 0;
-  font-size: 11px;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
+  font-family: var(--display);
+  font-size: clamp(1.15rem, 2vw, 1.4rem);
+  letter-spacing: 0.02em;
   color: var(--gold);
 }
 
-.phoenix .promo-summary,
-.phoenix .promo-note {
+.phoenix .promo-summary {
   margin: 0;
-  font-size: 0.92rem;
-  line-height: 1.55;
+  font-size: 1rem;
+  line-height: 1.6;
+  max-width: 42ch;
   color: var(--ivory-soft);
+}
+
+.phoenix .promo-note-line {
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.55;
+  color: var(--ivory-faint);
+}
+
+/* ----- the phrase: five hairlines, six notes, played in ----- */
+
+.phoenix .promo-phrase {
+  width: min(100%, 300px);
+  margin: var(--space-2xs) 0;
+  overflow: visible;
+}
+
+.phoenix .promo-phrase-staff line {
+  stroke: color-mix(in oklab, var(--gold) 32%, transparent);
+  stroke-width: 0.75;
+}
+
+.phoenix .promo-phrase-staff {
+  transform-origin: left center;
+  animation: promo-staff-in 900ms var(--ease-out) 260ms both;
+}
+
+@keyframes promo-staff-in {
+  from {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+}
+
+.phoenix .promo-note {
+  animation: promo-note-in 560ms var(--ease-out) both;
+  animation-delay: calc(900ms + var(--n) * 170ms);
+}
+
+.phoenix .promo-note ellipse {
+  fill: var(--gold);
+}
+
+.phoenix .promo-note path {
+  fill: none;
+  stroke: var(--gold);
+  stroke-width: 1.1;
+}
+
+.phoenix .promo-note path.promo-beam {
+  fill: var(--gold);
+  stroke: none;
+}
+
+@keyframes promo-note-in {
+  from {
+    opacity: 0;
+    transform: translateY(7px);
+  }
+}
+
+/* ----- arrival: the room dims, the plate rises, the instrument surfaces ----- */
+
+.phoenix .promo-scrim {
+  animation: promo-fade 420ms var(--ease-out) both;
+}
+
+.phoenix .promo-card {
+  animation: promo-card-in 640ms var(--ease-out) both;
+}
+
+.phoenix .promo-violin {
+  mix-blend-mode: lighten;
+  opacity: 0.9;
+  /* Turned so the neck leaves through the card's edge rather than crossing
+     the words, the way the instrument leans in the link-preview image. */
+  transform: rotate(-24deg);
+  mask-image: radial-gradient(90% 90% at 74% 58%, black 40%, transparent 76%);
+  animation: promo-violin-in 1200ms var(--ease-out) 280ms both;
+}
+
+@keyframes promo-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes promo-card-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.985);
+  }
+}
+
+@keyframes promo-violin-in {
+  from {
+    opacity: 0;
+    transform: translateX(16px) rotate(-24deg);
+  }
+}
+
+@media (max-width: 560px) {
+  .phoenix .promo-violin {
+    right: -36%;
+    bottom: -26%;
+    width: 100%;
+    opacity: 0.5;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .phoenix .promo-scrim,
+  .phoenix .promo-card,
+  .phoenix .promo-violin,
+  .phoenix .promo-phrase-staff,
+  .phoenix .promo-note {
+    animation: none;
+  }
 }
 
 /* A filled gold block and an outlined box are furniture from someone else's
@@ -4127,7 +4395,12 @@ canvas[hidden] + .phoenix-hero-plate {
   font-size: 10px;
   letter-spacing: 0.2em;
   text-transform: uppercase;
+  white-space: nowrap;
   transition: color 320ms var(--ease-out);
+}
+
+.phoenix .promo-dismiss {
+  white-space: nowrap;
 }
 
 .phoenix .promo-secondary:hover,
