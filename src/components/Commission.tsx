@@ -15,8 +15,10 @@ import { sounding_, watch } from "../lib/listening";
  *
  * The whole design problem is not being in the way, and it is solved by knowing
  * when to be absent. Never in the hero: nobody has been given a reason yet, and
- * the hero has its own player to press. Gone once the commission is on screen,
- * because a button pointing at what you are reading is noise. Bottom right,
+ * the hero has its own player to press. Gone from the moment the commission
+ * arrives on screen, and gone for good below it — a button pointing at what you
+ * are reading is noise, and everything after it is still the commission's own
+ * room. Bottom right,
  * because the player sits bottom left — and on a narrow screen that player is
  * nearly the full width, so this lifts above it rather than fighting for the
  * corner.
@@ -80,34 +82,37 @@ export function Commission({
       return () => window.removeEventListener("scroll", enough);
     }
 
-    let atTarget = false;
+    let pastTarget = false;
     let atHero = Boolean(hero);
-    const settle = () => setShown(!atTarget && !atHero);
+    const settle = () => setShown(!pastTarget && !atHero);
 
-    const watchers: IntersectionObserver[] = [];
+    /* Once the reader has reached the commission the button's work is done —
+       and it stays done: the deed, the brief and the terms below it are all
+       the commission's own rooms, so the button does not come back down
+       there. "Reached" a shade early, so it is gone by the time you are
+       reading it. */
+    const reached = () => {
+      pastTarget = target.getBoundingClientRect().top < window.innerHeight * 0.82;
+      settle();
+    };
+    window.addEventListener("scroll", reached, { passive: true });
+    window.addEventListener("resize", reached);
 
-    const onTarget = new IntersectionObserver(
-      ([entry]) => {
-        atTarget = entry?.isIntersecting ?? false;
-        settle();
-      },
-      // A shade before it arrives, so it is gone by the time you are reading it.
-      { rootMargin: "0px 0px -18% 0px" },
-    );
-    onTarget.observe(target);
-    watchers.push(onTarget);
-
+    let onHero: IntersectionObserver | undefined;
     if (hero) {
-      const onHero = new IntersectionObserver(([entry]) => {
+      onHero = new IntersectionObserver(([entry]) => {
         atHero = entry?.isIntersecting ?? false;
         settle();
       });
       onHero.observe(hero);
-      watchers.push(onHero);
     }
 
-    settle();
-    return () => watchers.forEach((watcher) => watcher.disconnect());
+    reached();
+    return () => {
+      window.removeEventListener("scroll", reached);
+      window.removeEventListener("resize", reached);
+      onHero?.disconnect();
+    };
   }, []);
 
   const props = {

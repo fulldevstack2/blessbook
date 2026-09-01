@@ -21,9 +21,10 @@ export interface NavItem {
   readonly hash: string;
 }
 
+/* No "Portfolio" entry: the films sit inside the work the page already walks
+   you through, and the man himself has his own passage at the end of this row. */
 export const workNav: readonly NavItem[] = [
   { id: "work", label: "Work", hash: "#work" },
-  { id: "portfolio", label: "Portfolio", hash: "#portfolio" },
   { id: "packages", label: "Packages", hash: "#packages" },
   { id: "terms", label: "T&C", hash: "#terms" },
   { id: "testimonials", label: "Testimonials", hash: "#testimonials" },

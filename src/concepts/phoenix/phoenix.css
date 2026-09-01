@@ -52,6 +52,31 @@
   pointer-events: none;
 }
 
+/* Not a bar — a fall of the ground's own light. The chrome is type over the
+   page, and type over type is illegible for the moment a section heading
+   passes beneath it; this dims what passes without drawing an edge. */
+.phoenix .chrome::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 -3rem 0;
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--lacquer) 96%, transparent) 0%,
+    color-mix(in oklab, var(--lacquer) 78%, transparent) 48%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+
+.phoenix .chrome[data-ground="ivory"]::before {
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--ivory) 96%, transparent) 0%,
+    color-mix(in oklab, var(--ivory) 78%, transparent) 48%,
+    transparent 100%
+  );
+}
+
 /* Type only — no bar, no bloom. Legibility on lacquer is the light ink; on the
    ivory turn the chrome flips to dark ink (see [data-ground="ivory"]). */
 .phoenix .chrome-brand {
@@ -72,13 +97,18 @@
   color: var(--ivory);
 }
 
+/* One instrument, not two: the section links sit right against the passage,
+   whose vertical seam divides the rooms of this page from the man himself.
+   Centering them left the row floating unattached to anything. */
 .phoenix .chrome-nav {
   pointer-events: auto;
+  position: relative;
+  z-index: 1;
   display: flex;
   flex: 1 1 auto;
-  justify-content: center;
+  justify-content: flex-end;
   align-items: center;
-  gap: clamp(0.35rem, 1.4vw, 1.15rem);
+  gap: clamp(0.55rem, 1.6vw, 1.35rem);
   min-width: 0;
   overflow-x: auto;
   scrollbar-width: none;
@@ -185,6 +215,29 @@
   letter-spacing: 0.02em;
   line-height: 1.2;
   text-wrap: balance;
+}
+
+/* Until the hero has left there is no passage, and no hole where it will be:
+   it opens out of its own seam, and the section links make room in the same
+   motion. Wide screens only — the phone chrome has no link row to make room. */
+@media (min-width: 721px) {
+  .phoenix .chrome-passage {
+    max-width: 0;
+    overflow: hidden;
+    transition:
+      color 320ms var(--ease-out),
+      opacity 520ms var(--ease-out),
+      transform 620ms var(--ease-out),
+      max-width 680ms var(--ease-out);
+  }
+
+  .phoenix .chrome-passage[data-shown="true"] {
+    max-width: 22rem;
+  }
+
+  .phoenix .chrome-passage-label {
+    white-space: nowrap;
+  }
 }
 
 /* Over cream: gold marks, not lacquer — ivory sections can still hold dark
