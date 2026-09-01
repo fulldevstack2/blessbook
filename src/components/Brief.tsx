@@ -1,8 +1,8 @@
-import { brief, enquiry, type BriefField } from "../content/commission";
+import { brief, disclaimer, enquiry, type BriefField } from "../content/commission";
 import { NEAR_COUNT, countries } from "../content/countries";
 import { Choose, type Choice } from "./Choose";
 import { When } from "./When";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { OTHER, REVIEW, dialKey, list, otherKey, outstandingIn, useBrief } from "../lib/enquiry";
 
 /**
@@ -278,6 +278,19 @@ export function Brief() {
   const heading = useRef<HTMLParagraphElement>(null);
   const first = useRef(true);
 
+  /* Dennis's team requires an acknowledgment before anything is sent: the
+     send button opens the disclaimer, and only agreement lets the brief go. */
+  const [gate, setGate] = useState(false);
+
+  useEffect(() => {
+    if (!gate) return;
+    const away = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setGate(false);
+    };
+    window.addEventListener("keydown", away);
+    return () => window.removeEventListener("keydown", away);
+  }, [gate]);
+
   /* Moving between parts replaces everything on screen, so say where you are
      now. Without this a keyboard or screen-reader user is left wherever the
      button was, reading nothing. Not on the first paint — that would drag the
@@ -428,11 +441,59 @@ export function Brief() {
               type="button"
               className="brief-send"
               disabled={stage === "sending"}
-              onClick={() => void submit()}
+              onClick={() => setGate(true)}
             >
               {stage === "sending" ? enquiry.sending : enquiry.send}
             </button>
           </div>
+
+          {gate ? (
+            <div
+              className="promo promo--gate"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="disclaimer-title"
+            >
+              <button
+                type="button"
+                className="promo-scrim"
+                onClick={() => setGate(false)}
+                aria-label="Close disclaimer"
+              />
+              <div className="promo-card">
+                <div className="promo-body">
+                  <p className="promo-eyebrow">{disclaimer.eyebrow}</p>
+                  <h3 id="disclaimer-title" className="promo-title promo-title--gate">
+                    {disclaimer.title}
+                  </h3>
+                  <p className="promo-note-line">{disclaimer.define}</p>
+                  {disclaimer.body.map((passage) => (
+                    <p key={passage.slice(0, 24)} className="promo-summary promo-summary--gate">
+                      {passage}
+                    </p>
+                  ))}
+                  <div className="promo-actions">
+                    <button
+                      type="button"
+                      className="promo-primary"
+                      disabled={stage === "sending"}
+                      onClick={() => {
+                        setGate(false);
+                        void submit();
+                      }}
+                    >
+                      {disclaimer.agree}
+                    </button>
+                    <div className="promo-quiet">
+                      <button type="button" className="promo-dismiss" onClick={() => setGate(false)}>
+                        {disclaimer.back}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : null}
         </div>
       ) : section ? (
         <form

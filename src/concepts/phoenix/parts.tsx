@@ -16,6 +16,7 @@ import type { Photo } from "../../content/media";
 import { conceptById, violin } from "../registry";
 import { TURNED } from "../../lib/loadModel";
 import { siteName, workNav } from "../../content/site";
+import { pressWord, words } from "../../content/work";
 
 /**
  * Phoenix's own furniture.
@@ -101,21 +102,33 @@ export function SiteChrome() {
       return;
     }
 
-    /* A thin band at the top of the viewport — where the masthead sits. If any
-       ivory section crosses it, the marks switch ink. */
-    const seen = new Set<Element>();
-    const watcher = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) seen.add(entry.target);
-          else seen.delete(entry.target);
-        }
-        setGround(seen.size > 0 ? "ivory" : "lacquer");
-      },
-      { rootMargin: "0px 0px -88% 0px", threshold: 0 },
-    );
-    for (const light of lights) watcher.observe(light);
-    return () => watcher.disconnect();
+    /* The marks flip to dark ink only when an ivory section actually stands
+       under the masthead — measured, not intersection-observed, because a
+       section whose last few pixels graze the viewport top used to latch the
+       ivory ink (and its ivory light-fall) over the lacquer room below it:
+       arrive at the commission and the masthead wore white. */
+    let frame = 0;
+    const judge = () => {
+      frame = 0;
+      const bar = 64;
+      const lit = lights.some((light) => {
+        const rect = light.getBoundingClientRect();
+        return rect.top < bar * 0.5 && rect.bottom > bar;
+      });
+      setGround(lit ? "ivory" : "lacquer");
+    };
+    const onScroll = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(judge);
+    };
+    judge();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      if (frame) cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
   }, [onStory]);
 
   return (
@@ -196,6 +209,68 @@ export function SiteChrome() {
         </span>
       </Link>
     </header>
+  );
+}
+
+/**
+ * The testimonials as a chorus: one voice on the stage at a time, scroll
+ * turning the page between them, the way the hero and the process already
+ * move. The press verdict opens the programme in moving gold leaf; each
+ * client follows under the movement's numeral at hall-sign size.
+ */
+export function Chorus() {
+  const voices = [
+    { mark: "The press", text: pressWord.text, who: pressWord.who, when: pressWord.when, press: true },
+    ...words.map((word) => ({
+      mark: word.what,
+      text: word.text,
+      who: word.who,
+      when: word.when,
+      press: false,
+    })),
+  ];
+
+  return (
+    <div id="testimonials" className="phoenix-section--invert chorus-hall">
+      <ScrollStage vh={(voices.length + 1) * 100} cuts={voices.length} className="chorus">
+        {({ stage }) => (
+          <>
+            <p className="phoenix-eyebrow chorus-eyebrow">Testimonials</p>
+
+            <div className="chorus-numeral" aria-hidden>
+              {voices.map((voice, index) => (
+                <span key={voice.who + String(index)} data-active={index === stage}>
+                  {NUMERALS[index]}
+                </span>
+              ))}
+            </div>
+
+            <ul className="chorus-voices">
+              {voices.map((voice, index) => (
+                <li
+                  className="chorus-voice"
+                  key={voice.who + String(index)}
+                  data-active={index === stage}
+                  data-press={voice.press || undefined}
+                >
+                  <p className="chorus-mark">{voice.mark}</p>
+                  <blockquote className="chorus-text">{voice.text}</blockquote>
+                  <p className="chorus-who">
+                    {voice.who} · {voice.when}
+                  </p>
+                </li>
+              ))}
+            </ul>
+
+            <div className="chorus-ticks" aria-hidden>
+              {voices.map((voice, index) => (
+                <span key={voice.who + String(index)} data-done={index <= stage} />
+              ))}
+            </div>
+          </>
+        )}
+      </ScrollStage>
+    </div>
   );
 }
 

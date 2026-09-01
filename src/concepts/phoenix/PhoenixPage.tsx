@@ -15,6 +15,7 @@ import { Volume } from "../../components/Volume";
 import { Words } from "../../components/Words";
 import {
   Band,
+  Chorus,
   Enquiry,
   Figure,
   Gauges,
@@ -50,7 +51,7 @@ import {
   training,
 } from "../../content/dennis";
 import { photos } from "../../content/media";
-import { pressWord, socials, words } from "../../content/work";
+import { socials } from "../../content/work";
 import { SceneCanvas } from "../../lib/SceneCanvas";
 import { ScrollStage } from "../../lib/ScrollStage";
 import { useFonts } from "../../lib/useFonts";
@@ -260,33 +261,8 @@ export function PhoenixPage() {
         {/* ---------------- who books him ---------------- */}
         <Band />
 
-        <section className="phoenix-section phoenix-section--invert" id="testimonials">
-          <p className="phoenix-eyebrow" data-reveal>
-            Testimonials
-          </p>
-          <p className="phoenix-lede" data-reveal style={{ maxWidth: "48ch" }}>
-            In their words.
-          </p>
-
-          {/* The press, first and largest — three words that say the rest. */}
-          <blockquote className="phoenix-word-press" data-reveal>
-            <p>&ldquo;{pressWord.text}&rdquo;</p>
-            <cite>
-              {pressWord.who} · {pressWord.when}
-            </cite>
-          </blockquote>
-
-          <ul className="phoenix-words">
-            {words.map((word) => (
-              <li key={word.text} className="phoenix-word-plate" data-reveal>
-                <blockquote className="phoenix-word">{word.text}</blockquote>
-                <p className="phoenix-word-who">
-                  {word.who} · {word.when}
-                </p>
-              </li>
-            ))}
-          </ul>
-        </section>
+        {/* ---------------- the chorus: what they say, one voice at a time ---------------- */}
+        <Chorus />
 
         {/* ---------------- and only now, the commission ---------------- */}
         {/* The button in the corner lands here rather than on the form. Someone

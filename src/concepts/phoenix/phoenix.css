@@ -1481,21 +1481,129 @@
   color: var(--ivory-faint);
 }
 
-/* The press verdict, first and largest: three words in the display face,
-   struck in deep gold on the ivory, before any client speaks. */
-.phoenix-word-press {
-  margin: var(--space-2xl) 0 0;
-  padding: 0;
+/* ---------- the chorus: each voice takes the stage ----------
+
+   Not a grid of pull-quotes. The section is a pinned stage, like the hero
+   and the process: one voice on the ivory at a time, scroll turning the
+   page, the movement's numeral at hall-sign size behind it, and the press
+   verdict opening the programme in moving gold leaf. */
+
+.phoenix .chorus {
+  display: grid;
+  align-content: center;
+  padding: clamp(var(--space-2xl), 9vh, var(--space-4xl))
+    clamp(var(--space-lg), 6vw, var(--space-5xl));
+  background: var(--ivory);
+  color: var(--lacquer);
+  overflow: hidden;
 }
 
-.phoenix-word-press p {
+.phoenix .chorus-eyebrow {
+  position: absolute;
+  top: clamp(var(--space-xl), 9vh, var(--space-3xl));
+  left: clamp(var(--space-lg), 6vw, var(--space-5xl));
+}
+
+/* The movement's numeral, hall-sign sized and outlined so it stays a mark on
+   the wall — the same sign the process hangs, struck deep gold for ivory. */
+.phoenix .chorus-numeral {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  align-items: center;
+  justify-items: end;
+  padding-right: clamp(var(--space-2xl), 9vw, var(--space-5xl));
+  pointer-events: none;
+}
+
+.phoenix .chorus-numeral span {
+  grid-area: 1 / 1;
+  font-family: var(--display);
+  font-size: clamp(9rem, 34vw, 26rem);
+  line-height: 0.8;
+  letter-spacing: 0.02em;
+  color: transparent;
+  -webkit-text-stroke: 1px color-mix(in oklab, var(--gold-deep) 36%, transparent);
+  opacity: 0;
+  transform: scale(1.1);
+  transition:
+    opacity 900ms var(--ease-out),
+    transform 1400ms var(--ease-out);
+}
+
+.phoenix .chorus-numeral span[data-active="true"] {
+  opacity: 1;
+  transform: none;
+}
+
+.phoenix .chorus-voices {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  width: min(100%, 46rem);
+}
+
+.phoenix .chorus-voice {
+  grid-area: 1 / 1;
+  opacity: 0;
+  transform: translateY(26px);
+  transition:
+    opacity 700ms var(--ease-out) ,
+    transform 950ms var(--ease-out);
+  pointer-events: none;
+}
+
+.phoenix .chorus-voice[data-active="true"] {
+  opacity: 1;
+  transform: none;
+  transition-delay: 140ms, 140ms;
+}
+
+.phoenix .chorus-mark {
+  margin: 0 0 var(--space-lg);
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--gold-deep);
+}
+
+.phoenix .chorus-text {
   margin: 0;
   font-family: var(--display);
-  font-optical-sizing: auto;
-  font-size: clamp(2.6rem, 6.5vw, 4.8rem);
-  line-height: 1;
-  letter-spacing: 0.005em;
-  /* Gold leaf, not flat ink: a slow light keeps moving through the letters. */
+  font-style: italic;
+  font-size: clamp(1.7rem, 3.6vw, 3.1rem);
+  line-height: 1.18;
+  color: var(--lacquer);
+}
+
+.phoenix .chorus-text::before {
+  content: "\201C";
+  color: var(--gold-deep);
+}
+
+.phoenix .chorus-text::after {
+  content: "\201D";
+  color: var(--gold-deep);
+}
+
+.phoenix .chorus-who {
+  margin: var(--space-xl) 0 0;
+  padding-top: var(--space-md);
+  max-width: 26rem;
+  border-top: 1px solid color-mix(in oklab, var(--gold-deep) 40%, transparent);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--lacquer) 62%, transparent);
+}
+
+/* The press opens the programme: upright, largest, in gold leaf that a slow
+   light keeps moving through. */
+.phoenix .chorus-voice[data-press] .chorus-text {
+  font-style: normal;
+  font-size: clamp(2.6rem, 6.5vw, 5rem);
+  line-height: 1.02;
   background:
     linear-gradient(
       105deg,
@@ -1516,110 +1624,54 @@
   }
 }
 
-.phoenix-word-press cite {
-  display: block;
-  margin-top: var(--space-md);
-  font-style: normal;
-  font-size: 10px;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: color-mix(in oklab, var(--lacquer) 62%, transparent);
-}
-
-/* ---------- each voice on its own engraved plaque ----------
-
-   The section is ivory; the plates are the concept's lacquer — the same
-   jewel-box object as the commission plate in the corner, so the voices read
-   as kept things rather than pull-quotes. Each plate lands, then a seam of
-   light draws along its top edge and a ghost of the opening mark surfaces
-   behind the words. */
-.phoenix-word-plate {
-  position: relative;
-  isolation: isolate;
-  padding: clamp(var(--space-lg), 3vw, var(--space-2xl));
-  background: linear-gradient(135deg, #0b0705 0%, #1a1208 100%);
-  border: 1px solid color-mix(in oklab, var(--gold) 42%, transparent);
-  box-shadow:
-    0 0 0 1px color-mix(in oklab, var(--gold) 12%, transparent),
-    0 26px 50px rgb(23 15 8 / 20%),
-    0 0 30px color-mix(in oklab, var(--gold) 10%, transparent);
-  overflow: hidden;
-}
-
-.phoenix-word-plate::before {
-  content: "";
+/* The programme's progress, ruled in gold. */
+.phoenix .chorus-ticks {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
+  left: clamp(var(--space-lg), 6vw, var(--space-5xl));
+  bottom: clamp(24px, 6vh, 48px);
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.phoenix .chorus-ticks span {
+  width: 26px;
   height: 1px;
-  background: linear-gradient(
-    90deg,
-    var(--gold),
-    color-mix(in oklab, var(--gold) 15%, transparent)
-  );
-  transform: scaleX(0);
-  transform-origin: left center;
-  transition: transform 1400ms var(--ease-out) calc(var(--reveal-delay) + 400ms);
+  background: color-mix(in oklab, var(--gold-deep) 24%, transparent);
+  transition: background 500ms var(--ease-out);
 }
 
-.phoenix-word-plate[data-revealed="true"]::before {
-  transform: none;
+.phoenix .chorus-ticks span[data-done="true"] {
+  background: var(--gold-deep);
 }
 
-.phoenix-word-plate::after {
-  content: "“";
-  position: absolute;
-  top: -0.08em;
-  right: 0.04em;
-  z-index: -1;
-  font-family: var(--display);
-  font-size: clamp(5rem, 8vw, 7rem);
-  line-height: 1;
-  color: color-mix(in oklab, var(--gold) 22%, transparent);
-  opacity: 0;
-  transition: opacity 1100ms var(--ease-out) calc(var(--reveal-delay) + 650ms);
-  pointer-events: none;
-}
-
-.phoenix-word-plate[data-revealed="true"]::after {
-  opacity: 1;
-}
-
-/* On the plate the voice is lit, and slanted — the display face's italic. */
-.phoenix-section--invert .phoenix-word-plate .phoenix-word {
-  color: var(--ivory);
-  font-style: italic;
-}
-
-.phoenix-word-plate .phoenix-word::before,
-.phoenix-word-plate .phoenix-word::after {
-  color: var(--gold);
-}
-
-.phoenix-section--invert .phoenix-word-plate .phoenix-word-who {
-  color: color-mix(in oklab, var(--gold) 72%, transparent);
-}
-
-/* The plates alternate height on a wide screen — a hung gallery, not a grid. */
-@media (min-width: 760px) {
-  .phoenix-words {
+@media (max-width: 899px) {
+  .phoenix .chorus-numeral {
     align-items: start;
+    padding-top: clamp(var(--space-3xl), 14vh, 9rem);
   }
 
-  .phoenix-word-plate:nth-child(even) {
-    margin-top: var(--space-3xl);
+  .phoenix .chorus-numeral span {
+    font-size: clamp(7rem, 40vw, 12rem);
+  }
+
+  .phoenix .chorus-text {
+    font-size: clamp(1.45rem, 6.4vw, 2rem);
+  }
+
+  .phoenix .chorus-voice[data-press] .chorus-text {
+    font-size: clamp(2.1rem, 9.5vw, 3rem);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .phoenix-word-press p {
-    animation: none;
+  .phoenix .chorus-numeral span,
+  .phoenix .chorus-voice,
+  .phoenix .chorus-ticks span {
+    transition: none;
   }
 
-  .phoenix-word-plate::before,
-  .phoenix-word-plate::after {
-    transition: none;
+  .phoenix .chorus-voice[data-press] .chorus-text {
+    animation: none;
   }
 }
 
@@ -4570,6 +4622,29 @@ canvas[hidden] + .phoenix-hero-plate {
     width: 100%;
     opacity: 0.5;
   }
+}
+
+/* ----- the same plate, standing as a gate: the disclaimer before the brief
+   is sent. No instrument, tighter measure, and it may scroll on a short
+   screen — legal words must be readable to be worth showing. */
+.phoenix .promo--gate .promo-card {
+  width: min(100%, 560px);
+  max-height: min(84vh, 40rem);
+  overflow-y: auto;
+}
+
+.phoenix .promo--gate .promo-body {
+  max-width: none;
+}
+
+.phoenix .promo-title--gate {
+  font-size: clamp(1.5rem, 2.6vw, 1.9rem);
+}
+
+.phoenix .promo-summary--gate {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  max-width: none;
 }
 
 @media (prefers-reduced-motion: reduce) {

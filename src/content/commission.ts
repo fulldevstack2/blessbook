@@ -471,6 +471,24 @@ export const commission = {
 } as const;
 
 /**
+ * The disclaimer shown before the brief is sent, supplied by Dennis's team
+ * (Jon, 2026-09-01) — their text in substance, with the party defined once
+ * and used consistently: "the Composer" is Dennis Lau.
+ */
+export const disclaimer = {
+  eyebrow: "Before it goes",
+  title: "Disclaimer",
+  define: "In this form, “the Composer” refers to Dennis Lau.",
+  body: [
+    "The contents of this form, including all information, particulars, statements, representations and supporting documents contained therein, are provided and/or completed by the relevant party and are the sole responsibility of the person or entity providing the same.",
+    "The Composer has no responsibility or liability whatsoever for the accuracy, completeness, authenticity or veracity of any information or contents contained in this form, and shall not be responsible or liable for any reliance placed upon, or any consequences arising from, such information or contents.",
+    "For the avoidance of doubt, nothing contained in this form shall be construed as an endorsement, verification, confirmation or representation by the Composer as to the accuracy or completeness of its contents.",
+  ],
+  agree: "I understand — send the brief",
+  back: "Go back",
+} as const;
+
+/**
  * The terms, as clauses. Nothing here is invented: each one restates a promise
  * the page already makes — the deed, the seven days, the payment order, the
  * one-of-one guarantee — in the plain order a client would ask about them.
