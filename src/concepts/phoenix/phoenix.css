@@ -17,12 +17,13 @@
      Latin face carries the glyphs, so both stacks fall through to whatever CJK
      face the reader's system has rather than to tofu. */
   --cjk: "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Heiti SC";
-  --display: "Italiana", "Times New Roman", var(--cjk), serif;
+  --display: "Bodoni Moda", "Times New Roman", var(--cjk), serif;
   --text: "Commissioner", ui-sans-serif, system-ui, var(--cjk), sans-serif;
 
   background: var(--lacquer);
   color: var(--ivory);
   font-family: var(--text);
+  font-optical-sizing: auto;
   /* Light type on a dark ground reads thinner than it measures, so the body
      weight and leading are both a step up from where a light page would sit. */
   font-weight: 360;
@@ -112,7 +113,7 @@
   color: var(--gold);
 }
 
-/* An open passage, not a boxed button. Gold seam, Italiana. On the work page
+/* An open passage, not a boxed button. Gold seam, display type. On the work page
    it waits until the hero has left, then arrives. */
 .phoenix .chrome-passage {
   pointer-events: none;
@@ -344,16 +345,11 @@
   filter: none;
 }
 
-/* The hero has its own voice.
-
-   Italiana carries the rest of the concept and is the right face for it, but at
-   display size over a lit photograph its hairlines disappear, which is exactly
-   what a masthead cannot do. Bodoni Moda has the same high contrast and real
-   weight behind it, and its optical-size axis keeps the big setting from going
-   spindly. It is used here and nowhere else, which is what a masthead is. */
+/* The hero has its own voice — Bodoni Moda at display size with optical sizing
+   so hairlines stay visible over the photograph. */
 .phoenix-cut h1,
 .phoenix-cut p.phoenix-line {
-  font-family: "Bodoni Moda", var(--display);
+  font-family: var(--display);
   font-optical-sizing: auto;
   font-weight: 600;
   /* Bounded by the frame's height too — see --pin-pad. */
@@ -3083,10 +3079,10 @@ canvas[hidden] + .phoenix-hero-plate {
 }
 
 /* The name is not shown until it can be shown in the right face. Painted before
-   Italiana lands it appears in Times New Roman and then swaps under the reader,
+   Bodoni Moda lands it appears in Times New Roman and then swaps under the reader,
    which happens in the first half second, before the site has said anything
    else at all. */
-/* His name waits for Italiana before it paints, and then it has to be able to
+/* His name waits for the display face before it paints, and then it has to be able to
    leave again. Both of those are opacity rules on the same two elements at the
    same specificity, and the font gate was written last, so it outranked the
    exit: the room opened, the hero came up behind it, and "Dennis Lau" stayed

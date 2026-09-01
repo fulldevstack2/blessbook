@@ -526,7 +526,7 @@ argument out of its own materials, and nothing with a visible shape is shared:
 - **Object:** a gold-leaf lacquer screen, a velvet-lined flight case.
 - **Palette:** lacquer `oklch(14% 0.014 48)`, 24K gold `oklch(78% 0.13 85)`,
   ivory `oklch(93% 0.012 85)`.
-- **Type:** Italiana (display) + Commissioner (body).
+- **Type:** Bodoni Moda (display) + Commissioner (body).
 - **Layout:** stacked editorial, six movements and a coda.
 - **Hero scene** (`phoenixScene.ts`): a full-screen fragment shader. Procedural
   molten gold from a double domain-warped fbm, one seam of gold opening down the
@@ -871,7 +871,7 @@ Everything below is generated, and **the generators are checked in under
   phone before this existed. `node tools/fit-check.mjs [origin]`, needs
   `playwright-core` and a Chromium (`CHROME=` to point at one).
 - `tools/og.mjs` → `public/og.jpg`, 1200×630, rendered at 2× and downsampled.
-  Typeset in the real Italiana by rendering a page in Playwright rather than
+  Typeset in the real Bodoni Moda by rendering a page in Playwright rather than
   mocked up in an image editor. Two things it has to do that are not obvious:
   the page is **written to disk and opened as a `file://` URL**, because
   `setContent` leaves the document on an `about:blank` origin which may not

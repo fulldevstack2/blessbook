@@ -59,8 +59,8 @@ export const concepts: readonly Concept[] = [
       "The most opulent of the three, and the closest to the gold Phoenix violin itself. Near-black lacquer, one seam of 24K gold, and fine display type. Everything on the page is lit the way an object is lit in a dark room.",
     theme: "dark",
     fonts:
-      "https://fonts.googleapis.com/css2?family=Italiana&family=Bodoni+Moda:opsz,wght@6..96,500..900&family=Commissioner:wght@200..800&display=swap",
-    display: "Italiana",
+      "https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,500..900&family=Commissioner:wght@200..800&display=swap",
+    display: "Bodoni Moda",
     body: "Commissioner",
     swatches: [
       { name: "Lacquer", value: "oklch(16% 0.018 40)" },
