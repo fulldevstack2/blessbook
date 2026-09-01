@@ -43,7 +43,7 @@ const from = tiers.reduce(
 );
 
 export function Commission({
-  label = "Commission a song",
+  label = "Create your song now",
   /** Where the commission lives, when it is not on this page. */
   to,
 }: {
