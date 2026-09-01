@@ -213,10 +213,15 @@ export function SiteChrome() {
 }
 
 /**
- * The testimonials as a chorus: one voice on the stage at a time, scroll
- * turning the page between them, the way the hero and the process already
- * move. The press verdict opens the programme in moving gold leaf; each
- * client follows under the movement's numeral at hall-sign size.
+ * The testimonials as strings.
+ *
+ * Not the process's numeral stage and not a grid: this room is strung like
+ * the instrument the whole site is about. Five vertical gold strings stand
+ * on the ivory — one per voice. The one that is sounding glows and visibly
+ * vibrates; the ones already played stay warm; the ones waiting stay faint.
+ * And the voice itself is not faded in: it is engraved, letter by letter,
+ * by the scroll — the pin's own `--cut` progress fills the ghost letters
+ * with ink as the reader draws the bow.
  */
 export function Chorus() {
   const voices = [
@@ -237,11 +242,13 @@ export function Chorus() {
           <>
             <p className="phoenix-eyebrow chorus-eyebrow">Testimonials</p>
 
-            <div className="chorus-numeral" aria-hidden>
+            <div className="chorus-strings" aria-hidden>
               {voices.map((voice, index) => (
-                <span key={voice.who + String(index)} data-active={index === stage}>
-                  {NUMERALS[index]}
-                </span>
+                <span
+                  key={voice.who + String(index)}
+                  className="chorus-string"
+                  data-state={index === stage ? "sounding" : index < stage ? "played" : "waiting"}
+                />
               ))}
             </div>
 
@@ -261,12 +268,6 @@ export function Chorus() {
                 </li>
               ))}
             </ul>
-
-            <div className="chorus-ticks" aria-hidden>
-              {voices.map((voice, index) => (
-                <span key={voice.who + String(index)} data-done={index <= stage} />
-              ))}
-            </div>
           </>
         )}
       </ScrollStage>

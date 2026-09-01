@@ -1481,12 +1481,14 @@
   color: var(--ivory-faint);
 }
 
-/* ---------- the chorus: each voice takes the stage ----------
+/* ---------- the chorus: five strings, five voices ----------
 
-   Not a grid of pull-quotes. The section is a pinned stage, like the hero
-   and the process: one voice on the ivory at a time, scroll turning the
-   page, the movement's numeral at hall-sign size behind it, and the press
-   verdict opening the programme in moving gold leaf. */
+   This room is strung like the instrument the site is about. A chord of
+   vertical gold strings stands on the ivory, one per voice: the sounding
+   string glows and vibrates, the played ones stay warm, the waiting ones
+   faint — the strings are the programme. The voice itself is engraved by
+   the scroll: the pin's own --cut fills the ghost letters with ink as the
+   reader draws the bow. */
 
 .phoenix .chorus {
   display: grid;
@@ -1504,36 +1506,75 @@
   left: clamp(var(--space-lg), 6vw, var(--space-5xl));
 }
 
-/* The movement's numeral, hall-sign sized and outlined so it stays a mark on
-   the wall — the same sign the process hangs, struck deep gold for ivory. */
-.phoenix .chorus-numeral {
+/* The chord. Each string fades out toward its ends, the way a lit string
+   loses its edges in a dark hall. */
+.phoenix .chorus-strings {
   position: absolute;
-  inset: 0;
-  display: grid;
-  align-items: center;
-  justify-items: end;
-  padding-right: clamp(var(--space-2xl), 9vw, var(--space-5xl));
+  top: clamp(var(--space-3xl), 16vh, 10rem);
+  bottom: clamp(var(--space-3xl), 16vh, 10rem);
+  right: clamp(var(--space-xl), 9vw, var(--space-5xl));
+  display: flex;
+  gap: clamp(28px, 4.5vw, 60px);
   pointer-events: none;
 }
 
-.phoenix .chorus-numeral span {
-  grid-area: 1 / 1;
-  font-family: var(--display);
-  font-size: clamp(9rem, 34vw, 26rem);
-  line-height: 0.8;
-  letter-spacing: 0.02em;
-  color: transparent;
-  -webkit-text-stroke: 1px color-mix(in oklab, var(--gold-deep) 36%, transparent);
-  opacity: 0;
-  transform: scale(1.1);
-  transition:
-    opacity 900ms var(--ease-out),
-    transform 1400ms var(--ease-out);
+.phoenix .chorus-string {
+  position: relative;
+  width: 1px;
+  height: 100%;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    color-mix(in oklab, var(--gold-deep) 20%, transparent) 14%,
+    color-mix(in oklab, var(--gold-deep) 20%, transparent) 86%,
+    transparent
+  );
+  transition: background 700ms var(--ease-out);
 }
 
-.phoenix .chorus-numeral span[data-active="true"] {
-  opacity: 1;
-  transform: none;
+.phoenix .chorus-string[data-state="played"] {
+  background: linear-gradient(
+    180deg,
+    transparent,
+    color-mix(in oklab, var(--gold-deep) 48%, transparent) 14%,
+    color-mix(in oklab, var(--gold-deep) 48%, transparent) 86%,
+    transparent
+  );
+}
+
+.phoenix .chorus-string[data-state="sounding"] {
+  background: linear-gradient(
+    180deg,
+    transparent,
+    var(--gold-deep) 12%,
+    var(--gold-deep) 88%,
+    transparent
+  );
+  box-shadow: 0 0 14px color-mix(in oklab, var(--gold-deep) 40%, transparent);
+}
+
+/* The vibration: a blurred ghost of the string, widening and thinning too
+   fast to read as anything but a bowed string's envelope. */
+.phoenix .chorus-string[data-state="sounding"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: inherit;
+  filter: blur(2px);
+  transform: scaleX(4);
+  animation: chorus-vibrate 190ms linear infinite alternate;
+}
+
+@keyframes chorus-vibrate {
+  from {
+    transform: scaleX(3.5);
+    opacity: 0.5;
+  }
+
+  to {
+    transform: scaleX(9);
+    opacity: 0.18;
+  }
 }
 
 .phoenix .chorus-voices {
@@ -1541,7 +1582,7 @@
   margin: 0;
   padding: 0;
   display: grid;
-  width: min(100%, 46rem);
+  width: min(100%, 44rem);
 }
 
 .phoenix .chorus-voice {
@@ -1549,7 +1590,7 @@
   opacity: 0;
   transform: translateY(26px);
   transition:
-    opacity 700ms var(--ease-out) ,
+    opacity 700ms var(--ease-out),
     transform 950ms var(--ease-out);
   pointer-events: none;
 }
@@ -1568,23 +1609,43 @@
   color: var(--gold-deep);
 }
 
+/* Engraved by the bow: ghost letters, and an ink fill whose width is the
+   scroll's own progress through this voice's cut. Two painted layers under
+   a text clip — the ink drawn to --cut, the ghost always there beneath. */
 .phoenix .chorus-text {
   margin: 0;
   font-family: var(--display);
   font-style: italic;
   font-size: clamp(1.7rem, 3.6vw, 3.1rem);
   line-height: 1.18;
-  color: var(--lacquer);
+  color: transparent;
+  background-image:
+    linear-gradient(90deg, var(--lacquer), var(--lacquer)),
+    linear-gradient(
+      90deg,
+      color-mix(in oklab, var(--lacquer) 20%, transparent),
+      color-mix(in oklab, var(--lacquer) 20%, transparent)
+    );
+  background-repeat: no-repeat, no-repeat;
+  background-size:
+    clamp(0%, calc(var(--cut, 1) * 145% - 18%), 100%) 100%,
+    100% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
 }
 
-.phoenix .chorus-text::before {
-  content: "\201C";
-  color: var(--gold-deep);
-}
-
-.phoenix .chorus-text::after {
-  content: "\201D";
-  color: var(--gold-deep);
+/* The press opens the programme, and its verdict is engraved in gold. */
+.phoenix .chorus-voice[data-press] .chorus-text {
+  font-style: normal;
+  font-size: clamp(2.6rem, 6.5vw, 5rem);
+  line-height: 1.02;
+  background-image:
+    linear-gradient(100deg, var(--gold-deep), oklch(70% 0.125 80), var(--gold-deep)),
+    linear-gradient(
+      90deg,
+      color-mix(in oklab, var(--gold-deep) 22%, transparent),
+      color-mix(in oklab, var(--gold-deep) 22%, transparent)
+    );
 }
 
 .phoenix .chorus-who {
@@ -1598,60 +1659,13 @@
   color: color-mix(in oklab, var(--lacquer) 62%, transparent);
 }
 
-/* The press opens the programme: upright, largest, in gold leaf that a slow
-   light keeps moving through. */
-.phoenix .chorus-voice[data-press] .chorus-text {
-  font-style: normal;
-  font-size: clamp(2.6rem, 6.5vw, 5rem);
-  line-height: 1.02;
-  background:
-    linear-gradient(
-      105deg,
-      var(--gold-deep) 0%,
-      oklch(74% 0.125 82) 22%,
-      var(--gold-deep) 44%
-    )
-    0 0 / 250% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: phoenix-press-sheen 8s linear infinite alternate;
-}
-
-@keyframes phoenix-press-sheen {
-  to {
-    background-position: 100% 0;
-  }
-}
-
-/* The programme's progress, ruled in gold. */
-.phoenix .chorus-ticks {
-  position: absolute;
-  left: clamp(var(--space-lg), 6vw, var(--space-5xl));
-  bottom: clamp(24px, 6vh, 48px);
-  display: flex;
-  gap: var(--space-sm);
-}
-
-.phoenix .chorus-ticks span {
-  width: 26px;
-  height: 1px;
-  background: color-mix(in oklab, var(--gold-deep) 24%, transparent);
-  transition: background 500ms var(--ease-out);
-}
-
-.phoenix .chorus-ticks span[data-done="true"] {
-  background: var(--gold-deep);
-}
-
 @media (max-width: 899px) {
-  .phoenix .chorus-numeral {
-    align-items: start;
-    padding-top: clamp(var(--space-3xl), 14vh, 9rem);
-  }
-
-  .phoenix .chorus-numeral span {
-    font-size: clamp(7rem, 40vw, 12rem);
+  .phoenix .chorus-strings {
+    top: clamp(var(--space-2xl), 10vh, 6rem);
+    bottom: auto;
+    height: clamp(7rem, 22vh, 11rem);
+    right: var(--space-lg);
+    gap: 14px;
   }
 
   .phoenix .chorus-text {
@@ -1664,14 +1678,21 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .phoenix .chorus-numeral span,
-  .phoenix .chorus-voice,
-  .phoenix .chorus-ticks span {
+  .phoenix .chorus-string,
+  .phoenix .chorus-voice {
     transition: none;
   }
 
-  .phoenix .chorus-voice[data-press] .chorus-text {
+  .phoenix .chorus-string[data-state="sounding"]::after {
     animation: none;
+    opacity: 0.3;
+  }
+
+  /* No scroll-writing under reduced motion: the words are simply there. */
+  .phoenix .chorus-text {
+    background-size:
+      100% 100%,
+      100% 100%;
   }
 }
 
