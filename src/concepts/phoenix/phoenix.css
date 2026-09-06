@@ -1338,6 +1338,16 @@ html {
   color: var(--ivory-faint);
 }
 
+/* The four kinds of work are headings, not whispers: the display face at a
+   real size, so the wall reads as four rooms rather than one long shelf. */
+.phoenix .reel-section-title {
+  font-family: var(--display);
+  font-size: clamp(1.35rem, 2.4vw, 1.9rem);
+  letter-spacing: 0.01em;
+  text-transform: none;
+  color: var(--ivory);
+}
+
 .phoenix .reel-note {
   margin-top: var(--space-sm);
   max-width: 52ch;
@@ -1456,8 +1466,10 @@ html {
 }
 
 @media (min-width: 900px) {
+  /* Four films sit as a balanced wall of two by two, not three and an
+     orphan. */
   .phoenix .films {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--space-xl);
   }
 
@@ -4760,10 +4772,26 @@ canvas[hidden] + .phoenix-hero-plate {
 }
 
 .phoenix .promo-dismiss {
-  color: var(--ivory-faint);
+  color: var(--ivory-soft);
   font-size: 10px;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
+  transition: color 320ms var(--ease-out);
+}
+
+.phoenix .promo-dismiss:hover,
+.phoenix .promo-dismiss:focus-visible {
+  color: var(--gold);
+}
+
+.phoenix .promo-x {
+  color: var(--ivory-faint);
+  transition: color 320ms var(--ease-out);
+}
+
+.phoenix .promo-x:hover,
+.phoenix .promo-x:focus-visible {
+  color: var(--gold);
 }
 
 .phoenix-tier--intro {

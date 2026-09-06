@@ -141,7 +141,10 @@ function Frame({ hero, children }: { hero?: ReactNode; children: ReactNode }) {
       <Grain />
       <Commission {...(hero ? {} : { to: `${concept.path}#commission` })} />
       <WhatsAppFab />
-      {hero ? <PromoOffer /> : null}
+      {/* On every page, by Dennis's team's own call: the offer returns each
+          time a new room is entered, with Explore more and the cross to put
+          it away. */}
+      <PromoOffer />
 
       {hero}
 
@@ -253,7 +256,7 @@ export function PhoenixPage() {
           <p className="phoenix-eyebrow" data-reveal>
             Movement II · In the room
           </p>
-          <Films caption="Three films he scored" />
+          <Films caption="Four music videos he produced" />
         </section>
 
         <Struck />

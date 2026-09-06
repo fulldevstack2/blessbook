@@ -1768,6 +1768,24 @@ body {
 }
 
 /* Under the plate, in the clear column — never over the instrument. */
+/* The cross, quiet in the corner: the second of the two ways out. */
+.promo-x {
+  position: absolute;
+  top: var(--space-sm);
+  right: var(--space-sm);
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  font: inherit;
+  font-size: 1rem;
+}
+
 .promo-quiet {
   display: flex;
   align-items: center;

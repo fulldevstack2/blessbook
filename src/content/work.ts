@@ -274,7 +274,7 @@ export const demoSections: readonly DemoSection[] = [
 export const demos: readonly Demo[] = demoSections.flatMap((section) => section.demos);
 
 /**
- * A film. The three featured ones, as against the fourteen in `catalogue`.
+ * A film. The four featured ones, as against the fourteen in `catalogue`.
  *
  * `embed`, `href` and `on` are the same three fields a `Work` carries, and they
  * are here for the same reason: both go through the one lightbox, so both have
@@ -327,6 +327,16 @@ export const films: readonly Film[] = [
     title: "天赐 · Heaven's Gift",
     note: "A song written for one child, and debuted during his 100th day celebration.",
     poster: poster("theo.webp"),
+  },
+  {
+    id: "born",
+    youtube: "BcJyTBIkdbg",
+    embed: "https://www.youtube-nocookie.com/embed/BcJyTBIkdbg?autoplay=1&rel=0",
+    href: "https://youtu.be/BcJyTBIkdbg",
+    on: "YouTube",
+    title: "BORN FOR A REASON · for Braxton",
+    note: "The music video of a father's dedication to his son, whose song is in the reel above.",
+    poster: poster("born-for-a-reason.webp"),
   },
 ];
 

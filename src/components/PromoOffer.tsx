@@ -1,4 +1,5 @@
 import { useEffect, useState, type CSSProperties } from "react";
+import { useLocation } from "react-router-dom";
 import { introOffer, whatsapp } from "../content/site";
 import { photos } from "../content/media";
 
@@ -46,13 +47,15 @@ function Phrase() {
 }
 
 export function PromoOffer() {
+  const { pathname } = useLocation();
   const [open, setOpen] = useState(false);
 
+  /* Dennis's team's call: the offer is not once-per-browser — it returns on
+     every new page. Dismissing it closes it for the room you are in; walk to
+     another and it makes its offer again. Hash jumps within a page do not
+     count as a new room. Never over the menu veil: if the reader is choosing
+     a room when the moment comes, the offer waits for them to finish. */
   useEffect(() => {
-    if (localStorage.getItem(introOffer.storageKey) === "1") return;
-
-    /* Never over the menu veil: if the reader is choosing a room when the
-       moment comes, the offer waits for them to finish. */
     let delay: number;
     const attempt = () => {
       if (document.querySelector('.chrome-menu[data-open="true"]')) {
@@ -62,8 +65,11 @@ export function PromoOffer() {
       setOpen(true);
     };
     delay = window.setTimeout(attempt, 4200);
-    return () => window.clearTimeout(delay);
-  }, []);
+    return () => {
+      window.clearTimeout(delay);
+      setOpen(false);
+    };
+  }, [pathname]);
 
   /* The page holds still under the card while it is up. */
   useEffect(() => {
@@ -78,15 +84,15 @@ export function PromoOffer() {
 
   if (!open) return null;
 
-  const dismiss = () => {
-    localStorage.setItem(introOffer.storageKey, "1");
-    setOpen(false);
-  };
+  const dismiss = () => setOpen(false);
 
   return (
     <div className="promo" role="dialog" aria-labelledby="promo-title" aria-modal="true">
       <button type="button" className="promo-scrim" onClick={dismiss} aria-label="Close offer" />
       <div className="promo-card">
+        <button type="button" className="promo-x" onClick={dismiss} aria-label="Close offer">
+          <span aria-hidden>✕</span>
+        </button>
         {/* On pure black, so lighten-blending sinks it into the lacquer the
             way the link-preview image does it: an object in a dark room, not
             a pasted photograph. */}
@@ -116,11 +122,8 @@ export function PromoOffer() {
               </a>
             )}
             <div className="promo-quiet">
-              <a className="promo-secondary" href="#commission" onClick={dismiss}>
-                See all packages
-              </a>
               <button type="button" className="promo-dismiss" onClick={dismiss}>
-                Not now
+                Explore more
               </button>
             </div>
           </div>

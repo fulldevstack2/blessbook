@@ -39,5 +39,4 @@ export const introOffer = {
     "An introductory song for a wedding, a first dance, a baby's arrival, or another milestone you want set to music.",
   cta: "Ask about this package",
   note: "Limited introductory package. Enquire via WhatsApp or the brief below.",
-  storageKey: "blessbook:promo-dismissed",
 } as const;
