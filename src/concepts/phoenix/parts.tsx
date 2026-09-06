@@ -214,13 +214,14 @@ export function SiteChrome() {
 }
 
 /**
- * The testimonials as a ledger, four entries to a page.
+ * The testimonials: four plaques to a page, four columns across.
  *
- * No cards and no press: only the ten finalized voices, entered in gold on
- * the lacquer the way everything on this site is engraved — a continuous
- * number, a hairline, the words in the display face's italic, the name in
- * struck caps. The page turns with roman numerals and a seam-and-word, and
- * every turn enters its four in sequence, each hairline drawing itself.
+ * The same engraved plate the reel's songs are struck on — the section
+ * above teaches the reader what this object is, and here the clients'
+ * words are engraved on it: the continuous number, the gold hairline
+ * along the top edge, the words in the display italic, the name above
+ * its own rule. The page turns with roman numerals and a seam-and-word,
+ * and every turn lands its four in sequence.
  */
 const VOICES_PAGE = 4;
 
@@ -241,24 +242,23 @@ export function Chorus() {
       {/* Keyed by page so a turn re-enters the four. data-reveal is wrong
           inside: the reveal observer only knows nodes that existed when the
           page mounted. */}
-      <ol className="ledger" key={page} aria-label={`Testimonials, page ${page + 1} of ${pages}`}>
+      <ol className="voxwall" key={page} aria-label={`Testimonials, page ${page + 1} of ${pages}`}>
         {shown.map((word, index) => (
           <li
-            className="ledger-row"
+            className="vox-card"
             key={word.who + word.text.slice(0, 12)}
             data-long={word.text.length > 220 || undefined}
             style={{ "--i": index } as CSSProperties}
           >
-            <span className="ledger-index" aria-hidden>
+            <span className="vox-index" aria-hidden>
               {String(page * VOICES_PAGE + index + 1).padStart(2, "0")}
             </span>
-            <div className="ledger-entry">
-              <p className="ledger-mark">{word.what}</p>
-              <blockquote className="ledger-text">{word.text}</blockquote>
-              <p className="ledger-who">
-                {word.who} · {word.when}
-              </p>
-            </div>
+            <p className="vox-mark">{word.what}</p>
+            <blockquote className="vox-text">{word.text}</blockquote>
+            <p className="vox-who">
+              {word.who}
+              <span className="vox-role">{word.when}</span>
+            </p>
           </li>
         ))}
       </ol>

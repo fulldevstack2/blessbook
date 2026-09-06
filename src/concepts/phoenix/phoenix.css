@@ -1545,134 +1545,166 @@ html {
   color: var(--ivory-faint);
 }
 
-/* ---------- the voices: a golden ledger ----------
+/* ---------- the voices: four plaques across ----------
 
-   No cards. The ten finalized voices are entered on the lacquer the way
-   everything here is engraved: a continuous number struck in gold, one
-   hairline per entry drawing itself in, the words in the display italic,
-   the name in struck caps beneath. Four entries to a page; the page turns
-   with roman numerals and a seam-and-word. */
+   The same engraved plate the songs are struck on, one column each: the
+   reel above teaches the reader the object, and here the clients' words
+   are engraved on it. Continuous numbering, the gold hairline along the
+   top edge, the words in the display italic, the name above its own rule
+   at the plate's foot. */
 
-.phoenix .ledger {
+.phoenix .voxwall {
   list-style: none;
   margin: var(--space-2xl) 0 0;
   padding: 0;
-}
-
-.phoenix .ledger-row {
-  position: relative;
   display: grid;
-  grid-template-columns: clamp(3.4rem, 6vw, 5.6rem) minmax(0, 1fr);
   gap: var(--space-lg);
-  padding: clamp(var(--space-xl), 4vh, var(--space-2xl)) 0;
-  animation: ledger-in 640ms var(--ease-out) both;
-  animation-delay: calc(var(--i) * 120ms);
+  align-items: stretch;
 }
 
-@keyframes ledger-in {
-  from {
-    opacity: 0;
-    transform: translateY(14px);
+@media (min-width: 680px) {
+  .phoenix .voxwall {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-/* Each entry rules its own top line, drawn left to right as it arrives. */
-.phoenix .ledger-row::before {
+@media (min-width: 1100px) {
+  .phoenix .voxwall {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-xl);
+  }
+}
+
+.phoenix .vox-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(var(--space-lg), 1.8vw, var(--space-xl));
+  background: linear-gradient(165deg, #1a130d 0%, #120d09 52%, #0d0906 100%);
+  border: 1px solid var(--rule);
+  transition: border-color 420ms var(--ease-out);
+  animation: vox-in 640ms var(--ease-out) both;
+  animation-delay: calc(var(--i) * 110ms);
+}
+
+.phoenix .vox-card:hover {
+  border-color: color-mix(in oklab, var(--gold) 52%, transparent);
+}
+
+@keyframes vox-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
+/* Struck, not printed: the plate's own hairline of gold along the top edge,
+   drawn in as the plate lands. */
+.phoenix .vox-card::before {
   content: "";
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
+  inset: 0 0 auto;
   height: 1px;
   background: linear-gradient(
     90deg,
-    color-mix(in oklab, var(--gold) 55%, transparent),
-    color-mix(in oklab, var(--gold) 10%, transparent)
+    var(--gold),
+    color-mix(in oklab, var(--gold) 14%, transparent)
   );
   transform: scaleX(0);
   transform-origin: left center;
-  animation: ledger-rule 1100ms var(--ease-out) both;
-  animation-delay: calc(var(--i) * 120ms + 200ms);
+  animation: vox-seam 1100ms var(--ease-out) both;
+  animation-delay: calc(var(--i) * 110ms + 260ms);
 }
 
-@keyframes ledger-rule {
+@keyframes vox-seam {
   to {
     transform: none;
   }
 }
 
-.phoenix .ledger-index {
+.phoenix .vox-index {
   font-family: var(--display);
-  font-size: clamp(1.3rem, 2.2vw, 1.8rem);
-  line-height: 1.1;
-  color: var(--gold);
-}
-
-.phoenix .ledger-mark {
-  margin: 0 0 var(--space-sm);
   font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: color-mix(in oklab, var(--gold) 78%, transparent);
+  letter-spacing: 0.24em;
+  color: var(--gold);
+  font-variant-numeric: tabular-nums;
 }
 
-.phoenix .ledger-text {
-  margin: 0;
-  max-width: 58ch;
+.phoenix .vox-mark {
+  margin: var(--space-lg) 0 var(--space-md);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--gold) 72%, transparent);
+}
+
+.phoenix .vox-text {
+  margin: 0 0 var(--space-lg);
   font-family: var(--display);
   font-style: italic;
-  font-size: clamp(1.3rem, 2vw, 1.75rem);
-  line-height: 1.42;
+  font-size: clamp(1.02rem, 1.15vw, 1.18rem);
+  line-height: 1.55;
   color: var(--ivory);
 }
 
-.phoenix .ledger-text::before {
+.phoenix .vox-text::before {
   content: "\201C";
   color: var(--gold);
 }
 
-.phoenix .ledger-text::after {
+.phoenix .vox-text::after {
   content: "\201D";
   color: var(--gold);
 }
 
 /* The one long letter sits a size down and does not shout. */
-.phoenix .ledger-row[data-long] .ledger-text {
-  font-size: clamp(1.05rem, 1.4vw, 1.25rem);
+.phoenix .vox-card[data-long] .vox-text {
+  font-size: 0.94rem;
   line-height: 1.6;
 }
 
-.phoenix .ledger-who {
-  margin: var(--space-md) 0 0;
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.24em;
+/* The signature at the plate's foot, above its own rule. */
+.phoenix .vox-who {
+  margin: auto 0 0;
+  padding-top: var(--space-md);
+  border-top: 1px solid color-mix(in oklab, var(--gold) 26%, transparent);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
+  color: var(--gold);
+}
+
+.phoenix .vox-role {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
   color: var(--ivory-faint);
 }
 
-@media (max-width: 720px) {
-  .phoenix .ledger-row {
-    grid-template-columns: minmax(0, 1fr);
-    gap: var(--space-sm);
-  }
-
-  .phoenix .ledger-index {
-    font-size: 1.1rem;
+@media (prefers-reduced-motion: reduce) {
+  .phoenix .vox-card,
+  .phoenix .vox-card::before {
+    animation-duration: 0s;
+    animation-delay: 0s;
   }
 }
 
 /* ----- the page-turn: numerals, and a seam with a word ----- */
 
+/* Everything on the left baseline: the corner of the page belongs to the
+   commission plate, and an interactive word must never sit beneath it. */
 .phoenix .voices-turn {
   margin-top: var(--space-2xl);
   padding-top: var(--space-lg);
   border-top: 1px solid color-mix(in oklab, var(--gold) 30%, transparent);
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--space-lg);
+  justify-content: flex-start;
+  gap: clamp(var(--space-xl), 5vw, var(--space-4xl));
 }
 
 .phoenix .voices-pages {
