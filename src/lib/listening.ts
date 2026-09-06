@@ -127,6 +127,17 @@ export function play(
   }
   if (label) labels.set(element, label);
   listen(element);
+
+  /* A pressed play must never be guaranteed silence. The shared context can
+     have been suspended since the tap was made — a backgrounded tab, a phone
+     call, an iOS interruption — and the element would "play" with no sound,
+     which is exactly the bug report that looks unreproducible on the machine
+     it is checked on. And a master gain once dragged to zero is not what
+     anyone means when they press play days later. */
+  const ctx = audioContext();
+  if (ctx) resumeAudio(ctx);
+  if (level_ === 0) setVolume(DEFAULT_VOLUME);
+
   void element.play().catch(() => undefined);
   announce();
 }

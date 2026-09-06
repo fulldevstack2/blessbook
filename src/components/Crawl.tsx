@@ -58,7 +58,12 @@ export function Crawl({
     if (!box || !inner) return;
 
     const measure = () => {
-      const width = inner.getBoundingClientRect().width;
+      /* Layout width, not getBoundingClientRect: the plaque's reverse mounts
+         the instant the card starts turning, and a rect measured mid-turn is
+         foreshortened by the 3D rotation — the line always "fit", so a long
+         note never earned its fade or its travel and simply hard-clipped at
+         the face's edge. offsetWidth does not care what the card is doing. */
+      const width = inner.offsetWidth;
       const spare = width - box.clientWidth;
       setOver(spare > 2);
       // One copy plus the gap: the distance at which the second copy is exactly

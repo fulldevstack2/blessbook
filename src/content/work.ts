@@ -566,7 +566,7 @@ export const words: readonly Word[] = [
     text: "I personally love the melody of 由我定, it is locked in my brain already. I love the song too.",
     who: "Vanessa Reynauld",
     when: "1st runner-up, Sing! China Malaysia",
-    what: "On her first original single, 由我定",
+    what: "On her first original single demo, 由我定",
   },
   {
     text: "The music and video really goes hand in hand. So amazing and good. Thank you Dennis.",
@@ -603,5 +603,11 @@ export const words: readonly Word[] = [
     who: "Wen Suen 林文荪",
     when: "Champion, The Voice 2017",
     what: "On her latest single, 时间会唱歌",
+  },
+  {
+    text: "Heartfelt thanks from everyone at Sumo11 for the opportunity to collaborate with Dennis and his incredible team on such a spectacular show. Every bow, chord, cue, sound, light, camera, driver and performer played an essential part in bringing everything together beautifully. Thank you, Dennis and team, for delivering one of our best shows of the year. Look forward for more to come.",
+    who: "May",
+    when: "Founder, Sumo Eleven Sdn Bhd",
+    what: "On Ascendance, the DENZA launch opening",
   },
 ];

@@ -214,67 +214,81 @@ export function SiteChrome() {
 }
 
 /**
- * The testimonials as strings.
+ * The testimonials, four to a page.
  *
- * Not the process's numeral stage and not a grid: this room is strung like
- * the instrument the whole site is about. Five vertical gold strings stand
- * on the ivory — one per voice. The one that is sounding glows and visibly
- * vibrates; the ones already played stay warm; the ones waiting stay faint.
- * And the voice itself is not faded in: it is engraved, letter by letter,
- * by the scroll — the pin's own `--cut` progress fills the ghost letters
- * with ink as the reader draws the bow.
+ * The Star's verdict opens in moving gold leaf; beneath it the voices hang
+ * as lacquer plaques on the ivory, four at a time by Dennis's team's own
+ * call, with a page-turn in the house language: roman numerals for the
+ * pages and a seam-and-word for the next four. Every turn re-lands the
+ * plaques in sequence, each drawing its seam of light along the top edge.
  */
+const VOICES_PAGE = 4;
+
 export function Chorus() {
-  const voices = [
-    { mark: "The press", text: pressWord.text, who: pressWord.who, when: pressWord.when, press: true },
-    ...words.map((word) => ({
-      mark: word.what,
-      text: word.text,
-      who: word.who,
-      when: word.when,
-      press: false,
-    })),
-  ];
+  const [page, setPage] = useState(0);
+  const pages = Math.ceil(words.length / VOICES_PAGE);
+  const shown = words.slice(page * VOICES_PAGE, page * VOICES_PAGE + VOICES_PAGE);
 
   return (
-    <div id="testimonials" className="phoenix-section--invert chorus-hall">
-      {/* Ten voices now: travel per voice comes down so the whole programme
-          stays near the length it had with five. */}
-      <ScrollStage vh={voices.length * 70 + 70} cuts={voices.length} className="chorus">
-        {({ stage }) => (
-          <>
-            <p className="phoenix-eyebrow chorus-eyebrow">Testimonials</p>
+    <section id="testimonials" className="phoenix-section phoenix-section--invert voices">
+      <p className="phoenix-eyebrow" data-reveal>
+        Testimonials
+      </p>
 
-            <div className="chorus-strings" aria-hidden>
-              {voices.map((voice, index) => (
-                <span
-                  key={voice.who + String(index)}
-                  className="chorus-string"
-                  data-state={index === stage ? "sounding" : index < stage ? "played" : "waiting"}
-                />
-              ))}
-            </div>
+      <blockquote className="voices-press" data-reveal>
+        <p>&ldquo;{pressWord.text}&rdquo;</p>
+        <cite>
+          {pressWord.who} · {pressWord.when}
+        </cite>
+      </blockquote>
 
-            <ul className="chorus-voices">
-              {voices.map((voice, index) => (
-                <li
-                  className="chorus-voice"
-                  key={voice.who + String(index)}
-                  data-active={index === stage}
-                  data-press={voice.press || undefined}
-                >
-                  <p className="chorus-mark">{voice.mark}</p>
-                  <blockquote className="chorus-text">{voice.text}</blockquote>
-                  <p className="chorus-who">
-                    {voice.who} · {voice.when}
-                  </p>
-                </li>
-              ))}
-            </ul>
-          </>
-        )}
-      </ScrollStage>
-    </div>
+      {/* Keyed by page so a turn remounts the plaques and their entrance
+          choreography plays again. data-reveal is wrong here: the reveal
+          observer only knows nodes that existed when the page mounted. */}
+      <ul className="voices-wall" key={page} aria-label={`Testimonials, page ${page + 1} of ${pages}`}>
+        {shown.map((word, index) => (
+          <li
+            key={word.who + word.text.slice(0, 12)}
+            className="voice-plate"
+            data-long={word.text.length > 220 || undefined}
+            style={{ "--i": index } as CSSProperties}
+          >
+            <p className="voice-mark">{word.what}</p>
+            <blockquote className="voice-text">{word.text}</blockquote>
+            <p className="voice-who">
+              {word.who} · {word.when}
+            </p>
+          </li>
+        ))}
+      </ul>
+
+      <div className="voices-turn">
+        <div className="voices-pages" aria-hidden>
+          {Array.from({ length: pages }, (_, index) => (
+            <button
+              key={index}
+              type="button"
+              className="voices-page"
+              data-active={index === page}
+              tabIndex={-1}
+              onClick={() => setPage(index)}
+            >
+              {NUMERALS[index]}
+            </button>
+          ))}
+        </div>
+        <button
+          type="button"
+          className="voices-next"
+          onClick={() => setPage((current) => (current + 1) % pages)}
+        >
+          <span className="voices-next-seam" aria-hidden />
+          <span className="voices-next-word">
+            {page + 1 < pages ? "More voices" : "From the top"}
+          </span>
+        </button>
+      </div>
+    </section>
   );
 }
 

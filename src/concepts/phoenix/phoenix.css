@@ -1545,229 +1545,275 @@ html {
   color: var(--ivory-faint);
 }
 
-/* ---------- the chorus: a string for every voice ----------
+/* ---------- the voices: four plaques to a page ----------
 
-   This room is strung like the instrument the site is about. A chord of
-   vertical gold strings stands on the ivory, one per voice, however many
-   voices there are: the sounding
-   string glows and vibrates, the played ones stay warm, the waiting ones
-   faint — the strings are the programme. The voice itself is engraved by
-   the scroll: the pin's own --cut fills the ghost letters with ink as the
-   reader draws the bow. */
+   The Star's verdict opens in moving gold leaf; the clients hang beneath it
+   as lacquer plaques on the ivory — the commission plate's own jewel-box
+   object — four at a time. A page-turn remounts them, so every turn lands
+   the plaques in sequence, draws a seam of light along each top edge and
+   surfaces the ghost of the opening mark behind the words. */
 
-.phoenix .chorus {
-  display: grid;
-  align-content: center;
-  padding: clamp(var(--space-2xl), 9vh, var(--space-4xl))
-    clamp(var(--space-lg), 6vw, var(--space-5xl));
-  background: var(--ivory);
-  color: var(--lacquer);
-  overflow: hidden;
-}
-
-.phoenix .chorus-eyebrow {
-  position: absolute;
-  top: clamp(var(--space-xl), 9vh, var(--space-3xl));
-  left: clamp(var(--space-lg), 6vw, var(--space-5xl));
-}
-
-/* The chord. Each string fades out toward its ends, the way a lit string
-   loses its edges in a dark hall. */
-.phoenix .chorus-strings {
-  position: absolute;
-  top: clamp(var(--space-3xl), 16vh, 10rem);
-  bottom: clamp(var(--space-3xl), 16vh, 10rem);
-  right: clamp(var(--space-xl), 9vw, var(--space-5xl));
-  display: flex;
-  gap: clamp(16px, 2.2vw, 34px);
-  pointer-events: none;
-}
-
-.phoenix .chorus-string {
-  position: relative;
-  width: 1px;
-  height: 100%;
-  background: linear-gradient(
-    180deg,
-    transparent,
-    color-mix(in oklab, var(--gold-deep) 20%, transparent) 14%,
-    color-mix(in oklab, var(--gold-deep) 20%, transparent) 86%,
-    transparent
-  );
-  transition: background 700ms var(--ease-out);
-}
-
-.phoenix .chorus-string[data-state="played"] {
-  background: linear-gradient(
-    180deg,
-    transparent,
-    color-mix(in oklab, var(--gold-deep) 48%, transparent) 14%,
-    color-mix(in oklab, var(--gold-deep) 48%, transparent) 86%,
-    transparent
-  );
-}
-
-.phoenix .chorus-string[data-state="sounding"] {
-  background: linear-gradient(
-    180deg,
-    transparent,
-    var(--gold-deep) 12%,
-    var(--gold-deep) 88%,
-    transparent
-  );
-  box-shadow: 0 0 14px color-mix(in oklab, var(--gold-deep) 40%, transparent);
-}
-
-/* The vibration: a blurred ghost of the string, widening and thinning too
-   fast to read as anything but a bowed string's envelope. */
-.phoenix .chorus-string[data-state="sounding"]::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: inherit;
-  filter: blur(2px);
-  transform: scaleX(4);
-  animation: chorus-vibrate 190ms linear infinite alternate;
-}
-
-@keyframes chorus-vibrate {
-  from {
-    transform: scaleX(3.5);
-    opacity: 0.5;
-  }
-
-  to {
-    transform: scaleX(9);
-    opacity: 0.18;
-  }
-}
-
-.phoenix .chorus-voices {
-  list-style: none;
-  margin: 0;
+.phoenix .voices-press {
+  margin: var(--space-2xl) 0 0;
   padding: 0;
-  display: grid;
-  width: min(100%, 44rem);
 }
 
-.phoenix .chorus-voice {
-  grid-area: 1 / 1;
-  opacity: 0;
-  transform: translateY(26px);
-  transition:
-    opacity 700ms var(--ease-out),
-    transform 950ms var(--ease-out);
-  pointer-events: none;
-}
-
-.phoenix .chorus-voice[data-active="true"] {
-  opacity: 1;
-  transform: none;
-  transition-delay: 140ms, 140ms;
-}
-
-/* Legible at arm's length: the eyebrow and the attribution carry real
-   weight — still tracked caps, no longer a whisper. */
-.phoenix .chorus-mark {
-  margin: 0 0 var(--space-lg);
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.26em;
-  text-transform: uppercase;
-  color: var(--gold-deep);
-}
-
-/* Engraved by the bow: ghost letters, and an ink fill whose width is the
-   scroll's own progress through this voice's cut. Two painted layers under
-   a text clip — the ink drawn to --cut, the ghost always there beneath. */
-.phoenix .chorus-text {
-  /* The letters are painted by a text-clipped background, and a background
-     stops at the element's box — with a tight line-height the last line's
-     descenders hang below it and lose their paint (the y in "Simply", the g
-     in "together"). Pad the paint box past the descenders and pull the
-     layout back with the matching negative margins. */
-  margin: -0.12em -0.1em -0.24em -0.04em;
-  padding: 0.12em 0.1em 0.24em 0.04em;
+.phoenix .voices-press p {
+  margin: 0;
   font-family: var(--display);
-  font-style: italic;
-  font-size: clamp(1.7rem, 3.6vw, 3.1rem);
-  line-height: 1.18;
-  color: transparent;
-  background-image:
-    linear-gradient(90deg, var(--lacquer), var(--lacquer)),
+  font-optical-sizing: auto;
+  font-size: clamp(2.4rem, 6vw, 4.4rem);
+  line-height: 1;
+  letter-spacing: 0.005em;
+  background:
     linear-gradient(
-      90deg,
-      color-mix(in oklab, var(--lacquer) 20%, transparent),
-      color-mix(in oklab, var(--lacquer) 20%, transparent)
-    );
-  background-repeat: no-repeat, no-repeat;
-  background-size:
-    clamp(0%, calc(var(--cut, 1) * 145% - 18%), 100%) 100%,
-    100% 100%;
+      105deg,
+      var(--gold-deep) 0%,
+      oklch(74% 0.125 82) 22%,
+      var(--gold-deep) 44%
+    )
+    0 0 / 250% 100%;
   -webkit-background-clip: text;
   background-clip: text;
+  color: transparent;
+  /* Descenders hang below the tight line box, and a clipped background is
+     their only paint: pad the box, pull the layout back. */
+  padding: 0.1em 0.1em 0.22em 0.02em;
+  margin: -0.1em -0.1em -0.22em -0.02em;
+  animation: phoenix-press-sheen 8s linear infinite alternate;
 }
 
-/* The press opens the programme, and its verdict is engraved in gold. */
-.phoenix .chorus-voice[data-press] .chorus-text {
+@keyframes phoenix-press-sheen {
+  to {
+    background-position: 100% 0;
+  }
+}
+
+.phoenix .voices-press cite {
+  display: block;
+  margin-top: var(--space-md);
   font-style: normal;
-  font-size: clamp(2.6rem, 6.5vw, 5rem);
-  line-height: 1.02;
-  background-image:
-    linear-gradient(100deg, var(--gold-deep), oklch(70% 0.125 80), var(--gold-deep)),
-    linear-gradient(
-      90deg,
-      color-mix(in oklab, var(--gold-deep) 22%, transparent),
-      color-mix(in oklab, var(--gold-deep) 22%, transparent)
-    );
-}
-
-.phoenix .chorus-who {
-  margin: var(--space-xl) 0 0;
-  padding-top: var(--space-md);
-  max-width: 26rem;
-  border-top: 1px solid color-mix(in oklab, var(--gold-deep) 45%, transparent);
   font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.24em;
   text-transform: uppercase;
-  color: color-mix(in oklab, var(--lacquer) 80%, transparent);
+  color: color-mix(in oklab, var(--lacquer) 78%, transparent);
 }
 
-@media (max-width: 899px) {
-  .phoenix .chorus-strings {
-    top: clamp(var(--space-2xl), 10vh, 6rem);
-    bottom: auto;
-    height: clamp(7rem, 22vh, 11rem);
-    right: var(--space-lg);
-    gap: 14px;
-  }
+.phoenix .voices-wall {
+  list-style: none;
+  margin: var(--space-3xl) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-xl);
+}
 
-  .phoenix .chorus-text {
-    font-size: clamp(1.45rem, 6.4vw, 2rem);
+@media (min-width: 900px) {
+  .phoenix .voices-wall {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-2xl);
   }
+}
 
-  .phoenix .chorus-voice[data-press] .chorus-text {
-    font-size: clamp(2.1rem, 9.5vw, 3rem);
+.phoenix .voice-plate {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(var(--space-lg), 2.6vw, var(--space-2xl));
+  background: linear-gradient(135deg, #0b0705 0%, #1a1208 100%);
+  border: 1px solid color-mix(in oklab, var(--gold) 42%, transparent);
+  box-shadow:
+    0 0 0 1px color-mix(in oklab, var(--gold) 12%, transparent),
+    0 26px 50px rgb(23 15 8 / 20%),
+    0 0 30px color-mix(in oklab, var(--gold) 10%, transparent);
+  overflow: hidden;
+  animation: voice-in 640ms var(--ease-out) both;
+  animation-delay: calc(var(--i) * 110ms);
+}
+
+@keyframes voice-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
   }
+}
+
+/* A seam of light draws along the top edge after the plaque lands. */
+.phoenix .voice-plate::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    var(--gold),
+    color-mix(in oklab, var(--gold) 15%, transparent)
+  );
+  transform: scaleX(0);
+  transform-origin: left center;
+  animation: voice-seam 1200ms var(--ease-out) both;
+  animation-delay: calc(var(--i) * 110ms + 300ms);
+}
+
+@keyframes voice-seam {
+  to {
+    transform: none;
+  }
+}
+
+/* The ghost of the opening mark, engraved behind the words. */
+.phoenix .voice-plate::after {
+  content: "\201C";
+  position: absolute;
+  top: -0.08em;
+  right: 0.04em;
+  z-index: -1;
+  font-family: var(--display);
+  font-size: clamp(4.5rem, 7vw, 6.5rem);
+  line-height: 1;
+  color: color-mix(in oklab, var(--gold) 22%, transparent);
+  opacity: 0;
+  animation: voice-ghost 1000ms var(--ease-out) both;
+  animation-delay: calc(var(--i) * 110ms + 460ms);
+  pointer-events: none;
+}
+
+@keyframes voice-ghost {
+  to {
+    opacity: 1;
+  }
+}
+
+.phoenix .voice-mark {
+  margin: 0 0 var(--space-md);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.phoenix .voice-text {
+  margin: 0 0 var(--space-lg);
+  font-family: var(--display);
+  font-style: italic;
+  font-size: clamp(1.1rem, 1.5vw, 1.35rem);
+  line-height: 1.5;
+  color: var(--ivory);
+}
+
+.phoenix .voice-text::before {
+  content: "\201C";
+  color: var(--gold);
+}
+
+.phoenix .voice-text::after {
+  content: "\201D";
+  color: var(--gold);
+}
+
+/* The long letters sit a size down, so one generous voice does not shout. */
+.phoenix .voice-plate[data-long] .voice-text {
+  font-size: clamp(0.98rem, 1.2vw, 1.12rem);
+  line-height: 1.6;
+}
+
+.phoenix .voice-who {
+  margin: auto 0 0;
+  padding-top: var(--space-md);
+  border-top: 1px solid color-mix(in oklab, var(--gold) 30%, transparent);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--gold) 72%, transparent);
+}
+
+/* ----- the page-turn: numerals, and a seam with a word ----- */
+
+.phoenix .voices-turn {
+  margin-top: var(--space-2xl);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-lg);
+}
+
+.phoenix .voices-pages {
+  display: flex;
+  gap: var(--space-lg);
+}
+
+.phoenix .voices-page {
+  border: 0;
+  background:
+    linear-gradient(90deg, var(--gold-deep), var(--gold-deep)) left bottom / 0% 1px
+    no-repeat;
+  padding: 0.2rem 0.1rem;
+  font-family: var(--display);
+  font-size: 1.05rem;
+  color: color-mix(in oklab, var(--lacquer) 40%, transparent);
+  cursor: pointer;
+  transition:
+    color 320ms var(--ease-out),
+    background-size 420ms var(--ease-out);
+}
+
+.phoenix .voices-page[data-active="true"],
+.phoenix .voices-page:hover {
+  color: var(--gold-deep);
+  background-size: 100% 1px;
+}
+
+.phoenix .voices-next {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.85rem;
+  border: 0;
+  background: none;
+  padding: 0.35rem 0;
+  cursor: pointer;
+  color: var(--gold-deep);
+  transition: color 320ms var(--ease-out);
+}
+
+.phoenix .voices-next:hover,
+.phoenix .voices-next:focus-visible {
+  color: var(--lacquer);
+}
+
+.phoenix .voices-next-seam {
+  width: 1px;
+  height: 1.55rem;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    var(--gold-deep) 22%,
+    var(--gold-deep) 78%,
+    transparent
+  );
+  box-shadow: 0 0 8px color-mix(in oklab, var(--gold-deep) 36%, transparent);
+}
+
+.phoenix .voices-next-word {
+  font-family: var(--display);
+  font-size: clamp(1rem, 1.2vw, 1.2rem);
+  letter-spacing: 0.02em;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .phoenix .chorus-string,
-  .phoenix .chorus-voice {
-    transition: none;
-  }
-
-  .phoenix .chorus-string[data-state="sounding"]::after {
+  .phoenix .voices-press p {
     animation: none;
-    opacity: 0.3;
   }
 
-  /* No scroll-writing under reduced motion: the words are simply there. */
-  .phoenix .chorus-text {
-    background-size:
-      100% 100%,
-      100% 100%;
+  .phoenix .voice-plate,
+  .phoenix .voice-plate::before,
+  .phoenix .voice-plate::after {
+    animation-duration: 0s;
+    animation-delay: 0s;
   }
 }
 
