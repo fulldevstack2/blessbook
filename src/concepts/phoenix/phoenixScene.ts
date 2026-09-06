@@ -200,10 +200,15 @@ const fragmentShader = /* glsl */ `
       /* Two photographs share the plate: the 2026 pair, the first dissolving
          into the second across the middle of the scroll. Each is cover-fitted
          with its own aspect, so neither ever letterboxes. */
+      /* When the plate is squarer than the photograph, the crop comes off
+         the bottom, not both ends: his head lives at the top of the frame,
+         and a centred window was taking it. 0.82 leaves a sliver of head-
+         room so the scroll rise never clamps against the photo's edge. */
+      const float keepTop = 0.82;
       vec2 shotA = shot;
       float scaleA = panelAspect / uPhotoAspect;
       if (scaleA > 1.0) {
-        shotA.y = (shotA.y - 0.5) / scaleA + 0.5;
+        shotA.y = shotA.y / scaleA + (1.0 - 1.0 / scaleA) * keepTop;
       } else {
         shotA.x = (shotA.x - 0.5) * scaleA + 0.5;
       }
@@ -212,7 +217,7 @@ const fragmentShader = /* glsl */ `
       vec2 shotB = shot;
       float scaleB = panelAspect / uPhotoAspectB;
       if (scaleB > 1.0) {
-        shotB.y = (shotB.y - 0.5) / scaleB + 0.5;
+        shotB.y = shotB.y / scaleB + (1.0 - 1.0 / scaleB) * keepTop;
       } else {
         shotB.x = (shotB.x - 0.5) * scaleB + 0.5;
       }
