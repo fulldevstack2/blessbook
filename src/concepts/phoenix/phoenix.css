@@ -1545,10 +1545,11 @@ html {
   color: var(--ivory-faint);
 }
 
-/* ---------- the chorus: five strings, five voices ----------
+/* ---------- the chorus: a string for every voice ----------
 
    This room is strung like the instrument the site is about. A chord of
-   vertical gold strings stands on the ivory, one per voice: the sounding
+   vertical gold strings stands on the ivory, one per voice, however many
+   voices there are: the sounding
    string glows and vibrates, the played ones stay warm, the waiting ones
    faint — the strings are the programme. The voice itself is engraved by
    the scroll: the pin's own --cut fills the ghost letters with ink as the
@@ -1578,7 +1579,7 @@ html {
   bottom: clamp(var(--space-3xl), 16vh, 10rem);
   right: clamp(var(--space-xl), 9vw, var(--space-5xl));
   display: flex;
-  gap: clamp(28px, 4.5vw, 60px);
+  gap: clamp(16px, 2.2vw, 34px);
   pointer-events: none;
 }
 

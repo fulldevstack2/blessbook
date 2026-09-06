@@ -238,7 +238,9 @@ export function Chorus() {
 
   return (
     <div id="testimonials" className="phoenix-section--invert chorus-hall">
-      <ScrollStage vh={(voices.length + 1) * 100} cuts={voices.length} className="chorus">
+      {/* Ten voices now: travel per voice comes down so the whole programme
+          stays near the length it had with five. */}
+      <ScrollStage vh={voices.length * 70 + 70} cuts={voices.length} className="chorus">
         {({ stage }) => (
           <>
             <p className="phoenix-eyebrow chorus-eyebrow">Testimonials</p>

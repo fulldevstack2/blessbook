@@ -537,40 +537,71 @@ export interface Word {
  * are named. The two anonymous commission quotes that used to sit here came
  * from the previous project and were never verified, so they are gone.
  */
-/* Attributions verified against dennislau.thechosen.io (his own site) on
-   2026-09-01 — two of them had been swapped here. Alistair Hay's line is from
-   emeraldguitars.com/dennis-lau-phoenix-violin, and it earns its place on a
-   commissions site: it is what the man who built the Phoenix said about
-   being commissioned by Dennis. */
+/* The press verdict that opens the chorus: The Star's own headline. */
 export const pressWord = {
   text: "Simply electric.",
   who: "The Star",
   when: "2016",
 } as const;
 
+/* Dennis's team's own client testimonials (Jon, 2026-09-06), transcribed
+   from the styled-Unicode originals into plain text — script codepoints read
+   as gibberish to screen readers and search engines, and this site sets its
+   own type. Wording kept as sent, lightly normalised. The Star's verdict
+   above remains the press opener. */
 export const words: readonly Word[] = [
   {
-    text: "Dennis, you are the pride, not only to the UCSI University, but also to the nation.",
-    who: "Dato' Dr Peter Ng",
-    when: "Chairman, UCSI Group",
-    what: "On his record",
+    text: "Awesome show man, respect! Definitely captured the moment, got dramatic effect!",
+    who: "Joe Flizzow",
+    when: "Malaysia's award-winning No. 1 rapper",
+    what: "On Ascendance, live at the DENZA Z9 GT launch",
   },
   {
-    text: "Never fail to amaze me with his unique blend and skill of putting his music abilities together.",
-    who: "Soren Ravn",
-    when: "Managing Director, Carlsberg Malaysia",
-    what: "On his playing",
+    text: "The song Born for a Reason really captured all the message and essence I have for my son, Braxton.",
+    who: "Bernard Ooi",
+    when: "Braxton's father",
+    what: "On his son's third-birthday song",
   },
   {
-    text: "Get mesmerised by Malaysia's most breath-taking performer for your next event.",
-    who: "Winnie Loo",
-    when: "Founder, A Cut Above",
-    what: "On his performances",
+    text: "I personally love the melody of 由我定, it is locked in my brain already. I love the song too.",
+    who: "Vanessa Reynauld",
+    when: "1st runner-up, Sing! China Malaysia",
+    what: "On her first original single, 由我定",
   },
   {
-    text: "This project has been one of the most rewarding commissions of my career.",
-    who: "Alistair Hay",
-    when: "Luthier, Emerald Guitars · builder of the Phoenix",
-    what: "On being commissioned by Dennis",
+    text: "The music and video really goes hand in hand. So amazing and good. Thank you Dennis.",
+    who: "Datuk Albert Chiang",
+    when: "Former Group MD, Bonia Corporation Berhad",
+    what: "On the One Seafood 六星报喜 dinner anthem",
+  },
+  {
+    text: "Wow, sounds good! I initially had some doubts, but this sounds good. The agency loves the song, so far the client likes it too.",
+    who: "Lobak Loon",
+    when: "Award-winning film director",
+    what: "On his micro-drama theme song",
+  },
+  {
+    text: "This is totally He-Man level 1000! With this grand entrance song, I can finally act out my dream!",
+    who: "Yujin Wong",
+    when: "International keynote speaker",
+    what: "On his Grand Entrance anthem",
+  },
+  {
+    text: "The song totally captured our company's soul and spirit. Although being a corporate song, it totally brings everyone together in unity.",
+    who: "Acson Malaysia",
+    when: "Awards gala dinner",
+    what: "On their gala anthem, 与光同行",
+  },
+  {
+    text: "Bravo! Bravo! This is exactly the song that totally represents me. Simply fantastic!",
+    who: "Sara Yeong",
+    when: "Marketing trainer for FMCG brands",
+    what: "On her own song",
+  },
+  {
+    text: "Very nice. When can we create our next song?",
+    who: "Wen Suen 林文荪",
+    when: "Champion, The Voice 2017",
+    what: "On her latest single, 时间会唱歌",
   },
 ];
