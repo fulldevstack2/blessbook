@@ -40,13 +40,21 @@ export const photos = {
     alt: "Dennis Lau in close-up, eyes closed, mid-phrase on the gold Phoenix violin.",
     credit: "Mosaic Music Entertainment · CC0",
   },
-  /** The official press portrait — larger and sharper than the CC0 crop above. */
+  /** The 2026 cover pair, supplied by Dennis's team: the hero opens on the
+      first and dissolves to the second as the reader scrolls. */
   press: {
-    src: asset("dennis-press.webp"),
-    width: 2000,
+    src: asset("dl-2026-1.webp"),
+    width: 1429,
     height: 2000,
-    alt: "Dennis Lau performing with the gold Phoenix electric violin.",
-    credit: "Mosaic Music Entertainment",
+    alt: "Dennis Lau, 2026 portrait with the gold Phoenix electric violin.",
+    credit: "Dennis Lau, 2026",
+  },
+  pressTwo: {
+    src: asset("dl-2026-2.webp"),
+    width: 1333,
+    height: 2000,
+    alt: "Dennis Lau, second 2026 portrait with the gold Phoenix electric violin.",
+    credit: "Dennis Lau, 2026",
   },
   violin: {
     src: asset("violin-phoenix.webp"),
@@ -173,14 +181,14 @@ export const showreel = {
 } as const;
 
 /**
- * Forty seconds of The Journey, played live on the Phoenix at the 2016 concert.
- * This is the sound the heroes are drawn by — the site's motion comes from his
- * playing rather than from a timer.
+ * The Journey, complete — Dennis's own studio recording, supplied by his team
+ * (2026-09-06) in place of the forty-second live phrase. This is the sound the
+ * heroes are drawn by: the site's motion comes from his playing, not a timer.
  */
 export const livePhrase = {
-  src: audio("the-journey-live.mp3"),
-  seconds: 40,
+  src: audio("the-journey.mp3"),
+  seconds: 245,
   title: "The Journey",
-  where: "Live at The Phoenix Rising, 2016",
-  credit: "The Phoenix Rising Concert, 2016",
+  where: "By Dennis Lau",
+  credit: "The Journey · Dennis Lau",
 } as const;

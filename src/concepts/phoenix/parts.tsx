@@ -357,19 +357,20 @@ export function Band() {
           <div className="ingot-head">
             <p className="ingot-eyebrow">{clientWall.eyebrow}</p>
             <h2 className="ingot-lede">{clientWall.lede}</h2>
+            <p className="ingot-turn">{clientWall.turn}</p>
           </div>
 
           <SceneCanvas
             factory={createBandScene}
             progress={progress}
             className="ingot-bar"
-            label={`A bar of gold with fourteen names engraved into it: ${clients
+            label={`A bar of gold with ${clients.length} names engraved into it: ${clients
               .map((client) => client.name)
               .join(", ")}.`}
           />
 
           <p className="ingot-foot">
-            Each of the fourteen booked him for a room of their own. They appear here as credit for work done, nothing more.
+            Each of them booked him for a room of their own. They appear here as credit for work done, nothing more.
           </p>
         </>
       )}

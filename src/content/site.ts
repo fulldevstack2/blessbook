@@ -2,7 +2,7 @@
 export const siteName = "BlessBook";
 
 /** The tagline, Dennis's team's own (Jon, 2026-09-06). */
-export const tagline = "Every story deserves its own soundtrack.";
+export const tagline = "Every Story Deserves its own Soundtrack.";
 
 /** Dennis's team WhatsApp — set VITE_WHATSAPP_NUMBER in .env when provided. */
 const whatsappDigits = (import.meta.env.VITE_WHATSAPP_NUMBER as string | undefined)?.replace(

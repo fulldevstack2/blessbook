@@ -3,8 +3,8 @@
  *
  *     node tools/waveform.mjs
  *
- * Reads `public/audio/the-journey-live.mp3` — The Journey, played live on the
- * Phoenix at the 2016 concert — and writes `src/content/waveform.ts`: one peak
+ * Reads `public/audio/the-journey.mp3` — The Journey, his studio recording —
+ * and writes `src/content/waveform.ts`: one peak
  * per bucket, normalised to the loudest moment in the take.
  *
  * The Nocturne page builds a form out of these numbers and travels through it,
@@ -20,7 +20,7 @@
 import { execFileSync } from "node:child_process";
 import { writeFileSync } from "node:fs";
 
-const SOURCE = "public/audio/the-journey-live.mp3";
+const SOURCE = "public/audio/the-journey.mp3";
 const OUT = "src/content/waveform.ts";
 /** Enough to hold individual bow strokes; small enough to read as one line. */
 const BUCKETS = 900;

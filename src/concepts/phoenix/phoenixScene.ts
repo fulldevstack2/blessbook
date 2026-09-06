@@ -34,8 +34,11 @@ const fragmentShader = /* glsl */ `
   precision highp float;
 
   uniform sampler2D uPhoto;
+  uniform sampler2D uPhotoB;
   uniform float uHasPhoto;
+  uniform float uHasPhotoB;
   uniform float uPhotoAspect;
+  uniform float uPhotoAspectB;
   uniform float uAspect;
   uniform float uProgress;
   uniform float uTime;
@@ -194,15 +197,29 @@ const fragmentShader = /* glsl */ `
       vec2 shot = (panel - 0.5) / zoom + 0.5;
       shot.y += (uProgress - 0.5) * (1.0 - 1.0 / zoom);
 
-      float scale = panelAspect / uPhotoAspect;
-      if (scale > 1.0) {
-        shot.y = (shot.y - 0.5) / scale + 0.5;
+      /* Two photographs share the plate: the 2026 pair, the first dissolving
+         into the second across the middle of the scroll. Each is cover-fitted
+         with its own aspect, so neither ever letterboxes. */
+      vec2 shotA = shot;
+      float scaleA = panelAspect / uPhotoAspect;
+      if (scaleA > 1.0) {
+        shotA.y = (shotA.y - 0.5) / scaleA + 0.5;
       } else {
-        shot.x = (shot.x - 0.5) * scale + 0.5;
+        shotA.x = (shotA.x - 0.5) * scaleA + 0.5;
       }
-      shot = clamp(shot, vec2(0.0), vec2(1.0));
+      shotA = clamp(shotA, vec2(0.0), vec2(1.0));
 
-      vec3 photo = texture2D(uPhoto, shot).rgb;
+      vec2 shotB = shot;
+      float scaleB = panelAspect / uPhotoAspectB;
+      if (scaleB > 1.0) {
+        shotB.y = (shotB.y - 0.5) / scaleB + 0.5;
+      } else {
+        shotB.x = (shotB.x - 0.5) * scaleB + 0.5;
+      }
+      shotB = clamp(shotB, vec2(0.0), vec2(1.0));
+
+      float swap = smoothstep(0.36, 0.60, uProgress) * uHasPhotoB;
+      vec3 photo = mix(texture2D(uPhoto, shotA).rgb, texture2D(uPhotoB, shotB).rgb, swap);
       float l = grey(photo);
       // Lifted, then warmed toward the room's own light rather than regraded.
       vec3 lifted = pow(max(photo, vec3(0.0)), vec3(0.82)) * vec3(1.06, 0.99, 0.9);
@@ -317,8 +334,11 @@ function build({ canvas, reducedMotion }: SceneContext, panel: boolean): SceneHa
     fragmentShader,
     uniforms: {
       uPhoto: { value: null },
+      uPhotoB: { value: null },
       uHasPhoto: { value: 0 },
+      uHasPhotoB: { value: 0 },
       uPhotoAspect: { value: photos.press.width / photos.press.height },
+      uPhotoAspectB: { value: photos.pressTwo.width / photos.pressTwo.height },
       uAspect: { value: 1 },
       uProgress: { value: 0 },
       uTime: { value: 0 },
@@ -334,7 +354,7 @@ function build({ canvas, reducedMotion }: SceneContext, panel: boolean): SceneHa
   });
 
   const loader = new THREE.TextureLoader();
-  loader.load(photos.press.src, (texture) => {
+  const dress = (texture: THREE.Texture) => {
     texture.colorSpace = THREE.SRGBColorSpace;
     texture.minFilter = THREE.LinearMipmapLinearFilter;
     texture.magFilter = THREE.LinearFilter;
@@ -342,8 +362,16 @@ function build({ canvas, reducedMotion }: SceneContext, panel: boolean): SceneHa
     texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
     texture.wrapS = THREE.ClampToEdgeWrapping;
     texture.wrapT = THREE.ClampToEdgeWrapping;
+  };
+  loader.load(photos.press.src, (texture) => {
+    dress(texture);
     material.uniforms.uPhoto.value = texture;
     material.uniforms.uHasPhoto.value = 1;
+  });
+  loader.load(photos.pressTwo.src, (texture) => {
+    dress(texture);
+    material.uniforms.uPhotoB.value = texture;
+    material.uniforms.uHasPhotoB.value = 1;
   });
 
   const quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
@@ -380,6 +408,7 @@ function build({ canvas, reducedMotion }: SceneContext, panel: boolean): SceneHa
     dispose() {
       window.removeEventListener("pointermove", onPointer);
       (material.uniforms.uPhoto.value as THREE.Texture | null)?.dispose();
+      (material.uniforms.uPhotoB.value as THREE.Texture | null)?.dispose();
       quad.geometry.dispose();
       material.dispose();
       renderer.dispose();

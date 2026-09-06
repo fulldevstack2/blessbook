@@ -218,7 +218,7 @@ export function PhoenixPage() {
               </div>
 
               <div className="phoenix-hero-foot">
-                <span>Photograph · 2016</span>
+                <span>Photographs · 2026</span>
                 <span className="phoenix-progress" aria-hidden />
                 <span>Scroll</span>
               </div>

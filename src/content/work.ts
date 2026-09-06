@@ -377,6 +377,15 @@ export interface Work {
 
 export const catalogue: readonly Work[] = [
   {
+    id: "come-up",
+    on: "YouTube",
+    href: "https://youtu.be/muFlm966ifY",
+    embed: "https://www.youtube-nocookie.com/embed/muFlm966ifY?autoplay=1&rel=0",
+    poster: poster("come-up-to-carlsberg.webp"),
+    title: "COME UP TO CARLSBERG",
+    note: "Carlsberg Malaysia's brand portfolio single, with its Managing Director then, Soren Ravn.",
+  },
+  {
     id: "glory",
     on: "YouTube",
     href: "https://youtu.be/8vBQ-BdAbjA",
@@ -513,6 +522,11 @@ export const socials: readonly Social[] = [
   { label: "Site", handle: "dennislau.thechosen.io", href: "https://dennislau.thechosen.io" },
   { label: "Instagram", handle: "@dennisviolin", href: "https://instagram.com/dennisviolin" },
   { label: "YouTube", handle: "DennisLauTV", href: "https://www.youtube.com/@DennisLauTV" },
+  {
+    label: "Spotify",
+    handle: "Dennis Lau",
+    href: "https://open.spotify.com/artist/1AFZzRtmT8bhzlBOMUYWXT",
+  },
   /* His own page, not his management's. It pointed at
      MosaicMusicEntertainment, which is the company that books him — a real
      account, and the wrong one to put under his name. */

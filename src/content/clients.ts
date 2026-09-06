@@ -3,18 +3,26 @@
  * is the strongest exclusivity argument on the whole site: the people who could
  * hire anyone hire him.
  *
- * The logos ship as alpha-only silhouettes in public/clients, so every concept
- * paints them in its own ink through a CSS mask instead of pasting boxed white
- * logos onto a dark page. Two of the sixteen on his site (BMW, Samsung) are
- * light marks inside a coloured field and would not reduce to a clean
- * silhouette, so they are left out rather than shipped as blobs.
+ * The list is Dennis's own (2026-09-06). Phoenix cuts the NAMES into the gold
+ * band as text, so no logo asset gates who may appear; the silhouette masks in
+ * public/clients remain only for the retired concepts.
  */
 
 export interface Client {
   readonly slug: string;
   readonly name: string;
   /** Loose grouping, used where the wall wants a caption rather than a grid. */
-  readonly field: "Watchmaking" | "Motoring" | "Spirits" | "Hospitality" | "Technology" | "Consumer" | "Finance";
+  readonly field:
+    | "Watchmaking"
+    | "Motoring"
+    | "Spirits"
+    | "Hospitality"
+    | "Technology"
+    | "Consumer"
+    | "Finance"
+    | "Music"
+    | "Property"
+    | "Brewing";
 }
 
 function mask(slug: string): string {
@@ -22,20 +30,23 @@ function mask(slug: string): string {
 }
 
 export const clients: readonly Client[] = [
-  { slug: "patek-philippe", name: "Patek Philippe", field: "Watchmaking" },
-  { slug: "porsche", name: "Porsche", field: "Motoring" },
   { slug: "mercedes", name: "Mercedes-Benz", field: "Motoring" },
-  { slug: "audi", name: "Audi", field: "Motoring" },
-  { slug: "honda", name: "Honda", field: "Motoring" },
-  { slug: "dunhill", name: "Dunhill", field: "Consumer" },
-  { slug: "chivas", name: "Chivas Regal", field: "Spirits" },
-  { slug: "grand-hyatt", name: "Grand Hyatt", field: "Hospitality" },
-  { slug: "huawei", name: "Huawei", field: "Technology" },
-  { slug: "intel", name: "Intel", field: "Technology" },
-  { slug: "nestle", name: "Nestlé", field: "Consumer" },
-  { slug: "maybank", name: "Maybank", field: "Finance" },
-  { slug: "maxis", name: "Maxis", field: "Technology" },
+  { slug: "denza", name: "Denza", field: "Motoring" },
+  { slug: "acson", name: "Acson", field: "Consumer" },
   { slug: "sime-darby", name: "Sime Darby", field: "Consumer" },
+  { slug: "sunsuria", name: "Sunsuria", field: "Property" },
+  { slug: "berjaya", name: "Berjaya", field: "Consumer" },
+  { slug: "ytl", name: "YTL", field: "Property" },
+  { slug: "intel", name: "Intel", field: "Technology" },
+  { slug: "universal-music", name: "Universal Music", field: "Music" },
+  { slug: "maxis", name: "Maxis", field: "Technology" },
+  { slug: "chivas", name: "Chivas Regal", field: "Spirits" },
+  { slug: "dom-perignon", name: "Dom Pérignon", field: "Spirits" },
+  { slug: "samsung", name: "Samsung", field: "Technology" },
+  { slug: "patek-philippe", name: "Patek Philippe", field: "Watchmaking" },
+  { slug: "toyota", name: "Toyota", field: "Motoring" },
+  { slug: "bmw", name: "BMW", field: "Motoring" },
+  { slug: "carlsberg", name: "Carlsberg", field: "Brewing" },
 ];
 
 export function clientMask(client: Client): string {
@@ -44,5 +55,6 @@ export function clientMask(client: Client): string {
 
 export const clientWall = {
   eyebrow: "Selected clients",
-  lede: "Fourteen companies have booked him",
+  lede: "They have commissioned or booked him",
+  turn: "Now it's your turn",
 } as const;
