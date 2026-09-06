@@ -31,7 +31,7 @@ import { pressWord, words } from "../../content/work";
  * measure — it strikes.
  *
  * Phoenix is treated as the live site now: no way back to the design chooser,
- * no links to the other two directions. The bar is Blessbook's own masthead.
+ * no links to the other two directions. The bar is BlessBook's own masthead.
  */
 
 const site = conceptById("phoenix");

@@ -55,7 +55,7 @@ const html = `<!doctype html><html><head><meta charset="utf-8">
     <div class="veil"></div>
     <div class="floor"></div>
     <div class="type">
-      <div class="eyebrow">Blessbook</div>
+      <div class="eyebrow">BlessBook</div>
       <div class="name">Dennis Lau</div>
       <div class="cn">刘凯彦</div>
       <div class="rule"></div>

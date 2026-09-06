@@ -1,5 +1,5 @@
 /** Public site identity. Served from `/blessbook/` on GitHub Pages. */
-export const siteName = "Blessbook";
+export const siteName = "BlessBook";
 
 /** The tagline, Dennis's team's own (Jon, 2026-09-06). */
 export const tagline = "Every story deserves its own soundtrack.";
