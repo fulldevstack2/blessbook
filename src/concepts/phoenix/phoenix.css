@@ -1878,6 +1878,17 @@ html {
 
 /* ---------- socials ---------- */
 
+/* The sign-off: the house line, said once, in the display face's italic. */
+.phoenix-tagline {
+  margin: var(--space-4xl) 0 0;
+  max-width: 24ch;
+  font-family: var(--display);
+  font-style: italic;
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  line-height: 1.2;
+  color: var(--gold);
+}
+
 .phoenix-socials {
   list-style: none;
   margin: var(--space-4xl) 0 0;

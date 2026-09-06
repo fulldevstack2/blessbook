@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { tiers } from "../content/commission";
+import { introTier, tiers } from "../content/commission";
 import { sounding_, watch } from "../lib/listening";
 
 /**
@@ -33,13 +33,15 @@ import { sounding_, watch } from "../lib/listening";
  * furniture on this site that did not know which page it was on.
  */
 
-/** The cheaper of the two, phrased as an entry price rather than a quote. */
-const from = tiers.reduce(
+/* The true entry price, introductory package included: the plate's number is
+   the least a song can cost, not the least a full commission can. */
+const offers = [introTier, ...tiers] as const;
+const from = offers.reduce(
   (cheapest, tier) =>
     Number(tier.price.replace(/[^\d]/g, "")) < Number(cheapest.price.replace(/[^\d]/g, ""))
       ? tier
       : cheapest,
-  tiers[0] as (typeof tiers)[number],
+  offers[0] as (typeof offers)[number],
 );
 
 export function Commission({

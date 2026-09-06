@@ -1,6 +1,9 @@
 /** Public site identity. Served from `/blessbook/` on GitHub Pages. */
 export const siteName = "Blessbook";
 
+/** The tagline, Dennis's team's own (Jon, 2026-09-06). */
+export const tagline = "Every story deserves its own soundtrack.";
+
 /** Dennis's team WhatsApp — set VITE_WHATSAPP_NUMBER in .env when provided. */
 const whatsappDigits = (import.meta.env.VITE_WHATSAPP_NUMBER as string | undefined)?.replace(
   /\D/g,

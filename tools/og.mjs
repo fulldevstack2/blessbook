@@ -59,7 +59,7 @@ const html = `<!doctype html><html><head><meta charset="utf-8">
       <div class="name">Dennis Lau</div>
       <div class="cn">刘凯彦</div>
       <div class="rule"></div>
-      <div class="line">Commission a song of your own.</div>
+      <div class="line">Every story deserves its own soundtrack.</div>
     </div>
     <div class="foot">
       <span>Electric violinist · Kuala Lumpur</span>

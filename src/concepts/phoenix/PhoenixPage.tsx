@@ -52,6 +52,7 @@ import {
 } from "../../content/dennis";
 import { photos } from "../../content/media";
 import { socials } from "../../content/work";
+import { tagline } from "../../content/site";
 import { SceneCanvas } from "../../lib/SceneCanvas";
 import { ScrollStage } from "../../lib/ScrollStage";
 import { useFonts } from "../../lib/useFonts";
@@ -375,6 +376,11 @@ export function PhoenixPage() {
           </section>
 
           <p className="phoenix-note">{commission.note}</p>
+
+          {/* The house line, said once, as the sign-off. */}
+          <p className="phoenix-tagline" data-reveal>
+            {tagline}
+          </p>
 
           <ul className="phoenix-socials">
             {socials.map((social) => (
