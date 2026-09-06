@@ -1545,102 +1545,39 @@ html {
   color: var(--ivory-faint);
 }
 
-/* ---------- the voices: four plaques to a page ----------
+/* ---------- the voices: a golden ledger ----------
 
-   The Star's verdict opens in moving gold leaf; the clients hang beneath it
-   as lacquer plaques on the ivory — the commission plate's own jewel-box
-   object — four at a time. A page-turn remounts them, so every turn lands
-   the plaques in sequence, draws a seam of light along each top edge and
-   surfaces the ghost of the opening mark behind the words. */
+   No cards. The ten finalized voices are entered on the lacquer the way
+   everything here is engraved: a continuous number struck in gold, one
+   hairline per entry drawing itself in, the words in the display italic,
+   the name in struck caps beneath. Four entries to a page; the page turns
+   with roman numerals and a seam-and-word. */
 
-.phoenix .voices-press {
+.phoenix .ledger {
+  list-style: none;
   margin: var(--space-2xl) 0 0;
   padding: 0;
 }
 
-.phoenix .voices-press p {
-  margin: 0;
-  font-family: var(--display);
-  font-optical-sizing: auto;
-  font-size: clamp(2.4rem, 6vw, 4.4rem);
-  line-height: 1;
-  letter-spacing: 0.005em;
-  background:
-    linear-gradient(
-      105deg,
-      var(--gold-deep) 0%,
-      oklch(74% 0.125 82) 22%,
-      var(--gold-deep) 44%
-    )
-    0 0 / 250% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  /* Descenders hang below the tight line box, and a clipped background is
-     their only paint: pad the box, pull the layout back. */
-  padding: 0.1em 0.1em 0.22em 0.02em;
-  margin: -0.1em -0.1em -0.22em -0.02em;
-  animation: phoenix-press-sheen 8s linear infinite alternate;
-}
-
-@keyframes phoenix-press-sheen {
-  to {
-    background-position: 100% 0;
-  }
-}
-
-.phoenix .voices-press cite {
-  display: block;
-  margin-top: var(--space-md);
-  font-style: normal;
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: color-mix(in oklab, var(--lacquer) 78%, transparent);
-}
-
-.phoenix .voices-wall {
-  list-style: none;
-  margin: var(--space-3xl) 0 0;
-  padding: 0;
-  display: grid;
-  gap: var(--space-xl);
-}
-
-@media (min-width: 900px) {
-  .phoenix .voices-wall {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-2xl);
-  }
-}
-
-.phoenix .voice-plate {
+.phoenix .ledger-row {
   position: relative;
-  isolation: isolate;
-  display: flex;
-  flex-direction: column;
-  padding: clamp(var(--space-lg), 2.6vw, var(--space-2xl));
-  background: linear-gradient(135deg, #0b0705 0%, #1a1208 100%);
-  border: 1px solid color-mix(in oklab, var(--gold) 42%, transparent);
-  box-shadow:
-    0 0 0 1px color-mix(in oklab, var(--gold) 12%, transparent),
-    0 26px 50px rgb(23 15 8 / 20%),
-    0 0 30px color-mix(in oklab, var(--gold) 10%, transparent);
-  overflow: hidden;
-  animation: voice-in 640ms var(--ease-out) both;
-  animation-delay: calc(var(--i) * 110ms);
+  display: grid;
+  grid-template-columns: clamp(3.4rem, 6vw, 5.6rem) minmax(0, 1fr);
+  gap: var(--space-lg);
+  padding: clamp(var(--space-xl), 4vh, var(--space-2xl)) 0;
+  animation: ledger-in 640ms var(--ease-out) both;
+  animation-delay: calc(var(--i) * 120ms);
 }
 
-@keyframes voice-in {
+@keyframes ledger-in {
   from {
     opacity: 0;
-    transform: translateY(16px);
+    transform: translateY(14px);
   }
 }
 
-/* A seam of light draws along the top edge after the plaque lands. */
-.phoenix .voice-plate::before {
+/* Each entry rules its own top line, drawn left to right as it arrives. */
+.phoenix .ledger-row::before {
   content: "";
   position: absolute;
   top: 0;
@@ -1649,93 +1586,89 @@ html {
   height: 1px;
   background: linear-gradient(
     90deg,
-    var(--gold),
-    color-mix(in oklab, var(--gold) 15%, transparent)
+    color-mix(in oklab, var(--gold) 55%, transparent),
+    color-mix(in oklab, var(--gold) 10%, transparent)
   );
   transform: scaleX(0);
   transform-origin: left center;
-  animation: voice-seam 1200ms var(--ease-out) both;
-  animation-delay: calc(var(--i) * 110ms + 300ms);
+  animation: ledger-rule 1100ms var(--ease-out) both;
+  animation-delay: calc(var(--i) * 120ms + 200ms);
 }
 
-@keyframes voice-seam {
+@keyframes ledger-rule {
   to {
     transform: none;
   }
 }
 
-/* The ghost of the opening mark, engraved behind the words. */
-.phoenix .voice-plate::after {
-  content: "\201C";
-  position: absolute;
-  top: -0.08em;
-  right: 0.04em;
-  z-index: -1;
+.phoenix .ledger-index {
   font-family: var(--display);
-  font-size: clamp(4.5rem, 7vw, 6.5rem);
-  line-height: 1;
-  color: color-mix(in oklab, var(--gold) 22%, transparent);
-  opacity: 0;
-  animation: voice-ghost 1000ms var(--ease-out) both;
-  animation-delay: calc(var(--i) * 110ms + 460ms);
-  pointer-events: none;
+  font-size: clamp(1.3rem, 2.2vw, 1.8rem);
+  line-height: 1.1;
+  color: var(--gold);
 }
 
-@keyframes voice-ghost {
-  to {
-    opacity: 1;
-  }
-}
-
-.phoenix .voice-mark {
-  margin: 0 0 var(--space-md);
+.phoenix .ledger-mark {
+  margin: 0 0 var(--space-sm);
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: var(--gold);
+  color: color-mix(in oklab, var(--gold) 78%, transparent);
 }
 
-.phoenix .voice-text {
-  margin: 0 0 var(--space-lg);
+.phoenix .ledger-text {
+  margin: 0;
+  max-width: 58ch;
   font-family: var(--display);
   font-style: italic;
-  font-size: clamp(1.1rem, 1.5vw, 1.35rem);
-  line-height: 1.5;
+  font-size: clamp(1.3rem, 2vw, 1.75rem);
+  line-height: 1.42;
   color: var(--ivory);
 }
 
-.phoenix .voice-text::before {
+.phoenix .ledger-text::before {
   content: "\201C";
   color: var(--gold);
 }
 
-.phoenix .voice-text::after {
+.phoenix .ledger-text::after {
   content: "\201D";
   color: var(--gold);
 }
 
-/* The long letters sit a size down, so one generous voice does not shout. */
-.phoenix .voice-plate[data-long] .voice-text {
-  font-size: clamp(0.98rem, 1.2vw, 1.12rem);
+/* The one long letter sits a size down and does not shout. */
+.phoenix .ledger-row[data-long] .ledger-text {
+  font-size: clamp(1.05rem, 1.4vw, 1.25rem);
   line-height: 1.6;
 }
 
-.phoenix .voice-who {
-  margin: auto 0 0;
-  padding-top: var(--space-md);
-  border-top: 1px solid color-mix(in oklab, var(--gold) 30%, transparent);
+.phoenix .ledger-who {
+  margin: var(--space-md) 0 0;
   font-size: 10px;
   font-weight: 500;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.24em;
   text-transform: uppercase;
-  color: color-mix(in oklab, var(--gold) 72%, transparent);
+  color: var(--ivory-faint);
+}
+
+@media (max-width: 720px) {
+  .phoenix .ledger-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-sm);
+  }
+
+  .phoenix .ledger-index {
+    font-size: 1.1rem;
+  }
 }
 
 /* ----- the page-turn: numerals, and a seam with a word ----- */
 
 .phoenix .voices-turn {
   margin-top: var(--space-2xl);
+  padding-top: var(--space-lg);
+  border-top: 1px solid color-mix(in oklab, var(--gold) 30%, transparent);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1750,12 +1683,12 @@ html {
 .phoenix .voices-page {
   border: 0;
   background:
-    linear-gradient(90deg, var(--gold-deep), var(--gold-deep)) left bottom / 0% 1px
+    linear-gradient(90deg, var(--gold), var(--gold)) left bottom / 0% 1px
     no-repeat;
   padding: 0.2rem 0.1rem;
   font-family: var(--display);
   font-size: 1.05rem;
-  color: color-mix(in oklab, var(--lacquer) 40%, transparent);
+  color: var(--ivory-faint);
   cursor: pointer;
   transition:
     color 320ms var(--ease-out),
@@ -1764,7 +1697,7 @@ html {
 
 .phoenix .voices-page[data-active="true"],
 .phoenix .voices-page:hover {
-  color: var(--gold-deep);
+  color: var(--gold);
   background-size: 100% 1px;
 }
 
@@ -1776,13 +1709,13 @@ html {
   background: none;
   padding: 0.35rem 0;
   cursor: pointer;
-  color: var(--gold-deep);
+  color: var(--gold);
   transition: color 320ms var(--ease-out);
 }
 
 .phoenix .voices-next:hover,
 .phoenix .voices-next:focus-visible {
-  color: var(--lacquer);
+  color: var(--ivory);
 }
 
 .phoenix .voices-next-seam {
@@ -1791,11 +1724,11 @@ html {
   background: linear-gradient(
     180deg,
     transparent,
-    var(--gold-deep) 22%,
-    var(--gold-deep) 78%,
+    var(--gold) 22%,
+    var(--gold) 78%,
     transparent
   );
-  box-shadow: 0 0 8px color-mix(in oklab, var(--gold-deep) 36%, transparent);
+  box-shadow: 0 0 8px color-mix(in oklab, var(--gold) 36%, transparent);
 }
 
 .phoenix .voices-next-word {
@@ -1805,13 +1738,8 @@ html {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .phoenix .voices-press p {
-    animation: none;
-  }
-
-  .phoenix .voice-plate,
-  .phoenix .voice-plate::before,
-  .phoenix .voice-plate::after {
+  .phoenix .ledger-row,
+  .phoenix .ledger-row::before {
     animation-duration: 0s;
     animation-delay: 0s;
   }

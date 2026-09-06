@@ -282,7 +282,12 @@ body {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  clip-path: inset(0 0 0 0);
+  /* The wipe ends OUTSIDE the box, not on it. clip-path crops the rendered
+     projection of the 3D flip — an inset(0) end state sheared the card's
+     corners mid-turn, because a turning plate projects wider than the box
+     it lives in. The negative inset gives the turn forty percent of air on
+     every side and costs the wipe nothing a reader can see. */
+  clip-path: inset(-40% -40% -40% -40%);
   transition: clip-path 1200ms var(--ease-out) var(--reveal-delay);
 }
 
@@ -304,7 +309,7 @@ body {
 .plaque[data-revealed="true"] .plaque-enter,
 .plaque[data-open="true"] .plaque-enter {
   overflow: visible;
-  clip-path: inset(0 0 0 0);
+  clip-path: inset(-40% -40% -40% -40%);
 }
 
 .plaque-stage {

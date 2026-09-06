@@ -16,7 +16,7 @@ import type { Photo } from "../../content/media";
 import { conceptById, violin } from "../registry";
 import { TURNED } from "../../lib/loadModel";
 import { siteName, tagline, workNav } from "../../content/site";
-import { pressWord, words } from "../../content/work";
+import { words } from "../../content/work";
 
 /**
  * Phoenix's own furniture.
@@ -214,13 +214,13 @@ export function SiteChrome() {
 }
 
 /**
- * The testimonials, four to a page.
+ * The testimonials as a ledger, four entries to a page.
  *
- * The Star's verdict opens in moving gold leaf; beneath it the voices hang
- * as lacquer plaques on the ivory, four at a time by Dennis's team's own
- * call, with a page-turn in the house language: roman numerals for the
- * pages and a seam-and-word for the next four. Every turn re-lands the
- * plaques in sequence, each drawing its seam of light along the top edge.
+ * No cards and no press: only the ten finalized voices, entered in gold on
+ * the lacquer the way everything on this site is engraved — a continuous
+ * number, a hairline, the words in the display face's italic, the name in
+ * struck caps. The page turns with roman numerals and a seam-and-word, and
+ * every turn enters its four in sequence, each hairline drawing itself.
  */
 const VOICES_PAGE = 4;
 
@@ -230,37 +230,38 @@ export function Chorus() {
   const shown = words.slice(page * VOICES_PAGE, page * VOICES_PAGE + VOICES_PAGE);
 
   return (
-    <section id="testimonials" className="phoenix-section phoenix-section--invert voices">
+    <section id="testimonials" className="phoenix-section voices">
       <p className="phoenix-eyebrow" data-reveal>
         Testimonials
       </p>
+      <h2 className="phoenix-h2" data-reveal>
+        In their words
+      </h2>
 
-      <blockquote className="voices-press" data-reveal>
-        <p>&ldquo;{pressWord.text}&rdquo;</p>
-        <cite>
-          {pressWord.who} · {pressWord.when}
-        </cite>
-      </blockquote>
-
-      {/* Keyed by page so a turn remounts the plaques and their entrance
-          choreography plays again. data-reveal is wrong here: the reveal
-          observer only knows nodes that existed when the page mounted. */}
-      <ul className="voices-wall" key={page} aria-label={`Testimonials, page ${page + 1} of ${pages}`}>
+      {/* Keyed by page so a turn re-enters the four. data-reveal is wrong
+          inside: the reveal observer only knows nodes that existed when the
+          page mounted. */}
+      <ol className="ledger" key={page} aria-label={`Testimonials, page ${page + 1} of ${pages}`}>
         {shown.map((word, index) => (
           <li
+            className="ledger-row"
             key={word.who + word.text.slice(0, 12)}
-            className="voice-plate"
             data-long={word.text.length > 220 || undefined}
             style={{ "--i": index } as CSSProperties}
           >
-            <p className="voice-mark">{word.what}</p>
-            <blockquote className="voice-text">{word.text}</blockquote>
-            <p className="voice-who">
-              {word.who} · {word.when}
-            </p>
+            <span className="ledger-index" aria-hidden>
+              {String(page * VOICES_PAGE + index + 1).padStart(2, "0")}
+            </span>
+            <div className="ledger-entry">
+              <p className="ledger-mark">{word.what}</p>
+              <blockquote className="ledger-text">{word.text}</blockquote>
+              <p className="ledger-who">
+                {word.who} · {word.when}
+              </p>
+            </div>
           </li>
         ))}
-      </ul>
+      </ol>
 
       <div className="voices-turn">
         <div className="voices-pages" aria-hidden>

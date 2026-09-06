@@ -537,13 +537,6 @@ export interface Word {
  * are named. The two anonymous commission quotes that used to sit here came
  * from the previous project and were never verified, so they are gone.
  */
-/* The press verdict that opens the chorus: The Star's own headline. */
-export const pressWord = {
-  text: "Simply electric.",
-  who: "The Star",
-  when: "2016",
-} as const;
-
 /* Dennis's team's own client testimonials (Jon, 2026-09-06), transcribed
    from the styled-Unicode originals into plain text — script codepoints read
    as gibberish to screen readers and search engines, and this site sets its
