@@ -15,7 +15,7 @@ import { enquiry, steps } from "../../content/commission";
 import type { Photo } from "../../content/media";
 import { conceptById, violin } from "../registry";
 import { TURNED } from "../../lib/loadModel";
-import { siteName, workNav } from "../../content/site";
+import { siteName, tagline, workNav } from "../../content/site";
 import { pressWord, words } from "../../content/work";
 
 /**
@@ -134,7 +134,8 @@ export function SiteChrome() {
   return (
     <header className="chrome" data-ground={ground} data-menu-open={menuOpen}>
       <Link className="chrome-brand" to={site.path} onClick={() => setMenuOpen(false)}>
-        {siteName}
+        <span className="chrome-brand-name">{siteName}</span>
+        <span className="chrome-brand-line">{tagline}</span>
       </Link>
 
       <nav className="chrome-nav" aria-label="Primary">

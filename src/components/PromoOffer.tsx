@@ -1,5 +1,5 @@
 import { useEffect, useState, type CSSProperties } from "react";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { introOffer, whatsapp } from "../content/site";
 import { photos } from "../content/media";
 
@@ -117,9 +117,18 @@ export function PromoOffer() {
                 {introOffer.cta}
               </a>
             ) : (
-              <a className="promo-primary" href="#commission" onClick={dismiss}>
+              /* A real journey, not a bare hash: from the man page there is no
+                 #packages to jump to, so this walks back to the work page and
+                 arrives on the USD 288 tier the same way the corner plate
+                 travels. */
+              <Link
+                className="promo-primary"
+                to={{ pathname: "/", hash: "#packages" }}
+                state={{ arrive: "packages" }}
+                onClick={dismiss}
+              >
                 {introOffer.cta}
-              </a>
+              </Link>
             )}
             <div className="promo-quiet">
               <button type="button" className="promo-dismiss" onClick={dismiss}>

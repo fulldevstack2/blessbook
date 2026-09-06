@@ -116,12 +116,32 @@ html {
   /* Above the menu veil, so the mark keeps burning while the menu is open. */
   z-index: 3;
   flex: 0 0 auto;
-  font-size: 11px;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
+  display: flex;
+  flex-direction: column;
+  gap: 0.22rem;
   color: var(--gold);
   text-decoration: none;
   transition: color 320ms var(--ease-out);
+}
+
+.phoenix .chrome-brand-name {
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+}
+
+/* The house line rides under the mark, small and slanted. */
+.phoenix .chrome-brand-line {
+  font-family: var(--display);
+  font-style: italic;
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  color: color-mix(in oklab, var(--ivory) 60%, transparent);
+}
+
+.phoenix .chrome[data-ground="ivory"] .chrome-brand-line {
+  color: color-mix(in oklab, var(--lacquer) 58%, transparent);
 }
 
 .phoenix .chrome-brand:hover,
@@ -444,9 +464,13 @@ html {
     padding: 0.55rem 0.85rem;
   }
 
-  .phoenix .chrome-brand {
+  .phoenix .chrome-brand-name {
     font-size: 10px;
     letter-spacing: 0.2em;
+  }
+
+  .phoenix .chrome-brand-line {
+    font-size: 9.5px;
   }
 
   .phoenix .chrome-passage {
