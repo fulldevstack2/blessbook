@@ -577,7 +577,10 @@ body {
 .listen-track {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-xs);
+  /* The venue shares the title's baseline. Left to stretch, the small caps
+     ride the top of the taller display face and float strangely high. */
+  align-items: baseline;
+  gap: var(--space-xs) var(--space-sm);
 }
 
 .listen-rail {
