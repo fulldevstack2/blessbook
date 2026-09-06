@@ -168,14 +168,23 @@ const fragmentShader = /* glsl */ `
        out of it, so the bar is visibly rotating rather than cutting: a short
        hold on the name, a long smooth quarter-turn, another hold. A narrow band
        here reads as a jump cut, which is not what a heavy object does. */
-    float turned = uRoll * uNames_ - 0.5;
+    /* The strip has ends. It used to be sampled with fract(), which wrapped
+       the texture: the last name bled over the crown above the first, the
+       roll overshot past the last name back to the first, and the reader saw
+       Carlsberg twice and the order scrambled. The roll now starts centred
+       on the first name, finishes centred on the last, and beyond the ends
+       there is only bar. */
+    float turned = uRoll * (uNames_ - 1.0);
     float step_ = clamp((fract(turned) - 0.14) / 0.72, 0.0, 1.0);
     // Quintic, so the acceleration itself is continuous and nothing snaps.
     float eased = step_ * step_ * step_ * (step_ * (step_ * 6.0 - 15.0) + 10.0);
-    float held = floor(turned) + eased + 0.5;
-    float names = held + (v - 0.5) * face;
+    float held = min(floor(turned) + eased + 0.5, uNames_ - 0.5);
+    /* The canvas texture arrives flipped (v = 1 is the canvas top), so the
+       roll counts down through it: without this the list read bottom-up,
+       Carlsberg first and Mercedes last. */
+    float names = (uNames_ - held) + (v - 0.5) * face;
     float row = names / uNames_;
-    vec2 at = vec2(vUv.x, fract(row));
+    vec2 at = vec2(vUv.x, clamp(row, 0.0, 1.0));
 
     /* The cut, and its walls.
 
@@ -190,8 +199,8 @@ const fragmentShader = /* glsl */ `
     float bevelU = 0.0015 / max(depth, 0.3);
 
     float cut = texture2D(uNames, at).r;
-    float up = texture2D(uNames, vec2(at.x, fract(row + bevelV))).r;
-    float down = texture2D(uNames, vec2(at.x, fract(row - bevelV))).r;
+    float up = texture2D(uNames, vec2(at.x, clamp(row + bevelV, 0.0, 1.0))).r;
+    float down = texture2D(uNames, vec2(at.x, clamp(row - bevelV, 0.0, 1.0))).r;
     float left = texture2D(uNames, vec2(at.x - bevelU, at.y)).r;
     float right = texture2D(uNames, vec2(at.x + bevelU, at.y)).r;
 

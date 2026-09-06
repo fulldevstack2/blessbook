@@ -386,7 +386,14 @@ export function PhoenixPage() {
             {socials.map((social) => (
               <li key={social.label}>
                 <a href={social.href} rel="noreferrer noopener" target="_blank">
-                  <span className="phoenix-social-label">{social.label}</span>
+                  <span className="phoenix-social-label">
+                    <span
+                      className="phoenix-social-mark"
+                      data-net={social.label.toLowerCase()}
+                      aria-hidden
+                    />
+                    {social.label}
+                  </span>
                   <span className="phoenix-social-handle">{social.handle}</span>
                 </a>
               </li>
