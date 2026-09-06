@@ -46,6 +46,9 @@ function Phrase() {
   );
 }
 
+/** Session-scoped: a fresh visit gets the offer fresh. */
+const ANSWERED = "blessbook:offer-answered";
+
 export function PromoOffer() {
   const { pathname } = useLocation();
   const [open, setOpen] = useState(false);
@@ -54,8 +57,17 @@ export function PromoOffer() {
      every new page. Dismissing it closes it for the room you are in; walk to
      another and it makes its offer again. Hash jumps within a page do not
      count as a new room. Never over the menu veil: if the reader is choosing
-     a room when the moment comes, the offer waits for them to finish. */
+     a room when the moment comes, the offer waits for them to finish.
+
+     But an offer that has been TAKEN stays taken: someone who pressed its
+     button is already standing in front of the package it sells, and popping
+     up again over that would be pestering. Answered lasts the visit. */
   useEffect(() => {
+    try {
+      if (sessionStorage.getItem(ANSWERED) === "1") return;
+    } catch {
+      /* Private windows may refuse storage; the offer simply behaves as new. */
+    }
     let delay: number;
     const attempt = () => {
       if (document.querySelector('.chrome-menu[data-open="true"]')) {
@@ -86,6 +98,15 @@ export function PromoOffer() {
 
   const dismiss = () => setOpen(false);
 
+  const taken = () => {
+    try {
+      sessionStorage.setItem(ANSWERED, "1");
+    } catch {
+      /* Nothing to do: without storage it simply returns next page. */
+    }
+    setOpen(false);
+  };
+
   return (
     <div className="promo" role="dialog" aria-labelledby="promo-title" aria-modal="true">
       <button type="button" className="promo-scrim" onClick={dismiss} aria-label="Close offer" />
@@ -113,6 +134,7 @@ export function PromoOffer() {
                 href={whatsapp.href}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={taken}
               >
                 {introOffer.cta}
               </a>
@@ -125,7 +147,7 @@ export function PromoOffer() {
                 className="promo-primary"
                 to={{ pathname: "/", hash: "#packages" }}
                 state={{ arrive: "packages" }}
-                onClick={dismiss}
+                onClick={taken}
               >
                 {introOffer.cta}
               </Link>
