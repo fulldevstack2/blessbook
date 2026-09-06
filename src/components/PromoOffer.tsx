@@ -50,8 +50,15 @@ function Phrase() {
 const ANSWERED = "blessbook:offer-answered";
 
 export function PromoOffer() {
-  const { pathname } = useLocation();
+  const { pathname, state } = useLocation();
   const [open, setOpen] = useState(false);
+
+  /* A navigation that carries an arrival intent is a journey the reader chose
+     — the corner plate walking them to the commission, the offer's own
+     button walking them to the packages. The offer does not interrupt a
+     journey; it waits for the next ordinary page. */
+  const onAMission =
+    state !== null && typeof state === "object" && "arrive" in (state as object);
 
   /* Dennis's team's call: the offer is not once-per-browser — it returns on
      every new page. Dismissing it closes it for the room you are in; walk to
@@ -63,6 +70,7 @@ export function PromoOffer() {
      button is already standing in front of the package it sells, and popping
      up again over that would be pestering. Answered lasts the visit. */
   useEffect(() => {
+    if (onAMission) return;
     try {
       if (sessionStorage.getItem(ANSWERED) === "1") return;
     } catch {
@@ -81,7 +89,7 @@ export function PromoOffer() {
       window.clearTimeout(delay);
       setOpen(false);
     };
-  }, [pathname]);
+  }, [pathname, onAMission]);
 
   /* The page holds still under the card while it is up. */
   useEffect(() => {
