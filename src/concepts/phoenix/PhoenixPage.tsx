@@ -380,8 +380,11 @@ export function PhoenixPage() {
           {/* The curtain call: the plumb line comes down to the mark, and the
               house line closes the page in moving gold leaf. */}
           <div className="phoenix-coda" data-reveal>
-            <span className="phoenix-coda-seam" aria-hidden />
-            <p className="phoenix-coda-mark">{siteName}</p>
+            <p className="phoenix-coda-mark">
+              <span className="phoenix-coda-rule" aria-hidden />
+              {siteName}
+              <span className="phoenix-coda-rule phoenix-coda-rule--after" aria-hidden />
+            </p>
             <p className="phoenix-tagline">{tagline}</p>
           </div>
 

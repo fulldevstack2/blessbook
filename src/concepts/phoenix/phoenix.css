@@ -1976,38 +1976,60 @@ html {
 
 /* ---------- socials ---------- */
 
-/* The curtain call. Not a caption left at the bottom of a page: the seam
-   comes down from the room above, lands on the mark, and the house line
-   closes the site in gold leaf with a slow light moving through it. */
+/* The curtain call. A lockup, not a caption: two hairlines draw outward
+   from the mark as it arrives, then the house line rises beneath it and
+   the gold light pours through the letters from that moment. */
 .phoenix-coda {
   margin: var(--space-5xl) auto 0;
   display: grid;
   justify-items: center;
-  gap: var(--space-md);
+  gap: var(--space-lg);
   max-width: 34rem;
   text-align: center;
 }
 
-.phoenix-coda-seam {
-  width: 1px;
-  height: clamp(48px, 9vh, 84px);
-  background: linear-gradient(
-    180deg,
-    transparent,
-    var(--gold) 30%,
-    var(--gold) 70%,
-    transparent
-  );
-  box-shadow: 0 0 10px color-mix(in oklab, var(--gold) 32%, transparent);
-}
-
 .phoenix-coda-mark {
   margin: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.3em;
   text-transform: uppercase;
   color: var(--gold);
+  opacity: 0;
+  transition: opacity 700ms var(--ease-out) 150ms;
+}
+
+.phoenix-coda[data-revealed="true"] .phoenix-coda-mark {
+  opacity: 1;
+}
+
+.phoenix-coda-rule {
+  width: clamp(44px, 7vw, 88px);
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in oklab, var(--gold) 65%, transparent)
+  );
+  transform: scaleX(0);
+  transform-origin: right center;
+  transition: transform 1100ms var(--ease-out) 350ms;
+}
+
+.phoenix-coda-rule--after {
+  transform-origin: left center;
+  background: linear-gradient(
+    270deg,
+    transparent,
+    color-mix(in oklab, var(--gold) 65%, transparent)
+  );
+}
+
+.phoenix-coda[data-revealed="true"] .phoenix-coda-rule {
+  transform: none;
 }
 
 .phoenix-tagline {
@@ -2033,7 +2055,19 @@ html {
   padding: 0.08em 0.1em 0.22em;
   margin-inline: -0.1em;
   margin-bottom: -0.22em;
-  animation: phoenix-coda-sheen 9s linear infinite alternate;
+  opacity: 0;
+  transform: translateY(14px);
+  transition:
+    opacity 800ms var(--ease-out) 550ms,
+    transform 1000ms var(--ease-out) 550ms;
+}
+
+/* The light begins only once the line has arrived, so the first sweep is
+   seen, not missed. */
+.phoenix-coda[data-revealed="true"] .phoenix-tagline {
+  opacity: 1;
+  transform: none;
+  animation: phoenix-coda-sheen 9s linear 900ms infinite alternate;
 }
 
 @keyframes phoenix-coda-sheen {
@@ -2043,7 +2077,15 @@ html {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .phoenix-coda-mark,
+  .phoenix-coda-rule,
   .phoenix-tagline {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .phoenix-coda[data-revealed="true"] .phoenix-tagline {
     animation: none;
   }
 }
