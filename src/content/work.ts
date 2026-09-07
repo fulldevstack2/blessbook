@@ -302,9 +302,16 @@ function poster(file: string): string {
  * and makes YouTube's intermittent "Please sign in / protect our community"
  * bot gate fire more often; the standard host can share a session after the
  * reader presses play. Click-to-load still means nothing hits YouTube until then.
+ *
+ * And no `autoplay`. Pressing a poster is a gesture in *our* page, which the
+ * iframe cannot see: to YouTube a fresh frame that demands playback with no
+ * interaction of its own looks like a machine, which is precisely what the bot
+ * gate is looking for. The reader now presses YouTube's own play button — one
+ * gesture it can actually observe — and `playsinline` keeps a phone from
+ * throwing the film into its native fullscreen player to do it.
  */
 function youtubeEmbed(id: string): string {
-  return `https://www.youtube.com/embed/${id}?autoplay=1&rel=0`;
+  return `https://www.youtube.com/embed/${id}?rel=0&playsinline=1`;
 }
 
 export const films: readonly Film[] = [

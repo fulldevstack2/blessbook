@@ -4764,8 +4764,22 @@ canvas[hidden] + .phoenix-hero-plate {
     color 320ms var(--ease-out);
 }
 
-.phoenix .lightbox-shut {
+.phoenix .lightbox-shut,
+/* The way out has to be visible before it is needed: when YouTube decides to
+   show its own sign-in wall inside the frame, this plate is the reader's only
+   door, and a nine-pixel text link is not a door. */
+.phoenix .lightbox-on {
   border: 1px solid color-mix(in oklab, var(--gold) 46%, transparent);
+}
+
+.phoenix .lightbox-on {
+  padding: 0.6rem 1rem;
+  background: linear-gradient(135deg, #0b0705 0%, #1a1208 100%);
+}
+
+.phoenix .lightbox-on:hover,
+.phoenix .lightbox-on:focus-visible {
+  border-color: color-mix(in oklab, var(--gold) 85%, transparent);
 }
 
 .phoenix .lightbox-shut:hover {
