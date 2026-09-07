@@ -52,7 +52,7 @@ import {
 } from "../../content/dennis";
 import { photos } from "../../content/media";
 import { socials } from "../../content/work";
-import { tagline } from "../../content/site";
+import { siteName, tagline } from "../../content/site";
 import { SceneCanvas } from "../../lib/SceneCanvas";
 import { ScrollStage } from "../../lib/ScrollStage";
 import { useFonts } from "../../lib/useFonts";
@@ -377,10 +377,13 @@ export function PhoenixPage() {
 
           <p className="phoenix-note">{commission.note}</p>
 
-          {/* The house line, said once, as the sign-off. */}
-          <p className="phoenix-tagline" data-reveal>
-            {tagline}
-          </p>
+          {/* The curtain call: the plumb line comes down to the mark, and the
+              house line closes the page in moving gold leaf. */}
+          <div className="phoenix-coda" data-reveal>
+            <span className="phoenix-coda-seam" aria-hidden />
+            <p className="phoenix-coda-mark">{siteName}</p>
+            <p className="phoenix-tagline">{tagline}</p>
+          </div>
 
           <ul className="phoenix-socials">
             {socials.map((social) => (
