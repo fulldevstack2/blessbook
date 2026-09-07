@@ -1997,6 +1997,15 @@ html {
   gap: var(--space-lg) var(--space-3xl);
 }
 
+/* On a phone the row wrapped ragged — one to a line, then two, then one.
+   A single even column reads as a decision instead of an accident. */
+@media (max-width: 720px) {
+  .phoenix-socials {
+    flex-direction: column;
+    gap: var(--space-lg);
+  }
+}
+
 .phoenix-socials a {
   display: grid;
   gap: var(--space-2xs);
