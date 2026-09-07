@@ -43,6 +43,26 @@ export interface Screening {
 }
 
 /**
+ * Stamp the page origin onto YouTube embeds so the player can attribute the
+ * request to this site. Leaves Spotify / Instagram (and anything else) alone.
+ */
+function frameSrc(embed: string): string {
+  try {
+    const url = new URL(embed);
+    if (
+      (url.hostname === "www.youtube.com" || url.hostname === "youtube.com") &&
+      url.pathname.startsWith("/embed/")
+    ) {
+      url.searchParams.set("origin", window.location.origin);
+      return url.toString();
+    }
+  } catch {
+    /* Keep the stored URL if it is not parseable. */
+  }
+  return embed;
+}
+
+/**
  * Where a film came from, in *document* coordinates.
  *
  * Not viewport coordinates, and that distinction is a bug I had: the card is
@@ -366,9 +386,10 @@ export function Lightbox({ work, from, onClose }: LightboxProps) {
           {arrived ? (
             <iframe
               className="lightbox-media"
-              src={work.embed}
+              src={frameSrc(work.embed)}
               title={work.title}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerPolicy="strict-origin-when-cross-origin"
               allowFullScreen
             />
           ) : work.poster ? (

@@ -297,11 +297,21 @@ function poster(file: string): string {
   return `${import.meta.env.BASE_URL}films/${file}`;
 }
 
+/**
+ * Standard YouTube embed (not youtube-nocookie). Privacy mode isolates cookies
+ * and makes YouTube's intermittent "Please sign in / protect our community"
+ * bot gate fire more often; the standard host can share a session after the
+ * reader presses play. Click-to-load still means nothing hits YouTube until then.
+ */
+function youtubeEmbed(id: string): string {
+  return `https://www.youtube.com/embed/${id}?autoplay=1&rel=0`;
+}
+
 export const films: readonly Film[] = [
   {
     id: "denza",
     youtube: "FtXeR3TTtbE",
-    embed: "https://www.youtube-nocookie.com/embed/FtXeR3TTtbE?autoplay=1&rel=0",
+    embed: youtubeEmbed("FtXeR3TTtbE"),
     href: "https://youtu.be/FtXeR3TTtbE",
     on: "YouTube",
     title: "DENZA Z9 GT · launch at KLCC",
@@ -311,7 +321,7 @@ export const films: readonly Film[] = [
   {
     id: "seafood",
     youtube: "QGlYj8CrJ6E",
-    embed: "https://www.youtube-nocookie.com/embed/QGlYj8CrJ6E?autoplay=1&rel=0",
+    embed: youtubeEmbed("QGlYj8CrJ6E"),
     href: "https://youtu.be/QGlYj8CrJ6E",
     on: "YouTube",
     title: "ONE SEAFOOD · six Michelin-starred chefs",
@@ -321,7 +331,7 @@ export const films: readonly Film[] = [
   {
     id: "theo",
     youtube: "Dq52GzlIaAQ",
-    embed: "https://www.youtube-nocookie.com/embed/Dq52GzlIaAQ?autoplay=1&rel=0",
+    embed: youtubeEmbed("Dq52GzlIaAQ"),
     href: "https://youtu.be/Dq52GzlIaAQ",
     on: "YouTube",
     title: "天赐 · Heaven's Gift",
@@ -331,7 +341,7 @@ export const films: readonly Film[] = [
   {
     id: "born",
     youtube: "BcJyTBIkdbg",
-    embed: "https://www.youtube-nocookie.com/embed/BcJyTBIkdbg?autoplay=1&rel=0",
+    embed: youtubeEmbed("BcJyTBIkdbg"),
     href: "https://youtu.be/BcJyTBIkdbg",
     on: "YouTube",
     title: "BORN FOR A REASON · for Braxton",
@@ -380,7 +390,7 @@ export const catalogue: readonly Work[] = [
     id: "come-up",
     on: "YouTube",
     href: "https://youtu.be/muFlm966ifY",
-    embed: "https://www.youtube-nocookie.com/embed/muFlm966ifY?autoplay=1&rel=0",
+    embed: youtubeEmbed("muFlm966ifY"),
     poster: poster("come-up-to-carlsberg.webp"),
     title: "COME UP TO CARLSBERG",
     note: "Carlsberg Malaysia's brand portfolio single, with its Managing Director then, Soren Ravn.",
@@ -389,7 +399,7 @@ export const catalogue: readonly Work[] = [
     id: "glory",
     on: "YouTube",
     href: "https://youtu.be/8vBQ-BdAbjA",
-    embed: "https://www.youtube-nocookie.com/embed/8vBQ-BdAbjA?autoplay=1&rel=0",
+    embed: youtubeEmbed("8vBQ-BdAbjA"),
     poster: poster("glory.webp"),
     title: "GLORY",
     note: "With Datuk Syafinaz Selamat.",
@@ -398,7 +408,7 @@ export const catalogue: readonly Work[] = [
     id: "wanna-be-free-live",
     on: "YouTube",
     href: "https://youtu.be/CJbWBhn0y2k",
-    embed: "https://www.youtube-nocookie.com/embed/CJbWBhn0y2k?autoplay=1&rel=0",
+    embed: youtubeEmbed("CJbWBhn0y2k"),
     poster: poster("wanna-be-free-live.webp"),
     title: "I Wanna Be Free",
     note: "With Jeryl Lee \u674e\u4f69\u73b2, live at The Chosen.",
@@ -407,7 +417,7 @@ export const catalogue: readonly Work[] = [
     id: "wanna-be-free",
     on: "YouTube",
     href: "https://youtu.be/gPVI1KYpr1o",
-    embed: "https://www.youtube-nocookie.com/embed/gPVI1KYpr1o?autoplay=1&rel=0",
+    embed: youtubeEmbed("gPVI1KYpr1o"),
     poster: poster("wanna-be-free.webp"),
     title: "I Wanna Be Free",
     note: "Jeryl Lee \u674e\u4f69\u73b2, for #VoiceBeyondHorizon.",
@@ -416,7 +426,7 @@ export const catalogue: readonly Work[] = [
     id: "abadi-kita",
     on: "YouTube",
     href: "https://youtu.be/VVHZ1DOIj18",
-    embed: "https://www.youtube-nocookie.com/embed/VVHZ1DOIj18?autoplay=1&rel=0",
+    embed: youtubeEmbed("VVHZ1DOIj18"),
     poster: poster("abadi-kita.webp"),
     title: "ABADI KITA",
     note: "Written for Aisyah Aziz, the Singaporean artiste.",
@@ -425,7 +435,7 @@ export const catalogue: readonly Work[] = [
     id: "nugget",
     on: "YouTube",
     href: "https://youtu.be/Piki1mKblAc",
-    embed: "https://www.youtube-nocookie.com/embed/Piki1mKblAc?autoplay=1&rel=0",
+    embed: youtubeEmbed("Piki1mKblAc"),
     poster: poster("nugget.webp"),
     title: "Nugget",
     note: "First single for Sharnaaz Ahmad, the Malaysian A-list actor.",
@@ -434,7 +444,7 @@ export const catalogue: readonly Work[] = [
     id: "nugget-acoustic",
     on: "YouTube",
     href: "https://youtu.be/zrS48blMetg",
-    embed: "https://www.youtube-nocookie.com/embed/zrS48blMetg?autoplay=1&rel=0",
+    embed: youtubeEmbed("zrS48blMetg"),
     poster: poster("nugget-acoustic.webp"),
     title: "Nugget \u00b7 acoustic",
     note: "One take, with Sharnaaz Ahmad.",
@@ -443,7 +453,7 @@ export const catalogue: readonly Work[] = [
     id: "makan-cintaku-acoustic",
     on: "YouTube",
     href: "https://youtu.be/N0UUpt0RFTc",
-    embed: "https://www.youtube-nocookie.com/embed/N0UUpt0RFTc?autoplay=1&rel=0",
+    embed: youtubeEmbed("N0UUpt0RFTc"),
     poster: poster("makan-cintaku-acoustic.webp"),
     title: "Makan Cintaku \u00b7 acoustic",
     note: "With Khai Bahar and Wany Hasrita.",
@@ -452,7 +462,7 @@ export const catalogue: readonly Work[] = [
     id: "jadi-tak-keruan",
     on: "YouTube",
     href: "https://youtu.be/HFtwimMVMz4",
-    embed: "https://www.youtube-nocookie.com/embed/HFtwimMVMz4?autoplay=1&rel=0",
+    embed: youtubeEmbed("HFtwimMVMz4"),
     poster: poster("jadi-tak-keruan.webp"),
     title: "JADI TAK KERUAN",
     note: "First single for Fara Dolhadi.",
@@ -461,7 +471,7 @@ export const catalogue: readonly Work[] = [
     id: "light-home",
     on: "YouTube",
     href: "https://youtu.be/ecuaYtAmwxs",
-    embed: "https://www.youtube-nocookie.com/embed/ecuaYtAmwxs?autoplay=1&rel=0",
+    embed: youtubeEmbed("ecuaYtAmwxs"),
     poster: poster("light-home.webp"),
     title: "The Light Home \uff5c \u56de\u5bb6\u7684\u5149",
     note: "Chinese New Year theme song, 2026.",
@@ -470,7 +480,7 @@ export const catalogue: readonly Work[] = [
     id: "beauty-in-the-pot",
     on: "YouTube",
     href: "https://youtu.be/jKVLyHmMBaY",
-    embed: "https://www.youtube-nocookie.com/embed/jKVLyHmMBaY?autoplay=1&rel=0",
+    embed: youtubeEmbed("jKVLyHmMBaY"),
     poster: poster("beauty-in-the-pot.webp"),
     title: "\u6211\u60f3\u5bf9\u4f60\u8bf4",
     note: "Theme song for the Beauty in the Pot hotpot chain.",
@@ -479,7 +489,7 @@ export const catalogue: readonly Work[] = [
     id: "safe-harbour",
     on: "YouTube",
     href: "https://youtu.be/mFGa7RPHnW0",
-    embed: "https://www.youtube-nocookie.com/embed/mFGa7RPHnW0?autoplay=1&rel=0",
+    embed: youtubeEmbed("mFGa7RPHnW0"),
     poster: poster("safe-harbour.webp"),
     title: "\u907f\u98ce\u6e2f",
     note: "For Daniel Tan: a groom's dedication to his bride.",
